@@ -22,7 +22,6 @@
 /**
  * @file surfaceshader.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class SurfaceShader
  */
 
@@ -61,7 +60,7 @@ class SurfaceShader: public Shader
 
         /**
         * Constructor. It builds a SurfaceShader given a Stratigraphy instance.
-        * @param a shared pointer to a Stratigraphy instance
+        * @param raw a shared pointer to a Stratigraphy instance
         */
         SurfaceShader( const std::shared_ptr< Stratigraphy >& raw_ );
 
@@ -74,7 +73,7 @@ class SurfaceShader: public Shader
 
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
-        * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
         * @see Stratigraphy
         * @return void.
         */
@@ -112,8 +111,8 @@ class SurfaceShader: public Shader
 
         /**
         * This method updates the color surface to a height map color. The color of each vertice will be computed by an interpolation between the z minimum value and z maximum value.
-        * @param zmin_ the minimum z value
-        * @param zmax_ the maximum z value
+        * @param zmin the minimum z value
+        * @param zmax the maximum z value
         * @return void.
         */
         void setHeightMap( double zmin_, double zmax_ );
@@ -152,9 +151,9 @@ class SurfaceShader: public Shader
 
         /**
         * This method loads the buffers with the required geometry
-        * @param vertices_ normalized vertices
-        * @param normals_  normalized normals
-        * @param faces_  surface faces
+        * @param vertices normalized vertices
+        * @param normals  normalized normals
+        * @param faces  surface faces
         * @return void.
         */
         void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
@@ -163,7 +162,7 @@ class SurfaceShader: public Shader
 
         /**
         * This method loads the colors buffers. This methods allows different colors to each vertex.
-        * @param colors_ vector of colors. The number of colors is the same of the number of vertices.
+        * @param colors vector of colors. The number of colors is the same of the number of vertices.
         * @return void.
         */
         void updateColorBuffers( const std::vector< GLfloat >& colors_ );
@@ -171,9 +170,9 @@ class SurfaceShader: public Shader
 
         /**
         * This method creates a vector of the color (r_, g_, b_) repeated to each vertex.
-        * @param r_ red component of the color
-        * @param green_ green component of the color
-        * @param blue_ blue component of the color
+        * @param r red component of the color
+        * @param g green component of the color
+        * @param b blue component of the color
         * @return void.
         */
         void updateColorBuffers( std::size_t nvertices_, int r_, int g_, int b_ );

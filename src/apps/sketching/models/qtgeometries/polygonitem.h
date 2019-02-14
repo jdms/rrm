@@ -22,7 +22,6 @@
 /**
  * @file polygonitem.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class PolygonItem
  */
 
@@ -44,8 +43,8 @@ class PolygonItem: public QGraphicsPolygonItem
     public:
 
         /**
-        * Constructor. parent_ is passed to QGraphicsPolygonItem's constructor.
-        * @param parent_ the parent item
+        * Constructor. parent is passed to QGraphicsPolygonItem's constructor.
+        * @param parent the parent item
         */
         PolygonItem( QGraphicsItem *parent_ = nullptr );
 
@@ -88,7 +87,7 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to add a point to the polygon
-        * @param p_ a point to be added to the polygon
+        * @param p a point to be added to the polygon
         * @see QPointF
         * @return void.
         */
@@ -97,7 +96,7 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to remove a point from the polygon
-        * @param p_ a point to be removed from the polygon
+        * @param p a point to be removed from the polygon
         * @see QPointF
         * @return void.
         */
@@ -106,6 +105,8 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Set the polygon as done. This not allow add any point more to the polygon.
+        * @param status if status is true, the polygon is done, and it is not more allowed to add any point. And
+        * it is false if the polygon is not done yet.
         * @return void.
         */
         void setDone( bool status_ );
@@ -120,9 +121,9 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to set the color of the border
-        * @param red the red component of the color (integer)
-        * @param green the green component of the color (integer)
-        * @param blue the blue component of the color (integer)
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
         * @return void.
         */
         void setBorderColor( int r_, int g_, int b_ );
@@ -130,9 +131,9 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to get the color of the border
-        * @param red reference to the red component of the color (integer)
-        * @param green reference to the green component of the color (integer)
-        * @param blue reference to the blue component of the color (integer)
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
         * @return void.
         */
         void getBorderColor( int& r_, int& g_, int& b_ ) const;
@@ -172,7 +173,7 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to set the border visible or not.
-        * @param status_ indicates if the border is visible or not. It is true if the border is visible and false otherwise.
+        * @param status indicates if the border is visible or not. It is true if the border is visible and false otherwise.
         * @return void.
         */
         void setBorderVisible( bool status_ );
@@ -180,7 +181,7 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to check if the border visible or not.
-        * @param status_ indicates
+        * @param status indicates
         * @return boolean Returns true if the border is visible and false otherwise.
         */
         bool isBorderVisible() const ;
@@ -188,7 +189,7 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to set if the fill color has transparency or not.
-        * @param status_ indicates if the fill color has transparency or not. It is true if there is transparency in the fill color and false otherwise.
+        * @param status indicates if the fill color has transparency or not. It is true if there is transparency in the fill color and false otherwise.
         * @return void.
         */
         void setTransparency( bool status_ );
@@ -196,7 +197,7 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to check if the fill color has transparency or not.
-        * @param status_ indicates if the fill color has transparency or not. It is true if there is transparency in the fill color and false otherwise.
+        * @param status indicates if the fill color has transparency or not. It is true if there is transparency in the fill color and false otherwise.
         * @return void.
         */
         bool hasTransparency() const ;
@@ -204,9 +205,9 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to fill the polygon with a given color
-        * @param red the red component of the color (integer)
-        * @param green the green component of the color (integer)
-        * @param blue the blue component of the color (integer)
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
         * @return void.
         */
         void setFillColor( int r_, int g_, int b_ );
@@ -214,9 +215,9 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to get the color of internal part of the polygon
-        * @param red reference to the red component of the color (integer)
-        * @param green reference to the green component of the color (integer)
-        * @param blue reference to the blue component of the color (integer)
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
         * @return void.
         */
         void getFillColor( int& r_, int& g_, int& b_ ) const;
@@ -289,9 +290,9 @@ class PolygonItem: public QGraphicsPolygonItem
 
         /**
         * Method to repaint the curve
-        * @see QPainter performs painting on the widget
-        * @see QStyleOptionGraphicsItem provides style options for the item
-        * @see QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
+        * @param QPainter performs painting on the widget
+        * @param QStyleOptionGraphicsItem provides style options for the item
+        * @param QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
         * @return void.
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,

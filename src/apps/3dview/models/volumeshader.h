@@ -22,7 +22,6 @@
 /**
  * @file volumeshader.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class VolumeShader
  */
 
@@ -62,7 +61,7 @@ class VolumeShader: public Shader
 
         /**
         * Constructor. It builds a VolumeShader given a Volume instance.
-        * @param raw_ a shared pointer to a Volume instance
+        * @param raw a shared pointer to a Volume instance
         */
         VolumeShader( const std::shared_ptr< Volume >& raw_ );
 
@@ -75,7 +74,7 @@ class VolumeShader: public Shader
 
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
-        * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
         * @see Volume
         * @return void.
         */
@@ -139,8 +138,8 @@ class VolumeShader: public Shader
 
         /**
         * This method loads the buffers with the required geometry
-        * @param vertices_ normalized vertices
-        * @param normals_  normalized normals
+        * @param vertices normalized vertices
+        * @param normals  normalized normals
         * @return void.
         */
         void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,

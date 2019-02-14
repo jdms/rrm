@@ -22,8 +22,7 @@
 /**
  * @file coordinate_axes_3d.cpp
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
- * @brief File containing the class CoordinateAxes3d
+ * @brief File containing the CoordinateAxes3d class
  */
 
 #include "coordinate_axes_3d.h"

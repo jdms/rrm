@@ -22,7 +22,6 @@
 /**
  * @file regions.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Regions
  */
 
@@ -85,7 +84,7 @@ class Regions: public Object
 
         /**
         * Method to set a new index to the region
-        * @param id_ a new index to the region
+        * @param id a new index to the region
         * @return void.
         */
         void setIndex( std::size_t id_ );
@@ -101,13 +100,14 @@ class Regions: public Object
         /**
         * Method to return the decompose and return the tetrahedrals into triangles
         * This method is mainly used to get the triangles to draw using opengl
-        * @return std::size_t the vector of the tetrahedrals decomposed into triangles
+        * @param cells the vector of the tetrahedrals decomposed into triangles
         */
         void getTriangleCells( std::vector< std::size_t >& cells_ ) const;
 
 
         /**
         * Method to set the tetrahedrals cells of the region
+        * @param cells a vector of the indexes that defines a cell for all cells
         * @return void.
         */
         void setTetrahedralCells( const std::vector< std::size_t >& cells_ );
@@ -129,7 +129,7 @@ class Regions: public Object
 
         /**
         * Method to set the vertices of the mesh of the region
-        * @param vertices_ a vector of the vertices coordinates that belongs to the region mesh
+        * @param vertices a vector of the vertices coordinates that belongs to the region mesh
         * @return void.
         */
         void setVertices( const std::vector< double >& vertices_  );
@@ -137,7 +137,7 @@ class Regions: public Object
 
         /**
         * Method to get the vertices of the mesh of the region
-        * @return std::vector< double > a vector of the vertices coordinates that belongs to the region mesh
+        * @param vertices a vector of the vertices coordinates that belongs to the region mesh
         */
         void getVertices( std::vector< double >& vertices_  ) const;
 
@@ -151,9 +151,9 @@ class Regions: public Object
 
         /**
         * Method to define a point inside of the region
-        * @param x_ the X coordinate of the point
-        * @param y_ the Y coordinate of the point
-        * @param z_ the Z coordinate of the point
+        * @param x the X coordinate of the point
+        * @param y the Y coordinate of the point
+        * @param z the Z coordinate of the point
         * @return void.
         */
         void setPoint( double x_, double y_, double z_ );
@@ -161,9 +161,9 @@ class Regions: public Object
 
         /**
         * Method to get the saved point which is inside of the region
-        * @param x_ the reference to the X coordinate of the point
-        * @param y_ the reference to the Y coordinate of the point
-        * @param z_ the reference to the Z coordinate of the point
+        * @param x the reference to the X coordinate of the point
+        * @param y the reference to the Y coordinate of the point
+        * @param z the reference to the Z coordinate of the point
         * @return void.
         */
         void getPoint( double& x_, double& y_, double& z_ ) const;
@@ -171,7 +171,7 @@ class Regions: public Object
 
         /**
         * Method to set a name to the region
-        * @param name_ a new name to the region
+        * @param name a new name to the region
         * @return void.
         */
         void setName( const std::string& name_ );
@@ -186,7 +186,7 @@ class Regions: public Object
 
         /**
         * Method to set the lower boundary of the region
-        * @param lower_ the lower curve which delimits the region
+        * @param lower the lower curve which delimits the region
         * @see PolyCurve
         * @return void.
         */
@@ -195,7 +195,7 @@ class Regions: public Object
 
         /**
         * Method to set the upper boundary of the region
-        * @param upper_ the upper curve which delimits the region
+        * @param upper the upper curve which delimits the region
         * @see PolyCurve
         * @return void.
         */
@@ -220,12 +220,12 @@ class Regions: public Object
 
         /**
         * Method to set the bounding box of the region
-        * @param maxx_ the maximum value of X
-        * @param maxy_ the maximum value of Y
-        * @param maxz_ the maximum value of Z
-        * @param minx_ the minimum value of X
-        * @param miny_ the minimum value of Y
-        * @param minz_ the minimum value of Z
+        * @param maxx the maximum value of X
+        * @param maxy the maximum value of Y
+        * @param maxz the maximum value of Z
+        * @param minx the minimum value of X
+        * @param miny the minimum value of Y
+        * @param minz the minimum value of Z
         * @return void.
         */
         void setMaxMin( double maxx_, double maxy_, double maxz_,
@@ -234,12 +234,12 @@ class Regions: public Object
 
         /**
         * Method to get the bounding box of the region
-        * @param maxx_ reference to the maximum value of X
-        * @param maxy_ reference to the maximum value of Y
-        * @param maxz_ reference to the maximum value of Z
-        * @param minx_ reference to the minimum value of X
-        * @param miny_ reference to the minimum value of Y
-        * @param minz_ reference to the minimum value of Z
+        * @param maxx reference to the maximum value of X
+        * @param maxy reference to the maximum value of Y
+        * @param maxz reference to the maximum value of Z
+        * @param minx reference to the minimum value of X
+        * @param miny reference to the minimum value of Y
+        * @param minz reference to the minimum value of Z
         * @return void.
         */
         void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
@@ -248,7 +248,7 @@ class Regions: public Object
 
         /**
         * Method to set the volume of the region
-        * @param volume_ volume of the region
+        * @param volume volume of the region
         * @return void.
         */
         void setVolume( double volume_ );
@@ -263,9 +263,9 @@ class Regions: public Object
 
         /**
         * Method to set the color of the region
-        * @param red the red component of the color (integer)
-        * @param green the green component of the color (integer)
-        * @param blue the blue component of the color (integer)
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
         * @return void.
         */
         void setColor( int r_, int g_, int b_ );
@@ -273,9 +273,9 @@ class Regions: public Object
 
         /**
         * Method to get the color of the region
-        * @param red reference to the red component of the color (integer)
-        * @param green reference to the green component of the color (integer)
-        * @param blue reference to the blue component of the color (integer)
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
         * @return void.
         */
         void getColor( int& r_, int& g_, int& b_ ) const;
@@ -297,7 +297,7 @@ class Regions: public Object
 
         /**
         * This method set the domain to which the region belongs
-        * @param id_ the index of the domain
+        * @param id the index of the domain
         * @return void.
         */
         inline void setDomain( std::size_t id_ ){ domain_index = id_; indomain = true; }
@@ -312,6 +312,7 @@ class Regions: public Object
 
         /**
         * This method gets the domain to which the region belongs
+        * @param id the index of the domain
         * @return std::size_t the index of the domain
         */
         inline bool getDomain( std::size_t& id_ ) const { id_ = domain_index; return indomain; }
@@ -319,7 +320,7 @@ class Regions: public Object
 
         /**
         * This method saves the metadata into a file using json
-        * @param json_ a JSON object from Qt
+        * @param json a JSON object from Qt
         * @see QJsonObject
         * @return void.
         */
@@ -332,7 +333,7 @@ class Regions: public Object
 
         /**
         * This method reads the metadata from a file using json
-        * @param json_ a reference to a JSON object from Qt
+        * @param json a reference to a JSON object from Qt
         * @see QJsonObject
         * @return void.
         */

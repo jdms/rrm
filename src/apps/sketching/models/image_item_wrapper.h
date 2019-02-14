@@ -22,7 +22,6 @@
 /**
  * @file image_item_wrapper.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class ImageItemWrapper
  */
 
@@ -64,9 +63,9 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         /**
         * Method to set all the properties required to represend the image
-        * @param im_ the image
-        * @param origin_ the origin of the image
-        * @param top_right_ the point at the right-top corner of the image. It helps to compute the image dimensions.
+        * @param im the image
+        * @param origin the origin of the image
+        * @param top_right the point at the right-top corner of the image. It helps to compute the image dimensions.
         * @see QPixmap
         * @see QPointF
         * @return void.
@@ -76,7 +75,7 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         /**
         * Method to set the path of the file
-        * @param file_ image path_
+        * @param file image path_
         * @see QString
         * @return void.
         */
@@ -109,7 +108,7 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         /**
         * Method to move the origin of the image to the new point origin_
-        * @param origin_ new origin of the image
+        * @param origin new origin of the image
         * @see QPointF
         * @return void.
         */
@@ -118,7 +117,7 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         /**
         * Method to move the top-right of the image to the new point p_
-        * @param origin_ new top-right corner of the image
+        * @param origin new top-right corner of the image
         * @see QPointF
         * @return void.
         */
@@ -137,9 +136,9 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         /**
         * Method to repaint the image
-        * @see QPainter performs painting on the widget
-        * @see QStyleOptionGraphicsItem provides style options for the item
-        * @see QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
+        * @param QPainter performs painting on the widget
+        * @param QStyleOptionGraphicsItem provides style options for the item
+        * @param QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
         * @return void
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,

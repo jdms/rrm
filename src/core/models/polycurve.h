@@ -22,8 +22,7 @@
 /**
  * @file polycurve.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
- * @brief File containing the class PolyCurve
+* @brief File containing the class PolyCurve
  */
 
 
@@ -92,7 +91,7 @@ class PolyCurve
 
         /**
         * Method to add a new segment of curve to the curve
-        * @param curve_ a segment of curve
+        * @param curve a segment of curve
         * @see Curve2D
         * @return void.
         */
@@ -104,7 +103,7 @@ class PolyCurve
 
         /**
         * Method to return a segment of curve
-        * @param index_ the index of the segment
+        * @param index the index of the segment
         * @see Curve2D
         * @return void.
         */
@@ -157,8 +156,8 @@ class PolyCurve
 
         /**
         * Method to create a curve given a vector of vertices, which coordinates are represented by doubles, and edges
-        * @param vs_ the vector of vertices coordinates in double
-        * @param es_ the vector of edges
+        * @param vs the vector of vertices coordinates in double
+        * @param es the vector of edges
         * @return void.
         */
         void fromVector( const std::vector< double >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() ){
@@ -221,8 +220,8 @@ class PolyCurve
 
         /**
         * Method to create a curve given a vector of vertices, which coordinates are represented by float, and edges
-        * @param vs_ the vector of vertices coordinates in float
-        * @param es_ the vector of edges
+        * @param vs the vector of vertices coordinates in float
+        * @param es the vector of edges
         * @return void.
         */
         void fromVector( const std::vector< float >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() ){
@@ -285,8 +284,8 @@ class PolyCurve
 
         /**
         * Method to return a vector of coordinates (double) and edges from a Polycurve
-        * @param vs_ a reference to the vector of vertices coordinates in double
-        * @param es_ a reference to the vector of edges
+        * @param vs a reference to the vector of vertices coordinates in double
+        * @param es a reference to the vector of edges
         * @return void.
         */
         void toVector( std::vector< double >& vs_, std::vector< std::size_t >& es_ ) const{
@@ -375,8 +374,8 @@ class PolyCurve
 
         /**
         * Method to get a curve 3d adding a fixed X coordinate to the vertices
-        * @param depth_ the fixed X coordinate
-        * @param swap_ if true the coordinates should be swapped before adding the X coordinate
+        * @param depth the fixed X coordinate
+        * @param swap if true the coordinates should be swapped before adding the X coordinate
         * @return std::vector< double > the vector of 3d coordinates adding a X coordinate to the vector of vertices existent
         */
         std::vector< double > addXCoordinate( double depth_, bool swap_ = false ) const
@@ -402,8 +401,8 @@ class PolyCurve
 
         /**
         * Method to get a curve 3d adding a fixed Y coordinate to the vertices
-        * @param depth_ the fixed Y coordinate
-        * @param swap_ if true the coordinates should be swapped before adding the Y coordinate
+        * @param depth the fixed Y coordinate
+        * @param swap if true the coordinates should be swapped before adding the Y coordinate
         * @return std::vector< double > the vector of 3d coordinates adding a Y coordinate to the vector of vertices existent
         */
         std::vector< double > addYCoordinate( double depth_, bool swap_ = false ) const
@@ -430,8 +429,8 @@ class PolyCurve
 
         /**
         * Method to get a curve 3d adding a fixed Z coordinate to the vertices
-        * @param depth_ the fixed Z coordinate
-        * @param swap_ if true the coordinates should be swapped before adding the Z coordinate
+        * @param depth the fixed Z coordinate
+        * @param swap if true the coordinates should be swapped before adding the Z coordinate
         * @return std::vector< double > the vector of 3d coordinates adding a Z coordinate to the vector of vertices existent
         */
         std::vector< double > addZCoordinate( double depth_, bool swap_ = false ) const

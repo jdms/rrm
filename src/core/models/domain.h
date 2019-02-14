@@ -22,7 +22,6 @@
 /**
  * @file domain.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Domain
  */
 
@@ -73,7 +72,7 @@ class Domain: public Object
 
         /**
         * Method to add a region into the domain
-        * @param index_ the index of the region
+        * @param index the index of the region
         * @return void.
         */
         void addRegion( const std::size_t& index_ );
@@ -81,7 +80,7 @@ class Domain: public Object
 
         /**
         * Method to return if a region belongs to the domain
-        * @param index_ the index of the region
+        * @param index the index of the region
         * @return boolean return true if the region belongs to the domain, and false otherwise
         */
         bool findRegion( const std::size_t& index_ ) const;
@@ -89,7 +88,7 @@ class Domain: public Object
 
         /**
         * Method to remove a region from the domain
-        * @param index_ the index of the region
+        * @param index the index of the region
         * @return void.
         */
         void removeRegion( const std::size_t& index_ );
@@ -104,7 +103,7 @@ class Domain: public Object
 
         /**
         * Method to add a set of regions into the domain
-        * @param regions_ a set of regions
+        * @param regions a set of regions
         * @return void.
         */
         void setRegions( const std::set< std::size_t >& regions_ );
@@ -112,7 +111,7 @@ class Domain: public Object
 
         /**
         * Method to return the regions which belongs to the domain
-        * @param regions_
+        * @param regions
         * @return std::set< std::size_t > a set of regions indexes
         */
         std::set< std::size_t > getRegions() const;
@@ -127,7 +126,7 @@ class Domain: public Object
 
         /**
         * Method to set the volume of the domain
-        * @param volume_ the volume of the domain, i.e., the sum of the volume of the
+        * @param volume the volume of the domain, i.e., the sum of the volume of the
         * regions that it contains
         * @return void.
         */
@@ -139,7 +138,7 @@ class Domain: public Object
 
         /**
         * Method to get the volume of the domain
-        * @param volume_
+        * @param volume
         * @return the volume of the domain, i.e., the sum of the volume of the
         * regions that it contains
         */

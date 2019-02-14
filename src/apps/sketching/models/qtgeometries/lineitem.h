@@ -22,7 +22,6 @@
 /**
  * @file lineitem.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class LineItem
  */
 
@@ -45,8 +44,8 @@ class LineItem: public QGraphicsLineItem
 
 
         /**
-        * Constructor. parent_ is passed to QGraphicsLineItem's constructor.
-        * @param parent_ the parent item
+        * Constructor. parent is passed to QGraphicsLineItem's constructor.
+        * @param parent the parent item
         */
         LineItem( QGraphicsItem *parent_ = nullptr);
 
@@ -81,9 +80,9 @@ class LineItem: public QGraphicsLineItem
 
         /**
         * Method to set the color of the line
-        * @param red the red component of the color (integer)
-        * @param green the green component of the color (integer)
-        * @param blue the blue component of the color (integer)
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
         * @return void.
         */
         void setLineColor( int r_, int g_, int b_ );
@@ -91,9 +90,9 @@ class LineItem: public QGraphicsLineItem
 
         /**
         * Method to get the color of the line
-        * @param red reference to the red component of the color (integer)
-        * @param green reference to the green component of the color (integer)
-        * @param blue reference to the blue component of the color (integer)
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
         * @return void.
         */
         void getLineColor( int& r_, int& g_, int& b_ ) const;
@@ -151,9 +150,9 @@ class LineItem: public QGraphicsLineItem
 
         /**
         * Method to repaint the curve
-        * @see QPainter performs painting on the widget
-        * @see QStyleOptionGraphicsItem provides style options for the item
-        * @see QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
+        * @param QPainter performs painting on the widget
+        * @param QStyleOptionGraphicsItem provides style options for the item
+        * @param QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
         * @return void.
         */
         void paint( QPainter* painter_, const QStyleOptionGraphicsItem* option_,

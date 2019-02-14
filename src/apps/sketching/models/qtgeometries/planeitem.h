@@ -22,7 +22,6 @@
 /**
  * @file planeitem.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class PlaneItem
  */
 
@@ -44,8 +43,8 @@ class PlaneItem: public QGraphicsRectItem
 
 
         /**
-        * Constructor. parent_ is passed to QGraphicsRectItem's constructor.
-        * @param parent_ the parent item
+        * Constructor. parent is passed to QGraphicsRectItem's constructor.
+        * @param parent the parent item
         */
         PlaneItem( QGraphicsItem *parent_ = nullptr );
 

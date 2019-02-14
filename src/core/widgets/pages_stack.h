@@ -22,7 +22,6 @@
 /**
  * @file pages_stack.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class PagesStack
  */
 
@@ -146,7 +145,7 @@ class PagesStack: public QStackedWidget
 
         /**
         * Method (slots) called to change the current page to show other widgets
-        * @param type_ the type of object which was selected
+        * @param type the type of object which was selected
         * @see Settings::Objects::ObjectType
         * @return void.
         */
@@ -155,8 +154,8 @@ class PagesStack: public QStackedWidget
 
         /**
         * Method (slots) called to update the object log widget with the name and the log of the stratigraphy/structural.
-        * @param name_ the name of the stratigraphy/structural which was selected
-        * @param text_ the log of the stratigraphy/structural
+        * @param name the name of the stratigraphy/structural which was selected
+        * @param text the log of the stratigraphy/structural
         * @return void.
         */
         void loadObjectInformation( const std::string& name_, const std::string& text_ );

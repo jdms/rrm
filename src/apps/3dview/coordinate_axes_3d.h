@@ -22,7 +22,6 @@
 /**
  * @file coordinate_axes_3d.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class CoordinateAxes3d
  */
 
@@ -111,9 +110,9 @@ class CoordinateAxes3d
 
         /**
         * Inline method to change the origin of the axes
-        * @param ox_ x coordinate of the origin of the axes
-        * @param oy_ y coordinate of the origin of the axes
-        * @param oz_ z coordinate of the origin of the axes
+        * @param ox x coordinate of the origin of the axes
+        * @param oy y coordinate of the origin of the axes
+        * @param oz z coordinate of the origin of the axes
         * @return void.
         */
         inline void setCenter( float ox_, float oy_, float oz_ )

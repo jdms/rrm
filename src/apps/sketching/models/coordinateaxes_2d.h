@@ -22,7 +22,6 @@
 /**
  * @file coordinateaxes_2d.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class CoordinateAxes2d
  */
 
@@ -90,8 +89,8 @@ class CoordinateAxes2d: public QGraphicsLineItem
         * Update the length of the y coordinate considering the vertical exaggeration.
         * This method was created to simulate the effect of the vertical exaggeration without apply it directly,
         * which was causing undesired deformation on the text.
-        * @param scale_ double. The scale to be applied.
-        * @param height_ the real size of the y coordinate.
+        * @param scale double. The scale to be applied.
+        * @param height the real size of the y coordinate.
         * @return void.
         */
         void updateVerticalExaggeration( double scale_, double height_ );
@@ -102,7 +101,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
         * Stop the vertical exaggeration effect turning the lenght of the y coordinate back to its real lenght
         * This method was created to simulate the effect of the vertical exaggeration without apply it directly,
         * which was causing undesired deformation on the text.
-        * @param height_ the real size of the y coordinate.
+        * @param height the real size of the y coordinate.
         * @return void.
         */
         void stopVerticalExaggeration(  double height_ );
@@ -122,9 +121,9 @@ class CoordinateAxes2d: public QGraphicsLineItem
 
         /**
         * Method to repaint the axes
-        * @see QPainter performs ainting on the widget
-        * @see QStyleOptionGraphicsItem provides style options for the item
-        * @see QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
+        * @param QPainter performs painting on the widget
+        * @param QStyleOptionGraphicsItem provides style options for the item
+        * @param QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
         * @return void.
         */
          void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
@@ -132,7 +131,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
 
          /**
          * Method to draw x coordinate
-         * @see QPainter performs painting on the widget
+         * @param QPainter performs painting on the widget
          * @return void.
          */
          void drawAxisX( QPainter* p );
@@ -140,7 +139,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
 
           /**
           * Method to draw y coordinate
-          * @see QPainter performs painting on the widget
+          * @param QPainter performs painting on the widget
           * @return void.
           */
          void drawAxisY( QPainter* p );
@@ -148,7 +147,7 @@ class CoordinateAxes2d: public QGraphicsLineItem
 
           /**
           * Method to draw y coordinate with scale
-          * @see QPainter performs ainting on the widget
+          * @param QPainter performs ainting on the widget
           * @return void.
           */
          void drawAxisYWithScale( QPainter* p );

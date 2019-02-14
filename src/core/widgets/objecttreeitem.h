@@ -22,7 +22,6 @@
 /**
  * @file objecttreeitem.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class ObjectTreeItem
  */
 
@@ -52,7 +51,7 @@ class ObjectTreeItem: public QTreeWidgetItem
 
         /**
         * Method to set the type of the object
-        * @param type_ the type of the object, i.e., it can be 'NONE, 'VOLUME', 'CROSS_SECTION',
+        * @param type the type of the object, i.e., it can be 'NONE, 'VOLUME', 'CROSS_SECTION',
         * 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'DOMAINS'
         * @see Settings::Objects::ObjectType
         * @return void.
@@ -62,7 +61,7 @@ class ObjectTreeItem: public QTreeWidgetItem
 
         /**
         * Method to return the type of the object
-        * @param type_ the type of the object
+        * @param type the type of the object
         * @see Settings::Objects::ObjectType
         * @return ObjectType the type of the object, i.e., it can be 'NONE, 'VOLUME', 'CROSS_SECTION',
         * 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'DOMAINS'
@@ -72,7 +71,7 @@ class ObjectTreeItem: public QTreeWidgetItem
 
         /**
         * Method to set the index of the object
-        * @param index_ index of the object
+        * @param index index of the object
         * @return void.
         */
         void setIndex( const std::size_t index_ );

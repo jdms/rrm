@@ -22,7 +22,6 @@
 /**
  * @file crosssection.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class CrossSection
  */
 
@@ -102,7 +101,7 @@ class CrossSection: public Object
 
         /**
         * Method to set a new index to the cross-sections
-        * @param id_ a new index to the cross-sections
+        * @param id a new index to the cross-sections
         * @return void.
         */
         void setIndex( std::size_t id_ );
@@ -117,7 +116,7 @@ class CrossSection: public Object
 
         /**
         * Method to set the volume to which it belongs
-        * @param volume_ a shared pointer to the volume to which it belongs
+        * @param volume a shared pointer to the volume to which it belongs
         * @see Volume
         * @return void.
         */
@@ -134,7 +133,7 @@ class CrossSection: public Object
 
         /**
         * Method to set the direction in which the cross-section was defined
-        * @param dir_ the direction in which the cross-section was defined
+        * @param dir the direction in which the cross-section was defined
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -151,7 +150,7 @@ class CrossSection: public Object
 
         /**
         * Method to set the depth in which the cross-section was defined
-        * @param depth_ the depth in which the cross-section was defined
+        * @param depth the depth in which the cross-section was defined
         * @return void.
         */
         void setDepth( double depth_ );
@@ -173,7 +172,7 @@ class CrossSection: public Object
 
         /**
         * Method to get the vertices coordinates which define the cross-section plane
-        * @param vertices_ the vertices coordinates which define the cross-section plane
+        * @param vertices the vertices coordinates which define the cross-section plane
         * @return void.
         */
         void getCoordinates( std::vector< double >& vertices_ );
@@ -181,12 +180,12 @@ class CrossSection: public Object
 
         /**
         * Method to set the bounding box of the cross-section
-        * @param maxx_ the maximum value of X
-        * @param maxy_ the maximum value of Y
-        * @param maxz_ the maximum value of Z
-        * @param minx_ the minimum value of X
-        * @param miny_ the minimum value of Y
-        * @param minz_ the minimum value of Z
+        * @param maxx the maximum value of X
+        * @param maxy the maximum value of Y
+        * @param maxz the maximum value of Z
+        * @param minx the minimum value of X
+        * @param miny the minimum value of Y
+        * @param minz the minimum value of Z
         * @return void.
         */
         void getMaxMin( double& maxx_, double& maxy_, double& maxz_,
@@ -196,10 +195,10 @@ class CrossSection: public Object
         /**
         * Method to set the image data which will appear in the cross-section
         * @param path_ the file path of the image
-        * @param ox_ the X coordinate of the image origin
-        * @param oy_ the Y coordinate of the image origin
-        * @param x_ the X coordinate of the top-right of the image
-        * @param y_ the Y coordinate of the top-right of the image
+        * @param ox the X coordinate of the image origin
+        * @param oy the Y coordinate of the image origin
+        * @param x the X coordinate of the top-right of the image
+        * @param y the Y coordinate of the top-right of the image
         * @return void.
         */
         void setImage( const std::string& path_, double ox_, double oy_, double x_, double y_ );
@@ -207,11 +206,11 @@ class CrossSection: public Object
 
         /**
         * Method to get the image data which appears in the cross-section
-        * @param path_ reference to the file path of the image
-        * @param ox_ reference to the X coordinate of the image origin
-        * @param oy_ reference to the Y coordinate of the image origin
-        * @param x_ reference to the X coordinate of the top-right of the image
-        * @param y_ reference to the Y coordinate of the top-right of the image
+        * @param path reference to the file path of the image
+        * @param ox reference to the X coordinate of the image origin
+        * @param oy reference to the Y coordinate of the image origin
+        * @param x reference to the X coordinate of the top-right of the image
+        * @param y reference to the Y coordinate of the top-right of the image
         * @return void.
         */
         void getImage( std::string& path_, double& ox_, double& oy_, double& x_, double& y_ );
@@ -233,7 +232,7 @@ class CrossSection: public Object
 
         /**
         * Method to set if the cross-section is visible or invisible
-        * @param status_ status_ is true if the cross-section is visible and false otherwise
+        * @param status status is true if the cross-section is visible and false otherwise
         * @return void.
         */
         void setVisible( const bool status_ );
@@ -248,8 +247,8 @@ class CrossSection: public Object
 
         /**
         * Method to add a curve of an object in the cross-section
-        * @param id_ the object index
-        * @param Polycurve the curve of the object
+        * @param id the object index
+        * @param curve the curve of the object
         * @see PolyCurve
         * @return boolean return true if the curve was properly added and false otherwise
         */
@@ -258,7 +257,7 @@ class CrossSection: public Object
 
         /**
         * Method to return the curve of an object in the cross-section
-        * @param id_ the object index
+        * @param id the object index
         * @see PolyCurve
         * @return Polycurve the curve of the object
         */
@@ -267,7 +266,7 @@ class CrossSection: public Object
 
         /**
         * Method to remove a curve of an object in the cross-section
-        * @param id_ the object index
+        * @param id the object index
         * @return boolean return true if the curve was properly removed and false otherwise
         */
         bool removeObjectCurve( const std::size_t& id_ ) ;
@@ -297,10 +296,10 @@ class CrossSection: public Object
 
         /**
         * Method to set the boundary of a region in the cross-section
-        * @param vupper_ vector of the vertices of the upper curve which delimits the region
-        * @param edupper_ vector of the edges that defines the upper curve
-        * @param vlower_ vector of the vertices of the lower curve which delimits the region
-        * @param edlower_ vector of the edges that defines the lower curve
+        * @param vupper vector of the vertices of the upper curve which delimits the region
+        * @param edupper vector of the edges that defines the upper curve
+        * @param vlower vector of the vertices of the lower curve which delimits the region
+        * @param edlower vector of the edges that defines the lower curve
         * @return void.
         */
         void setBoundaryArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ );
@@ -308,10 +307,10 @@ class CrossSection: public Object
 
         /**
         * Method to get the boundary of a region in the cross-section
-        * @param vupper_ a reference to the vector of vertices of the upper curve which delimits the region
-        * @param edupper_ a reference to the vector of edges that defines the upper curve
-        * @param vlower_ a reference to the vector of vertices of the lower curve which delimits the region
-        * @param edlower_ a reference to the vector of edges that defines the lower curve
+        * @param vupper a reference to the vector of vertices of the upper curve which delimits the region
+        * @param edupper a reference to the vector of edges that defines the upper curve
+        * @param vlower a reference to the vector of vertices of the lower curve which delimits the region
+        * @param edlowe_ a reference to the vector of edges that defines the lower curve
         * @return void.
         */
         void getBoundaryArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_ ) const;

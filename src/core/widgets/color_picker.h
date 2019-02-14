@@ -22,7 +22,6 @@
 /**
  * @file color_picker.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class ColorPicker
  */
 
@@ -51,8 +50,8 @@ class ColorPicker: public QToolButton
 
 
         /**
-        * Constructor. parent_ is passed to QToolButton's constructor.
-        * @param parent_ the parent item
+        * Constructor. parent is passed to QToolButton's constructor.
+        * @param parent the parent item
         * @see QWidget
         */
         ColorPicker( QWidget* parent = nullptr );
@@ -119,7 +118,7 @@ class ColorPicker: public QToolButton
 
         /**
         * Method called when the current color of the color picker is changed
-        * @param color_ the new color
+        * @param color the new color
         * @see QColor
         * @return void.
         */

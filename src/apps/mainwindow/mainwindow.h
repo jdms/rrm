@@ -22,7 +22,6 @@
 /**
  * @file mainwindow.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class MainWindow
  */
 
@@ -65,7 +64,7 @@ class MainWindow: public QMainWindow
 
         /**
         * Constructor. parent_ is passed to QMainWindow's constructor.
-        * @param parent_ the parent item
+        * @param parent the parent item
         * @see MainWindow
         */
         MainWindow( QWidget* parent_ = 0 );
@@ -104,7 +103,7 @@ class MainWindow: public QMainWindow
         /**
         * Method (slots) to disable the cross-section directions differents from dir_
         * This method was created because a surface only can be made in one direction per time
-        * @param dir_ current cross-section diretion
+        * @param dir current cross-section diretion
         * @see Settings::CrossSection::CrossSectionDirections
         * @return Void.
         */
@@ -114,7 +113,7 @@ class MainWindow: public QMainWindow
         /**
         * Method (slots) to disable the others options of preserve different from the option_
         * The others options will be available again after the user submit the current option
-        * @param option_ current option of preserve
+        * @param option current option of preserve
         * @return Void.
         */
         void lockPreserve( const std::string& option_ );
@@ -123,7 +122,7 @@ class MainWindow: public QMainWindow
         /**
         * Method (slots) to disable/enable the actions undo/redo
         * This is necessary mainly when the modelling is currently desactivate.
-        * @param status_ boolean to indicate if the the actions should be enabled or not. If its value is true the action undo/redo should be disabled, and enable otherwise.
+        * @param status boolean to indicate if the the actions should be enabled or not. If its value is true the action undo/redo should be disabled, and enable otherwise.
         * @return Void.
         */
         void lockUndoRedo( bool status_ );
@@ -138,7 +137,7 @@ class MainWindow: public QMainWindow
 
         /**
         * Method (slots) to disable/enable the action 'Preserve Above'
-        * @param status_ boolean to indicate if the the action should be enabled or not. If its value is true the action 'Preserve Above' be enabled, and disabled otherwise.
+        * @param status boolean to indicate if the the action should be enabled or not. If its value is true the action 'Preserve Above' be enabled, and disabled otherwise.
         * @return Void.
         */
         void activatePreserveAbove( bool status_ );
@@ -146,7 +145,7 @@ class MainWindow: public QMainWindow
 
         /**
         * Method (slots) to disable/enable the action 'Preserve Below'
-        * @param status_ boolean to indicate if the the action should be enabled or not. If its value is true the action 'Preserve Below' be enabled, and disabled otherwise.
+        * @param status boolean to indicate if the the action should be enabled or not. If its value is true the action 'Preserve Below' be enabled, and disabled otherwise.
         * @return Void.
         */
         void activatePreserveBelow( bool status_ );
@@ -154,7 +153,7 @@ class MainWindow: public QMainWindow
 
         /**
         * Method (slots) to disable/enable the action 'Preserve Region'
-        * @param status_ boolean to indicate if the the action should be enabled or not. If its value is true the action 'Preserve Region' be enabled, and disabled otherwise.
+        * @param status boolean to indicate if the the action should be enabled or not. If its value is true the action 'Preserve Region' be enabled, and disabled otherwise.
         * @return Void.
         */
         void activatePreserveRegion( bool status_ );
@@ -172,7 +171,7 @@ class MainWindow: public QMainWindow
 
         /**
         * Signal emitted to run the Flow Diagnostics application or not
-        * @param status_ if status_ is true starts Flow Diagnostics and stop Flow Diagnostics if false.
+        * @param status if status_ is true starts Flow Diagnostics and stop Flow Diagnostics if false.
         * @return void.
         */
         void runDiagnostics( bool status_ );

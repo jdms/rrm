@@ -22,7 +22,6 @@
 /**
  * @file slider.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Slider
  */
 
@@ -49,8 +48,8 @@ class Slider: public QSlider
 
 
         /**
-        * Constructor. parent_ is passed to QSlider's constructor.
-        * @param parent_ the parent item
+        * Constructor. parent is passed to QSlider's constructor.
+        * @param parent the parent item
         * @see QWidget
         */
         Slider( QWidget* parent = nullptr );
@@ -102,8 +101,8 @@ class Slider: public QSlider
 
         /**
         * Signal emmited when a marker is added in the slider
-        * @param value_ the value where the marker was added
-        * @param color_ the color of the marker
+        * @param value the value where the marker was added
+        * @param color the color of the marker
         * @return void.
         */
         void markValue( int value, QColor color_ );
@@ -111,7 +110,7 @@ class Slider: public QSlider
 
         /**
         * Signal emmited when a marker is removed from the slider
-        * @param value_ the value where the marker was removed
+        * @param value the value where the marker was removed
         * @return void.
         */
         void unmarkValue( int value );
@@ -130,7 +129,7 @@ class Slider: public QSlider
 
         /**
         * Method called when the mouse button is pressed over an existent marker
-        * @param pos_ the position of the marker on the slider
+        * @param pos the position of the marker on the slider
         * @return void.
         */
         void hightlightMarker( int pos_ );
@@ -138,7 +137,7 @@ class Slider: public QSlider
 
         /**
         * Method (slots) to return if a marker exists or not in a given position
-        * @param pos_ a position in the slider to know if exists a marker
+        * @param pos a position in the slider to know if exists a marker
         * @return void.
         */
         bool isValidMarker( int value );

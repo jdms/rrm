@@ -22,7 +22,6 @@
 /**
  * @file regionshader.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class RegionShader
  */
 
@@ -59,7 +58,7 @@ class RegionShader: public Shader
 
         /**
         * Constructor. It builds a RegionShader given a Regions instance
-        * @param a shared pointer to a Regions instance
+        * @param raw a shared pointer to a Regions instance
         */
         RegionShader( const std::shared_ptr< Regions >& raw_ );
 
@@ -72,7 +71,7 @@ class RegionShader: public Shader
 
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
-        * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
         * @return void.
         */
         void setRegion( const std::shared_ptr< Regions >& raw_ );
@@ -123,9 +122,9 @@ class RegionShader: public Shader
 
         /**
         * This method loads the buffers with the required geometry
-        * @param vertices_ normalized vertices
-        * @param normals_  normalized normals
-        * @param faces_  surface faces
+        * @param vertices normalized vertices
+        * @param normals  normalized normals
+        * @param faces  surface faces
         * @return void.
         */
         void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
@@ -135,7 +134,7 @@ class RegionShader: public Shader
 
         /**
         * This method loads the colors buffers. This methods allows different colors to each vertex.
-        * @param colors_ vector of colors. The number of colors is the same of the number of vertices.
+        * @param colors vector of colors. The number of colors is the same of the number of vertices.
         * @return void.
         */
         void updateColorBuffers( const std::vector< GLfloat >& colors_ );
@@ -143,10 +142,10 @@ class RegionShader: public Shader
 
         /**
         * This method creates a vector of the color (r_, g_, b_) repeated to each vertex.
-        * @param nvertices_ number of vertices of the mesh. It will be created the same number of colors.
-        * @param r_ red component of the color
-        * @param green_ green component of the color
-        * @param blue_ blue component of the color
+        * @param nvertices number of vertices of the mesh. It will be created the same number of colors.
+        * @param r red component of the color
+        * @param green green component of the color
+        * @param blue blue component of the color
         * @return void.
         */
         void updateColorBuffers( std::size_t nvertices_, int r_, int g_, int b_ );

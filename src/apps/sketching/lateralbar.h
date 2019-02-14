@@ -22,7 +22,6 @@
 /**
  * @file lateralbar.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class LateralBar
  */
 
@@ -74,7 +73,7 @@ class LateralBar: public QWidget
        /**
        * Method (slot) called as using the vertical exaggeration slider.
        * It updates the dip angle value.
-       * @param v_exagg_ Corresponds to the vertical exaggeration slider position (integer).
+       * @param v_exagg Corresponds to the vertical exaggeration slider position (integer).
        * @return Void
        */
         void changeVerticalExaggeration( int v_exagg_ );
@@ -83,7 +82,7 @@ class LateralBar: public QWidget
        /**
        * Method (slot) called as using the vertical exaggeration double spinbox.
        * It updates the dip angle value.
-       * @param v_exagg_ Corresponds to the vertical exaggeration slider value (double).
+       * @param v_exagg Corresponds to the vertical exaggeration slider value (double).
        * @return Void
        */
         void changeVerticalExaggerationBySpinbox( double v_exagg_ );
@@ -99,7 +98,7 @@ class LateralBar: public QWidget
 
         /**
        * Method (slot) to change the value of the input dip angle value (double).
-       * @param angle_ Corresponds to the the input dip angle value (double).
+       * @param angle Corresponds to the the input dip angle value (double).
        * @return Void
        */
         void changeDipAngle( double angle_ );
@@ -169,33 +168,43 @@ class LateralBar: public QWidget
     protected:
 
         QSlider* sl_vertical_exagg = nullptr;                       /**< Integer slider to represent the user input vertical exaggeration value. */
+
         QPushButton* btn_reset_exaggeration = nullptr;              /**< Button to reset the vertical exaggeration value. */
+
         QDoubleSpinBox* sp_exagger_value = nullptr;                 /**< Spinbox with doubles values to represent the user input vertical exaggeration value. */
 
         QDial* dl_input_dipangle = nullptr;                         /**< A dial to represent the user input dip angle (double).  */
+
         AnglePicture* lb_input_dipangle = nullptr;                  /**< A custom data to illustrate the input dip angle graphically.  */
+
         QLCDNumber* lcd_input_dipangle = nullptr;                   /**< A widget to display the current input dip angle.  */
 
         AnglePicture* lb_output_dipangle = nullptr;                 /**< A custom data to illustrate the output dip angle graphically.  */
+
         QLCDNumber* lcd_output_dipangle = nullptr;                  /**< A widget to display the current output dip angle.  */
 
         QPushButton* btn_show_output_dipangle = nullptr;            /**< Button to display the current image related to output angle.  */
+
         QPushButton* btn_move_output_dipangle = nullptr;            /**< Button to allow the user to move the current image related to output angle.  */
 
         const double MIN_VALUE = 0.1;                               /**< Minimum value to the vertical exaggeration slider.  */
+
         const double MAX_VALUE = 10000.;                            /**< Maximum value to the vertical exaggeration slider.  */
 
         double min_log = -1;                                        /**< Log10 of the minimum value to the vertical exaggeration slider.  */
+
         double max_log = 4;                                         /**< Log10 of the maximum value to the vertical exaggeration slider.  */
 
 
-        ///////////////////////////////////////////////////////////////////////////////
-        //                                                                           //
-        // log10 1 = min_log + v_exagg_*0.01* (max_log - min_log);                   //
-        // log10 1 = -1 + v_exagg_*0.01* (4 - (-1) );                                //
-        // 0 = -1 +  v_exagg_*0.01*5                                                 //
-        // v_exagg_ = 100/5 => v_exagg_ = 20                                         //
-        ///////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
+        // Determining the value of the slider, which reset the vertical exaggeration //
+        // to the value 1.                                                            //
+        //                                                                            //
+        // log10 1 = min_log + v_exagg_*0.01* (max_log - min_log);                    //
+        // log10 1 = -1 + v_exagg_*0.01* (4 - (-1) );                                 //
+        // 0 = -1 +  v_exagg_*0.01*5                                                  //
+        // v_exagg_ = 100/5 => v_exagg_ = 20                                          //
+        ////////////////////////////////////////////////////////////////////////////////
 
         const int RESET_VEXAG = 20;                               /**< Slider value to reset the vertical exaggeration to 1.0  */
 

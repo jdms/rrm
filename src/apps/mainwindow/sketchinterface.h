@@ -22,7 +22,6 @@
 /**
  * @file sketchinterface.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class SketchInterface
  */
 
@@ -53,7 +52,7 @@ class SketchInterface: public QObject
 
         /**
         * Constructor.
-        * @param window_ a const reference to the MainWindow
+        * @param window a const reference to the MainWindow
         * @see MainWindow
         */
         SketchInterface( MainWindow* const& window_ );
@@ -78,7 +77,7 @@ class SketchInterface: public QObject
 
         /**
         * \brief Method to indicate if the user can see both canvas ( main and top-view canvas ) or not.
-        * @param status_ if true both windows will be hidded. If false, both windows will be visible to the user.
+        * @param status if true both windows will be hidded. If false, both windows will be visible to the user.
         * @return void.
         */
         void showOnlyMainCanvas( bool status_ );

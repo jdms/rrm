@@ -22,7 +22,6 @@
 /**
  * @file stratigraphy.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Stratigraphy
  */
 
@@ -72,7 +71,7 @@ class Stratigraphy : public Object
 
         /**
         * Method to set a new index to the stratigraphy
-        * @param id_ a new index to the stratigraphy
+        * @param id a new index to the stratigraphy
         * @return void.
         */
         void setIndex(std::size_t id_ ) override;

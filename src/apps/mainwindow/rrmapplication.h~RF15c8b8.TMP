@@ -22,6 +22,7 @@
 /**
  * @file rrmapplication.h
  * @author Clarissa C. Marques
+ * @date 9 Sep 2012
  * @brief File containing the class RRMApplication
  */
 
@@ -68,14 +69,14 @@ public:
 
         /**
         * Copy constructor.
-        * @param app a const reference to another RRMApplication
+        * @param app_ a const reference to another RRMApplication
         */
         RRMApplication(const RRMApplication & app_);
 
 
         /**
         * Assignment operator.
-        * @param app a const reference to another RRMApplication
+        * @param app_ a const reference to another RRMApplication
         */
         RRMApplication & operator=(const RRMApplication & app_);
 
@@ -88,7 +89,7 @@ public:
 
         /**
         * Method to save a reference to the RRM main window.
-        * @param window  main window
+        * @param window_  main window
         * @see MainWindow
         * @return void.
         */
@@ -116,7 +117,6 @@ public:
 
         /**
         * Method (slot) to set a name to volume.
-        * @param name the new name of the volume
         * @return void.
         */
         void setVolumeName( const std::string& name_ );
@@ -125,7 +125,7 @@ public:
         /**
         * Method (slot) to set the volume as visible/invisible
         * This method emit a signal so that the visibility is updated in all sub-components of the application
-        * @param status boolean to indicate the visibility status of the volume. It will be visible if the value is true and invisible if false.
+        * @param status_ boolean to indicate the visibility status of the volume. It will be visible if the value is true and invisible if false.
         * @return void.
         */
         void setVolumeVisible( bool status_ );
@@ -134,7 +134,7 @@ public:
         /**
         * Method (slot) to update the volume dimensions
         * This method is called mainly when the user changes the volume dimensions using the Sketch application
-        * @param dir direction of the cross-section in which the dimension was changed
+        * @param dir_ direction of the cross-section in which the dimension was changed
         * @param width new width dimension
         * @param heihgt new height dimension
         * @see Settings::CrossSection::CrossSectionDirections
@@ -146,7 +146,7 @@ public:
         /**
         * Method (slot) to update the volume width
         * This method is called mainly when the user changes the volume width using the slider bar
-        * @param width new width dimension
+        * @param width_ new width dimension
         * @return void.
         */
         void setVolumeWidth( double width_ );
@@ -155,7 +155,7 @@ public:
         /**
         * Method (slot) to update the volume height
         * This method is called mainly when the user changes the volume height using the slider bar
-        * @param height new height dimension
+        * @param height_ new height dimension
         * @return void.
         */
         void setVolumeHeight( double height_ );
@@ -164,7 +164,7 @@ public:
         /**
         * Method (slot) to update the volume depth
         * This method is called mainly when the user changes the volume depth using the slider bar
-        * @param lenght new depth dimension
+        * @param lenght_ new depth dimension
         * @return void.
         */
         void setVolumeDepth( double lenght_ );
@@ -173,7 +173,7 @@ public:
         /**
         * Method (slot) to update the discretization of the surfaces meshes.
         * This also impacts the cross-section slider.
-        * @param dir the current direction of the cross-section
+        * @param dir_ the current direction of the cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -182,7 +182,7 @@ public:
 
         /**
         * Method (slot) to update the resolution of the surfaces meshes.
-        * @param resolution string to define the current resolution of the meshes. It can be  'LOW', 'MEDIUM, 'HIGH'.
+        * @param resolution_ string to define the current resolution of the meshes. It can be  'LOW', 'MEDIUM, 'HIGH'.
         * @return void.
         */
         void setMeshResolution( const std::string& resolution_ );
@@ -190,7 +190,7 @@ public:
 
         /**
         * Method (slot) to change the direction of the cross-section
-        * @param dir represents the new direction of the cross-section
+        * @param dir_ represents the new direction of the cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -200,7 +200,7 @@ public:
         /**
         * Method (slot) to move the cross-section to the depth value in the current direction.
         * @param depth_ new position of the cross-section in the current direction
-        * @return void
+        * @return void.
         */
         void moveMainCrossSection( double depth_ );
 
@@ -208,8 +208,8 @@ public:
         /**
         * Method (slot) to add a new fixed cross-section to be viewed.
         * This method calls the addFixedCrossSectionWindow() from the Controller and emit a signal to the Sketch application
-        * @param depth new position of the cross-section in the current direction
-        * @param color the color of the marker
+        * @param depth_ new position of the cross-section in the current direction
+        * @param color_ the color of the marker
         * @see QColor
         * @return void.
         */
@@ -219,7 +219,7 @@ public:
         /**
         * Method (slot) to remove a fixed cross-section.
         * This method calls the removeCrossSection() from the Controller and emit a signal to the Sketch application
-        * @param depth new position of the cross-section in the current direction
+        * @param depth_ new position of the cross-section in the current direction
         * @return void.
         */
         void removeFixedCrossSection( double depth_ );
@@ -228,13 +228,13 @@ public:
         /**
         * Method (slot) to save the image details into the given cross-section
         * This method calls the setImageToCrossSection() from the Controller and emit a signal to the Sketch application
-        * @param file image path
-        * @param dir direction of the cross-section
-        * @param depth depth of the cross-section
-        * @param ox x coordinate of the image origin
-        * @param oy y coordinate of the image origin
-        * @param w width of the image
-        * @param h height of the image
+        * @param file_ image path
+        * @param dir_ direction of the cross-section
+        * @param depth_ depth of the cross-section
+        * @param ox_ x coordinate of the image origin
+        * @param oy_ y coordinate of the image origin
+        * @param w_ width of the image
+        * @param h_ height of the image
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -244,8 +244,8 @@ public:
         /**
         * Method (slot) to clear the image from the given cross-section
         * This method calls the clearImageInCrossSection() from the Controller and emit a signal to the Sketch application
-        * @param dir direction of the cross-section
-        * @param depth depth of the cross-section
+        * @param dir_ direction of the cross-section
+        * @param depth_ depth of the cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -255,8 +255,8 @@ public:
         /**
         * Method (slot) to set a stratigraphy or structural visible
         * This method calls the setObjectVisibility() from the Controller and emit a signal
-        * @param index the index of the stratigraphy or the structural
-        * @param status If status is true, the stratigraphy/structural is made visible. Otherwise, the stratigraphy/structural is made invisible.
+        * @param index_ the index of the stratigraphy or the structural
+        * @param status_ If status_ is true, the stratigraphy/structural is made visible. Otherwise, the stratigraphy/structural is made invisible.
         * @return void.
         */
         void setObjectVisible( std::size_t index_, bool status_ );
@@ -265,8 +265,8 @@ public:
         /**
         * Method (slot) to set a name to the stratigraphy/structural
         * This method calls the setObjectName() from the Controller
-        * @param index the index of the stratigraphy or the structural
-        * @param status a string which define the name of the stratigraphy/structural
+        * @param index_ the index of the stratigraphy or the structural
+        * @param status_ a string which define the name of the stratigraphy/structural
         * @return void.
         */
         void setObjectName( std::size_t index_, const std::string& name_ );
@@ -275,10 +275,10 @@ public:
         /**
         * Method (slot) to set a color to the stratigraphy/structural
         * This method calls the setObjectColor() from the Controller and emit a signal
-        * @param index the index of the stratigraphy or the structural
-        * @param red the red component of the new color
-        * @param green the green component of the new color
-        * @param blue the blue component of the new color
+        * @param index_ the index of the stratigraphy or the structural
+        * @param red_ the red component of the new color
+        * @param green_ the green component of the new color
+        * @param blue_ the blue component of the new color
         * @return void.
         */
         void setObjectColor( std::size_t index_, int red_, int green_, int blue_ );
@@ -287,8 +287,8 @@ public:
         /**
         * Method (slot) to save a log information to the stratigraphy/structural
         * This method calls the setObjectLog() from the Controller
-        * @param index the index of the stratigraphy or the structural
-        * @param log a string to store the log information
+        * @param index_ the index of the stratigraphy or the structural
+        * @param log_ a string to store the log information
         * @return void.
         */
         void setObjectLog( std::size_t index_, const QString& log_ );
@@ -297,8 +297,8 @@ public:
         /**
         * Method (slot) to get the log information of the stratigraphy/structural
         * This method calls the getObjectLog() from the Controller
-        * @param index the index of the stratigraphy or the structural
-        * @param log a reference to the string which stores the log information
+        * @param index_ the index of the stratigraphy or the structural
+        * @param log_ a reference to the string which stores the log information
         * @see QString
         * @return void.
         */
@@ -308,7 +308,7 @@ public:
         /**
         * Method (slot) to change the type of the current object
         * This type comes from the enum 'Settings::Objects::ObjectType'
-        * @param type a type of objects
+        * @param type_ a type of objects
         * @see Settings::Objects::ObjectType
         * @return void.
         */
@@ -317,9 +317,9 @@ public:
 
         /**
         * Method (slot) to add a curve to the current object, which can be a stratrigraphy or structural
-        * @param curve a sketch (curve) made by the user
-        * @param dir direction of the cross-section which the curve was made
-        * @param depth depth of the cross-section which the curve was made
+        * @param curve_ a sketch (curve) made by the user
+        * @param dir_ direction of the cross-section which the curve was made
+        * @param depth_ depth of the cross-section which the curve was made
         * @see PolyCurve
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
@@ -329,7 +329,7 @@ public:
 
         /**
         * Method (slot) to add a trajectory to the current object, which can be a stratrigraphy or structural
-        * @param curve a sketch, i.e. the trajectory, made by the user
+        * @param curve_ a sketch, i.e. the trajectory, made by the user
         * @see PolyCurve
         * @return void.
         */
@@ -338,8 +338,8 @@ public:
 
         /**
         * Method (slot) to remove a curve from the current object, which was made in the given cross-section
-        * @param dir direction of the cross-section which the curve was made
-        * @param depth depth of the cross-section which the curve was made
+        * @param dir_ direction of the cross-section which the curve was made
+        * @param depth_ depth of the cross-section which the curve was made
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -363,7 +363,7 @@ public:
         /**
         * Method (slot) to show or hide the regions.
         * This method will compute or remove all the regions from the controller.
-        * @param status the regions will be visible if the status value is true, and invisible otherwise.
+        * @param status_ the regions will be visible if the status value is true, and invisible otherwise.
         * @return void.
         */
         void getRegions(bool status_);
@@ -372,7 +372,7 @@ public:
         /**
         * Method (slot) to show or hide the regions.
         * This method will only set the visibility status to each region.
-        * @param status the regions will be visible if the status value is true, and invisible otherwise.
+        * @param status_ the regions will be visible if the status value is true, and invisible otherwise.
         * @return void.
         */
         void setRegionsVisible( bool status_ );
@@ -381,8 +381,8 @@ public:
         /**
         * Method (slot) to show or hide the given region.
         * This method will only set the visibility status of the region.
-        * @param index the index of the region
-        * @param status the region will be visible if the status value is true, and invisible otherwise.
+        * @param index_ the index of the region
+        * @param status_ the region will be visible if the status value is true, and invisible otherwise.
         * @return void.
         */
         void setRegionVisible( std::size_t index_, bool status_ );
@@ -390,8 +390,8 @@ public:
 
         /**
         * Method (slot) to set a name to the given region.
-        * @param index the index of the region
-        * @param name a string to represent the name of the region
+        * @param index_ the index of the region
+        * @param name_ a string to represent the name of the region
         * @return void.
         */
         void setRegionName( std::size_t , const std::string&  );
@@ -399,10 +399,10 @@ public:
 
         /**
         * Method (slot) to change the color of the given region.
-        * @param index the index of the region
-        * @param red the red component of the new color
-        * @param green the green component of the new color
-        * @param blue the blue component of the new color
+        * @param index_ the index of the region
+        * @param red_ the red component of the new color
+        * @param green_ the green component of the new color
+        * @param blue_ the blue component of the new color
         * @return void.
         */
         void setRegionColor( std::size_t index_, int red_, int green_, int blue_ );
@@ -417,8 +417,8 @@ public:
 
         /**
         * Method (slot) to set a name to the given domain.
-        * @param index the index of the domain
-        * @param name a string to represent the name of the domain
+        * @param index_ the index of the domain
+        * @param name_ a string to represent the name of the domain
         * @return void.
         */
         void setDomainName( std::size_t index_, const std::string& name_ );
@@ -426,10 +426,10 @@ public:
 
         /**
         * Method (slot) to change the color of the given domain.
-        * @param index the index of the domain
-        * @param red the red component of the new color
-        * @param green the green component of the new color
-        * @param blue the blue component of the new color
+        * @param index_ the index of the domain
+        * @param red_ the red component of the new color
+        * @param green_ the green component of the new color
+        * @param blue_ the blue component of the new color
         * @return void.
         */
         void setDomainColor( std::size_t index_, int red_, int green_, int blue_ );
@@ -437,8 +437,8 @@ public:
 
         /**
         * Method (slot) to add a region to the given domain.
-        * @param reg_id the index of the region to be added to the domain
-        * @param domain_id tthe index of the domain
+        * @param reg_id_ the index of the region to be added to the domain
+        * @param domain_id_ tthe index of the domain
         * @return void.
         */
         void addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ );
@@ -446,8 +446,8 @@ public:
 
         /**
         * Method (slot) to remove a region from the given domain.
-        * @param reg_id the index of the region to be removed
-        * @param domain_id tthe index of the domain
+        * @param reg_id_ the index of the region to be removed
+        * @param domain_id_ tthe index of the domain
         * @return void.
         */
         void removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ );
@@ -455,7 +455,7 @@ public:
 
         /**
         * Method (slot) to remove a given domain.
-        * @param index tthe index of the domain
+        * @param index_ tthe index of the domain
         * @return void.
         */
         void removeDomain( std::size_t index_ );
@@ -463,8 +463,8 @@ public:
 
         /**
         * Method (slot) to add a set of regions to the given domain.
-        * @param domain_id the index of the domain
-        * @param regions vector of regions indexes, which should be added to the domain
+        * @param domain_id_ the index of the domain
+        * @param regions_ vector of regions indexes, which should be added to the domain
         * @return void.
         */
         void addRegionsToDomain( std::size_t domain_id_, std::vector< std::size_t > regions_ );
@@ -472,10 +472,10 @@ public:
 
         /**
         * Method (slot) to remove a set of regions from their domains
-        * Each element of the vector is the index of a region, and its position in the regions vector 'regions' corresponds to the same position of its domain in the domains vector 'domains_'.
-        * The variable delete indicates if the domains should be deleted if there is no more regions inside it.
-        * @param domain_id tthe index of the domain
-        * @param regions vector of regions indexes, which should be removed form its domain
+        * Each element of the vector is the index of a region, and its position in the regions vector 'regions_' corresponds to the same position of its domain in the domains vector 'domains_'.
+        * The variable delete_ indicates if the domains should be deleted if there is no more regions inside it.
+        * @param domain_id_ tthe index of the domain
+        * @param regions_ vector of regions indexes, which should be removed form its domain
         * @return void.
         */
         void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_, bool delete_ = true );
@@ -490,7 +490,7 @@ public:
 
         /**
         * Method (slot) to change the current stratigraphy rule
-        * @param rules the new rule to be applied in the current object
+        * @param rules_ the new rule to be applied in the current object
         * @see Settings::Stratigraphy::StratigraphicRules
         * @return void.
         */
@@ -499,7 +499,7 @@ public:
 
         /**
         * Method (slot) to set the 'Sketch Above' active or inactive
-        * @param status boolean. If status is true, the 'Sketch Above' is active and inactive otherwise.
+        * @param status_ boolean. If status_ is true, the 'Sketch Above' is active and inactive otherwise.
         * @return void.
         */
         void setSketchAbove( bool status_ );
@@ -507,7 +507,7 @@ public:
 
         /**
         * Method (slot) to set the 'Sketch Below' active or inactive
-        * @param status boolean. If status is true, the 'Sketch Below' is active and inactive otherwise.
+        * @param status_ boolean. If status_ is true, the 'Sketch Below' is active and inactive otherwise.
         * @return void.
         */
         void setSketchBelow( bool status_ );
@@ -515,7 +515,7 @@ public:
 
         /**
         * Method (slot) to set the 'Sketch Region' active or inactive
-        * @param status boolean. If status is true, the 'Sketch Region' is active and inactive otherwise.
+        * @param status_ boolean. If status_ is true, the 'Sketch Region' is active and inactive otherwise.
         * @return void.
         */
         void setSketchRegion( bool status_ );
@@ -523,9 +523,9 @@ public:
 
         /**
         * Method (slot) to change the current color
-        * @param red the red component of the new color
-        * @param green the green component of the new color
-        * @param blue the blue component of the new color
+        * @param red_ the red component of the new color
+        * @param green_ the green component of the new color
+        * @param blue_ the blue component of the new color
         * @return void.
         */
         void defineCurrentColor( int red_, int green_, int blue_ );
@@ -564,7 +564,7 @@ public:
 
         /**
         * Method (slot) to save the current session in a file which name is given by 'filename_'
-        * @param filename name of the file to be saved
+        * @param filename_ name of the file to be saved
         * @return void.
         */
         void save( const std::string& filename_ );
@@ -611,7 +611,7 @@ public:
 
         /**
         * Method (slot) to set a stratigraphy or structural as a boundary as using any of the preserves ('ABOVE' or 'BELOW')
-        * @param index index of the stratigraphy/structural
+        * @param index_ index of the stratigraphy/structural
         * @return void.
         */
         void setObjectSelectedAsBoundary( const std::size_t& index_ );
@@ -619,9 +619,8 @@ public:
 
         /**
         * Method (slot) to define a boundary from a selection sketch
-        * @param curve the sketch used to the selection
-        * @param dir direction of the cross-section which the selection sketch was made
-        * @param depth depth of the cross-section which the selection sketch was made
+        * @param dir_ direction of the cross-section which the selection sketch was made
+        * @param depth_ depth of the cross-section which the selection sketch was made
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -630,10 +629,10 @@ public:
 
         /**
         * Method (slot) to select a region by picking a point inside
-        * @param px x coordinate of the point
-        * @param py y coordinate of the point
-        * @param dir direction of the cross-section which the point was chosen
-        * @param depth depth of the cross-section which the point was chosen
+        * @param px_ x coordinate of the point
+        * @param py_ y coordinate of the point
+        * @param dir_ direction of the cross-section which the point was chosen
+        * @param depth_ depth of the cross-section which the point was chosen
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -656,8 +655,8 @@ public:
 
         /**
         * Method (slot) to set a region as selected/unselected
-        * @param id index of the region
-        * @param status if the status is true the region is selected, and unselected otherwise
+        * @param id_ index of the region
+        * @param status_ if the status_ is true the region is selected, and unselected otherwise
         * @return void.
         */
         void setRegionSelected( const std::size_t& id_, bool status_ );
@@ -681,10 +680,10 @@ public:
         /**
         * Method (slot) to set the point of the guided extrusion to the controller
         * This method is not being used properly
-        * @param px x coordinate of the point
-        * @param py y coordinate of the point
-        * @param depth depth of the cross-section which the point was chosen
-        * @param dir direction of the cross-section which the point was chosen
+        * @param px_ x coordinate of the point
+        * @param py_ y coordinate of the point
+        * @param depth_ depth of the cross-section which the point was chosen
+        * @param dir_ direction of the cross-section which the point was chosen
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -692,13 +691,11 @@ public:
 
 
         /**
-        * Method (slot) to set the point and the curve of the guided extrusion to the controller.
-        * Note that the point selected was 2d, however the third coordinate was determined by the depth of the cross-section.
+        * Method (slot) to set the point and the curve of the guided extrusion to the controller
         * This method is not being used properly
-        * @param px x coordinate of the point
-        * @param py y coordinate of the point
-        * @param pz z coordinate of the point
-        * @param curve curve made by the user to the guided extrusion
+        * @param px_ x coordinate of the point
+        * @param py_ y coordinate of the point
+        * @param curve_ curve made by the user to the guided extrusion
         * @see PolyCurve
         * @return void.
         */
@@ -750,7 +747,7 @@ public:
 
          /**
         * Inline method (slot) to notify the cross-section controller to remove the marker related to a fixed cross-section removed
-        * @param id it corresponds to the value of the depth of the cross-section to be removed
+        * @param id_ it corresponds to the value of the depth of the cross-section to be removed
         * @see View3dInterface::sl_depth_csection
         * @return void.
         */
@@ -778,8 +775,7 @@ public:
 
         /**
         * Signal emitted to notify that a new stratigraphy/structural should be added in the object tree
-        * @param obj A const shared pointer to the stratigraphy/structural data structure, from where the geometry, visibility and others relevants
-        * information to the rendering should be retrieved, is sent
+        * A const shared pointer to the stratigraphy/structural data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved, is sent
         * @see Object
         * @return void.
         */
@@ -795,12 +791,6 @@ public:
 
         /**
         * Signal emitted to notify that the volume has changed its geometry
-        * @param ox the x coordinate of the volume origin
-        * @param oy the y coordinate of the volume origin
-        * @param oz the z coordinate of the volume origin
-        * @param w the width of the volume
-        * @param h the height of the volume
-        * @param d the depth of the volume
         * @return void.
         */
         void defineVolumeGeometry( double ox_, double oy, double oz, double w_, double h_, double d_ );
@@ -853,8 +843,8 @@ public:
 
         /**
         * Signal emitted to notify the scenes to add a cross-section
-        * @param dir direction of the new cross-section
-        * @param depth depth of the new cross-section
+        * @param dir_ direction of the new cross-section
+        * @param depth_ depth of the new cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -863,9 +853,8 @@ public:
 
         /**
         * Signal emitted to notify the scenes to add a fixed cross-section
-        * @param dir direction of the new fixed cross-section
-        * @param depth depth of the new fixed cross-section
-        * @param color the color used to identify the depth of cross-section on the cross-section slider
+        * @param dir_ direction of the new fixed cross-section
+        * @param depth_ depth of the new fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -874,8 +863,8 @@ public:
 
         /**
         * Signal emitted to notify the scenes to remove a fixed cross-section
-        * @param dir direction of the fixed cross-section
-        * @param depth depth of the fixed cross-section
+        * @param dir_ direction of the fixed cross-section
+        * @param depth_ depth of the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -906,7 +895,7 @@ public:
         /**
         * Signal emitted to update the current discretization.
         * This signal is emitted mainly when the user changes the cross-section direction
-        * @param disc the new discretization
+        * @param disc_ the new discretization
         * @return void.
         */
         void updateDiscretization( const std::size_t& disc_ );
@@ -915,9 +904,9 @@ public:
         /**
         * Signal emitted to update the the cross-section slider range
         * This signal is emitted mainly when the user changes the cross-section direction
-        * @param min the minimum value of the range
-        * @param max the maximum value of the range
-        * @param inverted if inverted is true the appearance of the slider should be inverted anf false otherwise
+        * @param min_ the minimum value of the range
+        * @param max_ the maximum value of the range
+        * @param inverted_ if inverted_ is true the appearance of the slider should be inverted anf false otherwise
         * @return void.
         */
         void updateRange( double min_, double max_, bool inverted_ = true );
@@ -954,7 +943,7 @@ public:
         /**
         * Signal emmited to the main interface to disable the cross-section directions differents from dir_
         * This method was created because a surface only can be made in one direction per time
-        * @param dir current cross-section diretion
+        * @param dir_ current cross-section diretion
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -963,6 +952,7 @@ public:
 
         /**
         * Signal emmited to the main interface to enable all the cross-section directions
+        * @param dir_ current cross-section diretion
         * @return void.
         */
         void unlockDirections();
@@ -970,8 +960,8 @@ public:
 
         /**
         * Signal emmited to notify the scenes that a object is selected or not. The objects can be 'VOLUME', 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'NONE'. This latter indicates that all selection should be clear and the mode 'SKETCHING' should be activate.
-        * @param option which kind of object is selected or not. They can be 'VOLUME', 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'NONE'. This latter indicates that all selection should be clear and the mode 'SKETCHING' should be activate.
-        * @param status if status_ is true, the object should be selected and false otherwise
+        * @param option_ which kind of object is selected or not. They can be 'VOLUME', 'STRATIGRAPHY', 'STRUCTURAL', 'REGION', or 'NONE'. This latter indicates that all selection should be clear and the mode 'SKETCHING' should be activate.
+        * @param status_ if status_ is true, the object should be selected and false otherwise
         * @return void.
         */
         void selectEnabled( const std::string& option_, bool status_ = true );
@@ -979,8 +969,8 @@ public:
 
         /**
         * Signal emmited to notify the scenes that an option of preserve is active or not.
-        * @param option which kind of preserve is active or not. They can be 'ABOVE', 'BELOW', OR 'REGIONS'.
-        * @param status if status is true, the preserve is active and false otherwise
+        * @param option_ which kind of preserve is active or not. They can be 'ABOVE', 'BELOW', OR 'REGIONS'.
+        * @param status_ if status_ is true, the preserve is active and false otherwise
         * @return void..
         */
         void enablePreserve( const std::string& option_, bool status_ = true );
@@ -988,9 +978,9 @@ public:
 
         /**
         * Signal emmited to update the current color
-        * @param r the red component of the color (integer)
-        * @param g the green component of the color (integer)
-        * @param b the blue component of the color (integer)
+        * @param r_ the red component of the color (integer)
+        * @param g_ the green component of the color (integer)
+        * @param b_ the blue component of the color (integer)
         * @return void.
         */
         void setCurrentColor( int r_, int g_, int b_ );
@@ -998,7 +988,7 @@ public:
 
         /**
         * Signal emmited to notify the Sketch appliaction to add a region in the scene
-        * @param reg a const shared pointer for a data structure of Regions, which has all the geometry and others required information to draw it in the scene 2d.
+        * @param reg_ a const shared pointer for a data structure of Regions, which has all the geometry and others required information to draw it in the scene 2d.
         * @see Regions
         * @return void.
         */
@@ -1014,7 +1004,7 @@ public:
 
         /**
         * Signal emmited to notify all the applications to update the vertical exaggeration
-        * @param scale new value of vertical exaggeration
+        * @param scale_ new value of vertical exaggeration
         * @return void.
         */
         void setVerticalExaggerationScale( double scale_ );
@@ -1029,7 +1019,7 @@ public:
 
         /**
         * Signal emmited to notify the cross-section slider to remover the marker associated to the fixed cross-section was removed
-        * @param id the value of the fixed cross-section depth, which is currently the index of the marker
+        * @param id_ the value of the fixed cross-section depth, which is currently the index of the marker
         * @see View3dInterface::sl_depth_csection
         * @return void.
         */

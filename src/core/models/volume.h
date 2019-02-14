@@ -22,7 +22,6 @@
 /**
  * @file volume.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Volume
  */
 
@@ -70,7 +69,7 @@ class Volume: public Object
 
         /**
         * Assignment operator.
-        * @param app_ a const reference to another Volume
+        * @param volume_ a const reference to another Volume
         */
         Volume & operator=(const Volume & volume_);
 
@@ -83,12 +82,12 @@ class Volume: public Object
 
         /**
         * This method define the volume geometry, as its origin and dimensions
-        * @param ox_ the x coordinate of the origin of the volume
-        * @param oy_ the y coordinate of the origin of the volume
-        * @param oz_ the z coordinate of the origin of the volume
-        * @param w_ the volume width
-        * @param h_ the volume height
-        * @param l_ the volume lenght
+        * @param ox the x coordinate of the origin of the volume
+        * @param oy the y coordinate of the origin of the volume
+        * @param oz the z coordinate of the origin of the volume
+        * @param w the volume width
+        * @param h the volume height
+        * @param l the volume lenght
         * @return void.
         */
         void setGeometry( double ox_, double oy_, double oz_, double w_, double h_, double l_ );
@@ -96,12 +95,12 @@ class Volume: public Object
 
         /**
         * This method gets the volume geometry, as its origin and dimensions
-        * @param ox_ reference to the x coordinate of the origin of the volume
-        * @param oy_ reference to the y coordinate of the origin of the volume
-        * @param oz_ reference to the z coordinate of the origin of the volume
-        * @param w_ reference to the volume width
-        * @param h_ reference to the volume height
-        * @param l_ reference to the volume lenght
+        * @param ox reference to the x coordinate of the origin of the volume
+        * @param oy reference to the y coordinate of the origin of the volume
+        * @param oz reference to the z coordinate of the origin of the volume
+        * @param w reference to the volume width
+        * @param h reference to the volume height
+        * @param l reference to the volume lenght
         * @return void.
         */
         void getGeometry( double& ox_, double& oy_, double& oz_, double& w_, double& h_, double& l_ ) const;
@@ -109,9 +108,9 @@ class Volume: public Object
 
         /**
         * This method sets the origin volume
-        * @param ox_ the x coordinate of the origin of the volume
-        * @param oy_ the y coordinate of the origin of the volume
-        * @param oz_ the z coordinate of the origin of the volume
+        * @param ox the x coordinate of the origin of the volume
+        * @param oy the y coordinate of the origin of the volume
+        * @param oz the z coordinate of the origin of the volume
         * @return void.
         */
         void setOrigin( double ox_, double oy_, double oz_ );
@@ -119,9 +118,9 @@ class Volume: public Object
 
         /**
         * This method gets the volume origin
-        * @param ox_ reference to the x coordinate of the origin of the volume
-        * @param oy_ reference to the y coordinate of the origin of the volume
-        * @param oz_ reference to the z coordinate of the origin of the volume
+        * @param ox reference to the x coordinate of the origin of the volume
+        * @param oy reference to the y coordinate of the origin of the volume
+        * @param oz reference to the z coordinate of the origin of the volume
         * @return void.
         */
         void getOrigin( double& ox_, double& oy_, double& oz_ ) const;
@@ -129,9 +128,9 @@ class Volume: public Object
 
         /**
         * This method define the volume dimensions
-        * @param w_ the volume width
-        * @param h_ the volume height
-        * @param l_ the volume lenght
+        * @param w the volume width
+        * @param h the volume height
+        * @param l the volume lenght
         * @return void.
         */
         void setDimensions( double w_, double h_, double l_ );
@@ -139,9 +138,9 @@ class Volume: public Object
 
         /**
         * This method gets the volume dimensions
-        * @param w_ reference to the volume width
-        * @param h_ reference to the volume height
-        * @param l_ reference to the volume lenght
+        * @param w reference to the volume width
+        * @param h reference to the volume height
+        * @param l reference to the volume lenght
         * @return void.
         */
         void getDimensions( double& w_, double& h_, double& l_ ) const;
@@ -149,7 +148,7 @@ class Volume: public Object
 
         /**
         * This method define the volume width
-        * @param w_ the volume width
+        * @param w the volume width
         * @return void.
         */
         void setWidth( double w_ );
@@ -164,7 +163,7 @@ class Volume: public Object
 
         /**
         * This method define the volume height
-        * @param h_ the volume height
+        * @param h the volume height
         * @return void.
         */
         void setHeight( double h_  );
@@ -179,7 +178,7 @@ class Volume: public Object
 
         /**
         * This method define the volume lenght
-        * @param l_ the volume lenght
+        * @param l the volume lenght
         * @return void.
         */
         void setLenght( double l_ );
@@ -202,7 +201,7 @@ class Volume: public Object
 
         /**
         * This method gets the vertices which define the right face of the volume
-        * @param vertices_ the vertices which define the right face of the volume
+        * @param vertices the vertices which define the right face of the volume
         * @return double the volume lenght
         */
         void getRightFace( std::vector< double >& vertices_ ) const;

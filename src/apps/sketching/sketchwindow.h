@@ -22,7 +22,6 @@
 /**
  * @file sketchwindow.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class SketchWindow
  */
 
@@ -96,9 +95,9 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Method to add fixed cross-sections. Fixed cross-sections should have the same direction per time.
-       * @param depth_ The depth of the cross-section in the direction dir_ ( WIDTH, LENGHT or DEPTH ) to be visualized.
-       * @param dir_ The direction of the cross-section ( WIDTH, LENGHT or DEPTH ) to be visualized.
-       * @param color_ The color of the marker that was used in the depth slider ( see slider in the 3d widget ).
+       * @param depth The depth of the cross-section in the direction dir ( WIDTH, LENGHT or DEPTH ) to be visualized.
+       * @param dir The direction of the cross-section ( WIDTH, LENGHT or DEPTH ) to be visualized.
+       * @param color The color of the marker that was used in the depth slider ( see slider in the 3d widget ).
        * @see SketchScene
        * @return std::shared_ptr< SketchScene > A shared pointer to the scene associated to the cross-section added.
        */
@@ -107,7 +106,7 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Method to remove a fixed cross-section.
-       * @param depth_ The depth of the cross-section to be removed.
+       * @param depth The depth of the cross-section to be removed.
        * @return void
        */
         void removeCanvas( double depth_ );
@@ -137,7 +136,7 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Method called to enable/disable the action "Resize boundary".
-       * @param status_ boolean. It is true if the action "Resize boundary" should be enabled, or false otherwise.
+       * @param status boolean. It is true if the action "Resize boundary" should be enabled, or false otherwise.
        * @return void
        */
         void disableResizeVolume( bool status_ );
@@ -146,7 +145,7 @@ class SketchWindow: public QMainWindow
         //TODO: this method needs to be changed
        /**
        * \brief Method called to change the interaction mode of the user to selection. This mode disable the curves selection.
-       * @param status_ boolean. It is true if the selection interaction should be enabled, or false otherwise.
+       * @param status boolean. It is true if the selection interaction should be enabled, or false otherwise.
        * @return void
        */
         void setModeSelecting( bool status_ );
@@ -154,7 +153,7 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Method called to change the interaction mode of the user to selection of curves.
-       * @param status_ boolean. It is true if the curves selection interaction should be enabled, or false otherwise.
+       * @param status boolean. It is true if the curves selection interaction should be enabled, or false otherwise.
        * @return void
        */
         void setModeSelectingStratigraphies( bool status_ );
@@ -162,7 +161,7 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Method called to change the interaction mode of the user to selection of regions.
-       * @param status_ boolean. It is true if the regions selection interaction should be enabled, or false otherwise.
+       * @param status boolean. It is true if the regions selection interaction should be enabled, or false otherwise.
        * @return void
        */
         void setModeRegionSelecting( bool status_ );
@@ -184,7 +183,7 @@ class SketchWindow: public QMainWindow
 
         /**
        * \brief Method called to show or hide the output dip angle picture in the scene.
-       * @param status_ boolean. It is true if the output dip angle picture should be shown, or false otherwise.
+       * @param status boolean. It is true if the output dip angle picture should be shown, or false otherwise.
        * @return void
        */
         void showDipAngle( bool status_ );
@@ -192,7 +191,7 @@ class SketchWindow: public QMainWindow
 
          /**
        * \brief Method called to enable/disable to move the output dip angle picture in the scene.
-       * @param status_ boolean. It is true if the output dip angle picture is allowed to be moved, otherwise the value is false.
+       * @param status boolean. It is true if the output dip angle picture is allowed to be moved, otherwise the value is false.
        * @return void
        */
         void setDipAnglePictureMovable( bool status_ );
@@ -222,65 +221,9 @@ class SketchWindow: public QMainWindow
     signals:
 
 
-//        /// New signals
-
-//       /**
-//       * \brief A signal to change the current color, i.e., the color of the current object.
-//       * @return void
-//       */
-//        void sgn_changeCurrentColor( int, int, int );
-
-
-//        /**
-//        * \brief A signal to cancel the sketch as an object curve.
-//        * @return void
-//        */
-//         void sgn_cancel_sketch();
-
-
-//       /**
-//       * \brief A signal to submit the sketch as an object curve.
-//       * @return void
-//       */
-//        void sgn_submit_curve();
-
-//       /**
-//       * \brief A signal to resize the current boundary.
-//       * @return void
-//       */
-//        void sgn_resize_boundary();
-
-//       /**
-//       * \brief A signal to resize the image on the scene.
-//       * @return void
-//       */
-//        void sgn_resize_image();
-
-//       /**
-//       * \brief A signal to remove the image from the scene.
-//       * @return void
-//       */
-//        void sgn_remove_image();
-
-//       /**
-//       * \brief A signal to take a screenshot from the scene.
-//       * @return void
-//       */
-//        void sgn_take_screenshot();
-
-//       /**
-//       * \brief A signal to show and hide the axes from the scene.
-//       * @return void
-//       */
-//        void sgn_show_axes();
-
-//        /// End -- New signals
-
-
-
        /**
        * \brief When a fixed cross-section is closed this signal is emitted to warn the depth slider (see 3d window) to remove the associated marker.
-       * @param id_ A double value corresponding the depth of the cross-section removed.
+       * @param id A double value corresponding the depth of the cross-section removed.
        * @see View3dInterface::sl_depth_csection
        * @return void
        */
@@ -325,9 +268,9 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Signal to send the sketch and add it as a curve of the current object
-       * @param curve_ the sketch drawn by the user (Polycurve)
-       * @param dir_ the direction of the cross-section which was drawn the sketch
-       * @param depth_ the depth of the cross-section which was drawn the sketch
+       * @param curve the sketch drawn by the user (Polycurve)
+       * @param dir the direction of the cross-section which was drawn the sketch
+       * @param depth the depth of the cross-section which was drawn the sketch
        * @see Settings::CrossSection::CrossSectionDirections
        * @return void
        */
@@ -335,7 +278,7 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Signal to send the sketch and add it as a trajectory of the current object. Currently, a trajectory only is drawn in the cross-section of the height direction.
-       * @param curve_ the sketch drawn by the user (Polycurve)
+       * @param curve the sketch drawn by the user (Polycurve)
        * @see PolyCurve
        * @return void
        */
@@ -344,8 +287,8 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Signal to send to controller so that it removes the last curve inserted in the cross-section of direction dir_ and depth depth_.
-       * @param dir_ direction of the cross-section which the curve was drawn.
-       * @param depth_ depth_ of the cross-section which the curve was drawn.
+       * @param dir direction of the cross-section which the curve was drawn.
+       * @param depth depth_ of the cross-section which the curve was drawn.
        * @see Settings::CrossSection::CrossSectionDirections
        * @return void
        */
@@ -378,7 +321,7 @@ class SketchWindow: public QMainWindow
 
         /**
        * \brief Signal emitted when the user select a curve.
-       * @param id_ the id_ of the object which has the curve selected.
+       * @param id the id of the object which has the curve selected.
        * @return void
        */
         void objectSelected( const std::size_t& id_ );
@@ -386,10 +329,10 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Signal emitted when the user pick a point inside a region.
-       * @param px_ x coordinate of the point.
-       * @param py_ y coordinate of the point.
-       * @param depth_ depth of the cross-section in which the point was picked.
-       * @param dir_ direction of the cross-section in which the point was picked.
+       * @param px x coordinate of the point.
+       * @param py y coordinate of the point.
+       * @param depth depth of the cross-section in which the point was picked.
+       * @param dir direction of the cross-section in which the point was picked.
        * @see Settings::CrossSection::CrossSectionDirections
        * @return void
        */
@@ -398,9 +341,9 @@ class SketchWindow: public QMainWindow
 
         /**
        * \brief Signal emitted when the user drawn a sketch to select a curve.
-       * @param curve_ sketch drawn used to select a curve
-       * @param dir_ direction of the cross-section in which the sketch was done.
-       * @param depth_ depth of the cross-section in which the sketch was done.
+       * @param curve sketch drawn used to select a curve
+       * @param dir direction of the cross-section in which the sketch was done.
+       * @param depth depth of the cross-section in which the sketch was done.
        * @see Settings::CrossSection::CrossSectionDirections
        * @return void
        */
@@ -424,7 +367,7 @@ class SketchWindow: public QMainWindow
 
         /**
        * \brief Signal emitted to show or hide the output dip angle picture in the scene. It is associated to the button "Show" in the LateralBar.
-       * @param status_ boolean. True if the scene should show the output dip angle picture, and false otherwise.
+       * @param status boolean. True if the scene should show the output dip angle picture, and false otherwise.
        * @return void
        */
         void showDipAnglePicture( bool status_ );
@@ -432,8 +375,8 @@ class SketchWindow: public QMainWindow
 
         /**
        * \brief Signal emitted when the user select a region clicking in the object region. Currently this method is bot being used properly.
-       * @param id_ index of the region
-       * @param status_ status of selection of the object region. If true the region is selected, false otherwise.
+       * @param id index of the region
+       * @param status status of selection of the object region. If true the region is selected, false otherwise.
        * @return void
        */
         void regionSelected( const std::size_t& id_, bool status_ );
@@ -443,10 +386,10 @@ class SketchWindow: public QMainWindow
 
         /**
        * \brief Signal emitted when the user select a point to be used in the guided extrusion. Currently this method is bot being used.
-       * @param px_ x coordinate of the point.
-       * @param py_ y coordinate of the point.
-       * @param depth_ depth of the cross-section in which the point was picked.
-       * @param dir_ direction of the cross-section in which the point was picked.
+       * @param px x coordinate of the point.
+       * @param py y coordinate of the point.
+       * @param depth depth of the cross-section in which the point was picked.
+       * @param dir direction of the cross-section in which the point was picked.
        * @see Settings::CrossSection::CrossSectionDirections
        * @return void
        */
@@ -455,10 +398,10 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief Signal emitted to update point to be used in the guided extrusion. Currently this method is bot being used.
-       * @param px_ x coordinate of the point.
-       * @param py_ y coordinate of the point.
-       * @param depth_ depth of the cross-section in which the point was picked.
-       * @param dir_ direction of the cross-section in which the point was picked.
+       * @param px x coordinate of the point.
+       * @param py y coordinate of the point.
+       * @param depth depth of the cross-section in which the point was picked.
+       * @param dir direction of the cross-section in which the point was picked.
        * @see Settings::CrossSection::CrossSectionDirections
        * @return void
        */
@@ -467,7 +410,7 @@ class SketchWindow: public QMainWindow
 
        /**
        * \brief This signal is emitted to send the sketch done in the guided extrusion.
-       * @param curve_ sketch done by the user for the guided extrusion.
+       * @param curve sketch done by the user for the guided extrusion.
        * @see PolyCurve
        * @return void
        */
@@ -492,8 +435,8 @@ class SketchWindow: public QMainWindow
 
 
         /**
-       * \brief Protected method responsibles for the actions and connects creation
-       * related to the toolbar.
+       * \brief Protected method responsibles for the actions and connects creation related to the toolbar.
+       * @param canvas an instance of the SketchingCanvas. It is passed as parameter so that the scenes inside it can be connected by the signals
        * @see SketchingCanvas
        * @return void
        */
@@ -501,8 +444,9 @@ class SketchWindow: public QMainWindow
 
 
         /**
-       * \brief Protected method responsibles for the actions and connects creation
-       * related to the main cross-section scene.
+       * \brief Protected method responsibles for the actions and connects creation related to the main cross-section scene.
+       * @param canvas the main canvas, which hold the 'WIDTH' and the 'DEPTH' cross-sections. It is passed as parameter so that the scenes inside
+       * it can be connected by the signals
        * @see SketchingCanvas
        * @return void
        */
@@ -510,8 +454,9 @@ class SketchWindow: public QMainWindow
 
 
         /**
-       * \brief Protected method responsibles for the actions and connects creation
-       * related to the top view cross-section scene.
+       * \brief Protected method responsibles for the actions and connects creation related to the top view cross-section scene.
+       * @param canvas the top view canvas, which hold the 'HEIGHT' cross-sections. It is passed as parameter so that the scenes inside it can be
+       * connected by the signals
        * @see SketchingCanvas
        * @return void
        */
@@ -543,7 +488,7 @@ class SketchWindow: public QMainWindow
 
         /**
        * \brief Protected method to handle the keyboard events.
-       * @param event Corresponds to the mouse event.
+       * @param event Corresponds to the keyboard event.
        * @see QKeyEvent
        * @return void
        */

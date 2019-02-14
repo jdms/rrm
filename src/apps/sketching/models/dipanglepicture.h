@@ -22,7 +22,6 @@
 /**
  * @file dipanglepicture.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class DipAnglePicture
  */
 
@@ -65,7 +64,7 @@ class DipAnglePicture: public QGraphicsPixmapItem
 
         /**
         * Method to set the image movable if the image should be movable or not.
-        * @param status_ boolean to indicate if the image should be movable or not.
+        * @param status boolean to indicate if the image should be movable or not.
         * It is true if the image is movable and false otherwise.
         * @return void.
         */

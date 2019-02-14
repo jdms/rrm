@@ -22,7 +22,6 @@
 /**
  * @file coordinateaxes_2d.cpp
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class CoordinateAxes2d
  */
 

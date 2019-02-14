@@ -22,7 +22,6 @@
 /**
  * @file shader.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class Shader
  */
 
@@ -60,7 +59,7 @@ class Shader
 
         /**
         * Method to set the path of the folder where are the shaders
-        * @param path_ the path of the folder where are the shaders
+        * @param path the path of the folder where are the shaders
         * @return void.
         */
         void setDirectory( const std::string& path_ )
@@ -147,8 +146,9 @@ class Shader
 
 
         /**
-        * Method to normalize vectors given a maximum and a minimum.
+        * Method to normalize a point given a maximum and a minimum.
         * This method is considering a point 3d.
+        * @param p the point to be normalized given a bounding box
         * @param M the maximum point
         * @param m the minimum point
         * @return void.
@@ -176,6 +176,7 @@ class Shader
 
         /**
         * This method convert a vector of double to a vector of float
+        * @param points vector of points which coordinates are double values
         * @return void.
         */
         static std::vector< float > convertToFloat( const std::vector< double >& points_ )
@@ -189,6 +190,7 @@ class Shader
 
         /**
         * This method convert a vector of std::size_t to a vector of unsigned int
+        * @param edges vector of edges which indexes are std::size_t values
         * @return void.
         */
         static std::vector< unsigned int > convertToUnsignedInt( const std::vector< std::size_t >& edges_ )
@@ -202,7 +204,7 @@ class Shader
 
         /**
         * This temporary and auxiliary method creates a vector of repeated normal (0, 1, 0), with size 3*number_of_vertices_
-        * @param number_of_vertices_ number of normal (0, 1, 0) repeated
+        * @param number_of_vertices number of normal (0, 1, 0) repeated
         * @return void.
         */
         static std::vector< float > getDefaultNormals( std::size_t number_of_vertices_ )
@@ -224,8 +226,8 @@ class Shader
         /**
         * A temporary and auxiliary method to create a vector of colors depending on the height map, given a
         * maximum, minimum and a vector of vertices
-        * @param zmin_ the minimum z value
-        * @param zmax_ the maximum z value
+        * @param zmin the minimum z value
+        * @param zmax the maximum z value
         * @param values the vector of coordinates
         * @return colors a height map color given a maximum, minimum and a vector of vertices
         */

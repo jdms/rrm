@@ -22,7 +22,6 @@
 /**
  * @file realfeaturedslider.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class RealFeaturedSlider
  */
 
@@ -49,15 +48,15 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Constructor.
-        * @param o_ the slider orientation
+        * @param o the slider orientation
         */
         RealFeaturedSlider( Qt::Orientation o_ );
 
 
         /**
         * Constructor.
-        * @param o_ the slider orientation
-        * @param disc_ the slider discretization
+        * @param o the slider orientation
+        * @param disc the slider discretization
         */
         RealFeaturedSlider( Qt::Orientation o_, int disc_ );
 
@@ -105,8 +104,8 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called when the range of the slider is changed
-        * @param min_ minimum value for the slider range
-        * @param max_ maximum value for the slider range
+        * @param min minimum value for the slider range
+        * @param max maximum value for the slider range
         * @return void.
         */
         void setRange( double min_, double max_ );
@@ -114,7 +113,7 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called when the discretization of the slider is changed
-        * @param disc_ new discretization of the slider
+        * @param disc new discretization of the slider
         * @return void.
         */
         void setDiscretization( int disc_ );
@@ -122,7 +121,7 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called when the current value of the slider is changed
-        * @param value_ current value of the slider in double
+        * @param value current value of the slider in double
         * @return void.
         */
         void setValue( double value_ );
@@ -130,6 +129,7 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called to return the double value of the slider equivalent to the integer given
+        * @param index the integer value
         * @return double double value equivalent to the given integer
         */
         double getDoubleValue( int index_ ) const;
@@ -175,7 +175,7 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Methods (slots) called to move the slider position to the given value
-        * @param index_ the integer value
+        * @param index the integer value
         * @return void.
         */
         void moveInDouble( int index_ );
@@ -187,7 +187,7 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Signal emmited when the double slider has changed its current value
-        * @param value_ the new double value
+        * @param value the new double value
         * @return void.
         */
         void sliderMoved( const double& value_ );
@@ -195,8 +195,8 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Signal emmited when a marker is added in the slider
-        * @param value_ the double value where the marker was added
-        * @param color_ the color of the marker
+        * @param value the double value where the marker was added
+        * @param color the color of the marker
         * @see QColor
         * @return void.
         */
@@ -205,7 +205,7 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Signal emmited when a marker is removed from the slider
-        * @param value_ the double value where the marker was removed
+        * @param value the double value where the marker was removed
         * @return void.
         */
         void unmarkValue( double value );
@@ -232,7 +232,7 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Method (slots) called when the mouse button is pressed over an existent marker
-        * @param pos_ the position of the marker on the slider
+        * @param pos the position of the marker on the slider
         * @return void.
         */
         void hightlightMarker( int pos_ );
@@ -240,7 +240,7 @@ class RealFeaturedSlider: public Slider
 
         /**
         * Method (slots) to return if a marker exists or not in a given position
-        * @param pos_ a position in the slider to know if exists a marker
+        * @param pos a position in the slider to know if exists a marker
         * @return boolean returns true if there is a marker in this value, anf false otherwise
         */
         bool isValidMarker( int value );

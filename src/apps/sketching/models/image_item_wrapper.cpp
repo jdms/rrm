@@ -22,7 +22,6 @@
 /**
  * @file image_item_wrapper.cpp
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class ImageItemWrapper
  */
 

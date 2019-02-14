@@ -22,7 +22,6 @@
 /**
  * @file sketchingcontroller.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
  * @brief File containing the class SketchingController
  */
 
@@ -61,7 +60,7 @@ class SketchingController
 
         /**
         * Method to save a reference to the sketch window that holds the main cross-section scene, and to the its scene.
-        * @param window_  sketch window that holds the main cross-section scene
+        * @param window  sketch window that holds the main cross-section scene
         * @see SketchWindow
         * @return void.
         */
@@ -70,7 +69,7 @@ class SketchingController
 
         /**
         * Method to save a reference to the sketch window that will hold the top view cross-section scene, and to the its scene.
-        * @param window_  sketch window that holds the top view cross-section scene
+        * @param window  sketch window that holds the top view cross-section scene
         * @see SketchWindow
         * @return void.
         */
@@ -79,7 +78,7 @@ class SketchingController
 
         /**
         * Method to save a reference to RRM controller.
-        * @param a const shared pointer to the RRM controller.
+        * @param controller a const shared pointer to the RRM controller.
         * @see Controller
         * @return void.
         */
@@ -97,7 +96,7 @@ class SketchingController
 
         /**
         * This method enables or disabled the sketching in both scenes ( main scene and top view scene ).
-        * @param status_ boolean to set if the sketch should be enabled or disabled. It is true to enable it, and false otherwise.
+        * @param status boolean to set if the sketch should be enabled or disabled. It is true to enable it, and false otherwise.
         * @return void.
         */
         void enableSketching( bool status_ );
@@ -143,8 +142,8 @@ class SketchingController
 
         /**
         * This method loads a scene with all the elements present in a given fixed cross-section.
-        * @param dir_ direction of the fixed cross-section
-        * @param depth_ direction of the fixed cross-section
+        * @param dir direction of the fixed cross-section
+        * @param depth direction of the fixed cross-section
         * @param color of the marker associated to the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections&
         * @return void.
@@ -155,7 +154,7 @@ class SketchingController
         /**
         * This method adds a stratigraphy or structural in all scenes being viewed.
         * This graphical object will hold a const shared pointer for a data structure of Stratigraphy, so that it can know how to draw itself.
-        * @param obj_ a const shared pointer for a data structure of Stratigraphy, which has all the geometry and others required information to draw it in the scene 2d.
+        * @param obj a const shared pointer for a data structure of Stratigraphy, which has all the geometry and others required information to draw it in the scene 2d.
         * @see ObjectPtr
         * @return void.
         */
@@ -164,7 +163,7 @@ class SketchingController
 
         /**
         * This method updates a stratigraphy or structural in all scenes being viewed.
-        * @param index_ index of the stratigraphy/structural
+        * @param index index of the stratigraphy/structural
         * @return void.
         */
         void updateStratigraphy( const std::size_t& index_ );
@@ -187,7 +186,7 @@ class SketchingController
         /**
         * This method adds a region in all scenes being used.
         * This graphical object will hold a const shared pointer for a data structure of Regions, so that it can know how to draw itself.
-        * @param reg_ a const shared pointer for a data structure of Regions, which has all the geometry and others required information to draw it in the scene 2d.
+        * @param reg a const shared pointer for a data structure of Regions, which has all the geometry and others required information to draw it in the scene 2d.
         * @see RegionsPtr
         * @return void.
         */
@@ -217,8 +216,8 @@ class SketchingController
 
         /**
         * This method remove a window associated to the given fixed cross-section.
-        * @param dir_ direction of the fixed cross-section
-        * @param depth_ direction of the fixed cross-section
+        * @param dir direction of the fixed cross-section
+        * @param depth direction of the fixed cross-section
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -263,10 +262,10 @@ class SketchingController
         /**
         * This method updates the point used to guided extrusion in the top view scene.
         * This method is not being used properly
-        * @param px_ x coordinate of the point
-        * @param py_ y coordinate of the point
-        * @param depth_ depth of the cross-section associated to the current scene
-        * @param dir_ direction of the cross-section associated to the current scene
+        * @param px x coordinate of the point
+        * @param py y coordinate of the point
+        * @param depth depth of the cross-section associated to the current scene
+        * @param dir direction of the cross-section associated to the current scene
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -277,9 +276,9 @@ class SketchingController
         * This method retrieves the point used to guided extrusion in the top view scene.
         * Note that meaning of the coordinates should change depending on which cross-section direction is being used.
         * This method is not being used properly
-        * @param px_ x coordinate of the point
-        * @param py_ y coordinate of the point
-        * @param pz_ z coordinate of the point
+        * @param px x coordinate of the point
+        * @param py y coordinate of the point
+        * @param pz z coordinate of the point
         * @return void.
         */
         void getGuidedExtrusionPoint( float& px_, float& py_, float& pz_ );
@@ -290,8 +289,8 @@ class SketchingController
 
         /**
         * This method is responsible for add the objects from the cross-section to the scene and also update the cross-section information.
-        * @param csection_ cross-section which holds the objects
-        * @param scene_ scene to where the objects will be added
+        * @param csection cross-section which holds the objects
+        * @param scene scene to where the objects will be added
         * @see CrossSectionPtr
         * @see SketchScene
         * @return void.
@@ -301,8 +300,8 @@ class SketchingController
 
         /**
         * This method is responsible for calling updates for all the objects on scene, including the image and the boundary.
-        * @param csection_ cross-section which holds the objects
-        * @param scene_ scene to where the objects will be updated
+        * @param csection cross-section which holds the objects
+        * @param scene scene to where the objects will be updated
         * @see CrossSectionPtr
         * @see SketchScene
         * @return void.

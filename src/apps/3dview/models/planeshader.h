@@ -22,8 +22,7 @@
 /**
  * @file planeshader.h
  * @author Clarissa C. Marques
- * @date 9 Sep 2012
- * @brief File containing the class PlaneShader
+ * @brief File containing the PlaneShader class
  */
 
 
@@ -63,7 +62,7 @@ class PlaneShader: public Shader
 
         /**
         * Constructor. It builds a PlaneShader given a cross-section instance.
-        * @param a shared pointer to a CrossSection instance
+        * @param raw a shared pointer to a CrossSection instance
         */
         PlaneShader( const std::shared_ptr< CrossSection>& raw_ );
 
@@ -76,7 +75,7 @@ class PlaneShader: public Shader
 
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
-        * @param raw_ a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
         * @see CrossSection()
         * @return Void.
         */
@@ -119,8 +118,8 @@ class PlaneShader: public Shader
 
         /**
         * This method loads the buffers with the required geometry
-        * @param vertices_ normalized vertices
-        * @param normals_  normalized normals
+        * @param vertices normalized vertices
+        * @param normals  normalized normals
         * @return Void
         */
         void updateGeometryBuffers( const std::vector< GLfloat >& vertices_,
