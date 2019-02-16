@@ -100,12 +100,14 @@ class Controller
 
         /**
         * Copy constructor.
+        * @param cont a const reference to another controller
         */
         Controller(const Controller & cont_);
 
 
         /**
         * Assignment operator
+        * @param cont a const reference to another controller
         */
         Controller & operator=(const Controller & cont_);
 
@@ -119,7 +121,7 @@ class Controller
         /**
         * Method to set a reference to the application.
         * This create a brigde between the data and the interface by the controller
-        * @param app the interface application where the most of the events are implemented
+        * @param app the interface application where the most of the connections events are implemented
         * @see RRMApplication
         * @return void.
         */
@@ -169,7 +171,7 @@ class Controller
 
         /**
         * Method to set the volume depth
-        * @param depth the new depth volume
+        * @param lenght the new depth volume
         * @return Void.
         */
         void setVolumeLenght( double lenght_ );
@@ -190,7 +192,7 @@ class Controller
 
         /**
         * Method to set a name to the volume
-        * @param id a new name to the volume
+        * @param name a new name to the volume
         * @return void.
         */
         void setVolumeName( const std::string& name_ );
@@ -529,6 +531,7 @@ class Controller
         * Method to add a curve to the current object
         * @param dir the direction of the cross-section which the curve was done
         * @param depth the depth_ of the cross-section which the curve was done
+        * @param curve the curve to be added
         * @see Settings::CrossSection::CrossSectionDirections
         * @return boolean returns true if the curve was added properly and false otherwise
         */
@@ -1263,7 +1266,7 @@ class Controller
         /**
         * This method is responsible for calling the method to load a file for managing if it was successfull or not.
         * @param filename the path of the file
-        * @param Controller::MeshResolution a reference to the mesh resolution
+        * @param resol a reference to the mesh resolution
         * @see Controller::MeshResolution
         * @return Void
         */

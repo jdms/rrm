@@ -150,7 +150,7 @@ class CurveItem : public QGraphicsPathItem
     public:
 
         /**
-        * Constructor. parent_ is passed to QGraphicsPathItem's constructor.
+        * Constructor. parent is passed to QGraphicsPathItem's constructor.
         * @param parent the parent item
         */
         CurveItem( QGraphicsItem *parent = nullptr );
@@ -256,7 +256,7 @@ class CurveItem : public QGraphicsPathItem
 
         /**
         * Method to get the color of the curve by QColor
-        * @see QColor()
+        * @see QColor
         * @return QColor
         */
         QColor getColor() const;

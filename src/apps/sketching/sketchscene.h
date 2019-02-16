@@ -492,6 +492,7 @@ class SketchScene: public QGraphicsScene
         * Method(slot) to show or hide the output dip angle picture.
         * @param status a boolean to define if the output dip angle should be shown or not.
         * If status is true the picture will be shown, and hidding if the value is false
+        * @param pix a new output dip angle picture
         * @see QPixmap
         * @return void.
         */
@@ -583,7 +584,7 @@ class SketchScene: public QGraphicsScene
         * Method(slot) to undo the vertical exaggeration in the axes.
         * This method was implement as part of the solution to undo the undesired deformation in the axes resulting from the vertical exaggeration.
         * @param matrix the canvas matrix where the vertical exaggeration was applied. It will be used to revert the transformation on the axes.
-        * @param the value of the vertical exaggeration. It will be used to apply the scale on the axes in a different way.
+        * @param scale the value of the vertical exaggeration. It will be used to apply the scale on the axes in a different way.
         * @return void.
         */
         void revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ );
@@ -650,10 +651,10 @@ class SketchScene: public QGraphicsScene
         * @param string path to the image file.
         * @param CrossSectionDirections cross-section direction of the current scene.
         * @param double cross-section depth of the current scene.
-        * @param ox x coordinate of the origin of the image.
-        * @param oy y coordinate of the origin of the image.
-        * @param w width of the image.
-        * @param h height of the image.
+        * @param double x coordinate of the origin of the image.
+        * @param double y coordinate of the origin of the image.
+        * @param double width of the image.
+        * @param double height of the image.
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */

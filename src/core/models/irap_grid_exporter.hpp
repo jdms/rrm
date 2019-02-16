@@ -20,7 +20,7 @@
  ****************************************************************************/
 
 /**
- * @file irap_grid_exporter.h
+ * @file irap_grid_exporter.hpp
  * @author Clarissa C. Marques
  * @brief File containing the class IrapGridExporter
  */

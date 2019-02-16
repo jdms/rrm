@@ -64,7 +64,7 @@ class View3dController
 
         /**
         * Method to save a reference to RRM controller.
-        * @param a const shared pointer to the RRM controller.
+        * @param controller_ a const shared pointer to the RRM controller.
         * @see Controller
         * @return void.
         */
@@ -173,7 +173,7 @@ class View3dController
 
         /**
         * Method to pass the vertical exaggeration to the scene.
-        * @param scale the vertical exaggeration scale to be applied
+        * @param value of the vertical exaggeration to be applied
         * @return void.
         */
         void setVerticalExaggeration( double scale_ );

@@ -53,12 +53,14 @@ class Stratigraphy : public Object
 
         /**
         * Copy constructor.
+        * @param strat_ a const reference to another instance of Stratigraphy
         */
         Stratigraphy(const Stratigraphy & strat_);
 
 
         /**
         * Assignment operator.
+        * @param strat_ a const reference to another instance of Stratigraphy
         */
         Stratigraphy & operator=(const Stratigraphy & strat_);
 

@@ -61,8 +61,6 @@ class RegionItem: public PolygonItem
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
         * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
-        * @param dir the direction of the cross-section that cutted the volume
-        * @param depth the depth of the cross-section that cutted the volume
         * @see Regions
         * @return Void.
         */

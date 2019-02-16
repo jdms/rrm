@@ -53,6 +53,7 @@ class PolyCurve
 
         /**
         * Constructor. Creates a new Polycurve given a vector of Curve2D
+        * @param curve_ a const reference to a vector of Curve2D
         */
         PolyCurve( const std::vector< Curve2D >& curve_ )
         {
@@ -62,6 +63,7 @@ class PolyCurve
 
         /**
         * Constructor. Creates a new Polycurve given a Curve2D
+        * @param curve_ a const reference to a Curve2D
         */
         PolyCurve( const Curve2D& curve_ )
         {
@@ -72,6 +74,8 @@ class PolyCurve
 
         /**
         * Constructor. Creates a new Polycurve given a vector of vertices (double) and optionally edges
+        * @param vs a vector of vertices coordinates
+        * @param es a vector of vertices indexes that compose a edge
         */
         PolyCurve( const std::vector< double >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() )
         {
@@ -82,6 +86,8 @@ class PolyCurve
         /**
         * Constructor. Creates a new Polycurve given a vector of vertices (float)
         * and optionally edges
+        * @param vs a vector of vertices coordinates
+        * @param es a vector of vertices indexes that compose a edge
         */
         PolyCurve( const std::vector< float >& vs_, const std::vector< std::size_t >& es_ = std::vector< std::size_t >() )
         {

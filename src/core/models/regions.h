@@ -66,12 +66,14 @@ class Regions: public Object
 
         /**
         * Copy constructor.
+        * @param a const reference to another instance of Regions
         */
         Regions( const Regions& reg_ );
 
 
         /**
         * Assignment operator.
+        * @param a const reference to another instance of Regions
         */
         Regions& operator=(const Regions& reg_);
 

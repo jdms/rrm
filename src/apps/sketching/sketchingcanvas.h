@@ -44,7 +44,7 @@ class SketchingCanvas: public QGraphicsView
     public:
 
         /**
-        * Constructor. parent_ is passed to QGraphicsView's constructor.
+        * Constructor. parent is passed to QGraphicsView's constructor.
         * @param parent the parent item
         */
         SketchingCanvas( QWidget *parent_ = nullptr );

@@ -92,7 +92,7 @@ class Scene
         /**
         * A pure virtual method to update the stratigraphy or structural, which index is id_.
         * This update can be since updating the dimensions, color to its visibility.
-        * @param id index of the stratigraphy to be updated.
+        * @param index index of the stratigraphy to be updated.
         * @see Object
         * @return Void.
         */

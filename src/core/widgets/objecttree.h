@@ -225,7 +225,7 @@ class ObjectTree: public QTreeWidget
 
         /**
         * Method to change the visibility of the domains
-        * @param status if status_ is 'CHECKED' the domains are visible and 'UNCHECKED' otherwise
+        * @param status if status is 'CHECKED' the domains are visible and 'UNCHECKED' otherwise
         * @see Qt::CheckState
         * @return Void.
         */
@@ -235,7 +235,7 @@ class ObjectTree: public QTreeWidget
         /**
         * Method to change the visibility of a domain and its regions
         * @param index index of the domain
-        * @param status if status_ is true' the domain is visible and false otherwise
+        * @param status if status is true' the domain is visible and false otherwise
         * @return Void.
         */
         void setDomainsVisibility( std::size_t index_, bool status_ );

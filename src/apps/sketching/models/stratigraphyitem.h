@@ -46,7 +46,7 @@ class StratigraphyItem: public CurveItem
 
 
         /**
-        * Constructor. parent_ is passed to QGraphicsLineItem's constructor.
+        * Constructor. parent is passed to QGraphicsLineItem's constructor.
         * @param parent the parent item
         */
         StratigraphyItem( QGraphicsItem *parent_ = nullptr );

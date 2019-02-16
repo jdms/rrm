@@ -65,7 +65,7 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * This method set the bottom-left corner of the plane
-        * @param start_ the bottom-left corner of the plane
+        * @param start the bottom-left corner of the plane
         * @see QPointF
         * @return void.
         */
@@ -74,7 +74,7 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * This method set the right-top corner of the plane
-        * @param end_ the right-top corner of the plane
+        * @param end the right-top corner of the plane
         * This point helps to compute the plane dimensions
         * @see QPointF
         * @return void.
@@ -85,7 +85,7 @@ class PlaneItem: public QGraphicsRectItem
         /**
         * This method define new dimensions to the plane
         * @param dimensions the x coordinate represents the plane width and the second the plane height
-        * @param an optional parameter representing the origin of the plane, i.e., the bottom left corner of the plane
+        * @param origin an optional parameter representing the origin of the plane, i.e., the bottom left corner of the plane
         * @see QPointF
         * @return void.
         */
@@ -94,10 +94,10 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * This method define new dimensions to the plane
-        * @param width_ the plane width
-        * @param height_ the plane height
-        * @param ox_ an optional parameter representing the x coordinate of the origin of the plane
-        * @param oy_ an optional parameter representing the y coordinate of the origin of the plane
+        * @param width the plane width
+        * @param height the plane height
+        * @param ox an optional parameter representing the x coordinate of the origin of the plane
+        * @param oy an optional parameter representing the y coordinate of the origin of the plane
         * @return void.
         */
         void resize( double width_, double height_, double ox_ = 0.0, double oy_ = 0.0 );
@@ -119,9 +119,9 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * Method to set the color of the border
-        * @param red the red component of the color (integer)
-        * @param green the green component of the color (integer)
-        * @param blue the blue component of the color (integer)
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
         * @return void.
         */
         void setBorderColor( int r_, int g_, int b_ );
@@ -129,9 +129,9 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * Method to get the color of the border
-        * @param red reference to the red component of the color (integer)
-        * @param green reference to the green component of the color (integer)
-        * @param blue reference to the blue component of the color (integer)
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
         * @return void.
         */
         void getBorderColor( int& r_, int& g_, int& b_ ) const;
@@ -169,9 +169,9 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * Method to fill the plane with a given color
-        * @param red the red component of the color (integer)
-        * @param green the green component of the color (integer)
-        * @param blue the blue component of the color (integer)
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
         * @return void.
         */
         void setFillColor( int r_, int g_, int b_ );
@@ -179,9 +179,9 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * Method to get the color of internal part of the plane
-        * @param red reference to the red component of the color (integer)
-        * @param green reference to the green component of the color (integer)
-        * @param blue reference to the blue component of the color (integer)
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
         * @return void.
         */
         void getFillColor( int& r_, int& g_, int& b_ ) const;
@@ -250,9 +250,9 @@ class PlaneItem: public QGraphicsRectItem
 
         /**
         * Method to repaint the curve
-        * @see QPainter performs painting on the widget
-        * @see QStyleOptionGraphicsItem provides style options for the item
-        * @see QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
+        * @param QPainter performs painting on the widget
+        * @param QStyleOptionGraphicsItem provides style options for the item
+        * @param QWidget  it is an optional parameter. If provided, it points to the widget that is being painted on; otherwise, it is nullptr
         * @return void
         */
         void paint( QPainter* painter, const QStyleOptionGraphicsItem* option,

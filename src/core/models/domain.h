@@ -54,12 +54,14 @@ class Domain: public Object
 
         /**
         * Copy constructor.
+        * @param dmn_ a const reference to another domain instance
         */
         Domain( const Domain& dmn_ );
 
 
         /**
         * Assignment Operator
+        * @param dmn_ a const reference to another domain instance
         */
         Domain& operator=(const Domain& dmn_);
 

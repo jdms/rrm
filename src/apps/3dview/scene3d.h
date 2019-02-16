@@ -169,7 +169,7 @@ class Scene3d: public QObject
         * Method to add stratigraphies and structurals in the scene.
         * This stratigraphy will hold a const shared pointer to a stratigraphy data structure, so that it can retrieve the required information
         * to draw it on scene. Note that currently a structural has the same data structure as the stratigraphy.
-        * @param strat data structure that contains the geometry and others required information to draw it on scene.
+        * @param raw data structure that contains the geometry and others required information to draw it on scene.
         * @see Stratigraphy
         * @return Void.
         */
@@ -179,7 +179,7 @@ class Scene3d: public QObject
         /**
         * Method to update the stratigraphy or structural, which index is id_.
         * This update can be since updating the dimensions, color to its visibility.
-        * @param id index of the stratigraphy to be updated.
+        * @param index index of the stratigraphy to be updated.
         * @see Stratigraphy
         * @return Void.
         */
@@ -208,7 +208,7 @@ class Scene3d: public QObject
         /**
         * Method to update the region which index is id_.
         * This update can be since updating the dimensions, color to its visibility.
-        * @param id index of the region to be updated.
+        * @param index index of the region to be updated.
         * @see Regions
         * @return Void.
         */
@@ -261,6 +261,7 @@ class Scene3d: public QObject
 
         /**
         * Method to set vertical exaggeration in the scene.
+        * @param scale value of the vertical exaggeration
         * @return Void.
         */
         void setVerticalExaggeration( double scale_ );

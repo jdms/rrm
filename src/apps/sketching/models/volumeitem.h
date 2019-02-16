@@ -45,7 +45,7 @@ class VolumeItem: public PlaneItem
     public:
 
         /**
-        * Constructor. parent_ is passed to PlaneItem's constructor.
+        * Constructor. parent is passed to PlaneItem's constructor.
         * @param parent the parent item
         */
         VolumeItem( QGraphicsItem *parent_ = nullptr );
@@ -58,6 +58,8 @@ class VolumeItem: public PlaneItem
         /**
         * Method to set a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved.
         * @param raw a const shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved
+        * @param dir the direction of the cross-section
+        * @param depth the depth of the cross-section
         * @see Volume
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.

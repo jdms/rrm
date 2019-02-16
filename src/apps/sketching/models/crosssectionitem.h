@@ -45,7 +45,7 @@ class CrossSectionItem: public LineItem
     public:
 
         /**
-        * Constructor. parent_ is passed to LineItem's constructor.
+        * Constructor. parent is passed to LineItem's constructor.
         * @param parent the parent item
         */
         CrossSectionItem( QGraphicsItem *parent_ = nullptr );
