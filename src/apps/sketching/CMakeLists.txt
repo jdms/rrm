@@ -1,50 +1,78 @@
-cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
-
+cmake_minimum_required( VERSION 3.1 FATAL_ERROR )
 
 project( Sketching VERSION 3.1 LANGUAGES CXX )
-
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
                      ${CMAKE_CURRENT_BINARY_DIR} )
 
+find_package( Qt5Widgets REQUIRED )
 
 set( SKETCHING_HEADERS      sketchwindow.h
                             sketchscene.h
-                            models/inputsketch.h
-                            models/volume_item_wrapper.h
-                            models/object_item_wrapper.h
-                            models/crosssection_item_wrapper.h
-                            models/trajectoryitemwrapper.h
-                            models/coordinate_axes_2d.h
-                            models/image_item_wrapper.h )
+                            sketchingcanvas.h
+                            sketchingcontroller.h
+                            lateralbar.h
+                            models/qtgeometries/curveitem.h
+                            models/qtgeometries/lineitem.h
+                            models/qtgeometries/planeitem.h
+                            models/qtgeometries/polygonitem.h
+                            models/coordinateaxes_2d.h
+                            models/image_item_wrapper.h
+                            models/dipanglepicture.h
+                            models/crosssectionitem.h
+                            models/regionitem.h
+                            models/stratigraphyitem.h
+                            models/volumeitem.h
+                            models/anglepicture.h )
+
+
 
 set( SKETCHING_MOC_HEADERS  sketchwindow.h
-                            sketchscene.h )
+                            sketchscene.h
+                            lateralbar.h )
+
 
 
 set( SKETCHING_SOURCES      sketchwindow.cpp
                             sketchscene.cpp
-                            models/inputsketch.cpp
-                            models/volume_item_wrapper.cpp
-                            models/object_item_wrapper.cpp
-                            models/crosssection_item_wrapper.cpp
-                            models/trajectoryitemwrapper.cpp
-                            models/coordinate_axes_2d.cpp
-                            models/image_item_wrapper.cpp )
+                            sketchingcanvas.cpp
+                            sketchingcontroller.cpp
+                            lateralbar.cpp
+                            models/qtgeometries/curveitem.cpp
+                            models/qtgeometries/lineitem.cpp
+                            models/qtgeometries/planeitem.cpp
+                            models/qtgeometries/polygonitem.cpp
+                            models/coordinateaxes_2d.cpp
+                            models/image_item_wrapper.cpp
+                            models/dipanglepicture.cpp
+                            models/crosssectionitem.cpp
+                            models/regionitem.cpp
+                            models/stratigraphyitem.cpp
+                            models/volumeitem.cpp
+                            models/anglepicture.cpp )
 
 
-#QT5_WRAP_CPP( SKETCHING_MOC_SOURCES ${SKETCHING_MOC_HEADERS} )
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+#qt5_wrap_cpp( SKETCHING_MOC_SRCS ${SKETCHING_MOC_HEADERS})
+
 
 include_directories (${PROJECT_SOURCE_DIR})
 include_directories (${PROJECT_BINARY_DIR})
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ###############################################
 # ADD TO LIBRARY AND LINK
 ###############################################
 
-add_library( ${PROJECT_NAME} STATIC ${SKETCHING_SOURCES} ${SKETCHING_HEADERS} )
 
-#add_library( ${PROJECT_NAME} STATIC ${SKETCHING_HEADERS} ${SKETCHING_MOC_SOURCES} ${SKETCHING_SOURCES} )
+add_library( ${PROJECT_NAME} STATIC ${SKETCHING_SOURCES} ${SKETCHING_MOC_SRCS} ${SKETCHING_HEADERS} )
+
+
+
+
+
 

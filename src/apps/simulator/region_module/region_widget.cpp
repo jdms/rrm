@@ -115,6 +115,7 @@ namespace RRM
 				/// Next Position in the Grid
 				i += 2;
 			}
+			
 
 			/// @FIXME September   POROSITY
 			slider_porosity_ = new QSlider(Qt::Orientation::Horizontal);
@@ -249,6 +250,265 @@ namespace RRM
 
 
 			this->createRegions(this->region_colors_);
+		}
+
+		bool RegionWidget::read(const QJsonObject& region_data)
+		{
+			if (region_data.contains("gradient_type_") && region_data["gradient_type_"].isBool())
+			{
+				this->is_constant_ = region_data["gradient_type_"].toBool();
+			}
+
+			if (region_data.contains("is_isotropic_permeability_") && region_data["is_isotropic_permeability_"].isBool())
+			{
+				this->is_isotropic_permeability_ = region_data["is_isotropic_permeability_"].toBool();
+			}
+
+			if (region_data.contains("number_of_regions_") && region_data["number_of_regions_"].isDouble())
+			{
+				this->number_of_regions_ = region_data["number_of_regions_"].toDouble();
+			}
+
+			/// Region Attributes
+			single_double_input_GUI_[0].values_.clear();
+			single_double_input_GUI_[1].values_.clear();
+			single_double_input_GUI_[2].values_.clear();
+			single_double_input_GUI_[3].values_.clear();
+			regions_colors.clear();
+			//// it is really necessary
+			region_colors_.clear();
+
+			if (region_data.contains("attributes") && region_data["attributes"].isArray())
+			{
+				QJsonArray attributes = region_data["attributes"].toArray();
+
+				for (int index = 0; index < attributes.size(); ++index)
+				{
+					QJsonObject object = attributes[index].toObject();
+
+					int id = object["id"].toDouble();
+					
+					/// Water Saturation
+					single_double_input_GUI_[0].values_[id] = object["water_saturation"].toDouble();
+					/// Threshold Pressure
+					single_double_input_GUI_[1].values_[id] = object["pct"].toDouble();
+					/// Sort Factor
+					single_double_input_GUI_[2].values_[id] = object["sort_factor"].toDouble();
+					/// Connate Water Saturation
+					single_double_input_GUI_[3].values_[id] = object["siw"].toDouble();
+
+					int red = object["red"].toDouble();
+					int green = object["green"].toDouble();
+					int blue = object["blue"].toDouble();
+
+					regions_colors[id] = QColor(red, green, blue);
+					
+					region_colors_[id] = { red, green, blue };
+				}
+			}
+
+
+			if (region_data.contains("permeability_x") && region_data["permeability_x"].isArray() )
+			{
+				QJsonArray permeability_x_Array = region_data["permeability_x"].toArray();
+
+				/// Permeability X
+				permeability_GUI_[0].gradient_values_.clear();
+				permeability_GUI_[0].is_inverted_.clear();
+
+				for (int index = 0; index < permeability_x_Array.size(); ++index)
+				{
+					QJsonObject object = permeability_x_Array[index].toObject();
+
+					int id = object["id"].toDouble();
+										
+					permeability_GUI_[0].gradient_values_[id].first  = object["min"].toDouble();
+					permeability_GUI_[0].gradient_values_[id].second = object["max"].toDouble();;
+					permeability_GUI_[0].is_inverted_[id]			 = object["is_inverted"].toBool();
+
+				}
+			}
+
+			if (region_data.contains("permeability_y") && region_data["permeability_y"].isArray())
+			{
+				QJsonArray permeability_y_Array = region_data["permeability_y"].toArray();
+
+				/// Permeability Y
+				permeability_GUI_[1].gradient_values_.clear();
+				permeability_GUI_[1].is_inverted_.clear();
+
+				for (int index = 0; index < permeability_y_Array.size(); ++index)
+				{
+					QJsonObject object = permeability_y_Array[index].toObject();
+
+					int id = object["id"].toDouble();
+
+					permeability_GUI_[1].gradient_values_[id].first = object["min"].toDouble();
+					permeability_GUI_[1].gradient_values_[id].second = object["max"].toDouble();;
+					permeability_GUI_[1].is_inverted_[id] = object["is_inverted"].toBool();
+
+				}
+			}
+
+			if (region_data.contains("permeability_z") && region_data["permeability_z"].isArray())
+			{
+				QJsonArray permeability_z_Array = region_data["permeability_z"].toArray();
+
+				/// Permeability Z
+				permeability_GUI_[2].gradient_values_.clear();
+				permeability_GUI_[2].is_inverted_.clear();
+
+				for (int index = 0; index < permeability_z_Array.size(); ++index)
+				{
+					QJsonObject object = permeability_z_Array[index].toObject();
+
+					int id = object["id"].toDouble();
+
+					permeability_GUI_[2].gradient_values_[id].first = object["min"].toDouble();
+					permeability_GUI_[2].gradient_values_[id].second = object["max"].toDouble();;
+					permeability_GUI_[2].is_inverted_[id] = object["is_inverted"].toBool();
+
+				}
+			}
+
+			if (region_data.contains("porosity") && region_data["porosity"].isArray())
+			{
+				QJsonArray porosity_Array = region_data["porosity"].toArray();
+
+				/// Permeability X
+				porosity_gradient_values_.clear();
+				is_inverted_porosity_gradient_values_.clear();
+
+				for (int index = 0; index < porosity_Array.size(); ++index)
+				{
+					QJsonObject object = porosity_Array[index].toObject();
+
+					int id = object["id"].toDouble();
+
+					porosity_gradient_values_[id].first = object["min"].toDouble();
+					porosity_gradient_values_[id].second = object["max"].toDouble();;
+					is_inverted_porosity_gradient_values_[id] = object["is_inverted"].toBool();
+
+				}
+			}
+				
+			this->createRegions(region_colors_);
+
+			if (this->is_isotropic_permeability_ == true)
+			{
+				ui_->checkBox_Isotropic_Permeability_->setChecked(true);
+			}else
+			{
+				ui_->checkBox_Isotropic_Permeability_->setChecked(false);
+			}
+
+
+			if (this->is_constant_ == true)
+			{
+				ui_->radioButton_Linear_->setChecked(true);
+			}
+			else
+			{
+				ui_->radioButton_Linear_->setChecked(false);
+			}
+
+			return true;
+		}
+
+		bool RegionWidget::write(QJsonObject& region_data)
+		{
+			region_data["gradient_type_"] = this->is_constant_;
+			region_data["is_isotropic_permeability_"] = this->is_isotropic_permeability_;
+			region_data["number_of_regions_"] = this->number_of_regions_;
+			/// Other Region Data
+
+			QJsonArray region_attributes;
+			QJsonArray permeability_x_attributes;
+			QJsonArray permeability_y_attributes;
+			QJsonArray permeability_z_attributes;
+			QJsonArray porosity_attributes;
+
+			for (int it = 0; it < this->number_of_regions_; it++)
+			{
+				QJsonObject attributes;
+
+				attributes["id"] = it;
+
+				/// Water Saturation
+				attributes["water_saturation"] = single_double_input_GUI_[0].values_[it];
+				/// Threshold Pressure
+				attributes["pct"] = single_double_input_GUI_[1].values_[it];
+				/// Sort Factor
+				attributes["sort_factor"] = single_double_input_GUI_[2].values_[it];
+				/// Connate Water Saturation
+				attributes["siw"] = single_double_input_GUI_[3].values_[it];
+
+				attributes["red"] = regions_colors[it].red();
+				attributes["green"] = regions_colors[it].green();
+				attributes["blue"] = regions_colors[it].blue();
+
+				/// Read Pearmeability Values And Porosity Values
+				QJsonObject permeability_x;
+				QJsonObject permeability_y;
+				QJsonObject permeability_z;
+				QJsonObject porosity;
+
+				porosity["id"] = it;
+				porosity["min"] = this->porosity_gradient_values_.at(it).first;
+				porosity["max"] = this->porosity_gradient_values_.at(it).second;
+				porosity["is_inverted"] = is_inverted_porosity_gradient_values_.at(it);
+
+				if (this->is_isotropic_permeability_ == true)
+				{
+					permeability_x["id"] = it;
+					permeability_x["min"] = permeability_GUI_[0].gradient_values_.at(it).first;
+					permeability_x["max"] = permeability_GUI_[0].gradient_values_.at(it).second;
+					permeability_x["is_inverted"] = permeability_GUI_[0].is_inverted_.at(it);
+
+
+					permeability_y["id"] = it;
+					permeability_y["min"] = permeability_GUI_[0].gradient_values_.at(it).first;
+					permeability_y["max"] = permeability_GUI_[0].gradient_values_.at(it).second;
+					permeability_y["is_inverted"] = permeability_GUI_[0].is_inverted_.at(it);
+
+					permeability_z["id"] = it;
+					permeability_z["min"] = permeability_GUI_[0].gradient_values_.at(it).first;
+					permeability_z["max"] = permeability_GUI_[0].gradient_values_.at(it).second;
+					permeability_z["is_inverted"] = permeability_GUI_[0].is_inverted_.at(it);
+				}
+				else
+				{
+					permeability_x["id"] = it;
+					permeability_x["min"] = permeability_GUI_[0].gradient_values_.at(it).first;
+					permeability_x["max"] = permeability_GUI_[0].gradient_values_.at(it).second;
+					permeability_x["is_inverted"] = permeability_GUI_[0].is_inverted_.at(it);
+
+
+					permeability_y["id"] = it;
+					permeability_y["min"] = permeability_GUI_[1].gradient_values_.at(it).first;
+					permeability_y["max"] = permeability_GUI_[1].gradient_values_.at(it).second;
+					permeability_y["is_inverted"] = permeability_GUI_[1].is_inverted_.at(it);
+
+					permeability_z["id"] = it;
+					permeability_z["min"] = permeability_GUI_[2].gradient_values_.at(it).first;
+					permeability_z["max"] = permeability_GUI_[2].gradient_values_.at(it).second;
+					permeability_z["is_inverted"] = permeability_GUI_[2].is_inverted_.at(it);
+				}
+
+				region_attributes.append(attributes);
+				permeability_x_attributes.append(permeability_x);
+				permeability_y_attributes.append(permeability_y);
+				permeability_z_attributes.append(permeability_z);
+				porosity_attributes.append(porosity);
+			}
+			
+			region_data["permeability_x"] = permeability_x_attributes;
+			region_data["permeability_y"] = permeability_y_attributes;
+			region_data["permeability_z"] = permeability_z_attributes;
+			region_data["porosity"]		  = porosity_attributes;
+			region_data["attributes"]     = region_attributes;
+
+			return true;
 		}
 
 		void RegionWidget::getRegionData(int& _number_of_regions,
@@ -608,16 +868,16 @@ namespace RRM
 					else
 					{
 						/// Special field. It is used when the isotropic permeability is checked to feed all the permeabilities inputs
-						permeability_GUI_[0].gradient_Label_->setText(tr("Permeabilty XYZ"));
+						permeability_GUI_[0].gradient_Label_->setText(tr("Permeabilty X"));
 						permeability_GUI_[0].doubleSpinbBox_high_->setEnabled(!is_constant_);
+						permeability_GUI_[0].qxt_span_slider_->setEnabled(true);
+						permeability_GUI_[0].slider_->setEnabled(true);
 
 						for (std::size_t index = 1; index < permeability_GUI_.size(); index++)
 						{
 							/// @FIXME September  PERMEABILITY			
 							/// The slider only depends on whether is isotropic or not.
 							permeability_GUI_[index].slider_->setEnabled(!is_isotropic_permeability_);
-							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
-							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].qxt_span_slider_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].gradient_Label_->setEnabled(!is_isotropic_permeability_);
 							permeability_GUI_[index].doubleSpinbBox_low_->setEnabled(!is_isotropic_permeability_);
@@ -783,6 +1043,7 @@ namespace RRM
 
 					regions_colors[region_index_] = QColor(r, g, b);
 
+					/// Create Regions with Default Values
 					if (porosity_gradient_values_.count(region_index_) == 0)
                     {
                         /// @FIXME Me September
@@ -925,4 +1186,5 @@ namespace RRM
 			return result;
 		}
 
+		
 } /* namespace RRM */

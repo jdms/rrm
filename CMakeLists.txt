@@ -61,7 +61,11 @@ ENDIF()
 include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets )
 include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator)
 include_directories( ${CMAKE_BINARY_DIR}/simulator/FlowDiagnosticsApp_autogen/include)
+include_directories( ${CMAKE_BINARY_DIR}/simulator/FlowDiagnosticsApp_autogen/include_Debug)
+include_directories( ${CMAKE_BINARY_DIR}/simulator/FlowDiagnosticsApp_autogen/include_Release)
 include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include )
+include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include_Debug )
+include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include_Release )
 
 include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( "./" )
@@ -76,10 +80,14 @@ OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
 
 if( RRM_DIRECTORY_LIBRARIES )
 
-    set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
+
+    set( Qt5_DIR "C:/Qt/5.8/msvc2017_64/lib/cmake/Qt5" )
+    #set( Qt5_DIR "C:/Qt/5.10.1/msvc2017_64/lib/cmake/Qt5" )
+#    set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
     set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
     set( GLEW_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
-    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
+    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x64/glew32.lib )
+#    set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
 
 endif()
 
@@ -109,20 +117,16 @@ include_directories( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
 add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
 
 
-
-set( OPENVOLUMEMESH_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/include )
-set( OPENVOLUMEMESH_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/libs/OpenVolumeMesh/lib/x32 )
-set( OPENVOLUMEMESH_LIBRARY optimized ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMesh.lib
-    debug   ${OPENVOLUMEMESH_LIBRARY_DIR}/OpenVolumeMeshd.lib )
-
-include_directories( SYSTEM ${OPENVOLUMEMESH_INCLUDE_DIR} )
-
-
-set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre )
+set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
 include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
 find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
 
 add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/tinyobjloader EXCLUDE_FROM_ALL )
+
+set(COLORWRAP_BUILD_SHARED OFF) 
+set(COLORWRAP_EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3)
+add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/colorwrap EXCLUDE_FROM_ALL )
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs/colorwrap/include)
 
 ###############################################
 # Preliminary support for stratmod library
@@ -135,15 +139,17 @@ set(BUILD_USING_OPENMP ON)
 set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
 
 set(STRATMOD_CMAKE_ARGS 
-    -DBUILD_USING_OPENMP=${BUILD_USING_OPENMP}
-    -DBUILD_SHARED_LIBRARY=ON
+    -DSTRATMOD_EIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
+    -DSTRATMOD_BUILD_USING_OPENMP=${BUILD_USING_OPENMP}
+    -DSTRATMOD_BUILD_SHARED_LIBRARY=ON
     -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
     )
 
 if(BUILD_USING_OPENMP AND APPLE)
     set(STRATMOD_CMAKE_ARGS 
-        -DBUILD_USING_OPENMP=ON 
-        -DBUILD_SHARED_LIBRARY=${BUILD_SHARED_STRATMODLIB}
+        -DSTRATMOD_EIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
+        -DSTRATMOD_BUILD_USING_OPENMP=ON 
+        -DSTRATMOD_BUILD_SHARED_LIBRARY=${BUILD_SHARED_STRATMODLIB}
         -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
         -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake
         )
@@ -161,7 +167,7 @@ if(MSVC)
     set(STRATMODLIB ${STRATMOD_SOURCE}/stratmod/lib/stratmod.lib)
 else()
     set(STRATMODLIB "${STRATMOD_SOURCE}/stratmod/lib/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstratmod.a)
+    #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstr  atmod.a)
 endif()
 
 
@@ -169,10 +175,17 @@ include_directories(${STRATMOD_SOURCE}/stratmod/include)
 
 #message(WARNING stratmod)
 
+################################################
+## Trimesh2
+################################################
+## For Libraies without find*.cmake
+#set (  TRIMESH2_INCLUDE_DIR  "${CMAKE_CURRENT_SOURCE_DIR}/libs/trimesh2/install/include/")
+#set (  TRIMESH2_LIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/trimesh2/install/lib/trimesh2.lib")
 
 ###############################################
 # Main source
 ###############################################
+
 
 add_subdirectory( src )
 

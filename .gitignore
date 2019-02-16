@@ -101,3 +101,10 @@ octave-workspace
 .settings
 .project
 .cproject
+.cproject
+.project
+.settings
+build*
+install*
+
+

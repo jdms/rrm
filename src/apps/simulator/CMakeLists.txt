@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.1 FATAL_ERROR )
 
 
 project( FlowDiagnosticsApp VERSION 3.1 LANGUAGES CXX )
@@ -6,6 +6,26 @@ project( FlowDiagnosticsApp VERSION 3.1 LANGUAGES CXX )
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
                      ${CMAKE_CURRENT_BINARY_DIR} )
+
+find_package( Qt5Widgets REQUIRED )
+# find_package(Qt5 REQUIRED COMPONENTS Core Widgets Gui)
+
+
+################################################################
+## TODO: research how cmake interacts with Qt
+
+# Enable automoc
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(AUTOMOC_MOC_OPTIONS PROPERTIES FOLDER CMakeAutomocTargets)
+set_property(GLOBAL PROPERTY AUTOMOC_FOLDER CMakeAutomocTargets)
+
+# Is the following required? 
+# ENABLE CMP0020: Automatically link Qt executables to qtmain target on Windows.
+cmake_policy(SET CMP0020 NEW)
+
+################################################################
 
 
 include_directories( SYSTEM ${OPENVOLUMEMESH_INCLUDE_DIR} )
@@ -157,6 +177,7 @@ set( SIMULATOR_SOURCES
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ###############################################
@@ -167,6 +188,6 @@ include_directories (${PROJECT_SOURCE_DIR})
 include_directories (${PROJECT_BINARY_DIR})
 
 
-add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_UI_SOURCES} ${SIMULATOR_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} Qt5::Widgets RRMModel ${HYPRE} ${OPENVOLUMEMESH_LIBRARY} TinyObjLoader  )
+add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_MOC_HEADERS} ${SIMULATOR_UI_SOURCES} ${SIMULATOR_SOURCES} )
+#target_link_libraries( ${PROJECT_NAME} Qt5::Widgets ${HYPRE} )
 

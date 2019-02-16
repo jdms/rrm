@@ -78,15 +78,15 @@ class Mesh
 
 
 
-        void showVertices( bool status );
-        void showEdges( bool status );
-        void showFaces( bool status );
+        //void showVertices( bool status );
+        //void showEdges( bool status );
+        //void showFaces( bool status );
         void showBoundingBox( bool status );
 
 
-        bool showVertices() const;
-        bool showEdges() const;
-        bool showFaces() const;
+        //bool showVertices() const;
+        //bool showEdges() const;
+        //bool showFaces() const;
         bool showBoundingBox() const;
 
 
@@ -100,16 +100,12 @@ class Mesh
 
         void reloadShader();
 
-        void clear();
-
-        void resetBuffers();
-        void deleteShaders();
         /// get the correct depth from the model in QGraphicsScene coordinates
-        float getDepth() const;
+        /// float getDepth() const;
         std::tuple<Eigen::Vector3f, Eigen::Vector3f>  getBoudingBoxDimension() const;
 
         /// OpenVolumeMesh Integration
-        void setTetrahedronGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
+		void setTetrahedronGeometry(const std::vector<float>& _vertices_array, const std::vector < unsigned int >& _faces_array);
         void setHexahedronGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
         void setSkeletonGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
         void setTriangleSkeletonGeometry(const std::vector < unsigned int >& _faces_array, const std::vector<float>& _vertices_array);
@@ -120,6 +116,12 @@ class Mesh
         /// @TODO Later, move this fucntions to FlowvizualizationController
         void loadWellPosition(int _number_of_wells, const std::map<int, Eigen::Vector4d>& _vertices_array, const std::map<int, int>& _types, const std::map< int, Eigen::Vector2d >& _range);
         Eigen::Affine3f getModelMatrix() const;
+
+		void clear();
+		void resetBuffers();
+		//// June 2018. 
+		/// @FIXEME  This class is under refactoring
+
 
     protected:
 
@@ -133,9 +135,9 @@ class Mesh
         Tucano::Shader* shader;
         Tucano::Shader* quad_phong_;
 
-        bool show_vertices;
-        bool show_edges;
-        bool show_faces;
+        //bool show_vertices;
+        //bool show_edges;
+        //bool show_faces;
 
         bool apply_crosssection_clipping;
 
@@ -150,7 +152,7 @@ class Mesh
         bool show_bbox;
 
         /// get the correctly depth value
-        float depth_;
+        /// float depth_;
         Eigen::Affine3f model_matrix_;
 
         Eigen::Vector3f dim_max;
@@ -168,6 +170,15 @@ class Mesh
         std::map<std::string, OpenGLGeometry> entities_;
 
         std::size_t number_of_faces;
+
+	private:
+		
+		void deleteShaders();
+
+		//// June 2018. 
+		/// @FIXEME  This class is under refactoring
+
+
 };
 
 #endif // MESH_H

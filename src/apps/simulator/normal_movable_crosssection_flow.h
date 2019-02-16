@@ -28,9 +28,7 @@
 #include "ui_normal_movable_crosssection_flow.h"
 
 
-
-class NormalMovableCrossSectionFlow : public QWidget,
-                                      private Ui::NormalMovableCrossSectionFlow
+class NormalMovableCrossSectionFlow : public QWidget
 {
     Q_OBJECT
 
@@ -50,6 +48,11 @@ class NormalMovableCrossSectionFlow : public QWidget,
 
         void sendCrossSectionNormalCoordinates( float x, float y, float z );
         void canceled();
+
+
+    private:
+
+        Ui::NormalMovableCrossSectionFlow* ui;
 
 
 

@@ -1,645 +1,686 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file sketchwindow.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class SketchWindow
  */
 
 
+#include <cmath>
 
 #include <QToolBar>
 #include <QFileDialog>
+#include <QGroupBox>
+#include <QPushButton>
 
 #include "sketchwindow.h"
+
+#define PI 3.14159265
 
 
 SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 {
-    createWindow();
-    createToolBar();
+    createInterface();
 }
-
 
 
 void SketchWindow::createToolBar()
 {
-
-    QToolBar *tb_actions = new QToolBar();
-
-
     cp_color = new ColorPicker( this );
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit defineColorCurrent( color_ ); } );
+    cp_color->setToolTip( "Sketch Color" );
 
-    ac_discard = new QAction( "Discard", this );
-    ac_discard->setIcon(QIcon(":/images/icons/denyCurve.png"));
+    ac_cancel_sketch = new QAction( "Cancel", this );
+    ac_cancel_sketch->setToolTip( "Cancel Sketch" );
 
-    ac_commit = new QAction( "Commit", this );
-    ac_commit->setIcon(QIcon(":/images/icons/add_curve2.png"));
+    ac_submit_sketch = new QAction( "Submit", this );
+    ac_submit_sketch->setToolTip( "Submit Sketch" );
 
-    ac_create = new QAction( "Create", this );
-    ac_create->setIcon(QIcon(":/images/icons/accept.png"));
-    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
+    ac_end_object = new QAction( "End", this );
+    ac_end_object->setToolTip( "Create Surface" );
 
+    tb_sketch = addToolBar( "Edit Sketch" );
+    tb_sketch->addWidget( cp_color );
+    tb_sketch->addAction( ac_cancel_sketch );
+    tb_sketch->addAction( ac_submit_sketch );
+    tb_sketch->addAction( ac_end_object );
 
-    ac_edit_boundary = new QAction( "Edit Boundary", this );
-    ac_edit_boundary->setIcon(QIcon(":/images/icons/newBoundary.png"));
-    ac_edit_boundary->setCheckable( true );
+    ac_resize_boundary = new QAction( "Resize boundary", this );
+    ac_resize_boundary->setToolTip( "Resize Boundary" );
+    ac_resize_boundary->setCheckable( true );
+    ac_resize_boundary->setChecked( RESIZE_BOUNDARY_DEFAULT_STATUS );
+    tb_boundary = addToolBar( "Boundary" );
+    tb_boundary->addAction( ac_resize_boundary );
 
-    ac_edit_scene = new QAction( "Edit Scene", this );
-    ac_edit_scene->setIcon(QIcon(":/images/icons/select_curve.png"));
-    ac_edit_scene->setCheckable( true );
+    ac_resize_image = new QAction( "Resize image", this );
+    ac_resize_image->setToolTip( "Resize Image" );
+    ac_resize_image->setCheckable( true );
+    ac_remove_image = new QAction( "Remove image", this );
+    ac_remove_image->setToolTip( "Remove Image" );
 
-    ac_screenshot = new QAction( "Screenshot", this );
-    ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
-    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
-
-
-    ac_axes = new QAction( "Axes", this );
-    ac_axes->setIcon(QIcon(":/images/icons/axes.png"));
-    ac_axes->setCheckable( true );
-    ac_axes->setChecked( true );
-
-    ac_height_map = new QAction( "Map", this );
-    connect( ac_height_map, &QAction::triggered, [=](){ if( tv_main != nullptr ) std::cout << "tv_main->devicePixelRatio() = " << tv_main->devicePixelRatio() << std::endl << std::flush;
-                                                                                              emit getHeightMap(); } );
+    tb_image = addToolBar( "Image" );
+    tb_image->addAction( ac_resize_image );
+    tb_image->addAction( ac_remove_image );
 
     ac_fixed_csections = new QAction( "Fixed Cross-Sections", this );
     ac_fixed_csections->setIcon(QIcon(":/images/icons/fixedcsections.png"));
     ac_fixed_csections->setCheckable( true );
-    connect( ac_fixed_csections, &QAction::toggled, cs, &QDockWidget::setVisible );
+
+    ac_show_bar = new QAction( "Vertical Exaggeration", this );
+    ac_show_bar->setToolTip( "Show Vertical Exaggeration and Dip Angle Bar" );
+    ac_show_bar->setCheckable( true);
+    ac_show_bar->setChecked( SHOW_VERTICAL_EXAGGERATION );
+    tb_lateral_bar = addToolBar( "Lateral Bar" );
+    tb_lateral_bar->addAction( ac_show_bar );
+
+    ac_use_last_trajectory = new QAction( "Last trajectory" );
+    ac_use_last_trajectory->setToolTip( "Reuse Last Trajectory" );
+    tb_trajectory = addToolBar( "Trajectory" );
+    tb_trajectory->addAction( ac_use_last_trajectory );
+
+    ac_axes = new QAction( "Axes", this );
+    ac_axes->setToolTip( "Show axes" );
+    ac_axes->setIcon(QIcon(":/images/icons/axes.png"));
+    ac_axes->setCheckable( true );
+    ac_axes->setChecked( true );
+
+    ac_screenshot = new QAction( "Screenshot", this );
+    ac_screenshot->setToolTip( "Screenshot" );
+    ac_screenshot->setIcon(QIcon(":/images/icons/Camera.png"));
+    tb_misc = addToolBar( "Misc" );
+    tb_misc->addAction( ac_fixed_csections );
+    tb_misc->addAction( ac_screenshot );
+    tb_misc->addAction( ac_axes );
+
+    ac_select_regions = new QAction( "Select Regions", this );
+    ac_select_regions->setToolTip( "Select Regions" );
+    ac_select_regions->setCheckable( true );
+    ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
+
+    tb_region = addToolBar( "Region" );
+    tb_region->addAction( ac_select_regions );
+    tb_region->setVisible( false );
 
 
-    ac_enable_preview = new QAction( "Enable Preview", this );
-    ac_enable_preview->setIcon(QIcon(":/images/icons/preview.png"));
-    ac_enable_preview->setCheckable( true );
-    ac_enable_preview->setChecked( true );
-
-    connect( ac_enable_preview, &QAction::toggled, [=]( bool status_ ){ emit enablePreview( status_ ); } );
-
-
-    tb_actions->addWidget( cp_color );
-    tb_actions->addSeparator();
-    tb_actions->addAction( ac_discard );
-    tb_actions->addAction( ac_commit );
-    tb_actions->addAction( ac_create );
-    tb_actions->addSeparator();
-    tb_actions->addAction( ac_edit_boundary );
-    tb_actions->addAction( ac_edit_scene );
-    tb_actions->addSeparator();
-    tb_actions->addAction( ac_enable_preview );
-    tb_actions->addAction( ac_fixed_csections );
-    tb_actions->addAction( ac_axes );
-//    tb_actions->addAction( ac_height_map );
-    tb_actions->addAction( ac_screenshot );
-
-
-    addToolBar( tb_actions );
 
 }
 
 
-void SketchWindow::createWindow()
+void SketchWindow::createInterface()
 {
-    cs = new CanvasStack();
-    cs->setWindowTitle( "Fixed Cross-Sections" );
+    createToolBar();
+
+    fixed_csections_canvas = new CanvasStack();
+    fixed_csections_canvas->setWindowTitle( "Fixed Cross-Sections" );
+    fixed_csections_canvas->setVisible( false );
+}
 
 
-    cs->setVisible( false );
-    cs->setMinimumSize( WIDTH_APP, HEIGHT_APP );
+std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
+{
 
-    connect( cs, &CanvasStack::closeSubWindow, this, &SketchWindow::removeFixedCrossSectionCanvas );
+    // hidding actions not associated to the main cross-sections
+    tb_trajectory->setVisible( false );
 
-    hb_central_widget = new QHBoxLayout( this );
+    sketchingcanvas = std::make_shared< SketchingCanvas >();
+    //TODO: create a enum to identify the type of the cross-section, so that we can move the scale to inside the SketchingCanvas class
+    sketchingcanvas->scale( 1, -1 );
 
-    QWidget* central_widget = new QWidget( this );
-    central_widget->setLayout( hb_central_widget );
-    setCentralWidget( central_widget );
+    createLateralBar();
+
+    QHBoxLayout* hb_central = new QHBoxLayout( this );
+    hb_central->addWidget( sketchingcanvas.get() );
+    hb_central->addWidget( bar_ );
+
+    QWidget* central_ = new QWidget();
+    central_->setLayout( hb_central );
+    setCentralWidget( central_ );
+
+
+    // connects related to the fixed cross-sections widget
+    createFixedCrossSectionsActions();
+
+    // connects related to scene: from actions
+    createToolbarActions( sketchingcanvas.get() );
+
+    // connects related to scene: from scene
+    createMainSceneActions( sketchingcanvas.get() );
+
+    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+    return scene_;
+}
+
+
+void SketchWindow::createLateralBar()
+{
+
+    latBar = new LateralBar();
+
+    QVBoxLayout* hb_lateral_bar = new QVBoxLayout();
+    hb_lateral_bar->addWidget( latBar );
+
+    bar_ = new QWidget();
+    bar_->setMinimumWidth( 170 );
+    bar_->setLayout( hb_lateral_bar );
+    bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
+
+    createLateralBarActions();
 
 }
 
 
-void SketchWindow::addMainCanvas( CrossSection* const& cs_ )
+std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 {
 
-    if( cs_ == nullptr ) return;
+    // hidding actions not associated to the top view cross-sections
+    tb_trajectory->setVisible( true );
+    tb_lateral_bar->setVisible( false );
 
-    main_scene = new SketchScene( cs_ );
-    main_scene->setCurrent( true );
-
-    main = new QGraphicsView();
-
-    main->scale( 1, -1 );
-    main->setScene( main_scene );
-
-    ////// teste
-
-    QColor color_ = cp_color->currentColor();
-    main_scene->setCurrentColor( color_.red(), color_.green(), color_.blue() );
-
-    connect( ac_discard, &QAction::triggered, [=](){ if( main_scene == nullptr) return; emit main_scene->discard(); } );
-
-    connect( ac_commit, &QAction::triggered, [=](){ if( main_scene == nullptr) return; emit main_scene->commit(); } );
+    topviewcanvas = std::make_shared< SketchingCanvas >();
+    const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+    setCentralWidget( topviewcanvas.get() );
 
 
-    connect( ac_edit_scene, &QAction::triggered, [=]( bool status_ ){ if( main_scene == nullptr) return; main_scene->edit( status_ ); } );
+    // connects related to scene: from actions
+    createToolbarActions( topviewcanvas.get() );
 
-    connect( ac_edit_boundary, &QAction::triggered, [=]( bool status_ ){ if( main_scene == nullptr) return;
-                                                    if( status_ == true ) main_scene->setModeEditingBoundary();
-                                                    else main_scene->setModeSketching(); } );
-
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ )
-                                                    { if( main_scene == nullptr) return; main_scene->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
-
-    connect( ac_axes, &QAction::triggered, main_scene, &SketchScene::setAxesVisible );
+    // connects related to scene: from scene
+    createTopViewSceneActions( topviewcanvas.get() );
 
 
-
-    connect( main_scene, &SketchScene::acceptVolumeDimensions, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
-
-    connect( main_scene, &SketchScene::acceptCurve, [=]( const PolyCurve& curve_, double depth_ ){ emit acceptCurve( curve_, depth_ ); } );
-
-    connect( main_scene, &SketchScene::commitObject, [=](){ emit commitObject(); } );
-
-    connect( main_scene, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
-
-    connect( main_scene, &SketchScene::setImageCrossSection, [=]( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
-                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); updateCanvas(); }  );
-
-
-    connect( main_scene, &SketchScene::removeCurveFromObject, [=]( double depth_, std::size_t index_ )
-                                                            { emit removeCurveFromObject( depth_, index_ ); } );
-
-
-    connect( main_scene, &SketchScene::removeImageFromCrossSection, [=]( double depth_ )
-                                                            { emit removeImageFromCrossSection( depth_ ); } );
-
-
-
-
-    ////// teste
-
-    ac_height_map->setVisible( false );
-    hb_central_widget->insertWidget( 0, main );
-
+    return scene_;
 }
 
 
-void SketchWindow::addTopViewCanvas( CrossSection* const& cs_ )
-{
-    if( cs_ == nullptr ) return;
-
-    tv_scene = new SketchScene( cs_ );
-    tv_scene->setCurrent( true );
-
-    tv_main = new QGraphicsView();
-    tv_main->setScene( tv_scene );
-
-    ////// teste
-
-    QColor color_ = cp_color->currentColor();
-    tv_scene->setCurrentColor( color_.red(), color_.green(), color_.blue() );
-
-    connect( ac_discard, &QAction::triggered, [=](){ if( tv_scene == nullptr) return; emit tv_scene->discard(); } );
-
-    connect( ac_commit, &QAction::triggered, [=](){ if( tv_scene == nullptr) return; emit tv_scene->commit(); } );
-
-//    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
-
-    connect( ac_edit_scene, &QAction::triggered, [=]( bool status_ ){ if( tv_scene == nullptr) return; tv_scene->edit( status_ ); } );
-
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ )
-    { if( tv_scene == nullptr) return; tv_scene->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
-
-    connect( ac_axes, &QAction::triggered, tv_scene, &SketchScene::setAxesVisible );
-
-
-
-    connect( tv_scene, &SketchScene::acceptVolumeDimensions, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
-
-    connect( tv_scene, &SketchScene::acceptCurve, [=]( const PolyCurve& curve_, double depth_ ){ emit acceptCurve( curve_, depth_ ); } );
-
-    connect( tv_scene, &SketchScene::commitObject, [=](){ emit commitObject(); } );
-
-    connect( tv_scene, &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
-
-    connect( tv_scene, &SketchScene::setImageCrossSection, [=]( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
-    { emit setImageToTopView( file_, ox_, oy_, x_, y_ ); } );
-
-
-    connect( tv_scene, &SketchScene::removeCurveFromObject, [=]( double depth_, std::size_t index_ )
-    { emit removeCurveFromObject( depth_, index_ ); } );
-
-
-    connect( tv_scene, &SketchScene::removeImageFromCrossSection, [=](){ emit removeImageFromTopView(); } );
-
-    ////// teste
-
-    ac_fixed_csections->setVisible( false );
-    ac_edit_boundary->setVisible( false );
-    ac_enable_preview->setVisible( false );
-    hb_central_widget->insertWidget( 0, tv_main );
-
-}
-
-
-
-void SketchWindow::updateCanvas()
+void SketchWindow::createToolbarActions( const SketchingCanvas* canvas_ )
 {
 
-    if( main != nullptr )
+    const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
+
+
+    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
     {
+        scene_->setSketchColor( color_ );
+        emit defineColorCurrent( color_.red(), color_.green(), color_.blue() );
+    } );
 
-        if( main_scene != nullptr)
-        {
-            main_scene->updateVolume();
-            main_scene->updateCrossSection();
-        }
+    connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
 
+    connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
+
+    connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
+
+    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
+
+    connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
+
+    connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
+
+    connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
+
+    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
+
+    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
+
+
+    // if the window is the top-view window, it does not contain the lateral bar 'bar_'
+    if( bar_ == nullptr ) return;
+    connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
+
+}
+
+
+void SketchWindow::createMainSceneActions( const  SketchingCanvas* canvas_ )
+{
+
+    const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
+
+    connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
+
+    connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
+    { emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
+        ac_resize_boundary->setChecked( false ); } );
+
+    connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+    { emit addCurve( curve_, dir_, depth_ ); }  );
+
+    connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
+
+    connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
+
+    connect( scene_.get(), &SketchScene::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
+    {
+        emit removeImageFromCrossSection( dir_, depth_ );
+    } );
+
+
+    connect( scene_.get(), &SketchScene::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ ){ emit getRegionByPoint( px_, py_, depth_, dir_ ); }  );
+
+    connect( scene_.get(), &SketchScene::objectSelected, [=]( const std::size_t& id_ ) { emit objectSelected( id_ ); } );
+
+    connect( scene_.get(), &SketchScene::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ) { emit sendSketchOfSelection( curve_, dir_, depth_ ); } );
+
+    connect( scene_.get(), &SketchScene::regionSelected, [=]( const std::size_t& id_, bool status_ ) { emit regionSelected( id_, status_ ); } );
+
+    connect( scene_.get(), &SketchScene::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ) { emit sendPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
+
+    connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
+
+}
+
+
+void SketchWindow::createTopViewSceneActions( const SketchingCanvas* canvas_ )
+{
+    const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
+
+    connect( ac_use_last_trajectory, &QAction::triggered, [=](){ emit useLastTrajectory(); } );
+
+    connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
+    {
+        emit updateVolumeDimensions( dir_, width_, height_ );
+        applyVerticalExaggeration();
+        ac_resize_boundary->setChecked( false );
+    } );
+
+    connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_ ){ emit addTrajectory( curve_ ); }  );
+
+    connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
+
+    connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
+
+    connect( scene_.get(), &SketchScene::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ ){ emit getRegionByPoint( px_, py_, depth_, dir_ ); }  );
+
+    connect( scene_.get(), &SketchScene::sendSketchOfSelection, [=]( const PolyCurve& curve_ , const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ) { emit sendSketchOfSelection( curve_, dir_, depth_ ); } );
+
+    connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
+
+    connect( scene_.get(), &SketchScene::sketchDoneGuidedExtrusion, [=]( const PolyCurve& curve_ ) { emit sketchDoneGuidedExtrusion( curve_ ); } );
+
+}
+
+
+void SketchWindow::createLateralBarActions()
+{
+
+    connect( latBar, &LateralBar::sgn_updateVerticalExaggeration, [=]( double v_ )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        Settings::CrossSection::CrossSectionDirections dir_;
+        double depth_;
+        scene_->getCrossSectionInformation( dir_, depth_ );
+
+        // if cross-section is on the height direction, dont apply since it does not have height to be scaled
+        if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
+        sketchingcanvas->setVerticalExaggeration( v_ );
+        emit setVerticalExaggeration( v_ );
+    } );
+
+
+    connect( latBar, &LateralBar::sgn_resetVerticalExaggeration, [=]()
+    {
+        sketchingcanvas->stopVerticalExaggeration();
+    } );
+
+    connect( latBar, &LateralBar::sgn_sendDipAnglePicture, this, &SketchWindow::showDipAngle );
+
+    connect( latBar, &LateralBar::sgn_setDipAnglePictureMovable, this, &SketchWindow::setDipAnglePictureMovable );
+}
+
+
+void SketchWindow::createFixedCrossSectionsActions()
+{
+
+    connect( fixed_csections_canvas, &CanvasStack::closeSubWindow, [=]( double id_ )
+    {
+        emit removeMarkerFromSlider( id_ );
+    } );
+
+    connect( ac_fixed_csections, &QAction::toggled, fixed_csections_canvas, &CanvasStack::setVisible );
+
+    connect( fixed_csections_canvas, &CanvasStack::windowClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
+
+}
+
+
+std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Settings::CrossSection::CrossSectionDirections& dir_, QColor color_ )
+{
+    SketchingCanvas* canvas_ = new SketchingCanvas();
+    const std::shared_ptr< SketchScene >&scene_ = canvas_->getScene();
+    fixed_csections_canvas->addElement( depth_, canvas_ );
+    fixed_csections_canvas->setVisible( true );
+
+    //TODO: create a enum to identify the type of the cross-section, so that we can move the scale to inside the SketchingCanvas class
+    // it is necessary due to the qt coordinate system
+    if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
+        canvas_->scale( 1, -1 );
+
+    createToolbarActions( canvas_ );
+
+    createMainSceneActions( canvas_ );
+
+
+    return scene_;
+}
+
+
+void SketchWindow::removeCanvas( double depth_ )
+{
+    if( fixed_csections_canvas->findElement( depth_ ) == false ) return;
+    fixed_csections_canvas->removeElement( depth_ );
+}
+
+
+void SketchWindow::removeAllCanvas()
+{
+
+    if( fixed_csections_canvas == nullptr ) return;
+
+    CanvasContainer::Iterator it =  fixed_csections_canvas->begin();
+    while( it != fixed_csections_canvas->end() )
+    {
+        fixed_csections_canvas->removeElement( it->first );
+        it =  fixed_csections_canvas->begin();
+    }
+    fixed_csections_canvas->clear();
+    fixed_csections_canvas->close();
+
+}
+
+
+void SketchWindow::updateColorWidget(int red_, int green_, int blue_)
+{
+    if( cp_color == nullptr ) return;
+    cp_color->setColor( QColor( red_, green_, blue_ ) );
+
+    if( sketchingcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+    }
+    if( topviewcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
     }
 
-    if( tv_main != nullptr )
+    if( fixed_csections_canvas == nullptr ) return;
+    CanvasContainer::Iterator it =  fixed_csections_canvas->begin();
+    while( it != fixed_csections_canvas->end() )
     {
-
-        if( tv_scene != nullptr)
-        {
-            tv_scene->updateVolume();
-            tv_scene->updateCrossSection();
-        }
-
-    }
-
-    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
-    {
-        QGraphicsView* gview_ = cs->getElement( it->first );
-        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
-        sc_->updateVolume();
-        sc_->updateCrossSection();
-    }
-
-}
-
-
-
-
-void SketchWindow::addCrossSection( CrossSection* const& cs_ )
-{
-    if( cs_ == nullptr ) return;
-
-    if( tv_scene == nullptr) return;
-    tv_scene->addCrossSection( cs_ );
-
-}
-
-
-
-
-void SketchWindow::addObject( Object* const& obj_ )
-{
-
-    if( main == nullptr ) return;
-    if( main_scene == nullptr) return;
-
-    main_scene->addObject( obj_ );
-
-    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
-    {
-        QGraphicsView* gview_ = cs->getElement( it->first );
-        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
-        sc_->addObject( obj_ );
-    }
-
-}
-
-
-void SketchWindow::updateObject( const std::size_t& index_ )
-{
-
-    if( main == nullptr ) return;
-    if( main_scene == nullptr) return;
-
-    main_scene->updateObject( index_ );
-
-
-    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
-    {
-        QGraphicsView* gview_ = cs->getElement( it->first );
-        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
-        sc_->updateObject( index_ );
+        SketchingCanvas* canvas_ = static_cast< SketchingCanvas* >( fixed_csections_canvas->getElement( it->first ) );
+        const std::shared_ptr< SketchScene >&scene_ = canvas_->getScene();
+        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+        ++it;
     }
 }
 
 
-
-
-void SketchWindow::addTrajectory( Object* const& obj_ )
+void SketchWindow::disableResizeVolume( bool status_ )
 {
-
-    if( tv_scene == nullptr ) return;
-    tv_scene->addTrajectory( obj_ );
+    if( ac_resize_boundary == nullptr ) return;
+    ac_resize_boundary->setDisabled( status_ );
 }
 
 
-void SketchWindow::updateTrajectory( const std::size_t& index_ )
+void SketchWindow::setModeSelecting( bool status_ )
 {
-    if( tv_scene == nullptr ) return;
-    tv_scene->updateTrajectory( index_ );
-}
-
-
-
-
-
-void SketchWindow::setModeSelecting()
-{
-    if( main == nullptr ) return;
-    if( main_scene == nullptr) return;
-
-    main_scene->setModeSelecting();
-
-    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+    // this method is being used just to disable the select status.
+    // needs to be changed
+    if( sketchingcanvas != nullptr )
     {
-        QGraphicsView* gview_ = cs->getElement( it->first );
-        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
-        sc_->setModeSelecting();
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        scene_->setSelectingStratigraphyMode( false );
+    }
+    if( topviewcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+        scene_->setSelectingStratigraphyMode( false );
     }
 }
 
 
-void SketchWindow::setModeSketching()
+void SketchWindow::setModeSelectingStratigraphies( bool status_ )
 {
-    if( main == nullptr ) return;
-    if( main_scene == nullptr) return;
-
-    main_scene->setModeSketching();
-
-    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
+    if( sketchingcanvas != nullptr )
     {
-        QGraphicsView* gview_ = cs->getElement( it->first );
-        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
-        sc_->setModeSketching();
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        scene_->setSelectingStratigraphyMode( status_ );
     }
-
+    if( topviewcanvas != nullptr )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+        scene_->setSelectingStratigraphyMode( status_ );
+    }
 }
 
 
-
-void SketchWindow::setCurrentColor( int r_, int g_, int b_ )
+void SketchWindow::setModeRegionSelecting( bool status_ )
 {
-    cp_color->setColor( QColor( r_, g_, b_ ) );
-
-    if( main != nullptr )
+    if( sketchingcanvas != nullptr )
     {
-        if( main_scene != nullptr)
-            main_scene->setCurrentColor( r_, g_, b_ );
-
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        scene_->setSelectingRegionMode( status_ );
     }
-    if( tv_main != nullptr )
+    if( topviewcanvas != nullptr )
     {
-        if( tv_scene != nullptr )
-            tv_scene->setCurrentColor( r_, g_, b_ );
-
+        const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+        scene_->setSelectingRegionMode( status_ );
     }
-
-    for ( CanvasContainer::Iterator it =  cs->begin(); it != cs->end(); ++it )
-    {
-        QGraphicsView* gview_ = cs->getElement( it->first );
-        SketchScene* sc_ = ( SketchScene* )( gview_->scene() );
-        sc_->setCurrentColor( r_, g_, b_ );
-    }
-
-    updateCanvas();
 }
 
 
-
-
-
-void SketchWindow::clear()
+void SketchWindow::resetVerticalExaggeration()
 {
-    if( main != nullptr )
-    {
-        if( main_scene != nullptr )
-        {
-            main_scene->clear();
-            delete main_scene;
-            main_scene = nullptr;
-        }
-        delete main;
-        main = nullptr;
-    }
 
 
-    if( tv_main != nullptr )
-    {
-        if( tv_scene != nullptr )
-        {
-            tv_scene->clear();
-            delete tv_scene;
-            tv_scene = nullptr;
-        }
-        delete tv_main;
-        tv_main = nullptr;
-    }
+    if( sketchingcanvas == nullptr ) return;
+//    sl_vertical_exagg_->setValue( 20 );
+
+    if( latBar == nullptr ) return;
+
+    //resetting the widgets
+    latBar->resetVerticalExaggeration();
+    sketchingcanvas->stopVerticalExaggeration();
+}
 
 
-    std::map< double, SketchScene* >::iterator it_ =  scenes.begin();
-    while( it_ != scenes.end() )
-    {
-        if( it_->second == nullptr )
-            scenes.erase( it_->first );
-        else
-            removeFixedCrossSectionCanvas( it_->first );
+void SketchWindow::applyVerticalExaggeration()
+{
+    if( sketchingcanvas == nullptr ) return;
+    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
 
-        it_ =  scenes.begin();
-    }
-    scenes.clear();
+    double v_exag_ = sketchingcanvas->getVerticalExaggeration();
+    if( v_exag_ == 1 ) return;
 
-    if( cs == nullptr ) return;
-    cs->setVisible( false );
+    // first stop the vertical exaggeration so that the matrices be right
+    sketchingcanvas->stopVerticalExaggeration();
 
-
-    CanvasContainer::Iterator it =  cs->begin();
-    while( it != cs->end() )
-    {
-        cs->removeElement( it->first );
-        it =  cs->begin();
-    }
-    cs->clear();
+    // and apply the vertical exaggeration
+    sketchingcanvas->setVerticalExaggeration( v_exag_ );
 
 
 }
 
 
-
-
-void SketchWindow::addFixedCrossSectionCanvas( CrossSection* const& cs_, QColor c_ )
+void SketchWindow::showDipAngle( bool status_ )
 {
-    if( cs_ == nullptr ) return;
+    if( ( sketchingcanvas == nullptr ) || (latBar == nullptr) ) return;
 
-    cs->setVisible( true );
-    cs->raise();
+    const QPixmap* pix_ =  latBar->getDipAnglePicture(); //*/lb_output_dpangle->pixmap();
+    if( pix_ == nullptr ) return;
 
-    scenes[ cs_->getDepth() ] = new SketchScene( cs_ );
-    SketchScene* const& scene_ = scenes[ cs_->getDepth() ];
-
-
-    QColor color_ = cp_color->currentColor();
-    scene_->addLabel( cs_->getDepth(), c_ );
-    scene_->setCurrentColor( color_.red(), color_.green(), color_.blue() );
-    scene_->setCurrent( true );
-
-    QGraphicsView* gv_ = new QGraphicsView();
-    gv_->scale( 1, -1 );
-    gv_->setScene( scene_ );
-    gv_->setWindowTitle( QString( "CrossSection %1" ).arg( cs_->getDepth() ) );
-    cs->addElement( cs_->getDepth(), gv_ );
-
-
-    connect( ac_discard, &QAction::triggered, [=](){ if( scenes[ cs_->getDepth() ] == nullptr) return; emit scenes[ cs_->getDepth() ]->discard(); } );
-
-    connect( ac_commit, &QAction::triggered, [=](){ if( scenes[ cs_->getDepth() ] == nullptr) return; emit scenes[ cs_->getDepth() ]->commit(); } );
-
-//    connect( ac_create, &QAction::triggered, [=](){ emit commitObject(); } );
-
-    connect( ac_edit_scene, &QAction::triggered, [=]( bool status_ ){ if( scenes[ cs_->getDepth() ] == nullptr) return; scenes[ cs_->getDepth() ]->edit( status_ ); } );
-
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor color_ )
-                                                    { if( scenes[ cs_->getDepth() ] == nullptr) return; scenes[ cs_->getDepth() ]->setCurrentColor( color_.red(), color_.green(), color_.blue() ); } );
-
-    connect( ac_axes, &QAction::triggered, scene_, &SketchScene::setAxesVisible );
-
-
-
-    connect( scenes[ cs_->getDepth() ], &SketchScene::acceptVolumeDimensions, [=]( Settings::CrossSection::CrossSectionDirections dir_, double w, double h ){ emit updateVolume( dir_, w, h ); } );
-
-    connect( scenes[ cs_->getDepth() ], &SketchScene::acceptCurve, [=]( const PolyCurve& curve_, double depth_ ){ emit acceptCurve( curve_, depth_ ); } );
-
-    connect( scenes[ cs_->getDepth() ], &SketchScene::commitObject, [=](){ emit commitObject(); } );
-
-    connect( scenes[ cs_->getDepth() ], &SketchScene::objectSelected, [=]( std::size_t index_ ){ emit objectSelected( index_ ); } );
-
-    connect( scenes[ cs_->getDepth() ], &SketchScene::setImageCrossSection, [=]( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
-                                                            { emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ ); main_scene->updateCrossSection(); } );
-
-
-    connect( scenes[ cs_->getDepth() ], &SketchScene::removeCurveFromObject, [=]( double depth_, std::size_t index_ )
-                                                            { emit removeCurveFromObject( depth_, index_ ); } );
-
-
-    connect( scenes[ cs_->getDepth() ], &SketchScene::removeImageFromCrossSection, [=]( double depth_ )
-                                                            { emit removeImageFromCrossSection( depth_ ); } );
-
+    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+    scene_->showDipAnglePicture( status_, *pix_ );
 
 }
 
 
-bool SketchWindow::removeFixedCrossSectionCanvas( double depth_ )
+void SketchWindow::setDipAnglePictureMovable( bool status_ )
 {
-
-    if( scenes.find( depth_ ) != scenes.end() )
-    {
-        scenes[ depth_ ]->clear();
-        delete scenes[ depth_ ];
-        scenes.erase( depth_ );
-    }
-
-    if( cs->findElement( depth_  ) == false ) return false;
-
-    cs->removeElement( depth_ );
-
-    emit removeFixedCrossSection( depth_ );
-    return true;
-
-}
-
-
-void SketchWindow::setFixedCrossSectionsVisible( bool status_ )
-{
-    dw_canvas_stack->setVisible( true );
-}
-
-
-void SketchWindow::setCurrentCrossSection( double depth_ )
-{
-    if( tv_scene != nullptr )
-    {
-        tv_scene->moveCurrentCrossSection( depth_ );
-    }
-
-    if( cs->findElement( depth_ ) == false ) return;
-    cs->setCurrent( depth_ );
-}
-
-
-
-void SketchWindow::setTopViewImage( const std::string& image_ )
-{
-    if( tv_main == nullptr ) return;
-
-    if( tv_scene != nullptr )
-    {
-        tv_scene->setImageToCrossSection( QString( image_.c_str() ) );
-    }
-
-    update();
-}
-
-
-
-void SketchWindow::setCrossSectionImage( double depth_, const QString& file_, double ox_, double oy_, double x_, double y_ )
-{
-
-    emit setImageCrossSection( depth_, file_, ox_, oy_, x_, y_ );
-
-
-    if( main_scene == nullptr ) return;
-    main_scene->updateCrossSection();
+    if( sketchingcanvas == nullptr ) return;
+    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
+    scene_->setDipAnglePictureMovable( status_ );
 }
 
 
 void SketchWindow::screenshot()
 {
     QString selectedFilter;
-    QString name_of_file = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
-                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
-                                                         &selectedFilter );
-
-
-    if( main_scene != nullptr)
+    QString name_of_file_ = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
+                                                          tr( "PNG (*.png);;SVG (*.svg)" ),
+                                                          &selectedFilter );
+    if( sketchingcanvas != nullptr )
     {
+        std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
         if( selectedFilter == "PNG (*.png)" )
         {
-            main_scene->savetoRasterImage( name_of_file );
+            scene_->savetoRasterImage( name_of_file_ );
         }
         else if ( selectedFilter == "SVG (*.svg)" )
         {
-            main_scene->savetoVectorImage( name_of_file );
+            scene_->savetoVectorImage( name_of_file_ );
         }
     }
-    else if( tv_scene != nullptr)
+
+    if( topviewcanvas != nullptr )
     {
+        std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
         if( selectedFilter == "PNG (*.png)" )
         {
-            tv_scene->savetoRasterImage( name_of_file );
+            scene_->savetoRasterImage( name_of_file_ );
         }
         else if ( selectedFilter == "SVG (*.svg)" )
         {
-            tv_scene->savetoVectorImage( name_of_file );
+            scene_->savetoVectorImage( name_of_file_ );
         }
     }
 
 }
+
+
+void SketchWindow::reset()
+{
+
+
+    resetVerticalExaggeration();
+    removeAllCanvas();
+    disableResizeVolume( false );
+
+    if( latBar != nullptr )
+        latBar->clear();
+
+    if( ac_resize_image != nullptr )
+        ac_resize_image->setChecked( false );
+
+    if( ac_select_regions != nullptr )
+        ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
+
+    cp_color->setColor( QColor( 255, 0, 0 ) );
+
+
+    if( ac_show_bar != nullptr )
+        ac_show_bar->setChecked( SHOW_VERTICAL_EXAGGERATION );
+
+    if( ac_axes != nullptr )
+        ac_axes->setChecked( true );
+
+
+}
+
+
+void SketchWindow::keyPressEvent( QKeyEvent *event )
+{
+    switch( event->key() )
+    {
+    case Qt::Key_G:
+    {
+        if( sketchingcanvas == nullptr ) return;
+        const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
+        scene_->setGuidedExtrusionMode( true );
+
+    }
+        break;
+
+    case Qt::Key_D:
+    {
+        if( sketchingcanvas == nullptr ) return;
+        const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
+        scene_->setGuidedExtrusionMode( false );
+
+    }
+        break;
+
+    default:
+        break;
+    };
+}
+
+
+SketchWindow::~SketchWindow()
+{
+
+    if( cp_color!= nullptr )
+        delete cp_color;
+    cp_color = nullptr;
+
+    if( fixed_csections_canvas!= nullptr )
+        delete fixed_csections_canvas;
+    fixed_csections_canvas = nullptr;
+
+    sketchingcanvas.reset();
+    topviewcanvas.reset();
+
+    if( ac_cancel_sketch!= nullptr )
+        delete ac_cancel_sketch;
+    ac_cancel_sketch = nullptr;
+
+    if( ac_submit_sketch!= nullptr )
+        delete ac_submit_sketch;
+    ac_submit_sketch = nullptr;
+
+    if( ac_end_object!= nullptr )
+        delete ac_end_object;
+    ac_end_object = nullptr;
+
+    if( tb_boundary!= nullptr )
+        delete tb_boundary;
+    tb_boundary = nullptr;
+
+    if( ac_resize_boundary!= nullptr )
+        delete ac_resize_boundary;
+    ac_resize_boundary = nullptr;
+
+    if( tb_region!= nullptr )
+        delete tb_region;
+    tb_region = nullptr;
+
+    if( ac_select_regions!= nullptr )
+        delete ac_select_regions;
+    ac_select_regions = nullptr;
+
+    if( bar_!= nullptr )
+        delete bar_;
+    bar_ = nullptr;
+
+}
+
+

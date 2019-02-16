@@ -24,9 +24,9 @@
 
 #include "sutilities.hpp"
 
-#include "smodeller_impl.hpp"
+#include "detail/smodeller_impl.hpp"
 
-#include "planin/interpolated_graph.hpp"
+#include "detail/planin/interpolated_graph.hpp"
 
 
 
@@ -71,6 +71,62 @@ bool SUtilities::getNormalList( size_t surface_id, std::vector<double> &normals 
     return status;
 
 }
+
+bool SUtilities::getRegionVolumeList( std::vector<double> &vlist )
+{
+    if ( model_.pimpl_->buildTetrahedralMesh() == false )
+    {
+        return false;
+    }
+
+    return model_.pimpl_->mesh_->getRegionVolumeList(vlist);
+}
+
+bool SUtilities::getIntersectingSurfaceIndices( size_t controller_id, std::vector<size_t> &intersecting_surfaces_indices )
+{
+    std::vector<PlanarSurface::SurfaceId> sids;
+    size_t index;
+
+    if ( model_.pimpl_->getSurfaceIndex(controller_id, index) == false )
+    {
+        return false;
+    }
+
+    model_.pimpl_->container_[index]->getCachedBoundingSurfacesIDs(sids);
+    intersecting_surfaces_indices.resize( sids.size() );
+    ControllerSurfaceIndex cid;
+
+    for ( size_t i = 0; i < sids.size(); ++i )
+    {
+        model_.pimpl_->getControllerIndexFromPlanarSurfaceId(sids[i], cid);
+        /* model_.pimpl_->container_.getSurfaceIndex(sids[i], cid); */
+        intersecting_surfaces_indices[i] = cid;
+    }
+
+    return true;
+}
+
+
+bool SUtilities::getAdaptedWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width);
+}
+
+bool SUtilities::getAdaptedWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width);
+}
+
+bool SUtilities::getAdaptedLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length);
+}
+
+bool SUtilities::getAdaptedLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
+{
+    return model_.pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length);
+}
+
 
 bool SUtilities::getWidthCrossSectionCurveVertices( std::size_t,  std::size_t, std::vector< std::vector<double> > )
 {
@@ -569,17 +625,25 @@ bool SUtilities::computeLateralBoundingCurves( std::vector<std::vector<double>> 
 
 bool SUtilities::exportToTetgen( std::string filename )
 {
-    TetrahedralMeshBuilder mb(model_.pimpl_->container_);
+    /* TetrahedralMeshBuilder mb(model_.pimpl_->container_); */
+    if ( model_.pimpl_->buildTetrahedralMesh() == false )
+    {
+        return false;
+    }
     
-    return mb.exportToTetgen(filename);
+    return model_.pimpl_->mesh_->exportToTetgen(filename);
 }
 
 
 bool SUtilities::exportToVTK( std::string filename )
 {
-    TetrahedralMeshBuilder mb(model_.pimpl_->container_);
+    /* TetrahedralMeshBuilder mb(model_.pimpl_->container_); */
+    if ( model_.pimpl_->buildTetrahedralMesh() == false )
+    {
+        return false;
+    }
     
-    return mb.exportToVTK(filename);
+    return model_.pimpl_->mesh_->exportToVTK(filename);
 }
 
 bool SUtilities::getTetrahedralMeshRegions( const std::vector<double> &vcoords, const std::vector<size_t> &elements, std::vector<int> &regions)
@@ -635,11 +699,15 @@ bool SUtilities::getTetrahedralMeshRegions( const std::vector<double> &vcoords, 
     }
     /* std::cout << "Number of centroids: " << centroids.size() << "\n"; */
 
-    TetrahedralMeshBuilder mb(model_.pimpl_->container_);
+    /* TetrahedralMeshBuilder mb(model_.pimpl_->container_); */
+    if ( model_.pimpl_->buildTetrahedralMesh() == false )
+    {
+        return false;
+    }
 
-    bool status = mb.mapPointsToAttributes(centroids, regions);
+    bool status = model_.pimpl_->mesh_->mapPointsToAttributes(centroids, regions);
 
-    mb.exportToVTK("rtest", vcoords, elements, regions);
+    /* pimpl_->mesh_->exportToVTK("rtest", vcoords, elements, regions); */
 
     return status;
 }
@@ -649,6 +717,11 @@ bool SUtilities::liesBetweenBoundarySurfaces(double x, double y, double z)
     Point3 p = model_.pimpl_->point3(x, y, z);
 
     return model_.pimpl_->container_.liesBetweenBoundarySurfaces(p);
+}
+
+bool SUtilities::getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound)
+{
+    return model_.pimpl_->getBoundingSurfacesFromRegionID(region_id, lower_bound, upper_bound);
 }
 
 std::vector<size_t> SUtilities::getSurfacesIndicesBelowPoint(double x, double y, double z)
