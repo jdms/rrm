@@ -144,8 +144,8 @@ class RegionShader: public Shader
         * This method creates a vector of the color (r_, g_, b_) repeated to each vertex.
         * @param nvertices number of vertices of the mesh. It will be created the same number of colors.
         * @param r red component of the color
-        * @param green green component of the color
-        * @param blue blue component of the color
+        * @param g green component of the color
+        * @param b blue component of the color
         * @return void.
         */
         void updateColorBuffers( std::size_t nvertices_, int r_, int g_, int b_ );

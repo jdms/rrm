@@ -56,7 +56,7 @@ class AnglePicture: public QLabel
         /**
         * Method to update the output dip angle
         * @param angle the output dip angle
-        * @return void..
+        * @return void.
         */
         void updateAngle( double angle_ );
 
@@ -65,7 +65,7 @@ class AnglePicture: public QLabel
 
         /**
         * Method to repaint the image
-        * @see QPaintEvent contains event parameters for painting events
+        * @param QPaintEvent contains event parameters for painting events
         * @return void.
         */
         void paintEvent(QPaintEvent* e);

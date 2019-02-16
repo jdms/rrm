@@ -52,7 +52,10 @@ class Surface
 
 
         /**
-        * Constructor. Building a new surface given the vertices, faces, and optionally normals
+        * Constructor. Building a new surface given the vertices, faces, and optionally normals\
+        * @param vs a vector with the vertices coordinates of all vertices
+        * @param fs a vector with the index of each vertice that defines a face for all faces of the surface
+        * @param ns a vector with the coordinates of all normals
         */
         Surface( const std::vector< double >& vs_, const std::vector< std::size_t >& fs_,
                  const std::vector< double >& ns_ = std::vector< double >() )

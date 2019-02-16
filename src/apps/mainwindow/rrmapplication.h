@@ -88,7 +88,7 @@ public:
 
         /**
         * Method to save a reference to the RRM main window.
-        * @param window  main window
+        * @param window a const reference to main window
         * @see MainWindow
         * @return void.
         */
@@ -199,7 +199,7 @@ public:
 
         /**
         * Method (slot) to move the cross-section to the depth value in the current direction.
-        * @param depth_ new position of the cross-section in the current direction
+        * @param depth new position of the cross-section in the current direction
         * @return void
         */
         void moveMainCrossSection( double depth_ );
@@ -256,7 +256,7 @@ public:
         * Method (slot) to set a stratigraphy or structural visible
         * This method calls the setObjectVisibility() from the Controller and emit a signal
         * @param index the index of the stratigraphy or the structural
-        * @param status If status is true, the stratigraphy/structural is made visible. Otherwise, the stratigraphy/structural is made invisible.
+        * @param status if status is true, the stratigraphy/structural is made visible. Otherwise, the stratigraphy/structural is made invisible.
         * @return void.
         */
         void setObjectVisible( std::size_t index_, bool status_ );
@@ -390,8 +390,8 @@ public:
 
         /**
         * Method (slot) to set a name to the given region.
-        * @param index the index of the region
-        * @param name a string to represent the name of the region
+        * @param std::size_t the index of the region
+        * @param std::string a string to represent the name of the region
         * @return void.
         */
         void setRegionName( std::size_t , const std::string&  );
@@ -476,6 +476,7 @@ public:
         * The variable delete indicates if the domains should be deleted if there is no more regions inside it.
         * @param domain_id tthe index of the domain
         * @param regions vector of regions indexes, which should be removed form its domain
+        * @param delete indicates if the domains should be deleted if there is no more regions inside it.
         * @return void.
         */
         void removeRegionsFromDomains( const std::vector< std::size_t >& regions_, const std::vector< std::size_t >& domains_, bool delete_ = true );
@@ -572,7 +573,7 @@ public:
 
         /**
         * Method (slot) to load the session saved in the file called 'filename_'
-        * @param filename_ name of the saved file
+        * @param filename name of the saved file
         * @return void.
         */
         void load( const std::string& filename_ );
@@ -632,8 +633,8 @@ public:
         * Method (slot) to select a region by picking a point inside
         * @param px x coordinate of the point
         * @param py y coordinate of the point
-        * @param dir direction of the cross-section which the point was chosen
         * @param depth depth of the cross-section which the point was chosen
+        * @param dir direction of the cross-section which the point was chosen
         * @see Settings::CrossSection::CrossSectionDirections
         * @return void.
         */
@@ -666,6 +667,7 @@ public:
         /**
         * Method (slot) to set the vertical exaggeration.
         * This method emits a signal so that all the scenes can be updated with the vertical exaggeration
+        * @param scale the value of the vertical exaggeration
         * @return void.
         */
         void setVerticalExaggeration( double scale_ );
@@ -739,7 +741,7 @@ public:
          /**
         * Method (slot) to get the tetrahedrons from the regions volumes
         * @param vertices vector of vertices coordinates of each tetrahedron
-        * @param edges vector of indexes of vertices that each edge contains
+        * @param faces vector of vertices indexes that create a face, for each cell of the region
         * @param regions vector of indexes of the domains
         * @param colors reference to a vector of the domains colors
         * @return void.
@@ -769,7 +771,7 @@ public:
 
         /**
         * Signal emitted to notify that a new stratigraphy/structural was added
-        * A const shared pointer to the stratigraphy/structural data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved, is sent
+        * @param obj a const shared pointer to the stratigraphy/structural data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved, is sent
         * @see Object
         * @return void.
         */
@@ -778,7 +780,7 @@ public:
 
         /**
         * Signal emitted to notify that a new stratigraphy/structural should be added in the object tree
-        * @param obj A const shared pointer to the stratigraphy/structural data structure, from where the geometry, visibility and others relevants
+        * @param obj a const shared pointer to the stratigraphy/structural data structure, from where the geometry, visibility and others relevants
         * information to the rendering should be retrieved, is sent
         * @see Object
         * @return void.

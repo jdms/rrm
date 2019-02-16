@@ -75,7 +75,7 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         /**
         * Method to set the path of the file
-        * @param file image path_
+        * @param file image path
         * @see QString
         * @return void.
         */
@@ -117,7 +117,7 @@ class ImageItemWrapper: public QGraphicsPixmapItem
 
         /**
         * Method to move the top-right of the image to the new point p_
-        * @param origin new top-right corner of the image
+        * @param p new top-right corner of the image
         * @see QPointF
         * @return void.
         */

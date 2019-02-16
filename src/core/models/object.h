@@ -65,12 +65,14 @@ class Object
 
         /**
         * Copy constructor.
+        * @param obj_ a const reference to another Object instance
         */
         Object( const Object& obj_ );
 
 
         /**
         * Assignment operator.
+        * @param obj_ a const reference to another Object instance
         */
         Object& operator=( const Object & obj_ );
 

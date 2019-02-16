@@ -63,7 +63,7 @@ class MainWindow: public QMainWindow
 
 
         /**
-        * Constructor. parent_ is passed to QMainWindow's constructor.
+        * Constructor. parent is passed to QMainWindow's constructor.
         * @param parent the parent item
         * @see MainWindow
         */

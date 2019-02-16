@@ -72,8 +72,8 @@ class SketchWindow: public QMainWindow
 
 
         /**
-        * Constructor. parent_ is passed to QMainWindow's constructor.
-        * @param parent_ the parent item
+        * Constructor. parent is passed to QMainWindow's constructor.
+        * @param parent the parent item
         */
         SketchWindow( QWidget* parent = nullptr );
 

@@ -63,6 +63,7 @@ class Volume: public Object
 
         /**
         * Copy constructor.
+        * @param volume_ a const reference to another Volume
         */
         Volume(const Volume & volume_);
 

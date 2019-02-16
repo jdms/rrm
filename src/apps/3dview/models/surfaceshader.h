@@ -170,6 +170,7 @@ class SurfaceShader: public Shader
 
         /**
         * This method creates a vector of the color (r_, g_, b_) repeated to each vertex.
+        * @param nvertices the number of the surface vertices, which is the same of colors
         * @param r red component of the color
         * @param g green component of the color
         * @param b blue component of the color

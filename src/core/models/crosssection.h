@@ -70,18 +70,23 @@ class CrossSection: public Object
 
         /**
         * Constructor. Creates a new cross-section given a volume, direction and depth of the cross-section
+        * @param volume a const shared pointer to a volume
+        * @param dir the direction of the cross-section
+        * @param depth the depth of the cross-section
         */
         CrossSection( const std::shared_ptr< Volume >& volume_, const Settings::CrossSection::CrossSectionDirections& direction_, double depth_ );
 
 
         /**
         * Copy constructor.
+        * @param csection a const reference to another cross-section instance
         */
         CrossSection( const CrossSection & csection_ );
 
 
         /**
         * Assignment operator.
+        * @param csection a const reference to another cross-section instance
         */
         CrossSection & operator=( const CrossSection & csection_ );
 
