@@ -25,7 +25,7 @@
 # Preliminaries  
 ###############################################
 
-cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 project(StratMod CXX)
 
@@ -53,7 +53,7 @@ option(STRATMOD_BUILD_USING_OPENMP   "Use OpenMP for parallelization"           
 option(STRATMOD_BUILD_USING_CEREAL   "Use Cereal library for serialization"             ON)
 option(STRATMOD_BUILD_DOCS           "Build documentation with Doxygen"                 OFF)
 option(STRATMOD_BUILD_TESTS          "Build with support for testing using Catch"       OFF)
-option(STRATMOD_BUILD_EXAMPLE        "Build exmaples"                                   OFF) 
+option(STRATMOD_BUILD_EXAMPLE        "Build examples"                                   OFF) 
 option(STRATMOD_BUILD_UTILITIES      "Build command line utilities"                     OFF) 
 
 # regarding testing, see also: https://cmake.org/Wiki/CMake/Testing_With_CTest
@@ -107,25 +107,25 @@ endif()
 # Configure OpenMP for parallelization
 ###############################################
 
-#if(STRATMOD_BUILD_USING_OPENMP)
-#    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
-#    find_package(OpenMP REQUIRED)
-#endif()
-
 if(STRATMOD_BUILD_USING_OPENMP)
-    if (MSVC)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP /openmp")
-
-    else()
-        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Clang)")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp=libiomp5")
-
-        else()
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp")
-
-        endif()
-    endif()
+    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
+    find_package(OpenMP REQUIRED)
 endif()
+
+#if(STRATMOD_BUILD_USING_OPENMP)
+#    if (MSVC)
+#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP /openmp")
+#
+#    else()
+#        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Clang)")
+#            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp=libiomp5")
+#
+#        else()
+#            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_USING_OPENMP -fopenmp")
+#
+#        endif()
+#    endif()
+#endif()
 
 
 # Waiting for macOS to support OpenMP natively to adopt the following solution:
@@ -162,6 +162,9 @@ endif(STRATMOD_BUILD_DOCS)
 #     include_directories(SYSTEM ${Eigen3_INCLUDE_DIRS})
 # endif(Eigen3_FOUND) 
 
+if(STRATMOD_EIGEN3_INCLUDE_DIR)
+    message(STATUS "Using eigen3 include dir: ${STRATMOD_EIGEN3_INCLUDE_DIR}")
+endif()
 
 
 ###############################################
@@ -176,9 +179,10 @@ include(ExternalProject)
 # PlanIn processes all modelling primitives
 ###############################################
 
-set(PLANIN_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/planin)
+set(PLANIN_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin)
 
 set(PLANIN_CMAKE_ARGS 
+    -DPLANIN_EIGEN3_INCLUDE_DIR=${STRATMOD_EIGEN3_INCLUDE_DIR}
     -DPLANIN_BUILD_DOCS=OFF 
     -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
     -DPLANIN_BUILD_USING_OPENMP=${STRATMOD_BUILD_USING_OPENMP}
@@ -188,6 +192,7 @@ set(PLANIN_CMAKE_ARGS
 
 if(STRATMOD_BUILD_USING_OPENMP AND APPLE)
     set(PLANIN_CMAKE_ARGS 
+        -DPLANIN_EIGEN_INCLUDE_DIR=${STRATMOD_EIGEN_INCLUDE_DIR}
         -DPLANIN_BUILD_DOCS=OFF 
         -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
         -DPLANIN_BUILD_USING_OPENMP=ON 
@@ -268,15 +273,20 @@ set(HEADERS
     )
 
 set(STRATMOD_LIB_SOURCES 
-    src/smodeller_impl.cpp
+    src/detail/smodeller_impl.cpp
     src/smodeller.cpp
     src/sutilities.cpp
     ) 
 
 
 add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${HEADERS})  
-# target_link_libraries(stratmod planin OpenMP::OpenMP_CXX) # only valid in cmake >= 3.10
-target_link_libraries(stratmod planin)
+
+if( ${STRATMOD_BUILD_USING_OPENMP} )
+    target_link_libraries(stratmod planin OpenMP::OpenMP_CXX)
+else()
+    target_link_libraries(stratmod planin)
+endif()
+
 add_dependencies(stratmod planin)
 
 
@@ -299,10 +309,9 @@ install(FILES ${HEADERS}
 ###############################################
 
 if(${STRATMOD_BUILD_TESTS}) 
-    set(TESTING_SOURCES src/main_tests.cpp src/first_test.cpp src/smodeller_impl.cpp)
+    set(TESTING_SOURCES src/test/main_tests.cpp src/test/first_test.cpp src/detail/smodeller_impl.cpp)
     add_executable (run_tests ${TESTING_SOURCES} ${HEADERS})
-    target_link_libraries(run_tests planin)
-    # target_link_libraries(run_tests planin OpenMP::OpenMP_CXX) # only valid in cmake >= 3.10
+    target_link_libraries(run_tests planin OpenMP::OpenMP_CXX)
     add_dependencies(run_tests planin)
     add_dependencies(run_tests Catch-build)
 
@@ -321,28 +330,32 @@ if(${STRATMOD_BUILD_EXAMPLE})
 endif()
 
 if(${STRATMOD_BUILD_UTILITIES})
-    set(SOURCES src/test_boundary.cpp)
+    set(SOURCES src/test/test_boundary.cpp)
     add_executable(test_boundary ${SOURCES} ${HEADERS})
     target_link_libraries(test_boundary stratmod)
 
-    set(SOURCES src/test_mesh.cpp)
+    set(SOURCES src/test/test_mesh.cpp)
     add_executable(test_mesh ${SOURCES} ${HEADERS})
     target_link_libraries(test_mesh stratmod)
 
-    set(SOURCES src/test_regions.cpp)
+    set(SOURCES src/test/test_regions.cpp)
     add_executable(test_regions ${SOURCES} ${HEADERS})
     target_link_libraries(test_regions stratmod)
 
-    set(SOURCES src/binary2json.cpp)
+    set(SOURCES src/cl_util/binary2json.cpp)
     add_executable(binary2json ${SOURCES} ${HEADERS})
     target_link_libraries(binary2json stratmod)
 
-    set(SOURCES src/json2binary.cpp)
+    set(SOURCES src/cl_util/json2binary.cpp)
     add_executable(json2binary ${SOURCES} ${HEADERS})
     target_link_libraries(json2binary stratmod)
 
-    set(SOURCES src/change_resolution.cpp)
+    set(SOURCES src/cl_util/resample.cpp)
     add_executable(resample ${SOURCES} ${HEADERS})
     target_link_libraries(resample stratmod)
+
+    set(SOURCES src/cl_util/export2VTK.cpp)
+    add_executable(export2VTK ${SOURCES} ${HEADERS})
+    target_link_libraries(export2VTK stratmod)
 endif()
 

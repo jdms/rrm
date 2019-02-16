@@ -48,11 +48,15 @@ namespace RRM
                         WellScene ( QObject * parent = 0 );
                         void setTranformationMatrix ( const QTransform& _tranform );
                         QRectF fitView() const;
-                        void setDimension(const Eigen::Vector2f& _dim, bool _is_the_same = false);
+						/// Width and Height
+                        void setDimension(const Eigen::Vector2d& _dim, bool _is_the_same = false);
+						
                 public slots:
                         void createWells(int _number_of_wells, const std::map<int, int>& _types);
-                signals:
-                        void updatedWellsPosition(const std::map< int, Eigen::Vector4d >&);
+						void loadWells(int _number_of_wells, const std::map<int, int>& _types, const Eigen::Vector2d& _dim, const std::map<int,Eigen::Vector2d>& _wells_position);
+					signals:
+						/// Notify to WellWidget that a well position was changed
+                        void updatedWellsPosition(const std::map< int, Eigen::Vector2d >&);
 
                 protected:
                         void mousePressEvent ( QGraphicsSceneMouseEvent* event ) override;

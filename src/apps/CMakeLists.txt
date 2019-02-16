@@ -4,15 +4,11 @@ project(RRM)
 ###############################################
 # Main source -- Apps Directory
 ###############################################
-
+find_package( Qt5Widgets REQUIRED )
 
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR}
                       ${CMAKE_CURRENT_BINARY_DIR} )
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/simulator/FlowDiagnosticsApp_autogen/include)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidgets_autogen/include )
 
 ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 
@@ -47,7 +43,7 @@ include_directories (${PROJECT_BINARY_DIR})
 
 add_executable(${PROJECT_NAME} WIN32 ${RCC_SOURCES} )
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg
-    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp ${STRATMODLIB} )
+    ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} MainApp ${STRATMODLIB} colorwrap )
 
 
 ######################################################
@@ -62,9 +58,6 @@ add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -
 add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/files/manual ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/manual )
 
-
-add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/files/inputs ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/inputs )
 
 add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/files/models ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/models )

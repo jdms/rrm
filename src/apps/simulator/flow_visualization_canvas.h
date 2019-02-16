@@ -40,6 +40,7 @@
 #include "colormap.h"
 #include "coordinate_axes.h"
 #include "flow_crosssection.h"
+#include "Mesh.h"
 
 
 class FlowVisualizationCanvas: public QOpenGLWidget
@@ -59,8 +60,7 @@ class FlowVisualizationCanvas: public QOpenGLWidget
     public slots:
 
         void updateMesh();
-        void updateVolumetricMesh();
-        void updateCornerPoint();
+        void updateVolumetricMesh();       
 
         void showBoundingBox( bool status );
 
@@ -77,7 +77,7 @@ class FlowVisualizationCanvas: public QOpenGLWidget
         /// Debug Purpose
         void reloadShader();
 
-        float getDepth() const;
+        //float getDepth() const;
 
         void updateWellsPosition(int _number_of_wells, const std::map<int, Eigen::Vector4d>& _positions, const std::map<int, int>& _types, const std::map<int, Eigen::Vector2d>& _range);
 

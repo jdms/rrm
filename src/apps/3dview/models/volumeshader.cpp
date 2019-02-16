@@ -1,24 +1,29 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
- */
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
 
+/**
+ * @file volumeshader.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class VolumeShader
+ */
 
 
 #include "volumeshader.h"
@@ -31,14 +36,14 @@ VolumeShader::VolumeShader()
 
 
 
-VolumeShader::VolumeShader( Volume* const& raw_ )
+VolumeShader::VolumeShader( const std::shared_ptr< Volume >& raw_ )
 {
     setDefaultValues();
     init();
     setVolume( raw_ );
 }
 
-void VolumeShader::setVolume( Volume* const& raw_ )
+void VolumeShader::setVolume( const std::shared_ptr< Volume >& raw_ )
 {
     raw = raw_;
     if( raw->isEmpty() == true)
@@ -49,7 +54,7 @@ void VolumeShader::setVolume( Volume* const& raw_ )
 
 void VolumeShader::createVolumeMesh()
 {
-    double ox = 0.0f, oy = 0.0f, oz = 0.0f;
+    double ox = 0.0, oy = 0.0, oz = 0.0;
     raw->getOrigin( ox, oy, oz );
 
     float minx = static_cast< GLfloat > ( ox );
@@ -64,14 +69,9 @@ void VolumeShader::createVolumeMesh()
     Eigen::Vector3f min_real( minx, miny, minz );
     Eigen::Vector3f max_real( maxx, maxy, maxz );
 
-
     Eigen::Vector3f minimum = Shader::normalize( min_real, max_real, min_real );
     Eigen::Vector3f maximum = Shader::normalize( max_real, max_real, min_real );
 
-//    std::cout << "Box max: " << maximum.x() << ", " << maximum.y() << ", " << maximum.z() <<
-//                 std::flush << std::endl;
-//    std::cout << "Box min: " << minimum.x() << ", " << minimum.y() << ", " << minimum.z() <<
-//                 std::flush << std::endl;
 
     Eigen::Vector3f A( minimum.x(), minimum.y(), maximum.z() );
     Eigen::Vector3f B( maximum.x(), minimum.y(), maximum.z() );
@@ -82,7 +82,7 @@ void VolumeShader::createVolumeMesh()
     Eigen::Vector3f G( minimum.x(), maximum.y(), minimum.z() );
     Eigen::Vector3f H( maximum.x(), maximum.y(), minimum.z() );
 
-
+    // since the volume is render only as a box, the code belows determines the vertices of each box face
     std::vector< float > wireframe =
     {
         maximum.x(), maximum.y(), maximum.z(),1.0,
@@ -116,6 +116,7 @@ void VolumeShader::createVolumeMesh()
         minimum.x(), minimum.y(), minimum.z(),1.0
     };
 
+    // load the buffers with a temporary normal
     updateGeometryBuffers( wireframe, defineVolumeNormals() );
 }
 
@@ -125,6 +126,9 @@ void VolumeShader::createVolumeMesh()
 
 std::vector< float > VolumeShader::defineVolumeNormals() const
 {
+
+    // A, B ... H are the vertices of the box
+    // this method needs to be improve
     Eigen::Vector3f normal_A( -1.0f, -1.0f,  1.0f );
     Eigen::Vector3f normal_B(  1.0f, -1.0f,  1.0f );
     Eigen::Vector3f normal_C(  1.0f,  1.0f,  1.0f );
@@ -318,10 +322,15 @@ void VolumeShader::setDefaultValues()
     vb_normals = 0;
 
     number_of_vertices = 0;
-    raw = nullptr;
+    raw.reset();
 }
 
 void VolumeShader::update()
 {
     createVolumeMesh();
+}
+
+VolumeShader::~VolumeShader()
+{
+    clear();
 }

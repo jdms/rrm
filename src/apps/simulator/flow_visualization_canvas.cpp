@@ -76,7 +76,7 @@ void FlowVisualizationCanvas::paintGL()
 {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
     loadBackGround();
 
     //Eigen::Quaternionf q(Eigen::AngleAxisf(static_cast < float >(-0.5*M_PI), Eigen::Vector3f::UnitX()));
@@ -577,37 +577,14 @@ void FlowVisualizationCanvas::updateTriangleMesh( const std::vector< double >& v
 }
 
 
-void FlowVisualizationCanvas::updateCornerPoint( )
-{
-
-
-    std::vector< float > vertices_double;
-    std::vector< unsigned int > edges;
-    std::vector< unsigned int > faces ;
-
-    controller->updateCornerPoint( vertices_double, edges, faces );
-
-
-    std::vector< float > vertices;
-    vertices.assign( vertices_double.begin(), vertices_double.end() );
-
-    mesh.setMeshType( Mesh::TYPE::HEXAHEDRAL );
-    mesh.setHexahedronGeometry(faces, vertices);
-
-
-    update();
-
-}
-
 void FlowVisualizationCanvas::updateVolumetricMesh()
 {
 
-    std::vector< float > raw_vertices, normalized_vertices;
-    std::vector< unsigned int > edges;
-    std::vector< unsigned int > raw_faces, modified_faces;
+    std::vector< float >  vertices, raw_vertices;
+    std::vector< unsigned int > faces, raw_cells;
 
 
-    controller->updateVolumetricMesh( raw_vertices, normalized_vertices, edges, raw_faces, modified_faces);
+	controller->getTetrahedeonMeshGeometry(raw_vertices, raw_cells, vertices, faces);
 
     mesh.setMeshType( Mesh::TYPE::TETRAHEDRAL );
 
@@ -618,7 +595,7 @@ void FlowVisualizationCanvas::updateVolumetricMesh()
 	// which differs from the vertices' indices provided by the simulator in vector 'raw_faces'.
 	//
 
-    mesh.setTetrahedronGeometry(modified_faces, normalized_vertices);
+	mesh.setTetrahedronGeometry(vertices, faces);
 
     update();
 
@@ -645,10 +622,10 @@ FlowVisualizationCanvas::~FlowVisualizationCanvas()
 
 }
 /// Get the current boundingobx depth in the extrusion framework
-float FlowVisualizationCanvas::getDepth() const
-{
-    return mesh.getDepth();
-}
+//float FlowVisualizationCanvas::getDepth() const
+//{
+//    return mesh.getDepth();
+//}
 
 
 void FlowVisualizationCanvas::setDefaultColor()

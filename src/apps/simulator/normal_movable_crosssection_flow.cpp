@@ -24,9 +24,10 @@
 NormalMovableCrossSectionFlow::NormalMovableCrossSectionFlow(QWidget *parent) :
     QWidget(parent)
 {
-    setupUi(this);
+    ui = new Ui::NormalMovableCrossSectionFlow();
+    ui->setupUi(this);
 
-    this->setLayout( hl_layout );
+    this->setLayout( ui->hl_layout );
 }
 
 NormalMovableCrossSectionFlow::~NormalMovableCrossSectionFlow()
@@ -35,9 +36,9 @@ NormalMovableCrossSectionFlow::~NormalMovableCrossSectionFlow()
 
 void NormalMovableCrossSectionFlow::on_btn_acceptnormal_accepted()
 {
-    float X = edt_normalCoordX->text().toFloat();
-    float Y = edt_normalCoordY->text().toFloat();
-    float Z = edt_normalCoordZ->text().toFloat();
+    float X = ui->edt_normalCoordX->text().toFloat();
+    float Y = ui->edt_normalCoordY->text().toFloat();
+    float Z = ui->edt_normalCoordZ->text().toFloat();
 
     emit sendCrossSectionNormalCoordinates( X, Y, Z );
 
@@ -45,9 +46,9 @@ void NormalMovableCrossSectionFlow::on_btn_acceptnormal_accepted()
 
 void NormalMovableCrossSectionFlow::on_btn_acceptnormal_rejected()
 {
-    edt_normalCoordX->clear();
-    edt_normalCoordY->clear();
-    edt_normalCoordZ->clear();
+    ui->edt_normalCoordX->clear();
+    ui->edt_normalCoordY->clear();
+    ui->edt_normalCoordZ->clear();
 
     emit canceled();
 
@@ -55,7 +56,7 @@ void NormalMovableCrossSectionFlow::on_btn_acceptnormal_rejected()
 
 void NormalMovableCrossSectionFlow::clear()
 {
-    edt_normalCoordX->clear();
-    edt_normalCoordY->clear();
-    edt_normalCoordZ->clear();
+    ui->edt_normalCoordX->clear();
+    ui->edt_normalCoordY->clear();
+    ui->edt_normalCoordZ->clear();
 }
