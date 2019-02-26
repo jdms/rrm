@@ -1,0 +1,37 @@
+PROJECT_NAME           = "@CMAKE_PROJECT_NAME@"
+PROJECT_NUMBER         = 3.0
+STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/ \
+                         @PROJECT_BINARY_DIR@
+INPUT_ENCODING         = UTF-8
+INPUT                  = @PROJECT_SOURCE_DIR@/src/apps/3dview \
+                        @PROJECT_SOURCE_DIR@/src/apps/mainwindow \
+                        @PROJECT_SOURCE_DIR@/src/apps/resources \
+                        @PROJECT_SOURCE_DIR@/src/apps/sketching \
+                        @PROJECT_SOURCE_DIR@/src/core/models \
+                        @PROJECT_SOURCE_DIR@/src/core/widgets \
+                        @PROJECT_SOURCE_DIR@/README.md \
+                        @PROJECT_SOURCE_DIR@/rrm_3rd_party_libraries.md
+
+USE_MDFILE_AS_MAINPAGE = @PROJECT_SOURCE_DIR@/README.md \
+
+FILE_PATTERNS          = *.h \ 
+                         *.hpp \
+                         *.cpp
+RECURSIVE              = YES
+CREATE_SUBDIRS         = YES
+
+CLASS_DIAGRAMS       = YES
+BUILTIN_STL_SUPPORT  = NO
+HIDE_UNDOC_RELATIONS = YES
+HAVE_DOT             = YES
+CLASS_GRAPH          = YES
+COLLABORATION_GRAPH  = YES
+UML_LOOK             = YES
+UML_LIMIT_NUM_FIELDS = 50
+TEMPLATE_RELATIONS   = YES
+DOT_GRAPH_MAX_NODES  = 100
+MAX_DOT_GRAPH_DEPTH  = 0
+DOT_TRANSPARENT      = YES
+
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
