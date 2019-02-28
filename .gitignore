@@ -1,3 +1,7 @@
+# Git files       #
+###################
+.git*
+
 # Compiled source #
 ###################
 *.com
