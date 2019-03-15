@@ -277,32 +277,38 @@ class SRules
 
         bool liesBetweenBoundarySurfaces( Point3 &&p );
 
+        void updateDiscretization();
+
         void updateCache();
 
     private: 
         ContainerType container; 
         MapType dictionary; 
 
-        std::vector<PlanarSurface::WeakPtr> lower_bound_; 
+        std::vector<std::size_t> lower_bound_ids_ = {};
+        std::vector<std::size_t> sup_lower_bound_ids_ = {};
+        std::vector<PlanarSurface::WeakPtr> lower_bound_;
         bool define_above_ = false; 
 
-        std::vector<PlanarSurface::WeakPtr> upper_bound_; 
-        bool define_below_ = false; 
+        std::vector<std::size_t> upper_bound_ids_ = {};
+        std::vector<std::size_t> inf_upper_bound_ids_ = {};
+        std::vector<PlanarSurface::WeakPtr> upper_bound_;
+        bool define_below_ = false;
 
         bool defineAboveIsActive();
         bool defineBelowIsActive();
 
-        bool isValidSurface( const PlanarSurface::Ptr &sptr ); 
-        bool weakEntireSurfaceCheck( const PlanarSurface::Ptr &sptr ); 
-        bool weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces ); 
+        bool isValidSurface( const PlanarSurface::Ptr &sptr );
+        bool weakEntireSurfaceCheck( const PlanarSurface::Ptr &sptr );
+        bool weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces );
 
-        bool weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces ); 
-        bool weakUpperBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces ); 
+        bool weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces );
+        bool weakUpperBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces );
 
-        bool isValidSurfaceForInsertion( const PlanarSurface::Ptr &sptr, std::size_t &surface_index ); 
+        bool isValidSurfaceForInsertion( const PlanarSurface::Ptr &sptr, std::size_t &surface_index );
 
-        bool boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface ); 
-        bool boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface ); 
+        bool boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface );
+        bool boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface );
 
         // Cereal provides an easy way to serialize objects
         friend class cereal::access;
