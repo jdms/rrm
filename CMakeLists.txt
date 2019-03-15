@@ -202,7 +202,7 @@ else()
 endif()
 
 
-include_directories(${STRATMOD_SOURCE}/stratmod/include)
+include_directories(${STRATMOD_SOURCE}/src)
 
 #message(WARNING stratmod)
 
