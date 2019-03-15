@@ -833,6 +833,7 @@ bool PlanarSurface::weakLiesAboveOrEqualsCheck( std::vector<PlanarSurface::Ptr> 
         lies_above = lies_above && (height > s_height - tolerance); 
     }
 
+    /* std::cout << "\nPlanarSurface::weakLiesAboveOrEqualsCheck() returns " << lies_above << std::endl; */
     return lies_above; 
 }
 
@@ -931,6 +932,7 @@ bool PlanarSurface::weakLiesBelowOrEqualsCheck( std::vector<PlanarSurface::Ptr> 
         lies_below = lies_below && (height < s_height + tolerance ); 
     }
 
+    /* std::cout << "\nPlanarSurface::weakLiesBelowOrEqualsCheck() returns " << lies_below << std::endl; */
     return lies_below; 
 }
 
@@ -1222,7 +1224,7 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
                     inf_ubound = ub;
                     ubounding_surface_id = upper_surface->getID();
                 }
-                else if ( (abs(ub - inf_ubound) < tolerance) && ustatus )
+                else if ( (std::fabs(ub - inf_ubound) < tolerance) && ustatus )
                 {
                     inf_ubound = ub;
                     ubounding_surface_id = upper_surface->getID();
@@ -1241,7 +1243,7 @@ bool PlanarSurface::getHeight( Natural vertex_index, double &height, std::vector
                 sup_lbound = lb;
                 lbounding_surface_id = lower_surface->getID();
             }
-            else if ( (abs(lb - sup_lbound) < tolerance) && lstatus )
+            else if ( (std::fabs(lb - sup_lbound) < tolerance) && lstatus )
             {
                 sup_lbound = lb;
                 lbounding_surface_id = lower_surface->getID();
@@ -1694,6 +1696,7 @@ bool PlanarSurface::liesBelowRawSurface( Point3 &&p ) {
     return f->liesBelowRawSurface(p); 
 }
 
+// TODO: clean-up this method and either syncrhonize or ignore f's bounding lists
 bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) { 
     if ( s->surfaceIsSet() == false ) { 
         return false; 
@@ -1718,7 +1721,20 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) {
     /*     mesh_is_set_ = false; */ 
     /* } */
 
+    // Find if s has already been inserted in upper_bound_ list.  
+    // Return if s has already been inserted.
+    auto itu = upper_bound_.begin();
+    while(itu != upper_bound_.end())
+    {
+        if ( compareSurfaceWptr(*itu, std::weak_ptr<PlanarSurface>(s)) == true )
+        {
+            return true;
+        }
+        ++itu;
+    }
+    // if not already inserted:
     upper_bound_.push_back(std::weak_ptr<PlanarSurface>(s));
+
     auto itl = lower_bound_.begin();
     while (itl != lower_bound_.end())
     {
@@ -1775,6 +1791,7 @@ bool PlanarSurface::removeAbove( PlanarSurface::WeakPtr s )
     return removeAbove(sptr); 
 }
 
+// TODO: clean-up this method and either syncrhonize or ignore f's bounding lists
 bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s ) 
 { 
     if ( s->surfaceIsSet() == false ) { 
@@ -1803,7 +1820,20 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s )
     // lower_bound_.push_back( std::weak_ptr<PlanarSurface>(s) ); 
     // s->getUpperBoundList(upper_bound_); 
 
+    // Find if s has already been inserted in lower_bound_ list.  
+    // Return if s has already been inserted.
+    auto itl = lower_bound_.begin();
+    while(itl != lower_bound_.end())
+    {
+        if ( compareSurfaceWptr(*itl, std::weak_ptr<PlanarSurface>(s)) == true )
+        {
+            return true;
+        }
+        ++itl;
+    }
+    // if not already inserted:
     lower_bound_.push_back(std::weak_ptr<PlanarSurface>(s));
+
     auto itu = upper_bound_.begin();
     while (itu != upper_bound_.end())
     {

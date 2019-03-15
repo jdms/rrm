@@ -24,6 +24,7 @@
 #include <fstream>
 
 #include "srules.hpp" 
+/* #include "util/prettyprint.hpp" */
 
 
 #if defined( BUILD_WITH_SERIALIZATION )
@@ -317,7 +318,8 @@ bool SRules::addSurface( PlanarSurface::Ptr &sptr, size_t &surface_index )
     dictionary[ sptr->getID() ] = surface_index; 
     container.push_back(sptr); 
 
-    sptr->updateCache();
+    updateDiscretization();
+    updateCache();
 
     return true; 
 }
@@ -446,6 +448,8 @@ bool SRules::popLastSurface( PlanarSurface::Ptr &surface )
         sptr->pruneBoundingLists(); 
     }
 
+    updateCache();
+
     return true; 
 }
 
@@ -466,6 +470,7 @@ bool SRules::defineAbove()
 
 void SRules::stopDefineAbove() { 
     lower_bound_ = std::vector<PlanarSurface::WeakPtr>(); 
+    lower_bound_ids_ = {};
     define_above_ = false; 
 }
 
@@ -480,6 +485,7 @@ bool SRules::defineBelow()
 
 void SRules::stopDefineBelow() { 
     upper_bound_ = std::vector<PlanarSurface::WeakPtr>();
+    upper_bound_ids_ = {};
     define_below_ = false; 
 }
 
@@ -747,6 +753,7 @@ bool SRules::defineAbove( std::vector<PlanarSurface::Ptr> &bounding_surfaces )
     if ( has_bounding_surfaces == false )
     {
         stopDefineAbove();
+        /* std::cout << "SRules::defineAbove(): failed to get surfaces.\n"; */
         return false;
     }
 
@@ -793,6 +800,7 @@ bool SRules::defineBelow( std::vector<PlanarSurface::Ptr> &bounding_surfaces )
     if ( has_bounding_surfaces == false )
     {
         stopDefineBelow();
+        /* std::cout << "SRules::defineBelow(): failed to get surfaces.\n"; */
         return false;
     }
 
@@ -869,8 +877,17 @@ bool SRules::defineBelow( std::size_t surface_index )
 bool SRules::defineAbove( std::vector<size_t> surface_indices )
 {
     std::vector<PlanarSurface::Ptr> surfaces;
+    /* std::cout << "SRules::defineAbove(): " << surface_indices << std::endl; */
 
-    for ( auto &sid : surface_indices )
+    if ( lower_bound_ids_ != surface_indices )
+    {
+        lower_bound_ids_ = surface_indices;
+        sup_lower_bound_ids_ = getUpperBound(surface_indices);
+    }
+
+    /* std::cout << "Lbound surfaces ids: " << sup_lower_bound_ids_ << std::endl; */
+
+    for ( auto &sid : sup_lower_bound_ids_ )
     {
         if ( sid >= size() )
         {
@@ -886,8 +903,16 @@ bool SRules::defineAbove( std::vector<size_t> surface_indices )
 bool SRules::defineBelow( std::vector<size_t> surface_indices )
 {
     std::vector<PlanarSurface::Ptr> surfaces;
+    /* std::cout << "SRules::defineBelow(): " << surface_indices << std::endl; */
 
-    for ( auto &sid : surface_indices )
+    if ( upper_bound_ids_ != surface_indices )
+    {
+        upper_bound_ids_ = surface_indices;
+        inf_upper_bound_ids_ = getLowerBound(surface_indices);
+    }
+    /* std::cout << "Ubound surfaces ids: " << inf_upper_bound_ids_ << std::endl; */
+
+    for ( auto &sid : inf_upper_bound_ids_ )
     {
         if ( sid >= size() )
         {
@@ -977,6 +1002,14 @@ bool SRules::weakEntireSurfaceCheck( std::size_t surface_index )
 
 bool SRules::weakEntireSurfaceCheck( const PlanarSurface::Ptr &s ) 
 {
+    //
+    // Changed to always return true to allow the creation of volumes bounded
+    // by non-entire surfaces.  Will leave the old implementation available in
+    // case of need.
+    //
+
+    return true;
+
     bool status = false; 
     /* cout << "Check for entire surface: "; */ 
 
@@ -1008,6 +1041,14 @@ bool SRules::weakEntireSurfaceCheck( const PlanarSurface::Ptr &s )
 
 bool SRules::weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces )
 { 
+    //
+    // Changed to always return true to allow the creation of volumes bounded
+    // by non-entire surfaces.  Will leave the old implementation available in
+    // case of need.
+    //
+
+    return true;
+
     if ( surfaces.empty() )
     {
         return false;
@@ -1128,6 +1169,14 @@ bool SRules::weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &
 
 bool SRules::weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces )
 { 
+    //
+    // Changed to always return true to allow the creation of volumes bounded
+    // by non-entire surfaces.  Will leave the old implementation available in
+    // case of need.
+    //
+
+    return true;
+
     if ( surfaces.empty() )
     {
         return false;
@@ -1222,6 +1271,14 @@ bool SRules::weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSur
 
 bool SRules::weakUpperBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces )
 { 
+    return true;
+
+    //
+    // Changed to always return true to allow the creation of volumes bounded
+    // by non-entire surfaces.  Will leave the old implementation available in
+    // case of need.
+    //
+
     if ( surfaces.empty() )
     {
         return false;
@@ -1354,33 +1411,44 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
     bool SRules::boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface )  
     {
         bool status = false; 
+        /* std::cout << "Inside SRules::boundaryAwareRemoveBelow(), status is " << status << std::endl; */
+        /* std::cout << "BaseSurface = " << base_surface->getID() << ", ToRemove = " << to_remove_surface->getID() << std::endl; */
 
         if ( defineAboveIsActive() && defineBelowIsActive() ) 
         { 
+            /* std::cout << "defineAboveIsActive() && defineBelowIsActive(); "; */
             if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
                 if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
                     to_remove_surface->updateCache();
                     to_remove_surface->removeBelow(base_surface); 
                     status |= true;
+                    /* std::cout << "weakLies[Above,Below](); "; */
                 }
+            /* std::cout << "status is " << status << std::endl; */
         }
 
         else if ( defineAboveIsActive() ) 
         { 
+            /* std::cout << "defineAboveIsActive(); "; */
             if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
                 to_remove_surface->updateCache();
                 to_remove_surface->removeBelow(base_surface); 
                 status |= true;
+                /* std::cout << "weakLiesAbove(); "; */
             }
+            /* std::cout << "status is " << status << std::endl; */
         }
 
         else if ( defineBelowIsActive() ) 
         { 
+            /* std::cout << "defineBelowIsActive(); "; */
             if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
                 to_remove_surface->updateCache();
                 to_remove_surface->removeBelow(base_surface); 
                 status |= true; 
+                /* std::cout << "weakLiesBelow(); "; */
             }
+            /* std::cout << "status is " << status << std::endl; */
         }
 
         else 
@@ -1388,6 +1456,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
             to_remove_surface->updateCache();
             to_remove_surface->removeBelow(base_surface); 
             status |= true; 
+            /* std::cout << "defineAboveIsActive() && defineBelowIsActive(); status is true"; */
         }
 
         to_remove_surface->updateCache();
@@ -1715,6 +1784,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 
         std::vector<size_t> SRules::getLowerBound( std::vector<size_t> surface_ids )
         {
+            /* std::cout << "Inside SRules::getLowerBound()\n"; */
             std::vector<size_t> lbound;
 
             for ( auto &s : surface_ids )
@@ -1735,7 +1805,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
             std::set<size_t> lbound_set;
 
             std::vector<size_t> ordered_ids;
-            std::multimap<TriangleHeights, size_t> dictionary;
+            std::map<TriangleHeights, size_t> dictionary;
             TriangleHeights th;
             size_t numBlocks = PlanarSurface::getDiscretizationX() * PlanarSurface::getDiscretizationY();
             size_t numTriangPerBlock = 8;
@@ -1752,14 +1822,17 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
                         th = -container[s]->getTriangleHeightsFromPositionInBlock(tpos, bindex);
                         dictionary.insert(std::make_pair(th, s));
                     }
+                    /* std::cout << "For pair (b, t) " << "(" << bindex << ", " << tpos << ")" << " ordered indices are:"; */
 
                     for ( auto iter = dictionary.begin(); iter != dictionary.end(); ++iter )
                     {
+                        /* std::cout << " " << iter->second; */
                         ordered_ids.push_back( iter->second );
                     }
 
                     if ( !ordered_ids.empty() )
                     {
+                        /* std::cout << "; picked: " << ordered_ids.back() << std::endl; */
                         lbound_set.insert( ordered_ids.back() );
                     }
                 }
@@ -1775,6 +1848,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 
         std::vector<size_t> SRules::getUpperBound( std::vector<size_t> surface_ids )
         {
+            /* std::cout << "Inside SRules::getUpperBound()\n"; */
             std::vector<size_t> ubound;
 
             for ( auto &s : surface_ids )
@@ -1796,7 +1870,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
             std::set<size_t> ubound_set;
 
             std::vector<size_t> ordered_ids;
-            std::multimap<TriangleHeights, size_t> dictionary;
+            std::map<TriangleHeights, size_t> dictionary;
             TriangleHeights th;
             size_t numBlocks = PlanarSurface::getDiscretizationX() * PlanarSurface::getDiscretizationY();
             size_t numTriangPerBlock = 8;
@@ -1813,14 +1887,17 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
                         th = container[s]->getTriangleHeightsFromPositionInBlock(tpos, bindex);
                         dictionary.insert(std::make_pair(th, s));
                     }
+                    /* std::cout << "For pair (b, t) " << "(" << bindex << ", " << tpos << ")" << " ordered indices are:"; */
 
                     for ( auto iter = dictionary.begin(); iter != dictionary.end(); ++iter )
                     {
+                        /* std::cout << " " << iter->second; */
                         ordered_ids.push_back( iter->second );
                     }
 
                     if ( !ordered_ids.empty() )
                     {
+                        /* std::cout << "; picked: " << ordered_ids.back() << std::endl; */
                         ubound_set.insert( ordered_ids.back() );
                     }
                 }
@@ -1832,6 +1909,14 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
             }
 
             return ubound;
+        }
+
+        void SRules::updateDiscretization()
+        {
+            for ( auto &s : container )
+            {
+                s->updateDiscretization();
+            }
         }
 
         void SRules::updateCache()

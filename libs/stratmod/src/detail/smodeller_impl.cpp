@@ -600,7 +600,7 @@ bool SModellerImplementation::preserveAbove( std::vector<size_t> bounding_surfac
 {
     ContainerSurfaceIndex index;
     std::vector<ContainerSurfaceIndex> surface_ids;
-    stopPreserveAbove();
+    /* stopPreserveAbove(); */
 
     for ( auto &surface_index : bounding_surfaces_list )
     {
@@ -628,7 +628,7 @@ bool SModellerImplementation::preserveBelow( std::vector<size_t> bounding_surfac
 {
     ContainerSurfaceIndex index;
     std::vector<ContainerSurfaceIndex> surface_ids;
-    stopPreserveBelow();
+    /* stopPreserveBelow(); */
 
     for ( auto &surface_index : bounding_surfaces_list )
     {

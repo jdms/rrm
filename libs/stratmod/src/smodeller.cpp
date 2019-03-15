@@ -257,6 +257,7 @@ bool SModeller::changeDiscretization( size_t width, size_t length )
 
     pimpl_->discWidth_ = width; 
     pimpl_->discLenght_ = length; 
+    /* pimpl_->container_.updateCache(); */
 
     while ( counter > 0 )
     {
@@ -749,7 +750,8 @@ bool SModeller::undo()
     auto iter = pimpl_->dictionary_.find(last_surface_index); 
     pimpl_->dictionary_.erase(iter); 
 
-    pimpl_->container_.updateCache();
+    // Cache was updated in call to SRules::popLastSurface()
+    /* pimpl_->container_.updateCache(); */
 
     pimpl_->mesh_ = nullptr;
 
@@ -801,6 +803,8 @@ bool SModeller::redo()
     std::vector<size_t> lbounds, ubounds;
     bool status = pimpl_->parseTruncateSurfaces(lbounds, ubounds); 
 
+    /* pimpl_->container_.updateCache(); */
+
     if ( status == true )
     {
         status = pimpl_->commitSurface(undoed_sptr, surface_index, lbounds, ubounds); 
@@ -811,8 +815,6 @@ bool SModeller::redo()
 
     /* pimpl_->current_ = state_before_redo_; */
     /* pimpl_->enforceDefineRegion(); */
-
-    pimpl_->container_.updateCache();
 
     return status;
 }
