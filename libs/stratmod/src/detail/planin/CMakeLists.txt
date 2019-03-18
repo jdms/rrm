@@ -295,10 +295,11 @@ target_include_directories(planin SYSTEM
 target_link_libraries(planin)
 
 target_compile_features(planin PUBLIC cxx_std_11)
-target_compile_options(planin PRIVATE -Wall -Wno-unknown-pragmas)
 
 if(MSVC)
-    target_compile_options(planin PRIVATE EHsc W3)
+    target_compile_options(planin PRIVATE -EHsc -W3)
+else()
+    target_compile_options(planin PRIVATE -Wall -Wno-unknown-pragmas)
 endif()
 
 if( ${PLANIN_BUILD_USING_OPENMP} )

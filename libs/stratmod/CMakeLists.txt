@@ -292,10 +292,11 @@ set(STRATMOD_LIB_SOURCES
 add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${HEADERS})  
 
 target_compile_features(planin PUBLIC cxx_std_11)
-target_compile_options(planin PRIVATE -Wall -Wno-unknown-pragmas)
 
 if(MSVC)
-    target_compile_options(planin PRIVATE EHsc W3)
+    target_compile_options(planin PRIVATE -EHsc -W3)
+else()
+    target_compile_options(planin PRIVATE -Wall -Wno-unknown-pragmas)
 endif()
 
 if( ${STRATMOD_BUILD_USING_OPENMP} )
