@@ -80,6 +80,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 ###############################################
 
 if(STRATMOD_BUILD_SHARED_LIBRARY)
+    add_definitions(-DSTRATMOD_BUILD_SHARED)
     set(LIB_TYPE SHARED)
     # set(PLANIN_FORCE_POSITION_INDEPENDENT_CODE ON)
     set(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE ON)
@@ -276,7 +277,7 @@ endif()
 # include_directories(${CMAKE_SOURCE_DIR}/src)
 
 set(HEADERS 
-    src/win_dll_export_handler.hpp
+    src/stratmod_win_dll_export_handler.hpp
     src/smodeller_primitives.hpp
     src/smodeller.hpp
     src/sutilities.hpp
@@ -291,12 +292,16 @@ set(STRATMOD_LIB_SOURCES
 
 add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${HEADERS})  
 
-target_compile_features(planin PUBLIC cxx_std_11)
+target_compile_features(stratmod PUBLIC cxx_std_11)
 
 if(MSVC)
-    target_compile_options(planin PRIVATE -EHsc -W3)
+    target_compile_options(stratmod PRIVATE -EHsc -W3)
 else()
-    target_compile_options(planin PRIVATE -Wall -Wno-unknown-pragmas)
+    target_compile_options(stratmod PRIVATE -Wall -Wno-unknown-pragmas)
+endif()
+
+if(STRATMOD_BUILD_SHARED_LIBRARY)
+    target_compile_options(stratmod PUBLIC -DSTRATMOD_BUILD_SHARED_LIBRARY)
 endif()
 
 if( ${STRATMOD_BUILD_USING_OPENMP} )

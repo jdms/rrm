@@ -88,6 +88,22 @@ option(PLANIN_BUILD_TEST_MESH "" OFF)
 
 
 ###############################################
+# Use Backward-cpp
+###############################################
+option(PLANIN_BUILD_USING_BACKWARD_CPP "" ON)
+
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif()
+
+if(PLANIN_BUILD_USING_BACKWARD_CPP AND LINUX)
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/backward-cpp")
+    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/backward-cpp")
+    find_package(Backward)
+endif()
+
+
+###############################################
 # Tools.  
 ###############################################
 option(PLANIN_BUILD_UTILITY_UPDATE_MESH "" OFF)
@@ -304,6 +320,14 @@ endif()
 
 if( ${PLANIN_BUILD_USING_OPENMP} )
     target_link_libraries(planin PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
+if(LINUX)
+    if(${Backward_FOUND})
+        target_link_libraries(planin PUBLIC Backward::Backward)
+    else()
+        message(STATUS "Backward-cpp won't be used in this build")
+    endif()
 endif()
 
 if(LOCAL_EIGEN3_INSTALL)
