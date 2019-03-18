@@ -10,6 +10,7 @@ project( RRM )
 set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 #set( CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build )
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 ###############################################
 # Options
@@ -129,7 +130,7 @@ include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
 set( TUCANO_DIR ${CMAKE_SOURCE_DIR}/libs/Tucano )
 include_directories( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
 
-add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
+# add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
 
 
 if(WIN32)
@@ -163,45 +164,47 @@ include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs/colorwrap/include)
 # Preliminary support for stratmod library
 ###############################################
 
-include(ExternalProject)  ## needed
+# include(ExternalProject)  ## needed
 
-set(BUILD_USING_OPENMP ON)
+# set(BUILD_USING_OPENMP ON)
 
+# set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
+
+# set(STRATMOD_CMAKE_ARGS 
+#     -DSTRATMOD_EIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
+#     -DSTRATMOD_BUILD_USING_OPENMP=${BUILD_USING_OPENMP}
+#     -DSTRATMOD_BUILD_SHARED_LIBRARY=ON
+#     -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
+#     )
+
+# if(BUILD_USING_OPENMP AND APPLE)
+#     set(STRATMOD_CMAKE_ARGS 
+#         -DSTRATMOD_EIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
+#         -DSTRATMOD_BUILD_USING_OPENMP=ON 
+#         -DSTRATMOD_BUILD_SHARED_LIBRARY=${BUILD_SHARED_STRATMODLIB}
+#         -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
+#         -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake
+#         )
+# endif()
+
+# ExternalProject_Add(
+#     StratModLibBuild
+#     DOWNLOAD_COMMAND git submodule update --init
+#     UPDATE_COMMAND git submodule update -f
+#     SOURCE_DIR ${STRATMOD_SOURCE}
+#     CMAKE_ARGS ${STRATMOD_CMAKE_ARGS} 
+#     )
+
+# if(MSVC)
+#     set(STRATMODLIB ${STRATMOD_SOURCE}/stratmod/lib/stratmod.lib)
+# else()
+#     set(STRATMODLIB "${STRATMOD_SOURCE}/stratmod/lib/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
+#     #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstr  atmod.a)
+# endif()
+
+set(STRATMOD_EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
+add_subdirectory(${CMAKE_SOURCE_DIR}/libs/stratmod)
 set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
-
-set(STRATMOD_CMAKE_ARGS 
-    -DSTRATMOD_EIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
-    -DSTRATMOD_BUILD_USING_OPENMP=${BUILD_USING_OPENMP}
-    -DSTRATMOD_BUILD_SHARED_LIBRARY=ON
-    -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
-    )
-
-if(BUILD_USING_OPENMP AND APPLE)
-    set(STRATMOD_CMAKE_ARGS 
-        -DSTRATMOD_EIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
-        -DSTRATMOD_BUILD_USING_OPENMP=ON 
-        -DSTRATMOD_BUILD_SHARED_LIBRARY=${BUILD_SHARED_STRATMODLIB}
-        -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
-        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake
-        )
-endif()
-
-ExternalProject_Add(
-    StratModLibBuild
-    DOWNLOAD_COMMAND git submodule update --init
-    UPDATE_COMMAND git submodule update -f
-    SOURCE_DIR ${STRATMOD_SOURCE}
-    CMAKE_ARGS ${STRATMOD_CMAKE_ARGS} 
-    )
-
-if(MSVC)
-    set(STRATMODLIB ${STRATMOD_SOURCE}/stratmod/lib/stratmod.lib)
-else()
-    set(STRATMODLIB "${STRATMOD_SOURCE}/stratmod/lib/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstr  atmod.a)
-endif()
-
-
 include_directories(${STRATMOD_SOURCE}/src)
 
 #message(WARNING stratmod)

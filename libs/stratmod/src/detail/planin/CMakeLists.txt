@@ -43,27 +43,30 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set default build type (debug, release, etc.)
 ###############################################
 
-set(PLANIN_BUILD_TYPE "Release" CACHE STRING
-    "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
-set(CMAKE_BUILD_TYPE "${PLANIN_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+set(PLANIN_BUILD_TYPE "" CACHE STRING
+    "Leave empty or set to any of: Debug, Release, RelWithDebInfo, or MinSizeRel")
+
+if(PLANIN_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "${PLANIN_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+endif()
 
 
 ###############################################
 # Build forcing position independent code
 ###############################################
-option(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE "" OFF) 
+option(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE "" ON) 
 
 
 ###############################################
 # Use OpenMP
 ###############################################
-option(PLANIN_BUILD_USING_OPENMP "" ON) 
+option(PLANIN_BUILD_USING_OPENMP "" OFF) 
 
 
 ###############################################
 # Use Cereal for serialization
 ###############################################
-option(PLANIN_BUILD_USING_CEREAL "" ON) 
+option(PLANIN_BUILD_USING_CEREAL "" OFF) 
 
 
 ###############################################
@@ -81,7 +84,7 @@ option(PLANIN_BUILD_MAIN "" OFF)
 ###############################################
 # Build a tetrahedral meshing test program. 
 ###############################################
-option(PLANIN_BUILD_TEST_MESH "" ON)
+option(PLANIN_BUILD_TEST_MESH "" OFF)
 
 
 ###############################################
@@ -113,9 +116,9 @@ option(PLANIN_BUILD_DAISY_EXAMPLE_5B "" OFF)
 # Auxiliary config files. 
 ###############################################
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-include_directories("./")
+# include_directories("./")
 
 
 ###############################################
@@ -123,17 +126,17 @@ include_directories("./")
 # Gcc (4.8+) and VS2013 (revision 5+)). 
 ###############################################
 
-if(MSVC)
+# if(MSVC)
     # Flag '/EHsc': the mere fact of including <iostream> yields warning C4530
     # in VS2013, which relates to exception handling.  The flag '/EHsc' seems
     # to be necessary to make VS2013 behave sanely. 
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /W3")
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /W3")
 
-else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-unknown-pragmas")
+# else()
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-unknown-pragmas")
 
-endif()
+# endif()
 
 if(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -144,7 +147,7 @@ endif()
 # Finally a way to use OpenMP with AppleClang!  (It's still a hack, though...)
 # Let's keep the old hack commented out in case this breaks.  
 
-if(PLANIN_BUILD_USING_OPENMP)
+if(PLANIN_BUILD_USING_OPENMP OR STRATMOD_BUILD_USING_OPENMP)
     include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
     find_package(OpenMP REQUIRED)
 endif()
@@ -170,7 +173,7 @@ endif()
 # Docs
 ###############################################
 
-if (PLANIN_BUILD_DOCS)
+if (PLANIN_BUILD_DOCS OR STRATMOD_BUILD_DOCS)
     include("${CMAKE_MODULE_PATH}/BuildDocumentation.cmake") 
 endif()
 
@@ -183,9 +186,11 @@ include(ExternalProject)
 
 
 # Eigen is mainly used as a wrapper for Lapack. 
-if (PLANIN_EIGEN3_INCLUDE_DIR)
+if(PLANIN_EIGEN3_INCLUDE_DIR)
     message(STATUS "Using customized eigen3 include dir: ${PLANIN_EIGEN3_INCLUDE_DIR}")
-    include_directories(SYSTEM ${PLANIN_EIGEN3_INCLUDE_DIR})
+
+    # include_directories(SYSTEM ${PLANIN_EIGEN3_INCLUDE_DIR})
+    set(EIGEN3_INCLUDE_DIR ${PLANIN_EIGEN3_INCLUDE_DIR})
 
 else()
     find_package(Eigen3) 
@@ -195,7 +200,7 @@ else()
     endif()
 
     if(GLOBAL_EIGEN3_INSTALL) 
-        include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+        # include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
     else()
         set(EIGEN3_SOURCE ${CMAKE_SOURCE_DIR}/eigen3)
@@ -211,15 +216,15 @@ else()
             EXCLUDE_FROM_ALL TRUE
             )
 
-        include_directories(SYSTEM ${EIGEN3_SOURCE})
+        # include_directories(SYSTEM ${EIGEN3_SOURCE})
+        set(EIGEN3_INCLUDE_DIR ${EIGEN3_SOURCE})
         set(LOCAL_EIGEN3_INSTALL true CACHE BOOL "")
-
     endif() 
 endif()
 
 
 # Cereal is used to serialize objects
-if(PLANIN_BUILD_USING_CEREAL)
+if(PLANIN_BUILD_USING_CEREAL OR STRATMOD_BUILD_USING_CEREAL)
     #    set(CEREAL_SOURCE ${CMAKE_SOURCE_DIR}/cereal )
     #    ExternalProject_Add(
     #        CerealLib
@@ -234,7 +239,8 @@ if(PLANIN_BUILD_USING_CEREAL)
 
     #    include_directories(${CEREAL_SOURCE}/include)
 
-    include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/cereal)
+    # include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/cereal)
+    set(CEREAL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/cereal)
     add_definitions(-DBUILD_WITH_SERIALIZATION)
 endif()
 
@@ -273,18 +279,38 @@ set(PLANIN_LIB_SOURCES
     ) 
 
 add_library(planin STATIC ${PLANIN_LIB_SOURCES} ${HEADERS})  
+
+target_include_directories(planin
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mesh>
+)
+
+target_include_directories(planin SYSTEM
+    PUBLIC
+        $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${CEREAL_INCLUDE_DIR}>
+)
+
+target_link_libraries(planin)
+
+target_compile_features(planin PUBLIC cxx_std_11)
+target_compile_options(planin PRIVATE -Wall -Wno-unknown-pragmas)
+
+if(MSVC)
+    target_compile_options(planin PRIVATE EHsc W3)
+endif()
+
 if( ${PLANIN_BUILD_USING_OPENMP} )
-    target_link_libraries(planin OpenMP::OpenMP_CXX ${})
-else()
-    target_link_libraries(planin)
+    target_link_libraries(planin PUBLIC OpenMP::OpenMP_CXX)
 endif()
 
 if(LOCAL_EIGEN3_INSTALL)
     add_dependencies(planin Eigen3-build)
 endif()
 
-install(TARGETS planin
-    ARCHIVE DESTINATION ${CMAKE_SOURCE_DIR}/lib)
+# install(TARGETS planin
+    # ARCHIVE DESTINATION ${CMAKE_SOURCE_DIR}/lib)
 
 
 ###############################################
