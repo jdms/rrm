@@ -31,8 +31,6 @@
 #include <vector>
 #include <memory>
 
-#include "win_dll_export_handler.hpp"
-
 #include "smodeller.hpp"
 
 
