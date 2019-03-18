@@ -157,7 +157,7 @@ else()
     set(COLORWRAP_BUILD_SHARED ON) 
 endif()
 set(COLORWRAP_EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3)
-add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/colorwrap EXCLUDE_FROM_ALL )
+add_subdirectory(${CMAKE_SOURCE_DIR}/libs/colorwrap)
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs/colorwrap/include)
 
 ###############################################
