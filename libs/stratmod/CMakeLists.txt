@@ -41,11 +41,16 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Project options 
 ###############################################
 
-# Set default build type (debug, release, etc.)
+# Set default build type (debug, release, etc.), 
+# or leave empty to use the (platform specific) 
+# default
 
-set(STRATMOD_BUILD_TYPE "Release" CACHE STRING
-    "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
-set(CMAKE_BUILD_TYPE "${STRATMOD_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+set(STRATMOD_BUILD_TYPE "" CACHE STRING
+    "Leave empty or set to any of: Debug, Release, RelWithDebInfo, or MinSizeRel")
+
+if(STRATMOD_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "${STRATMOD_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+endif()
 
 
 option(STRATMOD_BUILD_SHARED_LIBRARY "Build a shared library instead of static library" ON)
@@ -64,9 +69,9 @@ option(STRATMOD_BUILD_UTILITIES      "Build command line utilities"             
 # Auxiliary config files. 
 ###############################################
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-include_directories("./")
+# include_directories("./")
 
 
 
@@ -76,7 +81,8 @@ include_directories("./")
 
 if(STRATMOD_BUILD_SHARED_LIBRARY)
     set(LIB_TYPE SHARED)
-    set(PLANIN_FORCE_POSITION_INDEPENDENT_CODE ON)
+    # set(PLANIN_FORCE_POSITION_INDEPENDENT_CODE ON)
+    set(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE ON)
 
 else()
     set(LIB_TYPE STATIC)
@@ -90,17 +96,17 @@ endif()
 # Gcc (5.4+) and VS2013 (revision 5+)). 
 ###############################################
 
-if(MSVC)
+# if(MSVC)
     # Flag '/EHsc': the mere fact of including <iostream> yields warning C4530
     # in VS2013, which relates to exception handling.  The flag '/EHsc' seems
     # to be necessary to make VS2013 behave sanely. 
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /W3")
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /W3")
 
-else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
+# else()
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
 
-endif()
+# endif()
 
 
 ###############################################
@@ -110,6 +116,7 @@ endif()
 if(STRATMOD_BUILD_USING_OPENMP)
     include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
     find_package(OpenMP REQUIRED)
+    set(PLANIN_BUILD_USING_OPENMP "" ON) 
 endif()
 
 #if(STRATMOD_BUILD_USING_OPENMP)
@@ -148,6 +155,7 @@ endif()
 
 if (STRATMOD_BUILD_DOCS)
     include("${CMAKE_MODULE_PATH}/BuildDocumentation.cmake") 
+    set(PLANIN_BUILD_DOCS "" OFF) 
 endif(STRATMOD_BUILD_DOCS)
 
 
@@ -164,6 +172,7 @@ endif(STRATMOD_BUILD_DOCS)
 
 if(STRATMOD_EIGEN3_INCLUDE_DIR)
     message(STATUS "Using eigen3 include dir: ${STRATMOD_EIGEN3_INCLUDE_DIR}")
+    set(PLANIN_EIGEN3_INCLUDE_DIR ${STRATMOD_EIGEN3_INCLUDE_DIR})
 endif()
 
 
@@ -180,43 +189,44 @@ include(ExternalProject)
 ###############################################
 
 set(PLANIN_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin)
+add_subdirectory(${PLANIN_SOURCE})
 
-set(PLANIN_CMAKE_ARGS 
-    -DPLANIN_EIGEN3_INCLUDE_DIR=${STRATMOD_EIGEN3_INCLUDE_DIR}
-    -DPLANIN_BUILD_DOCS=OFF 
-    -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
-    -DPLANIN_BUILD_USING_OPENMP=${STRATMOD_BUILD_USING_OPENMP}
-    -DPLANIN_BUILD_USING_CEREAL=${STRATMOD_BUILD_USING_CEREAL}
-    -DPLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE=${PLANIN_FORCE_POSITION_INDEPENDENT_CODE}
-    )
+# set(PLANIN_CMAKE_ARGS 
+#     -DPLANIN_EIGEN3_INCLUDE_DIR=${STRATMOD_EIGEN3_INCLUDE_DIR}
+#     -DPLANIN_BUILD_DOCS=OFF 
+#     -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
+#     -DPLANIN_BUILD_USING_OPENMP=${STRATMOD_BUILD_USING_OPENMP}
+#     -DPLANIN_BUILD_USING_CEREAL=${STRATMOD_BUILD_USING_CEREAL}
+#     -DPLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE=${PLANIN_FORCE_POSITION_INDEPENDENT_CODE}
+#     )
 
-if(STRATMOD_BUILD_USING_OPENMP AND APPLE)
-    set(PLANIN_CMAKE_ARGS 
-        -DPLANIN_EIGEN_INCLUDE_DIR=${STRATMOD_EIGEN_INCLUDE_DIR}
-        -DPLANIN_BUILD_DOCS=OFF 
-        -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
-        -DPLANIN_BUILD_USING_OPENMP=ON 
-        -DPLANIN_BUILD_USING_CEREAL=${STRATMOD_BUILD_USING_CEREAL}
-        -DPLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE=${PLANIN_FORCE_POSITION_INDEPENDENT_CODE}
-    )
-        #-DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake)
-endif()
+# if(STRATMOD_BUILD_USING_OPENMP AND APPLE)
+#     set(PLANIN_CMAKE_ARGS 
+#         -DPLANIN_EIGEN_INCLUDE_DIR=${STRATMOD_EIGEN_INCLUDE_DIR}
+#         -DPLANIN_BUILD_DOCS=OFF 
+#         -DPLANIN_BUILD_TYPE=${STRATMOD_BUILD_TYPE}
+#         -DPLANIN_BUILD_USING_OPENMP=ON 
+#         -DPLANIN_BUILD_USING_CEREAL=${STRATMOD_BUILD_USING_CEREAL}
+#         -DPLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE=${PLANIN_FORCE_POSITION_INDEPENDENT_CODE}
+#     )
+#         #-DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake)
+# endif()
 
-ExternalProject_Add(
-    PlanIn
-    DOWNLOAD_COMMAND ""
-    UPDATE_COMMAND ""
-    SOURCE_DIR ${PLANIN_SOURCE}
-    CMAKE_ARGS ${PLANIN_CMAKE_ARGS} 
-    )
+# ExternalProject_Add(
+#     PlanIn
+#     DOWNLOAD_COMMAND ""
+#     UPDATE_COMMAND ""
+#     SOURCE_DIR ${PLANIN_SOURCE}
+#     CMAKE_ARGS ${PLANIN_CMAKE_ARGS} 
+#     )
 
 
-add_library(planin STATIC IMPORTED)
-add_dependencies(planin PlanIn)
-include_directories(SYSTEM ${PLANIN_SOURCE})
+# add_library(planin STATIC IMPORTED)
+# add_dependencies(planin PlanIn)
+# include_directories(SYSTEM ${PLANIN_SOURCE})
 
-set(PLANINLIB "${PLANIN_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}planin${CMAKE_STATIC_LIBRARY_SUFFIX}")
-set_property(TARGET planin PROPERTY IMPORTED_LOCATION ${PLANINLIB})
+# set(PLANINLIB "${PLANIN_SOURCE}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}planin${CMAKE_STATIC_LIBRARY_SUFFIX}")
+# set_property(TARGET planin PROPERTY IMPORTED_LOCATION ${PLANINLIB})
 
 
 
@@ -226,7 +236,7 @@ set_property(TARGET planin PROPERTY IMPORTED_LOCATION ${PLANINLIB})
 
 if(STRATMOD_BUILD_USING_CEREAL)
     add_definitions(-DBUILD_WITH_SERIALIZATION)
-
+    set(PLANIN_BUILD_USING_CEREAL "" ON) 
 endif()
 
 
@@ -263,7 +273,7 @@ endif()
 # Main library
 ###############################################
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
+# include_directories(${CMAKE_SOURCE_DIR}/src)
 
 set(HEADERS 
     src/win_dll_export_handler.hpp
@@ -281,12 +291,29 @@ set(STRATMOD_LIB_SOURCES
 
 add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${HEADERS})  
 
+target_compile_features(planin PUBLIC cxx_std_11)
+target_compile_options(planin PRIVATE -Wall -Wno-unknown-pragmas)
+
+if(MSVC)
+    target_compile_options(planin PRIVATE EHsc W3)
+endif()
+
 if( ${STRATMOD_BUILD_USING_OPENMP} )
     target_link_libraries(stratmod planin OpenMP::OpenMP_CXX)
 else()
     target_link_libraries(stratmod planin)
 endif()
 
+target_include_directories(stratmod
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+)
+
+target_include_directories(stratmod SYSTEM
+    PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin>
+)
 add_dependencies(stratmod planin)
 
 

@@ -483,8 +483,14 @@ bool SRules::getUpperBoundary( const std::vector<VertexList> &vlists, const std:
     CEREAL_CLASS_VERSION(SRules, 2);
 
 #else
+    /* template<typename Archive> */
+    /* void SRules::serialize( Archive &, const std::uint32_t ) {} */
+
     template<typename Archive>
-    void SRules::serialize( Archive &, const std::uint32_t ) {}
+    void SRules::save( Archive &/* ar */, const std::uint32_t /* version */ ) const {}
+
+    template<typename Archive>
+    void SRules::load( Archive &/* ar */, const std::uint32_t /* version */ ) {}
 
 #endif /* BUILD_WITH_SERIALIZATION */
 

@@ -34,7 +34,7 @@
 #include <cstdint>
 
 #include "detail/planin/planin.hpp"
-#include "mesh/linear_complexes.hpp"
+#include "detail/planin/mesh/linear_complexes.hpp"
 
 #include "smodeller.hpp"
 
