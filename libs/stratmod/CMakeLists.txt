@@ -287,6 +287,8 @@ set(STRATMOD_LIB_SOURCES
     src/detail/smodeller_impl.cpp
     src/smodeller.cpp
     src/sutilities.cpp
+    src/use_smodeller.cpp
+    src/use_sutilities.cpp
     ) 
 
 

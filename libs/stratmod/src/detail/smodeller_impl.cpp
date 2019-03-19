@@ -596,6 +596,40 @@ bool SModellerImplementation::popLastSurface()
     return true;
 }
 
+bool SModellerImplementation::canRedo()
+{
+    if ( undoed_surfaces_stack_.size() > 0 )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool SModellerImplementation::canUndo()
+{
+    if ( container_.size() > 0 )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool SModellerImplementation::popUndoStack()
+{
+    if ( canRedo() == false )
+    {
+        return false;
+    }
+
+    undoed_surfaces_stack_.pop_back(); 
+    undoed_surfaces_indices_.pop_back();
+    undoed_states_.pop_back();
+
+    return true;
+}
+
 bool SModellerImplementation::preserveAbove( std::vector<size_t> bounding_surfaces_list )
 {
     ContainerSurfaceIndex index;

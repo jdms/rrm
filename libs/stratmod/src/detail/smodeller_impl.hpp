@@ -256,6 +256,11 @@ struct SModellerImplementation
 
     bool popLastSurface();
 
+    bool canUndo();
+    bool canRedo();
+
+    bool popUndoStack();
+
     bool preserveAbove( std::vector<size_t> bounding_surfaces_list );
     bool preserveBelow( std::vector<size_t> bounding_surfaces_list );
 

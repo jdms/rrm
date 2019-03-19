@@ -52,6 +52,15 @@ SModeller::SModeller() :
 
 SModeller::~SModeller() = default; 
 
+SModellerImplementation& SModeller::Impl()
+{
+    return *pimpl_;
+}
+
+const SModellerImplementation& SModeller::Impl() const
+{
+    return *pimpl_;
+}
 
 std::vector<size_t> SModeller::getSurfacesIndices()
 {
@@ -63,120 +72,135 @@ std::vector<std::size_t> SModeller::getOrderedSurfacesIndices()
     return pimpl_->getOrderedSurfacesIndices();
 }
 
-bool SModeller::requestCreateAbove( std::vector<size_t> &eligible_surfaces )
-{
-    if ( pimpl_->container_.empty() )
-    {
-        return false; 
-    }
+/* // create[Above,Below] is DEPRECATED */
+/* // */
+/* // brief: */
+/* // Verifies whether ir is possible to define a new 'drawing' region, */
+/* // either above or below. */
+/* // Argument: `eligible_surfaces` stores the indices of surfaces that can */
+/* // be used as input either for an `defineAbove()` or a `defineBelow()`. */
+/* // Return: true if at least one elegible surface was found. */
+/* // */
+/* [[deprecated]] */
+/* bool requestCreateAbove( std::vector<std::size_t> &eligible_surfaces ); */
 
-    eligible_surfaces.clear(); 
-    ControllerSurfaceIndex output_index; 
-    ContainerSurfaceIndex index; 
+/* bool SModeller::requestCreateAbove( std::vector<size_t> &eligible_surfaces ) */
+/* { */
+    /* if ( pimpl_->container_.empty() ) */
+    /* { */
+    /*     return false; */ 
+    /* } */
 
-    for ( size_t i = 0; i < pimpl_->inserted_surfaces_indices_.size(); ++i )
-    {
-        output_index = pimpl_->inserted_surfaces_indices_[i]; 
-        if ( pimpl_->getSurfaceIndex(output_index, index) == false )
-            continue; 
+    /* eligible_surfaces.clear(); */ 
+    /* ControllerSurfaceIndex output_index; */ 
+    /* ContainerSurfaceIndex index; */ 
 
-        if ( pimpl_->container_.weakEntireSurfaceCheck(index) )
-        {
-            if ( pimpl_->createBelowIsActive() )
-            {
-                /* std::cout << "Define Below is active.\n"; */ 
-                ContainerSurfaceIndex boundary_index; 
+    /* for ( size_t i = 0; i < pimpl_->inserted_surfaces_indices_.size(); ++i ) */
+    /* { */
+    /*     output_index = pimpl_->inserted_surfaces_indices_[i]; */ 
+    /*     if ( pimpl_->getSurfaceIndex(output_index, index) == false ) */
+    /*         continue; */ 
 
-                if ( pimpl_->getSurfaceIndex(pimpl_->current_.upper_boundary_, boundary_index) == false )
-                {
-                    /* std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; */ 
-                    /* std::cout << "Got wrong id. \n"; */ 
-                    continue;
-                }
+    /*     if ( pimpl_->container_.weakEntireSurfaceCheck(index) ) */
+    /*     { */
+    /*         if ( pimpl_->createBelowIsActive() ) */
+    /*         { */
+    /*             /1* std::cout << "Define Below is active.\n"; *1/ */ 
+    /*             ContainerSurfaceIndex boundary_index; */ 
 
-                /* std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; */ 
+    /*             if ( pimpl_->getSurfaceIndex(pimpl_->current_.upper_boundary_, boundary_index) == false ) */
+    /*             { */
+    /*                 /1* std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; *1/ */ 
+    /*                 /1* std::cout << "Got wrong id. \n"; *1/ */ 
+    /*                 continue; */
+    /*             } */
 
-                if ( index == boundary_index )
-                {
-                    continue;
-                }
+    /*             /1* std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; *1/ */ 
 
-                if ( pimpl_->container_[index]->weakLiesBelowOrEqualsCheck(pimpl_->container_[boundary_index]) )
-                {
-                    eligible_surfaces.push_back(output_index); 
-                }
-                else
-                {
-                    /* std::cout << " --> Not eligible\n"; */ 
-                }
-            }
-            else
-            {
-                eligible_surfaces.push_back(output_index); 
-            }
+    /*             if ( index == boundary_index ) */
+    /*             { */
+    /*                 continue; */
+    /*             } */
 
-        }
-    }
+    /*             if ( pimpl_->container_[index]->weakLiesBelowOrEqualsCheck(pimpl_->container_[boundary_index]) ) */
+    /*             { */
+    /*                 eligible_surfaces.push_back(output_index); */ 
+    /*             } */
+    /*             else */
+    /*             { */
+    /*                 /1* std::cout << " --> Not eligible\n"; *1/ */ 
+    /*             } */
+    /*         } */
+    /*         else */
+    /*         { */
+    /*             eligible_surfaces.push_back(output_index); */ 
+    /*         } */
 
-    return !eligible_surfaces.empty(); 
-}
+    /*     } */
+    /* } */
 
-bool SModeller::requestCreateBelow( std::vector<size_t> &eligible_surfaces )
-    {
-        if ( pimpl_->container_.empty() )
-        {
-            return false; 
-        }
+    /* return !eligible_surfaces.empty(); */ 
+/* } */
 
-        eligible_surfaces.clear(); 
-        ControllerSurfaceIndex output_index; 
-        ContainerSurfaceIndex index; 
+/* [[deprecated]] */
+/* bool requestCreateBelow( std::vector<std::size_t> &eligible_surfaces ); */
 
-        for ( size_t i = 0; i < pimpl_->inserted_surfaces_indices_.size(); ++i )
-        {
-            output_index = pimpl_->inserted_surfaces_indices_[i]; 
-            if ( pimpl_->getSurfaceIndex(output_index, index) == false )
-                continue; 
+/* bool SModeller::requestCreateBelow( std::vector<size_t> &eligible_surfaces ) */
+/* { */
+    /* if ( pimpl_->container_.empty() ) */
+    /* { */
+    /*     return false; */ 
+    /* } */
 
-            if ( pimpl_->container_.weakEntireSurfaceCheck(index) )
-            {
-                if ( pimpl_->createAboveIsActive() )
-                {
-                    /* std::cout << "Define Below is active.\n"; */ 
-                    ContainerSurfaceIndex boundary_index; 
+    /* eligible_surfaces.clear(); */ 
+    /* ControllerSurfaceIndex output_index; */ 
+    /* ContainerSurfaceIndex index; */ 
 
-                    if ( pimpl_->getSurfaceIndex(pimpl_->current_.lower_boundary_, boundary_index) == false )
-                    {
-                    /* std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; */ 
-                        /* std::cout << "Got wrong id. \n"; */ 
-                        continue;
-                    }
+    /* for ( size_t i = 0; i < pimpl_->inserted_surfaces_indices_.size(); ++i ) */
+    /* { */
+    /*     output_index = pimpl_->inserted_surfaces_indices_[i]; */ 
+    /*     if ( pimpl_->getSurfaceIndex(output_index, index) == false ) */
+    /*         continue; */ 
 
-                    /* std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; */ 
-                    if ( index == boundary_index )
-                    {
-                        continue;
-                    }
+    /*     if ( pimpl_->container_.weakEntireSurfaceCheck(index) ) */
+    /*     { */
+    /*         if ( pimpl_->createAboveIsActive() ) */
+    /*         { */
+    /*             /1* std::cout << "Define Below is active.\n"; *1/ */ 
+    /*             ContainerSurfaceIndex boundary_index; */ 
 
-                    if ( pimpl_->container_[index]->weakLiesAboveOrEqualsCheck(pimpl_->container_[boundary_index]) )
-                    {
-                        eligible_surfaces.push_back(output_index); 
-                    }
-                    else
-                    {
-                        /* std::cout << " --> Not eligible\n"; */ 
-                    }
-                }
-                else
-                {
-                    eligible_surfaces.push_back(output_index); 
-                }
+    /*             if ( pimpl_->getSurfaceIndex(pimpl_->current_.lower_boundary_, boundary_index) == false ) */
+    /*             { */
+    /*                 /1* std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; *1/ */ 
+    /*                 /1* std::cout << "Got wrong id. \n"; *1/ */ 
+    /*                 continue; */
+    /*             } */
 
-            }
-        }
+    /*             /1* std::cout << "Surface id: " << index << ", boundary id: " << boundary_index << std::endl; *1/ */ 
+    /*             if ( index == boundary_index ) */
+    /*             { */
+    /*                 continue; */
+    /*             } */
 
-        return !eligible_surfaces.empty(); 
-    }
+    /*             if ( pimpl_->container_[index]->weakLiesAboveOrEqualsCheck(pimpl_->container_[boundary_index]) ) */
+    /*             { */
+    /*                 eligible_surfaces.push_back(output_index); */ 
+    /*             } */
+    /*             else */
+    /*             { */
+    /*                 /1* std::cout << " --> Not eligible\n"; *1/ */ 
+    /*             } */
+    /*         } */
+    /*         else */
+    /*         { */
+    /*             eligible_surfaces.push_back(output_index); */ 
+    /*         } */
+
+    /*     } */
+    /* } */
+
+    /* return !eligible_surfaces.empty(); */ 
+/* } */
 
 
         /* Change the model's properties */
@@ -217,20 +241,31 @@ bool SModeller::useOpenGLCoordinateSystem()
 }
 
 
-bool SModeller::tryChangeDiscretization( size_t width, size_t length )
-{
-    if ( pimpl_->container_.size() > 0 )
-    {
-        return false;
-    }
+/**
+ * \brief Change models discretization if model is empty
+ *
+ * \param width_discretization - discretization in the width direction
+ * \param length_discretization - discretization in the length direction
+ *
+ * \return true if discretization was changed
+ */
+/* [[deprecated]] */
+/* bool tryChangeDiscretization( std::size_t width_discretization = 64, std::size_t depth_discretization = 64 ); */
 
-    pimpl_->discWidth_ = width; 
-    pimpl_->discLenght_ = length; 
+/* bool SModeller::tryChangeDiscretization( size_t width, size_t length ) */
+/* { */
+/*     if ( pimpl_->container_.size() > 0 ) */
+/*     { */
+/*         return false; */
+/*     } */
 
-    PlanarSurface::requestChangeDiscretization(width, length);
+/*     pimpl_->discWidth_ = width; */ 
+/*     pimpl_->discLenght_ = length; */ 
 
-    return true;
-}
+/*     PlanarSurface::requestChangeDiscretization(width, length); */
+
+/*     return true; */
+/* } */
 
 bool SModeller::changeDiscretization( size_t width, size_t length )
 {
@@ -373,56 +408,92 @@ void SModeller::clear()
         /* Query or modify the automatum state */
 
 
-        //
-        // brief:
-        // Define new input region above surface which index is `surface_index`.
-        //
-bool SModeller::createAbove( size_t surface_index )
-{
-    return pimpl_->createAbove(surface_index); 
-}
+/* // */
+/* // brief: */
+/* // Define new input region above surface which index is `surface_index`. */
+/* // */
+/* // */
+/* // brief: */
+/* // Define new input region above surface which index is `surface_index`. */
+/* // */
+/* [[deprecated]] */
+/* bool createAbove( std::size_t surface_index ); */
+
+/* bool SModeller::createAbove( size_t surface_index ) */
+/* { */
+/*     return pimpl_->createAbove(surface_index); */ 
+/* } */
 
 
-        //
-        // brief:
-        // Clear any previous `createAbove()` call.
-        // Safe to call anytime.
-        //
-void SModeller::stopCreateAbove()
-{
-    pimpl_->stopCreateAbove();
-}
+/* // */
+/* // brief: */
+/* // Clear any previous `defineAbove()` call. */
+/* // Safe to call anytime. */
+/* // */
+/* [[deprecated]] */
+/* void stopCreateAbove(); */
+
+        /* // */
+        /* // brief: */
+        /* // Clear any previous `createAbove()` call. */
+        /* // Safe to call anytime. */
+        /* // */
+/* void SModeller::stopCreateAbove() */
+/* { */
+    /* pimpl_->stopCreateAbove(); */
+/* } */
 
 
-        //
-        // brief:
-        // Define new input region below surface which index is `surface_index`.
-        //
-bool SModeller::createBelow( size_t surface_index )
-{
-    return pimpl_->createBelow(surface_index); 
-}
+/* // */
+/* // brief: */
+/* // Define new input region below surface which index is `surface_index`. */
+/* // */
+/* [[deprecated]] */
+/* bool createBelow( std::size_t surface_index ); */
 
-        //
-        // brief:
-        // Clear any previous `defineBelow()` call.
-        // Safe to call anytime.
-        //
-void SModeller::stopCreateBelow()
-{
-    pimpl_->stopCreateBelow();
-}
+/* // */
+/* // brief: */
+/* // Define new input region below surface which index is `surface_index`. */
+/* // */
+/* bool SModeller::createBelow( size_t surface_index ) */
+/* { */
+/*     return pimpl_->createBelow(surface_index); */ 
+/* } */
+
+/* // */
+/* // brief: */
+/* // Clear any previous `defineBelow()` call. */
+/* // Safe to call anytime. */
+/* // */
+/* [[deprecated]] */
+/* void stopCreateBelow(); */
+
+/* // */
+/* // brief: */
+/* // Clear any previous `defineBelow()` call. */
+/* // Safe to call anytime. */
+/* // */
+/* void SModeller::stopCreateBelow() */
+/* { */
+/*     pimpl_->stopCreateBelow(); */
+/* } */
 
 
-bool SModeller::createAboveIsActive( size_t &boundary_index )
-{
-    return pimpl_->createAboveIsActive(boundary_index);
-}
+/* [[deprecated]] */
+/* bool createAboveIsActive( std::size_t &boundary_index ); */
 
-bool SModeller::createBelowIsActive( size_t &boundary_index )  
-{
-    return pimpl_->createBelowIsActive(boundary_index);
-}
+/* bool SModeller::createAboveIsActive( size_t &boundary_index ) */
+/* { */
+/*     return pimpl_->createAboveIsActive(boundary_index); */
+/* } */
+
+/* [[deprecated]] */
+/* bool createBelowIsActive( std::size_t &boundary_index ); */
+
+/* bool SModeller::createBelowIsActive( size_t &boundary_index ) */  
+/* { */
+/*     return pimpl_->createBelowIsActive(boundary_index); */
+/* } */
 
 bool SModeller::preserveAbove( std::vector<size_t> &bounding_surfaces_list )
 {
@@ -758,6 +829,14 @@ bool SModeller::undo()
     return true;
 }
 
+/* [[deprecated]] */
+/* bool popUndoStack(); */
+
+/* bool SModeller::popUndoStack() */
+/* { */
+/*     return pimpl_->popUndoStack(); */
+/* } */
+
 bool SModeller::canRedo()
 {
     if ( pimpl_->undoed_surfaces_stack_.size() > 0 )
@@ -766,20 +845,6 @@ bool SModeller::canRedo()
     }
 
     return false;
-}
-
-bool SModeller::popUndoStack()
-{
-    if ( canRedo() == false )
-    {
-        return false;
-    }
-
-    pimpl_->undoed_surfaces_stack_.pop_back(); 
-    pimpl_->undoed_surfaces_indices_.pop_back();
-    pimpl_->undoed_states_.pop_back();
-
-    return true;
 }
 
 bool SModeller::redo()
@@ -819,31 +884,54 @@ bool SModeller::redo()
     return status;
 }
 
-bool SModeller::getVertexList( size_t surface_id, std::vector<float> &vlist )
+bool SModeller::destroyLastSurface()
 {
-    return pimpl_->getVertexList(surface_id, vlist);
+    if ( !canUndo() )
+    {
+        return false;
+    }
+
+    undo();
+    return pimpl_->popUndoStack(); // must return true
 }
 
-bool SModeller::getVertexList( size_t surface_id, std::vector<double> &vlist )
-{
-    return pimpl_->getVertexList(surface_id, vlist);
-}
+/* [[deprecated]] */
+/* bool getVertexList( std::size_t surface_id, std::vector<float> &vlist ); */
 
-bool SModeller::getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist )
-{
-    return pimpl_->getMesh(surface_id, vlist, flist);
-}
+/* bool SModeller::getVertexList( size_t surface_id, std::vector<float> &vlist ) */
+/* { */
+/*     return pimpl_->getVertexList(surface_id, vlist); */
+/* } */
+
+/* [[deprecated]] */
+/* bool getVertexList( std::size_t surface_id, std::vector<double> &vlist ); */
+
+/* bool SModeller::getVertexList( size_t surface_id, std::vector<double> &vlist ) */
+/* { */
+/*     return pimpl_->getVertexList(surface_id, vlist); */
+/* } */
+
+/* [[deprecated]] */
+/* bool getMesh( std::size_t surface_id, std::vector<float> &vlist, std::vector<unsigned int> &flist ); */
+
+/* bool SModeller::getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<unsigned int> &flist ) */
+/* { */
+/*     return pimpl_->getMesh(surface_id, vlist, flist); */
+/* } */
 
 bool SModeller::getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist )
 {
     return pimpl_->getMesh(surface_id, vlist, flist);
 }
 
-bool SModeller::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist )
-{
-    return pimpl_->getCrossSectionWidth(surface_id, vlist, elist, width);
-    /* return pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width); */
-}
+/* [[deprecated]] */
+/* bool getWidthCrossSectionCurve( std::size_t surface_id, std::size_t width, std::vector<float> &vlist, std::vector<unsigned int> &elist ); */
+
+/* bool SModeller::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<unsigned int> &elist ) */
+/* { */
+/*     return pimpl_->getCrossSectionWidth(surface_id, vlist, elist, width); */
+/*     /1* return pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width); *1/ */
+/* } */
 
 bool SModeller::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
@@ -851,11 +939,14 @@ bool SModeller::getWidthCrossSectionCurve( size_t surface_id, size_t width, std:
     /* return pimpl_->getAdaptedCrossSectionAtConstantWidth(surface_id, vlist, elist, width); */
 }
 
-bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
-{
-    return pimpl_->getCrossSectionDepth(surface_id, vlist, elist, length);
-    /* return pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length); */
-}
+/* [[deprecated]] */
+/* bool getLengthCrossSectionCurve( std::size_t surface_id, std::size_t lenght, std::vector<float> &vlist, std::vector<unsigned int> &elist ); */
+
+/* bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<unsigned int> &elist ) */
+/* { */
+/*     return pimpl_->getCrossSectionDepth(surface_id, vlist, elist, length); */
+/*     /1* return pimpl_->getAdaptedCrossSectionAtConstantLength(surface_id, vlist, elist, length); *1/ */
+/* } */
 
 bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
@@ -864,29 +955,32 @@ bool SModeller::getLengthCrossSectionCurve( size_t surface_id, size_t length, st
 }
 
 
-std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
-{
-    /* TetrahedralMeshBuilder mb(pimpl_->container_); */
-    if ( pimpl_->buildTetrahedralMesh() == false )
-    {
-        return 0;
-    }
+/* [[deprecated]] */
+/* std::size_t getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::vector<std::size_t>> &element_list ); */
 
-    bool status = true; 
-    size_t num_elements;
+/* std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list ) */
+/* { */
+/*     /1* TetrahedralMeshBuilder mb(pimpl_->container_); *1/ */
+/*     if ( pimpl_->buildTetrahedralMesh() == false ) */
+/*     { */
+/*         return 0; */
+/*     } */
 
-    status &= (pimpl_->mesh_->getVertexCoordinates(vertex_coordinates) > 0);
+/*     bool status = true; */ 
+/*     size_t num_elements; */
 
-    if ( status == false )
-    {
-        return 0;
-    }
+/*     status &= (pimpl_->mesh_->getVertexCoordinates(vertex_coordinates) > 0); */
+
+/*     if ( status == false ) */
+/*     { */
+/*         return 0; */
+/*     } */
 
 
-    num_elements = pimpl_->mesh_->getTetrahedronList(element_list);
+/*     num_elements = pimpl_->mesh_->getTetrahedronList(element_list); */
 
-    return num_elements;
-}
+/*     return num_elements; */
+/* } */
 
 std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::size_t> &element_list, std::vector<long int> &attribute_list )
 {
@@ -910,6 +1004,85 @@ std::size_t SModeller::getTetrahedralMesh( std::vector<double> &vertex_coordinat
 
     return num_elements;
 }
+
+bool SModeller::getNormalList( std::size_t surface_id, std::vector<double> &normal_list )
+{
+    size_t index; 
+    if ( pimpl_->getSurfaceIndex(surface_id, index) == false )
+    {
+        return false; 
+    }
+
+    bool status = pimpl_->container_[index]->getNormalList(normal_list);
+
+    return status;
+
+}
+
+bool SModeller::getExtrusionPath( std::size_t surface_id, std::vector<double> &path_vertex_list )
+{
+    size_t index; 
+    if ( pimpl_->getSurfaceIndex(surface_id, index) == false )
+    {
+        return false; 
+    }
+
+    return pimpl_->container_[index]->getPathVertexList(path_vertex_list);
+}
+
+bool SModeller::computeTetrahedralMeshVolumes( std::vector<double> &vlist )
+{
+    if ( pimpl_->buildTetrahedralMesh() == false )
+    {
+        return false;
+    }
+
+    return pimpl_->mesh_->getRegionVolumeList(vlist);
+}
+
+bool SModeller::getVolumeAttributesFromPointList( const std::vector<double> &vcoords, std::vector<int> &attribute_list)
+{
+    if ( vcoords.size() % 3 != 0 )
+    {
+        return false;
+    }
+
+    size_t num_points = vcoords.size()/3;
+
+    Point3 p;
+    std::vector<Point3> point_list(num_points);
+
+    for ( size_t i = 0; i < num_points; ++i )
+    {
+        p = pimpl_->point3(vcoords[3*i + 0], vcoords[3*i + 1], vcoords[3*i + 2]);
+        point_list[i] = p;
+    }
+
+    if ( pimpl_->buildTetrahedralMesh() == false )
+    {
+        return false;
+    }
+
+    bool status = pimpl_->mesh_->mapPointsToAttributes(point_list, attribute_list);
+
+    return status;
+}
+
+bool SModeller::getBoundingSurfacesFromVolumeAttribute( std::size_t attribute_id, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound)
+{
+    return pimpl_->getBoundingSurfacesFromRegionID(attribute_id, lower_bound, upper_bound);
+}
+
+std::vector<size_t> SModeller::getSurfacesIndicesBelowPoint( double x, double y, double z )
+{
+    return pimpl_->getSurfacesIndicesBelowPoint(x, y, z);
+}
+
+std::vector<size_t> SModeller::getSurfacesIndicesAbovePoint( double x, double y, double z )
+{
+    return pimpl_->getSurfacesIndicesAbovePoint(x, y, z);
+}
+
 
 #if defined(BUILD_WITH_SERIALIZATION)
 bool SModeller::saveBinary( std::string filename )

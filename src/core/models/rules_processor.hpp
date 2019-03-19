@@ -29,8 +29,13 @@
 
 #include "./libs/PolygonalCurve/CurveN.hpp"
 #include "stratmod_wrapper.hpp"
-#include "truncate_helper.hpp"
+/* #include "truncate_helper.hpp" */
 
+#ifdef _WIN32
+    #define RULES_PROCESSOR_DEPRECATED_METHOD
+#else
+    #define RULES_PROCESSOR_DEPRECATED_METHOD [[deprecated]]
+#endif
 
 //namespace RRM
 //{}
@@ -71,7 +76,10 @@
             //
             /* bool requestDefineRegion( std::vector<size_t> &eligible_surfaces ); */
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool requestCreateAbove( std::vector<size_t> &eligible_surfaces );
+
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool requestCreateBelow( std::vector<size_t> &eligible_surfaces );
 
 
@@ -80,21 +88,28 @@
             /* Change the model's properties */
 
 
-
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool setLowResolution();
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool setMediumResolution();
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool setHighResolution();
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool isLowResolution();
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool isMediumResolution();
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool isHighResolution();
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool setModellingResolution( std::size_t width = 64, std::size_t length = 64 );
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool setDiagnosticsResolution( std::size_t width = 16, std::size_t length = 16);
 
             void setOrigin( double opengl_x, double opengl_y, double opengl_z );
@@ -111,6 +126,7 @@
             std::size_t getWidthResolution() const;
 
             // DEPRECATED
+            RULES_PROCESSOR_DEPRECATED_METHOD
             std::size_t getDepthResolution();
             
             // USE THIS INSTEAD:
@@ -139,9 +155,11 @@
             // Define new input region above surface which index is `surface_index`.
             //
             // DEPRECATED
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineAbove( size_t surface_index );
             
             // USE THIS INSTEAD
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineAbove( std::vector<size_t> &surface_indices );
             // END: use this instead
 
@@ -151,6 +169,7 @@
             // Clear any previous `defineAbove()` call.
             // Safe to call anytime.
             //
+            RULES_PROCESSOR_DEPRECATED_METHOD
             void stopDefineAbove();
 
             //
@@ -158,9 +177,11 @@
             // Define new input region below surface which index is `surface_index`.
             //
             // DEPRECATED
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineBelow( size_t surface_index );
             
             // DEPRECATED
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineBelow( std::vector<size_t> surface_indices );
             // END: use this instead
 
@@ -169,21 +190,28 @@
             // Clear any previous `defineBelow()` call.
             // Safe to call anytime.
             //
+            RULES_PROCESSOR_DEPRECATED_METHOD
             void stopDefineBelow();
 
 //            bool defineAboveIsActive( std::size_t& index );
 //            bool defineBelowIsActive( std::size_t& index );
 
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineAboveIsActive();
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineBelowIsActive();
 
             // DEPRECATED
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineAboveIsActive( size_t &boundary_index );
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineBelowIsActive( size_t &boundary_index );
 
             // DEPRECATED
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineAboveIsActive( std::vector<size_t> &boundary_indices );
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool defineBelowIsActive( std::vector<size_t> &boundary_indices );
             // END: use this instead
 
@@ -214,23 +242,29 @@
             bool getModelAboveSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
             bool getModelBelowSurface( std::vector<double> &curve_points, std::vector<size_t> &surface_indices_list );
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getUpperBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getUpperBoundaryMesh( std::vector<double> &vlist, std::vector<size_t> &flist );
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getLowerBoundaryMesh( std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getLowerBoundaryMesh( std::vector<double> &vlist, std::vector<size_t> &flist );
 
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
 
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist );
             // END DEPRECATED
@@ -277,11 +311,13 @@
             void removeBelowIntersection();
 
             // DEPRECATED
+            RULES_PROCESSOR_DEPRECATED_METHOD
             void truncate();
 
 
             // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool createSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
             // SUGGESTED NEW 
@@ -290,9 +326,11 @@
 
             // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool testSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves );
 
             // NEW BUT ALREADY DEPRECATED
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool testSurface( size_t surface_index, std::vector<double> &points );
 
             // SUGGESTED NEW 
@@ -301,6 +339,7 @@
 
             // DEPRECATED: a new signature for this function must be discussed
             template<typename CurveType>
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool extrudeAlongPath( size_t surface_index,
                     const CurveType &cross_section, double cross_section_depth,
                     const CurveType &path
@@ -337,6 +376,7 @@
 
             /* Get mesh, pcl and curves for visualization */
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist );
             bool getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist );
             bool getNormals( size_t surface_id, std::vector<double> &nlist );
@@ -349,15 +389,18 @@
             /* bool getMesh( size_t surface_id, VertexList &vlist, FaceList &flist ); */
 
             // DEPRECATED
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getCrossSection( size_t surface_id, std::size_t depth, std::vector<float> &vlist, std::vector<size_t> &elist );
             bool getCrossSection( size_t surface_id, std::size_t depth, std::vector<double> &vlist, std::vector<size_t> &elist );
             /* template<typename VertexList, typename EdgeList> */
             /* bool getCrossSection( size_t surface_id, std::size_t depth, VertexList &vlist, EdgeList &elist ); */
 
             // USE THIS INSTEAD
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist );
             bool getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist );
 
+            RULES_PROCESSOR_DEPRECATED_METHOD
             bool getLengthCrossSectionCurve( size_t surface_id, size_t lenght, std::vector<float> &vlist, std::vector<size_t> &elist );
             bool getLengthCrossSectionCurve( size_t surface_id, size_t lenght, std::vector<double> &vlist, std::vector<size_t> &elist );
             // END: use this instead
@@ -575,163 +618,165 @@
     template<typename CurveType>
     bool RulesProcessor::createSurface( size_t surface_index, std::vector< std::tuple< CurveType, double  > > &curves )
     {
-        if ( testing_surface_insertion_ == true )
-        {
-            modeller_.undo();
-			// testing_surface_insertion_ = false;
-        }
+        return false;
+
+        /* if ( testing_surface_insertion_ == true ) */
+        /* { */
+        /*     modeller_.undo(); */
+			/* // testing_surface_insertion_ = false; */
+        /* } */
 		
-        std::vector<size_t> lbounds, ubounds;
-        std::vector<size_t> intersected_surfaces;
+        /* std::vector<size_t> lbounds, ubounds; */
+        /* std::vector<size_t> intersected_surfaces; */
 
-        std::vector<double> surface;
-        size_t num_cross_sections = curves.size();
+        /* std::vector<double> surface; */
+        /* size_t num_cross_sections = curves.size(); */
 
-        size_t first_index, second_index;
+        /* size_t first_index, second_index; */
 
-        bool status = false;
-        std::cout << "current surfaces: ";
-        auto surfs = getSurfaces();
-        for ( auto i : surfs )
-        {
-            std::cout << i << ", ";
-        }
-        std::cout << "\n";
+        /* bool status = false; */
+        /* std::cout << "current surfaces: "; */
+        /* auto surfs = getSurfaces(); */
+        /* for ( auto i : surfs ) */
+        /* { */
+        /*     std::cout << i << ", "; */
+        /* } */
+        /* std::cout << "\n"; */
 
-        if ( num_cross_sections > 1 )
-        {
-            for ( auto &curve_tuple : curves )
-            {
-                auto &in_curve = std::get<0>(curve_tuple);
-                auto &in_curve_depth = std::get<1>(curve_tuple);
+        /* if ( num_cross_sections > 1 ) */
+        /* { */
+        /*     for ( auto &curve_tuple : curves ) */
+        /*     { */
+        /*         auto &in_curve = std::get<0>(curve_tuple); */
+        /*         auto &in_curve_depth = std::get<1>(curve_tuple); */
 
-                for ( size_t i = 0; i < in_curve.size(); ++i )
-                {
-                    surface.push_back(in_curve[i].x());
-                    surface.push_back(in_curve[i].y());
-                    surface.push_back(in_curve_depth);
-                }
-            }
+        /*         for ( size_t i = 0; i < in_curve.size(); ++i ) */
+        /*         { */
+        /*             surface.push_back(in_curve[i].x()); */
+        /*             surface.push_back(in_curve[i].y()); */
+        /*             surface.push_back(in_curve_depth); */
+        /*         } */
+        /*     } */
 
-            if ( truncate_surface_ )
-            {
-                status = modeller_.tryCreateSurface( surface_index, intersected_surfaces, surface );
-                if ( intersected_surfaces.size() > 0 )
-                {
-                    status = getFirstRegionCurveIntersects( curves.front(), lbounds, ubounds, first_index, second_index );
-                    if ( status == false )
-                    {
-                        return false;
-                    }
+        /*     if ( truncate_surface_ ) */
+        /*     { */
+        /*         status = modeller_.tryCreateSurface( surface_index, intersected_surfaces, surface ); */
+        /*         if ( intersected_surfaces.size() > 0 ) */
+        /*         { */
+        /*             status = getFirstRegionCurveIntersects( curves.front(), lbounds, ubounds, first_index, second_index ); */
+        /*             if ( status == false ) */
+        /*             { */
+        /*                 return false; */
+        /*             } */
 
-                    status = modeller_.createSurface( surface_index, surface, lbounds, ubounds );
-                }
-            }
-            else
-            {
-                status = modeller_.createSurface( surface_index, surface );
-            }
+        /*             status = modeller_.createSurface( surface_index, surface, lbounds, ubounds ); */
+        /*         } */
+        /*     } */
+        /*     else */
+        /*     { */
+        /*         status = modeller_.createSurface( surface_index, surface ); */
+        /*     } */
 
-            /* if ( intersected_surfaces.size() > 0 ) */
-            /* { */
-            /*     std::cout << "Intersected at least surfaces: " */ 
-            /*         << intersected_surfaces.front() << ", " */ 
-            /*         << intersected_surfaces.back() << "\n"; */ 
+        /*     /1* if ( intersected_surfaces.size() > 0 ) *1/ */
+        /*     /1* { *1/ */
+        /*     /1*     std::cout << "Intersected at least surfaces: " *1/ */ 
+        /*     /1*         << intersected_surfaces.front() << ", " *1/ */ 
+        /*     /1*         << intersected_surfaces.back() << "\n"; *1/ */ 
                     
-            /*     getFirstRegionCurveIntersects( curves.front(), lbounds, ubounds ); */
-            /*     std::cout << "First lower bound: " << (lbounds.empty() ? -1 : (int)lbounds.front()) << "\n"; */
-            /*     std::cout << "First upper bound: " << (ubounds.empty() ? -1 : (int)ubounds.front()) << "\n"; */
+        /*     /1*     getFirstRegionCurveIntersects( curves.front(), lbounds, ubounds ); *1/ */
+        /*     /1*     std::cout << "First lower bound: " << (lbounds.empty() ? -1 : (int)lbounds.front()) << "\n"; *1/ */
+        /*     /1*     std::cout << "First upper bound: " << (ubounds.empty() ? -1 : (int)ubounds.front()) << "\n"; *1/ */
 
-            /*     status = modeller_.createSurface( surface_index, surface, lbounds, ubounds ); */
-            /* } */
-        }
+        /*     /1*     status = modeller_.createSurface( surface_index, surface, lbounds, ubounds ); *1/ */
+        /*     /1* } *1/ */
+        /* } */
 
-        else if ( num_cross_sections == 1 )
-        {
-            std::cout << "Inside createSurface() \n";
-            auto &curve_tuple = curves.front();
+        /* else if ( num_cross_sections == 1 ) */
+        /* { */
+        /*     std::cout << "Inside createSurface() \n"; */
+        /*     auto &curve_tuple = curves.front(); */
 
-            auto &in_curve = std::get<0>(curve_tuple);
-            auto &in_curve_depth = std::get<1>(curve_tuple);
+        /*     auto &in_curve = std::get<0>(curve_tuple); */
+        /*     auto &in_curve_depth = std::get<1>(curve_tuple); */
 
-            for ( size_t i = 0; i < in_curve.size(); ++i )
-            {
-                surface.push_back(in_curve[i].x());
-                surface.push_back(in_curve[i].y());
-            }
+        /*     for ( size_t i = 0; i < in_curve.size(); ++i ) */
+        /*     { */
+        /*         surface.push_back(in_curve[i].x()); */
+        /*         surface.push_back(in_curve[i].y()); */
+        /*     } */
 
-            if ( truncate_surface_ )
-            {
-                std::cout << "Truncate is active.\n";
-                status = modeller_.tryCreateLengthwiseExtrudedSurface( surface_index, intersected_surfaces, surface );
-                if ( intersected_surfaces.size() > 0 )
-                {
-                    std::cout << "Surface is not valid and status is: " << status << ", it intersects surfaces:";
-                    for (int s = 0; s < intersected_surfaces.size(); ++s)
-                        std::cout << intersected_surfaces[s] << ", ";
-                    std::cout << "\n";
+        /*     if ( truncate_surface_ ) */
+        /*     { */
+        /*         std::cout << "Truncate is active.\n"; */
+        /*         status = modeller_.tryCreateLengthwiseExtrudedSurface( surface_index, intersected_surfaces, surface ); */
+        /*         if ( intersected_surfaces.size() > 0 ) */
+        /*         { */
+        /*             std::cout << "Surface is not valid and status is: " << status << ", it intersects surfaces:"; */
+        /*             for (int s = 0; s < intersected_surfaces.size(); ++s) */
+        /*                 std::cout << intersected_surfaces[s] << ", "; */
+        /*             std::cout << "\n"; */
 
-					TruncateHelper<CurveType> tHelper(curve_tuple, modeller_, intersected_surfaces);
-                    // status = getFirstRegionCurveIntersects( curve_tuple, lbounds, ubounds, first_index, second_index );
-					status = tHelper.getFirstRegionCurveIntersects(lbounds, ubounds);
-					if ( status == false )
-                    {
-                        return false;
-                    }
+					/* TruncateHelper<CurveType> tHelper(curve_tuple, modeller_, intersected_surfaces); */
+        /*             // status = getFirstRegionCurveIntersects( curve_tuple, lbounds, ubounds, first_index, second_index ); */
+					/* status = tHelper.getFirstRegionCurveIntersects(lbounds, ubounds); */
+					/* if ( status == false ) */
+        /*             { */
+        /*                 return false; */
+        /*             } */
 
-                    std::vector<size_t> lb_intersect, ub_intersect;
-                    std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), lbounds.begin(), lbounds.end(), std::back_inserter(lb_intersect));
-                    std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), ubounds.begin(), ubounds.end(), std::back_inserter(ub_intersect));
+        /*             std::vector<size_t> lb_intersect, ub_intersect; */
+        /*             std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), lbounds.begin(), lbounds.end(), std::back_inserter(lb_intersect)); */
+        /*             std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), ubounds.begin(), ubounds.end(), std::back_inserter(ub_intersect)); */
 
-					status = tHelper.truncateCurve();
-					if (status == false)
-					{
-						return false;
-					}
+					/* status = tHelper.truncateCurve(); */
+					/* if (status == false) */
+					/* { */
+						/* return false; */
+					/* } */
 
-					std::cout << "Original curve\n";
-					for (size_t i = 0; i < in_curve.size(); ++i)
-					{
-						std::cout << in_curve[i].x() << " " << in_curve[i].y() << "\n";
-					}
-					in_curve = tHelper.getTruncatedCurve();
-					std::cout << "Modified curve\n";
-					for (size_t i = 0; i < in_curve.size(); ++i)
-					{
-						std::cout << in_curve[i].x() << " " << in_curve[i].y() << "\n";
-					}
-					surface = tHelper.getTruncatedPoints2D();
-                    status = modeller_.createLengthwiseExtrudedSurface( surface_index, surface, lb_intersect, ub_intersect );
-                    std::cout << "Final status is: " << status << "\n";
-                }
-            }
-            else
-            {
-                std::cout << "truncate is not active.\n";
-                status = modeller_.createLengthwiseExtrudedSurface( surface_index, surface );
-                std::cout << "Final status is: " << status << "\n";
-                /* status = modeller_.createSurface( surface_index, surface ); */
-            }
-            /* status = modeller_.createLengthwiseExtrudedSurface( surface_index, surface ); */
-        }
+					/* std::cout << "Original curve\n"; */
+					/* for (size_t i = 0; i < in_curve.size(); ++i) */
+					/* { */
+						/* std::cout << in_curve[i].x() << " " << in_curve[i].y() << "\n"; */
+					/* } */
+					/* in_curve = tHelper.getTruncatedCurve(); */
+					/* std::cout << "Modified curve\n"; */
+					/* for (size_t i = 0; i < in_curve.size(); ++i) */
+					/* { */
+						/* std::cout << in_curve[i].x() << " " << in_curve[i].y() << "\n"; */
+					/* } */
+					/* surface = tHelper.getTruncatedPoints2D(); */
+        /*             status = modeller_.createLengthwiseExtrudedSurface( surface_index, surface, lb_intersect, ub_intersect ); */
+        /*             std::cout << "Final status is: " << status << "\n"; */
+        /*         } */
+        /*     } */
+        /*     else */
+        /*     { */
+        /*         std::cout << "truncate is not active.\n"; */
+        /*         status = modeller_.createLengthwiseExtrudedSurface( surface_index, surface ); */
+        /*         std::cout << "Final status is: " << status << "\n"; */
+        /*         /1* status = modeller_.createSurface( surface_index, surface ); *1/ */
+        /*     } */
+        /*     /1* status = modeller_.createLengthwiseExtrudedSurface( surface_index, surface ); *1/ */
+        /* } */
 
-        testing_surface_insertion_ = false;
+        /* testing_surface_insertion_ = false; */
         
-        if ( status == true )
-        {
-            std::vector<double> dummy_vertices;
-            std::vector<size_t> dummy_edges;
-            /* status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0); */
-            status &= getMesh(surface_index, dummy_vertices, dummy_edges);
+        /* if ( status == true ) */
+        /* { */
+        /*     std::vector<double> dummy_vertices; */
+        /*     std::vector<size_t> dummy_edges; */
+        /*     /1* status &= (getMesh(surface_index, dummy_vertices, dummy_edges) > 0); *1/ */
+        /*     status &= getMesh(surface_index, dummy_vertices, dummy_edges); */
 
-            if ( status == false )
-            {
-                std::cout << "Inserted surface is vacuous, undoing...\n" << std::flush;
-                modeller_.undo();
-            }
-        }
+        /*     if ( status == false ) */
+        /*     { */
+        /*         std::cout << "Inserted surface is vacuous, undoing...\n" << std::flush; */
+        /*         modeller_.undo(); */
+        /*     } */
+        /* } */
         
-		return status;
+		/* return status; */
     }
 
     template<typename CurveType>
@@ -741,71 +786,73 @@
         /* size_t num_extrusion_steps */
         )
     {
-        if ( testing_surface_insertion_ == true )
-        {
-            modeller_.undo();
-        }
+        return false;
 
-        SUtilitiesWrapper util(modeller_);
-        std::vector<double> surface;
+        /* if ( testing_surface_insertion_ == true ) */
+        /* { */
+        /*     modeller_.undo(); */
+        /* } */
 
-        size_t first_index, second_index;
+        /* SUtilitiesWrapper util(modeller_); */
+        /* std::vector<double> surface; */
 
-        std::vector<double> cross_section;
-        for ( size_t i = 0; i < cross_section_curve.size(); ++i )
-        {
-            cross_section.push_back( cross_section_curve[i].x() );
-            cross_section.push_back( cross_section_curve[i].y() );
-        }
+        /* size_t first_index, second_index; */
 
-        std::vector<double> path;
-        for ( size_t i = 0; i < path_curve.size(); ++i )
-        {
-            path.push_back( path_curve[i].x() );
-            path.push_back( path_curve[i].y() );
-        }
+        /* std::vector<double> cross_section; */
+        /* for ( size_t i = 0; i < cross_section_curve.size(); ++i ) */
+        /* { */
+        /*     cross_section.push_back( cross_section_curve[i].x() ); */
+        /*     cross_section.push_back( cross_section_curve[i].y() ); */
+        /* } */
 
-        bool status;
+        /* std::vector<double> path; */
+        /* for ( size_t i = 0; i < path_curve.size(); ++i ) */
+        /* { */
+        /*     path.push_back( path_curve[i].x() ); */
+        /*     path.push_back( path_curve[i].y() ); */
+        /* } */
 
-        if ( truncate_surface_ )
-        {
-            std::vector<size_t> lbounds, ubounds;
-            std::vector<size_t> intersected_surfaces;
+        /* bool status; */
 
-            status = modeller_.tryCreateLengthwiseExtrudedSurface( surface_index, intersected_surfaces, cross_section, cross_section_depth, path );
+        /* if ( truncate_surface_ ) */
+        /* { */
+        /*     std::vector<size_t> lbounds, ubounds; */
+        /*     std::vector<size_t> intersected_surfaces; */
 
-            if ( intersected_surfaces.size() > 0 )
-            {
-                std::tuple<CurveType, double> curve_tuple = std::make_pair(cross_section_curve, cross_section_depth);
-                TruncateHelper<CurveType> tHelper(curve_tuple, modeller_, intersected_surfaces);
-                status = tHelper.getFirstRegionCurveIntersects( lbounds, ubounds );
-                if ( status == false )
-                {
-                    return false;
-                }
+        /*     status = modeller_.tryCreateLengthwiseExtrudedSurface( surface_index, intersected_surfaces, cross_section, cross_section_depth, path ); */
 
-                std::vector<size_t> lb_intersect, ub_intersect;
-                std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), lbounds.begin(), lbounds.end(), std::back_inserter(lb_intersect));
-                std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), ubounds.begin(), ubounds.end(), std::back_inserter(ub_intersect));
+        /*     if ( intersected_surfaces.size() > 0 ) */
+        /*     { */
+        /*         std::tuple<CurveType, double> curve_tuple = std::make_pair(cross_section_curve, cross_section_depth); */
+        /*         TruncateHelper<CurveType> tHelper(curve_tuple, modeller_, intersected_surfaces); */
+        /*         status = tHelper.getFirstRegionCurveIntersects( lbounds, ubounds ); */
+        /*         if ( status == false ) */
+        /*         { */
+        /*             return false; */
+        /*         } */
 
-                status = tHelper.truncateCurve();
-                if (status == false)
-                {
-                    return false;
-                }
+        /*         std::vector<size_t> lb_intersect, ub_intersect; */
+        /*         std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), lbounds.begin(), lbounds.end(), std::back_inserter(lb_intersect)); */
+        /*         std::set_intersection(intersected_surfaces.begin(), intersected_surfaces.end(), ubounds.begin(), ubounds.end(), std::back_inserter(ub_intersect)); */
 
-                cross_section = tHelper.getTruncatedPoints2D();
-                status = modeller_.createLengthwiseExtrudedSurface( surface_index, cross_section, cross_section_depth, path, lb_intersect, ub_intersect );
-            }
-        }
-        else
-        {
-            status = modeller_.createLengthwiseExtrudedSurface(surface_index, cross_section, cross_section_depth, path);
-        }
+        /*         status = tHelper.truncateCurve(); */
+        /*         if (status == false) */
+        /*         { */
+        /*             return false; */
+        /*         } */
 
-        testing_surface_insertion_ = false;
+        /*         cross_section = tHelper.getTruncatedPoints2D(); */
+        /*         status = modeller_.createLengthwiseExtrudedSurface( surface_index, cross_section, cross_section_depth, path, lb_intersect, ub_intersect ); */
+        /*     } */
+        /* } */
+        /* else */
+        /* { */
+        /*     status = modeller_.createLengthwiseExtrudedSurface(surface_index, cross_section, cross_section_depth, path); */
+        /* } */
 
-        return status;
+        /* testing_surface_insertion_ = false; */
+
+        /* return status; */
 
     }
 
