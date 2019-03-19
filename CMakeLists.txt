@@ -16,9 +16,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Options
 ###############################################
 
-set(RRM_BUILD_TYPE "RelWithDebInfo" CACHE STRING
-    "Set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
-set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+# Leave empty to use the (platform dependent) default build type
+set(RRM_BUILD_TYPE "" CACHE STRING
+	"Leave empty ot set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
+
+if(RRM_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+end()
 
 OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
