@@ -1,22 +1,28 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file shader.h
+ * @author Clarissa C. Marques
+ * @brief File containing the class Shader
  */
 
 
@@ -34,38 +40,85 @@
 //#include "./apps/simulator/colormap.h"
 #include <Tucano/Shader.hpp>
 
+/**
+ *  A wrapper to handle shader operations
+ */
 
 class Shader
 {
+
+
     public:
 
+
+        /**
+        * Constructor.
+        */
         Shader() = default;
 
+
+        /**
+        * Method to set the path of the folder where are the shaders
+        * @param path the path of the folder where are the shaders
+        * @return void.
+        */
         void setDirectory( const std::string& path_ )
         {
             shader_directory.clear();
             shader_directory = path_;
         }
+
+
+        /**
+        * Method to get the path of the folder where are the shaders
+        * @return std::string the path of the folder where are the shaders
+        */
         std::string getDirectory() const
         {
             return shader_directory;
         }
 
+
+
+        /**
+        * Method to initialize the shaders and the buffers
+        * @return void.
+        */
         void init()
         {
             initShaders();
             initBuffers();
         }
+
+
+        /**
+        * Method to reset the shaders and the buffers
+        * @return void.
+        */
         void reset()
         {
             resetShaders();
             resetBuffers();
         }
+
+
+        /**
+        * Method to reload the shaders
+        * @return void.
+        */
         void reload()
         {
             shader->reloadShaders();
         }
 
+
+        /**
+        * Method to normalize vectors given a maximum and a minimum
+        * @param M the maximum point
+        * @param m the minimum point
+        * @param n the number of the coordinates of a point
+        * @return void.
+        */
         static std::vector< float > normalize( const std::vector< float >& points, const Eigen::Vector3f& M, const Eigen::Vector3f& m, int n )
         {
 
@@ -92,6 +145,14 @@ class Shader
         }
 
 
+        /**
+        * Method to normalize a point given a maximum and a minimum.
+        * This method is considering a point 3d.
+        * @param p the point to be normalized given a bounding box
+        * @param M the maximum point
+        * @param m the minimum point
+        * @return void.
+        */
         static Eigen::Vector3f normalize( const Eigen::Vector3f& p, const Eigen::Vector3f& M, const Eigen::Vector3f& m )
         {
 
@@ -113,6 +174,11 @@ class Shader
         }
 
 
+        /**
+        * This method convert a vector of double to a vector of float
+        * @param points vector of points which coordinates are double values
+        * @return void.
+        */
         static std::vector< float > convertToFloat( const std::vector< double >& points_ )
         {
             std::vector< float > points;
@@ -122,6 +188,11 @@ class Shader
         }
 
 
+        /**
+        * This method convert a vector of std::size_t to a vector of unsigned int
+        * @param edges vector of edges which indexes are std::size_t values
+        * @return void.
+        */
         static std::vector< unsigned int > convertToUnsignedInt( const std::vector< std::size_t >& edges_ )
         {
             std::vector< unsigned int > edges;
@@ -131,6 +202,11 @@ class Shader
         }
 
 
+        /**
+        * This temporary and auxiliary method creates a vector of repeated normal (0, 1, 0), with size 3*number_of_vertices_
+        * @param number_of_vertices number of normal (0, 1, 0) repeated
+        * @return void.
+        */
         static std::vector< float > getDefaultNormals( std::size_t number_of_vertices_ )
         {
             std::size_t number_of_points = number_of_vertices_/3;
@@ -147,8 +223,16 @@ class Shader
         }
 
 
+        /**
+        * A temporary and auxiliary method to create a vector of colors depending on the height map, given a
+        * maximum, minimum and a vector of vertices
+        * @param zmin the minimum z value
+        * @param zmax the maximum z value
+        * @param values the vector of coordinates
+        * @return colors a height map color given a maximum, minimum and a vector of vertices
+        */
         static std::vector< float > getHeightMapColor(  double zmin_, double zmax_, std::vector< float > values )
-        {
+        {   // to be implemented
 //            ColorMap colormap;
             std::vector< float > colors_;
 //            for( double v: values )
@@ -165,15 +249,38 @@ class Shader
 
     protected:
 
+
+        /**
+        * A pure virtual method to initialize the shaders
+        * @return void.
+        */
         virtual void initShaders() = 0;
+
+
+        /**
+        * A pure virtual method to initialize the buffers
+        * @return void.
+        */
         virtual void initBuffers() = 0;
 
+
+        /**
+        * A pure virtual method to reset the shaders
+        * @return void.
+        */
         virtual void resetShaders() = 0;
+
+
+        /**
+        * A pure virtual method to reset the buffers
+        * @return void.
+        */
         virtual void resetBuffers() = 0;
 
-        std::string shader_directory;
-        Tucano::Shader* shader;
 
+        std::string shader_directory;                               /**< The path of the folder where are the shaders */
+
+        Tucano::Shader* shader;                                     /**< An instance of the Tucano shader wrapper */
 
 
 };

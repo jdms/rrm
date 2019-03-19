@@ -1,24 +1,29 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
- */
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
 
+/**
+ * @file canvasstack.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class CanvasStack
+ */
 
 
 #include "canvasstack.h"
@@ -47,13 +52,14 @@ void CanvasStack::initialize()
 
     setLayout( hb_main );
 
+    // the index of the current canvas, and it is mainly used as the cross-section depth
     current = 0.0;
 }
 
 
 void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
 {
-
+    // id_ corresponds to index of the canvas, and it is mainly used as the cross-section depth
     DockWidget* dc = new DockWidget( QString( "Canvas ").append( QString::number( id_, 'f', 1 ) ), this );
     dc->setAllowedAreas(Qt::AllDockWidgetAreas);
     dc->setGeometry( 100, 100, canvas_->rect().width(), canvas_->rect().height() );
@@ -65,7 +71,6 @@ void CanvasStack::addElement( double id_, QGraphicsView* canvas_ )
 
     hb_mainlayout->addWidget( dc );
 
-    QDockWidget* teste = new QDockWidget();
     connect( dc, &DockWidget::closeDockWidget, [=]() { emit closeSubWindow( id_ ); } );
 
 
@@ -113,6 +118,7 @@ void CanvasStack::setCurrent( double id_ )
         it++;
     }
 
+    // changing the canvas style when it is the current
     QGraphicsView* gv_ = (QGraphicsView*)(Container::data[ id_ ]->widget());
     gv_->setStyleSheet( "border: 2px solid navy" );
 
@@ -139,28 +145,8 @@ void CanvasStack::clear()
 }
 
 
-void CanvasStack::mousePressEvent(QMouseEvent *event)
-{
-
-    QWidget::mousePressEvent( event );
-}
-
-
-void CanvasStack::mouseReleaseEvent(QMouseEvent *event)
-{
-
-    QWidget::mouseReleaseEvent( event );
-}
-
-
-void CanvasStack::mouseDoubleClickEvent(QMouseEvent *event)
-{
-
-    QWidget::mouseDoubleClickEvent( event );
-}
-
 void CanvasStack::closeEvent(QCloseEvent *event)
 {
-      emit canvasClosed();
+      emit windowClosed();
       event->accept();
 }

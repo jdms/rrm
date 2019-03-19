@@ -773,7 +773,6 @@ void FlowWindow::buildUnstructured()
   
 
 	std::vector< float > vertices, raw_vertices;
-    std::vector< unsigned int > edges;
     std::vector< unsigned int > faces, raw_cells;
 
     controller->generateUnstructured();
@@ -784,7 +783,7 @@ void FlowWindow::buildUnstructured()
 	//controller->getTetrahedeonMeshGeometry(raw_vertices, raw_cells, vertices, faces);
 	
 
-    emit sendSimplifiedMesh( raw_vertices, edges, raw_cells );
+    emit sendSimplifiedMesh( raw_vertices, raw_cells );
 
 }
 

@@ -1,3 +1,31 @@
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file stratigraphyitem.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class StratigraphyItem
+ */
+
+
 #include "stratigraphyitem.h"
 
 StratigraphyItem::StratigraphyItem( QGraphicsItem *parent_): CurveItem( parent_ )
@@ -16,6 +44,8 @@ void StratigraphyItem::setRawStratigraphy( const std::shared_ptr< Stratigraphy >
     raw->getColor( r_, g_, b_ );
     
     setColor( r_, g_, b_ );
+
+    // initially the curve is rendered as a dot line curve, if it is done, the style turns into full
     setStyle( Qt::PenStyle::DotLine );
     updateCurve();
     
@@ -74,6 +104,7 @@ void StratigraphyItem::updateCurve()
     prepareGeometryChange();
     curve = QPainterPath();
 
+    // if the curve is on direction Y and it is not active dont update it
     if( raw->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y )
         if( raw->isActive() == false ) return;
 
@@ -100,12 +131,10 @@ void StratigraphyItem::updateLevelCurves()
     setColor( r_, g_, b_ );
     
     
+    // this method is only to curves on the Y direction
     prepareGeometryChange();
     if( raw->getCrossSectionDirection() != Settings::CrossSection::CrossSectionDirections::Y ) return;
 
-    //    curve = QPainterPath();
-
-    //    if( raw->isActive() == false ) return;
 
     if( csection_direction == Settings::CrossSection::CrossSectionDirections::X )
         setCurves( raw->getCurves(), true );
@@ -126,7 +155,7 @@ void StratigraphyItem::updateTrajectory()
     raw->getColor( r_, g_, b_ );
     setColor( r_, g_, b_ );
     
-    
+    // this method is only to curves on the X and Z direction, since the curves on Y direction has no trajectory
     if( raw->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y ) return;
     prepareGeometryChange();
     

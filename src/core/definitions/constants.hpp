@@ -1,32 +1,30 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
- */
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
 
-
-
-/*
- *
- * Constants.hpp
- *
- *  Created on: Aug 23, 2015
- *      Author: felipe
+/**
+ * @file constants.hpp
+ * @author Felipe
+ * @author Clarissa C. Marques
+ * @date Aug 23, 2015
+ * @brief File containing RRM namespaces
  */
 
 #ifndef _CORE_CONSTANTS_HPP_
@@ -233,14 +231,14 @@ namespace Settings {
     class Objects
     {
         public:
-            enum class BounderingRegion { NONE, ABOVE, BELOW, REGION };
+            enum class BoundaryRegion { NONE, ABOVE, BELOW, REGION };
 
             enum class ObjectType { NONE, VOLUME, CROSS_SECTION, STRATIGRAPHY, STRUCTURAL, REGION, DOMAINS, WELL };
 
             enum class ObjectProperties{ NAME, COLOR, INDEX, CURRENT, VISIBLE, SELECTABLE, SELECTED, ACTIVE };
 
             static const ObjectType DEFAULT_OBJECT_TYPE;
-            static const BounderingRegion DEFAULT_BOUNDERING_REGION;
+            static const BoundaryRegion DEFAULT_BOUNDARY_REGION;
             static const std::size_t MAX_CSECTION_NUMBER_FOR_CHANNEL;
 
     };

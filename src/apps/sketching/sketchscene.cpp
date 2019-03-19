@@ -1,24 +1,29 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
- */
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
 
+/**
+ * @file sketchscene.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class SketchScene
+ */
 
 
 #include <QGraphicsView>
@@ -43,13 +48,13 @@ SketchScene::SketchScene()
 
 void SketchScene::init()
 {
+
+    // this is what the user uses to make his/her sketch
     if( sketch == nullptr )
     {
         sketch = std::make_shared< CurveItem >();
         addItem( sketch.get() );
     }
-
-
 
     setSketchingMode();
 
@@ -57,6 +62,8 @@ void SketchScene::init()
     image->setVisible( false );
     addItem( image );
 
+
+    // markersto help the iser resize and move the image
     resize_marker = new QGraphicsEllipseItem( 0, 0, 10, 10 );
     resize_marker->setBrush( QColor( Qt::red ) );
     resize_marker->setFlag( QGraphicsItem::ItemIsSelectable, true );
@@ -71,11 +78,11 @@ void SketchScene::init()
     move_marker->setVisible( false );
     addItem( move_marker );
 
-    boudering_area = new PolygonItem();
-    boudering_area->setBorderVisible( false );
-    boudering_area->setTransparency( true );
-    boudering_area->setVisible( false );
-    addItem( boudering_area );
+    boundary_area = new PolygonItem();
+    boundary_area->setBorderVisible( false );
+    boundary_area->setTransparency( true );
+    boundary_area->setVisible( false );
+    addItem( boundary_area );
 
 
     trajectory_point = new QGraphicsEllipseItem( 0, 0, 10, 10 );
@@ -129,11 +136,7 @@ void SketchScene::createVolume( const std::shared_ptr< Volume >& volume_ )
     addItem( volume1.get() );
     setSceneRect( volume1->boundingRect() );
 
-    QPainterPath area_;
-    area_.addRect( volume1->boundingRect() );
-    setSelectionArea( area_, Qt::AddToSelection );
-
-
+    // the volume dimensions on the scene 2d depends on the current cross-section direction
 
     if( csection_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
@@ -165,11 +168,6 @@ void SketchScene::updateVolume()
     volume1->update( csection_direction );
     setSceneRect( volume1->boundingRect() );
 
-    //    QPainterPath area_;
-    //    area_.addRect( volume1->boundingRect() );
-    //    setSelectionArea( area_, Qt::AddToSelection );
-
-
     const std::shared_ptr< Volume >& volume_ = volume1->getRawVolume();
     if( csection_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
@@ -200,11 +198,9 @@ void SketchScene::updateVolume()
 void SketchScene::addCrossSection( const std::shared_ptr< CrossSection >& csection_ )
 {
     std::size_t id_ = csection_->getIndex();
-    cross_sections1[ id_ ] = std::make_shared< CrossSectionItem >();
-    cross_sections1[ id_ ]->setRawCrossSection( csection_ );
-    addItem( cross_sections1[ id_ ].get() );
-
-
+    cross_sections[ id_ ] = std::make_shared< CrossSectionItem >();
+    cross_sections[ id_ ]->setRawCrossSection( csection_ );
+    addItem( cross_sections[ id_ ].get() );
 }
 
 
@@ -220,8 +216,10 @@ void SketchScene::addImageToCrossSection( const QString& file_ )
     double w_ = static_cast< double >( image1.width() );
     double h_ = static_cast< double >( image1.height() );
 
+    // this method set the image in the scene
     setImageInCrossSection( file_.toStdString(), ox_, oy_, w_, h_ );
 
+    // this signal notify the controller to associate the path and the geometry of the image to the given cross-section
     emit setImageToCrossSection( file_.toStdString(), csection_direction, csection_depth, ox_, oy_, w_, h_ );
 
 }
@@ -257,15 +255,16 @@ void SketchScene::setImageInCrossSection( const std::string& file_, double ox_, 
 
 void SketchScene::removeImageInCrossSection()
 {
+    // makes the image invisible but the controller does not remove the image from the cross-section
     if( image == nullptr ) return;
     image->setVisible( false );
-    //    emit removeImageFromCrossSection( csection_direction, csection_depth );
     update();
 }
 
 
 void SketchScene::removeImageInCrossSectionAndUpdate()
 {
+    // this method makes the controller removes the image from the cross-section
     if( image == nullptr ) return;
     image->setVisible( false );
     emit removeImageFromCrossSection( csection_direction, csection_depth );
@@ -335,13 +334,12 @@ void SketchScene::getSelectedStratigraphies()
     QList< QGraphicsItem* > items_ = selectedItems();
     if( items_.empty() == true ) return;
 
+    // select one curve at time
     StratigraphyItem* const& obj_ = dynamic_cast< StratigraphyItem* >( items_[ 0 ] );
     std::size_t id_ = obj_->getIndex();
 
     emit objectSelected( id_ );
 
-
-    std::cout << "There are " << items_.size() << " curves selected" << std::endl << std::flush;
 }
 
 
@@ -358,6 +356,8 @@ void SketchScene::addRegion( const std::shared_ptr< Regions >& region_ )
     regions[ id_ ]->setFillColor( QColor( r_, g_, b_ ) );
     regions[ id_ ]->setOpacity( 0.7 );
     regions[ id_ ]->setVisible( true );
+
+    // placing the regions in front of the images
     if( image != nullptr )
         regions[ id_ ]->setZValue( image->zValue() );
     addItem( regions[ id_ ].get() );
@@ -398,17 +398,13 @@ void SketchScene::getSelectedRegions()
     QList< QGraphicsItem* > items_ = selectedItems();
     if( items_.empty() == true ) return;
 
-    std::cout << "There are " << items_.size() << " regions selected" << std::endl << std::flush;
-
     for( auto it: items_ )
     {
         RegionItem* const& reg_ = dynamic_cast< RegionItem* >( it );
         std::size_t id_ = reg_->getIndex();
-        std::cout << id_ << " " << std::flush;
 
         emit regionSelected( id_, true );
     }
-    std::cout << "\n\n" << std::flush;
 }
 
 
@@ -427,12 +423,12 @@ bool SketchScene::isSketchEnabled() const
 
 void SketchScene::cancelSketch()
 {
-    std::cout << "Canceling sketch..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
     sketch->clear();
 
-    emit removeLastCurve( csection_direction, csection_depth );
+    // this signal was created to test undo a curve submission. It should be placed in a new method for this aim.
+//    emit removeLastCurve( csection_direction, csection_depth );
 
 
     QGraphicsScene::update();
@@ -441,23 +437,20 @@ void SketchScene::cancelSketch()
 
 void SketchScene::submitSketch()
 {
-    std::cout << "Submitting sketch..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
 
     emit sketchDone( sketch->getCurve(), csection_direction, csection_depth );
+
+    // after submitting a sketch it should be clear
     sketch->clear();
 
-    std::cout << "Image is visible: " << image->isVisible() << std::endl;
-
     QGraphicsScene::update();
-    //    update();
 }
 
 
 void SketchScene::setSketchColor( const QColor& color_ )
 {
-    std::cout << "Changing sketch color..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
     sketch->setColor( color_ );
@@ -481,9 +474,10 @@ void SketchScene::processSketch()
 
 void SketchScene::endObject()
 {
-    std::cout << "Ending object..." << std::endl << std::flush;
 
     if( sketch == nullptr ) return;
+
+    // this makes the object does not accept curves anymore
     sketch->setDone();
 
     emit createObject();
@@ -497,11 +491,11 @@ void SketchScene::setSketchingMode( bool status_ )
 {
     if( status_ == false )
     {
-        current_interaction1 = UserInteraction1::NONE;
+        current_interaction = UserInteraction::NONE;
         return;
     }
 
-    current_interaction1 = UserInteraction1::SKETCHING;
+    current_interaction = UserInteraction::SKETCHING;
     sketch_enabled = true;
 
     if ( sketch != nullptr ) return;
@@ -513,7 +507,7 @@ void SketchScene::setSketchingMode( bool status_ )
 void SketchScene::setResizingBoundaryMode( bool status_ )
 {
     if( status_ == true )
-        current_interaction1 = UserInteraction1::RESIZING_BOUNDARY;
+        current_interaction = UserInteraction::RESIZING_BOUNDARY;
     else
     {
         setSketchingMode();
@@ -525,7 +519,7 @@ void SketchScene::setGuidedExtrusionMode( bool status_ )
 {
     if( status_ == true )
     {
-        current_interaction1 = UserInteraction1::GUIDED_EXTRUSION;
+        current_interaction = UserInteraction::GUIDED_EXTRUSION;
         updatePointGuidedExtrusion( QPointF( 0, 0 ) );
     }
     else
@@ -534,13 +528,6 @@ void SketchScene::setGuidedExtrusionMode( bool status_ )
     }
 }
 
-
-//temporary
-void SketchScene::setCreateRegionMode()
-{
-    current_interaction1 = UserInteraction1::CREATE_REGION;
-}
-//temporary
 
 void SketchScene::setOldSelectingStratigraphyMode( bool status_ )
 {
@@ -556,7 +543,7 @@ void SketchScene::setOldSelectingStratigraphyMode( bool status_ )
 
     if( status_ == true )
     {
-        current_interaction1 = UserInteraction1::SELECTING_STRATIGRAPHY_OLD;
+        current_interaction = UserInteraction::SELECTING_STRATIGRAPHY_OLD;
     }
     else
     {
@@ -576,7 +563,7 @@ void SketchScene::setSelectingStratigraphyMode( bool status_ )
 
     if( status_ == true )
     {
-        current_interaction1 = UserInteraction1::SELECTING_STRATIGRAPHY;
+        current_interaction = UserInteraction::SELECTING_STRATIGRAPHY;
     }
     else
     {
@@ -596,7 +583,7 @@ void SketchScene::setResizingImageMode( bool status_ )
 
     if( status_ == true )
     {
-        current_interaction1 = UserInteraction1::RESIZING_IMAGE;
+        current_interaction = UserInteraction::RESIZING_IMAGE;
         resize_marker->setPos( image->getTopRight() );
         move_marker->setPos( image->getOrigin() );
     }
@@ -618,7 +605,7 @@ void SketchScene::setSelectingRegionsMode( bool status_ )
     }
 
     if( status_ == true )
-        current_interaction1 = UserInteraction1::SELECTING_REGIONS;
+        current_interaction = UserInteraction::SELECTING_REGIONS;
     else
     {
         setSketchingMode();
@@ -634,7 +621,7 @@ void SketchScene::setSelectingRegionMode( bool status_ )
 
     if( status_ == true )
     {
-        current_interaction1 = UserInteraction1::SELECTING_REGION;
+        current_interaction = UserInteraction::SELECTING_REGION;
     }
     else
     {
@@ -643,29 +630,6 @@ void SketchScene::setSelectingRegionMode( bool status_ )
 
     update();
 }
-
-
-
-
-//void SketchScene::setSelectingWellsMode( bool status_ )
-//{
-//    clearSelection();
-
-//    for( auto it: wells )
-//    {
-//        it.second->setFlag( QGraphicsItem::ItemIsSelectable, status_ );
-//        it.second->update();
-//    }
-
-//    if( status_ == true )
-//        current_interaction1 = UserInteraction1::SELECTING_WELLS;
-//    else
-//    {
-//        setSketchingMode();
-//    }
-
-//    update();
-//}
 
 
 
@@ -704,25 +668,7 @@ void SketchScene::removeSketchesOfSelection()
 }
 
 
-void SketchScene::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_ )
-{
-
-    //    PolyCurve upper_( vupper_, edupper_ );
-    //    PolyCurve lower_( vlower_, edlower_ );
-
-    //    QPolygonF pol_upper_ = SketchLibraryWrapper::fromCurve2DToQt( upper_.getSubcurve( 0 ) );
-    //    QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower_.getSubcurve( 0 ) );
-
-    //    QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
-    //    boudering_area->setPolygon( pol_ );
-
-    //    boudering_area->setVisible( true );
-    //    boudering_area->update();
-    //    update();
-}
-
-
-void SketchScene::defineBounderingArea()
+void SketchScene::defineBoundaryArea()
 {
 
 
@@ -732,28 +678,28 @@ void SketchScene::defineBounderingArea()
         QPolygonF pol_lower_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
 
         QPolygonF pol_ = pol_upper_.intersected( pol_lower_ );
-        boudering_area->setPolygon( pol_ );
+        boundary_area->setPolygon( pol_ );
     }
 
     else if( lower.isEmpty() == false )
     {
         QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( lower.getSubcurve( 0 ) );
-        boudering_area->setPolygon( pol_ );
+        boundary_area->setPolygon( pol_ );
     }
     else if( upper.isEmpty() == false )
     {
         QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( upper.getSubcurve( 0 ) );
-        boudering_area->setPolygon( pol_ );
+        boundary_area->setPolygon( pol_ );
 
     }
     else
     {
-        boudering_area->clear();
+        boundary_area->clear();
     }
 
-    boudering_area->setVisible( true );
-    boudering_area->setZValue( image->zValue() + 1 );
-    boudering_area->update();
+    boundary_area->setVisible( true );
+    boundary_area->setZValue( image->zValue() + 1 );
+    boundary_area->update();
 
     update();
 }
@@ -763,40 +709,30 @@ void SketchScene::defineBounderingArea()
 void SketchScene::defineLowerBoundaryCurve( const PolyCurve& boundary_ )
 {
     lower = boundary_;
-    defineBounderingArea();
+    defineBoundaryArea();
 }
 
 
 void SketchScene::defineUpperBoundaryCurve( const PolyCurve& boundary_ )
 {
     upper = boundary_;
-    defineBounderingArea();
+    defineBoundaryArea();
 }
 
 
 void SketchScene::clearLowerBoundaryCurve()
 {
     lower.clear();
-    defineBounderingArea();
+    defineBoundaryArea();
 }
 
 
 void SketchScene::clearUpperBoundaryCurve()
 {
     upper.clear();
-    defineBounderingArea();
+    defineBoundaryArea();
 }
 
-
-void SketchScene::clearBoundaryCurve()
-{
-    //    lower.clear();
-    //    upper.clear();
-    //    boudering_area->clear();
-    //    boudering_area->setVisible( false );
-
-    //    update();
-}
 
 
 void SketchScene::updatePointGuidedExtrusion( const QPointF& p_ )
@@ -834,14 +770,16 @@ void SketchScene::showDipAnglePicture( bool status_, const QPixmap& pix_ )
     {
         setSketchingMode();
         dipangle->setVisible( false );
+        QGraphicsScene::update();
         return;
     }
 
-    current_interaction1 =  UserInteraction1::NONE;
+    current_interaction =  UserInteraction::NONE;
     dipangle->setImage( pix_ );
     dipangle->setVisible( true );
     dipangle->setZValue( image->zValue() + 1 );
 
+    QGraphicsScene::update();
 }
 
 
@@ -861,7 +799,7 @@ void SketchScene::setDipAnglePictureMovable( bool status_ )
     if( status_  == false )
         setSketchingMode();
     else
-        current_interaction1 =  UserInteraction1::NONE;
+        current_interaction =  UserInteraction::NONE;
 }
 
 
@@ -931,11 +869,19 @@ void SketchScene::savetoVectorImage( const QString& filename )
 
 void SketchScene::revertVerticalExaggerationInAxes( QMatrix matrix_, double scale_ )
 {
+
+    // first to revert the matrix scaled with the vertical exaggeration applied on the axes
     axes.setMatrix( matrix_.inverted().scale( 1, -1 ), false );
 
     if( volume1 == nullptr ) return;
+
+    // after pass the real height of the volume and the scale applied to the method
+    // which will scale the axes, and keep the text unchanged
     std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
     axes.updateVerticalExaggeration( scale_, volume_->getHeight() );
+
+
+    // after scaling the models, ensure all objects can be viewed
     emit ensureObjectsVisibility();
     update();
 }
@@ -944,10 +890,16 @@ void SketchScene::revertVerticalExaggerationInAxes( QMatrix matrix_, double scal
 void SketchScene::resetVerticalExaggerationInAxes()
 {
     QMatrix m_;
+
+    // first set an unitary matrix to the axes
     axes.setMatrix( m_, false );
+
+    // after set the axes as not scaled
     axes.resetVerticalExaggeration();
 
     if( volume1 == nullptr ) return;
+
+    // set the real volume height to the axes
     std::shared_ptr< Volume > volume_ = volume1->getRawVolume();
     axes.stopVerticalExaggeration( volume_->getHeight() );
     emit ensureObjectsVisibility();
@@ -964,7 +916,6 @@ void SketchScene::updateAxes()
     //    update();
 }
 
-///================================================================================
 
 void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
 {
@@ -972,54 +923,54 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
     QPointF p_ = event_->scenePos();
 
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SKETCHING ) )
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::SKETCHING ) )
     {
         sketch->create( p_ );
     }
 
-    else if( ( event_->buttons() & Qt::RightButton ) && ( current_interaction1 == UserInteraction1::SKETCHING )  )
+    else if( ( event_->buttons() & Qt::RightButton ) && ( current_interaction == UserInteraction::SKETCHING )  )
     {
         submitSketch();
     }
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_BOUNDARY )  )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::RESIZING_BOUNDARY )  )
     {
         volume1->setStartPoint( p_ );
     }
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::CREATE_REGION )  )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::CREATE_REGION )  )
     {
         //        regions[ nregions ] ->addPoint( p_ );
     }
 
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::SELECTING_STRATIGRAPHY ) )
     {
         sketch->create( p_ );
     }
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::SELECTING_STRATIGRAPHY_OLD ) )
     {
         getSelectedStratigraphies();
     }
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_REGION ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::SELECTING_REGION ) )
     {
         emit getRegionByPoint( p_.x(), p_.y(), csection_depth, csection_direction );
     }
 
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::GUIDED_EXTRUSION ) )
     {
         emit sendPointGuidedExtrusion( p_.x(), p_.y(), csection_depth, csection_direction );
     }
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::TRAJECTORY_GUIDED ) )
     {
         sketch->create( p_ );
     }
 
-    else if( ( event_->buttons() & Qt::RightButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED )  )
+    else if( ( event_->buttons() & Qt::RightButton ) && ( current_interaction == UserInteraction::TRAJECTORY_GUIDED )  )
     {
         submitSketchGuidedExtrusion();
         //       submitSketch();
@@ -1034,26 +985,22 @@ void SketchScene::mousePressEvent( QGraphicsSceneMouseEvent *event_ )
 void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 {
 
-    if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
+    if( current_interaction == UserInteraction::SELECTING_STRATIGRAPHY )
     {
-        std::cout << "Send the sketches to rules_processor" << std::endl << std::flush;
+        // send the sketches to rules_processor
         removeSketchesOfSelection();
     }
 
-    else if( current_interaction1 == UserInteraction1::SKETCHING )
+    else if( current_interaction == UserInteraction::SKETCHING )
     {
         endObject();
     }
 
-    else if( current_interaction1 == UserInteraction1::SELECTING_REGIONS )
+    else if( current_interaction == UserInteraction::SELECTING_REGIONS )
     {
         getSelectedRegions();
     }
 
-    //    else if( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION )
-    //    {
-
-    //    }
 
 
     QGraphicsScene::mouseDoubleClickEvent( event_ );
@@ -1065,23 +1012,22 @@ void SketchScene::mouseDoubleClickEvent( QGraphicsSceneMouseEvent *event_ )
 void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
 {
     QPointF p_ = event_->scenePos();
-    //    std::cout << "mx: " << p_.x() << ", my: " << p_.y() << std::endl << std::flush;
 
-    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SKETCHING )  )
+    if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::SKETCHING )  )
     {
         sketch->add(  p_ );
     }
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_BOUNDARY )  )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::RESIZING_BOUNDARY )  )
     {
         volume1->setEndPoint( p_ );
     }
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )  )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::SELECTING_STRATIGRAPHY )  )
     {
         sketch->add(  p_ );
     }
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_IMAGE )  )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::RESIZING_IMAGE )  )
     {
         if( resize_marker->isSelected() )
         {
@@ -1095,12 +1041,12 @@ void SketchScene::mouseMoveEvent( QGraphicsSceneMouseEvent* event_ )
         }
     }
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::GUIDED_EXTRUSION ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::GUIDED_EXTRUSION ) )
     {
         emit sendPointGuidedExtrusion( p_.x(), p_.y(), csection_depth, csection_direction );
     }
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::TRAJECTORY_GUIDED ) )
     {
         sketch->add(  p_ );
     }
@@ -1117,39 +1063,37 @@ void SketchScene::mouseReleaseEvent( QGraphicsSceneMouseEvent* event_ )
 
     QPointF p_ = event_->scenePos();
 
-    if( ( event_->button() == Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::SKETCHING )  )
+    if( ( event_->button() == Qt::LeftButton ) && ( current_interaction == UserInteraction::SKETCHING )  )
     {
         sketch->connect();
     }
 
-    else if( ( event_->button() == Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::RESIZING_BOUNDARY )  )
+    else if( ( event_->button() == Qt::LeftButton ) && ( current_interaction == UserInteraction::RESIZING_BOUNDARY )  )
     {
         volume1->setEndPoint( p_ );
-        //        setSceneRect( volume1->boundingRect() );
 
         emit resizeVolumeDimensions( csection_direction, static_cast< double >( volume1->boundingRect().width() ), static_cast< double >( volume1->boundingRect().height() ) );
-        //        emit ensureObjectsVisibility();
     }
 
-    else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY_OLD )
+    else if( current_interaction == UserInteraction::SELECTING_STRATIGRAPHY_OLD )
     {
         getSelectedStratigraphies();
     }
 
-    else if( current_interaction1 == UserInteraction1::SELECTING_STRATIGRAPHY )
+    else if( current_interaction == UserInteraction::SELECTING_STRATIGRAPHY )
     {
         addToSketchesOfSelection();
 
     }
 
 
-    else if(  current_interaction1 == UserInteraction1::RESIZING_IMAGE )
+    else if(  current_interaction == UserInteraction::RESIZING_IMAGE )
     {
         updateImageinCrossSection();
     }
 
 
-    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction1 == UserInteraction1::TRAJECTORY_GUIDED ) )
+    else if( ( event_->buttons() & Qt::LeftButton ) && ( current_interaction == UserInteraction::TRAJECTORY_GUIDED ) )
     {
         sketch->connect();
     }
@@ -1248,11 +1192,11 @@ void SketchScene::clearScene()
         delete move_marker;
     move_marker = nullptr;
 
-    if( boudering_area != nullptr )
-    {   boudering_area->clear();
-        delete boudering_area;
+    if( boundary_area != nullptr )
+    {   boundary_area->clear();
+        delete boundary_area;
     }
-    boudering_area = nullptr;
+    boundary_area = nullptr;
 
     if( dipangle  != nullptr )
         delete dipangle;
@@ -1263,9 +1207,9 @@ void SketchScene::clearScene()
         delete trajectory_point;
     trajectory_point = nullptr;
 
-    for( auto it: cross_sections1 )
+    for( auto it: cross_sections )
         (it.second).reset();
-    cross_sections1.clear();
+    cross_sections.clear();
 
     for( auto it: stratigraphies )
         (it.second).reset();
@@ -1290,7 +1234,7 @@ void SketchScene::clearScene()
     upper.clear();
 
     csection_direction = Settings::CrossSection::DEFAULT_CSECTION_DIRECTION;
-    current_interaction1 = UserInteraction1::SKETCHING;
+    current_interaction = UserInteraction::SKETCHING;
     sketch_enabled = true;
 
 }

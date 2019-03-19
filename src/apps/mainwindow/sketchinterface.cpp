@@ -1,3 +1,31 @@
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file sketchinterface.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class SketchInterface
+ */
+
+
 #include "sketchinterface.h"
 
 #include "mainwindow.h"
@@ -62,16 +90,25 @@ void SketchInterface::createSketchingActions()
     window->mn_windows->addAction( ac_topview );
 
 
-    ////
+    // connects related to the main window, i.e., the window associated to the cross-sections
+    // on the 'WIDTH' and 'DEPTH' directions
+    createSketchWindowActions();
 
-    connect( window, &MainWindow::runDiagnostics, this, &SketchInterface::showOnlyMainCanvas );
+    // connects related to the top-view window, i.e., the window associated to the cross-sections
+    // on the 'HEIGHT'direction
+    createSketchTopViewWindowActions();
 
+
+    // connects related to the mainwindow of the RRM application
+    createMainWindowActions();
+
+}
+
+
+void SketchInterface::createSketchWindowActions()
+{
 
     connect( ac_csection, &QAction::toggled, dw_sketchwindow, &QDockWidget::setVisible );
-
-
-    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
-
 
     connect( sketch_window, &SketchWindow::removeMarkerFromSlider, [=]( double id_ )
     {  window->app->removeMarkerFromSlider( id_ ); } );
@@ -114,21 +151,17 @@ void SketchInterface::createSketchingActions()
     connect( sketch_window, &SketchWindow::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ window->app->clearImageInCrossSection( dir_, depth_ ); } );
 
 
-    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
+    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundary( id_ ); } );
 
 
-    connect( sketch_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
+    connect( sketch_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundary( px_, py_, depth_, dir_ ); } );
 
 
-    connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  ){ window->app->selectBounderingBySketch( curve_, dir_, depth_  ); } );
-
-
-    connect( sketch_window, &SketchWindow::setAreaChoosed, [=](){ /*window->app->setSketchRegion( false );*/ } );
+    connect( sketch_window, &SketchWindow::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  ){ window->app->selectBoundaryBySketch( curve_, dir_, depth_  ); } );
 
 
     connect( sketch_window, &SketchWindow::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
     {
-        //         window->app->setPointGuidedExtrusion( px_, py_, depth_, dir_ );
         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
     } );
 
@@ -140,10 +173,19 @@ void SketchInterface::createSketchingActions()
     //         scontroller->setPointGuidedExtrusionInPath( px_, py_, depth_, dir_ );
     //     } );
 
+    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundary( id_ ); } );
 
 
-    connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundering( px_, py_, depth_, dir_ ); } );
+    connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
 
+    connect( sketch_window, &SketchWindow::setVerticalExaggeration, [=]( double scale_  ){ window->app->setVerticalExaggeration( scale_ ); } );
+
+
+}
+
+
+void SketchInterface::createSketchTopViewWindowActions()
+{
 
 
     connect( sketch_topview_window, &SketchWindow::defineColorCurrent, [=]( int red_, int green_, int blue_ )
@@ -152,6 +194,14 @@ void SketchInterface::createSketchingActions()
         if( sketch_window == nullptr) return;
         sketch_window->updateColorWidget( red_, green_, blue_ );
     } );
+
+
+    connect( ac_topview, &QAction::toggled, dw_topview_window, &QDockWidget::setVisible );
+
+
+    connect( sketch_topview_window, &SketchWindow::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ){ window->app->getRegionByPointAsBoundary( px_, py_, depth_, dir_ ); } );
+
+
 
     connect( sketch_topview_window, &SketchWindow::addTrajectory, [=]( const PolyCurve& curve_ )
     { window->app->addTrajectoryToObject( curve_ ); } );
@@ -189,14 +239,11 @@ void SketchInterface::createSketchingActions()
     connect( sketch_topview_window, &SketchWindow::stopSketchesOfSelection, [=](){ scontroller->enableSketching( true ); } );
 
 
-    connect( sketch_window, &SketchWindow::objectSelected, [=]( const std::size_t& id_  ){ window->app->setObjectSelectedAsBoundering( id_ ); } );
+}
 
 
-    connect( sketch_window, &SketchWindow::regionSelected, [=]( const std::size_t& id_, bool status_  ){ window->app->setRegionSelected( id_, status_ ); } );
-
-    connect( sketch_window, &SketchWindow::setVerticalExaggeration, [=]( double scale_  ){ window->app->setVerticalExaggeration( scale_ ); } );
-
-
+void SketchInterface::createMainWindowActions()
+{
     connect( window->app, &RRMApplication::updateVolume, [=]()
     { scontroller->updateVolume(); sketch_window->applyVerticalExaggeration(); } );
 
@@ -303,14 +350,8 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::setCurrentColor, [=]( int red_, int green_, int blue_ ){ sketch_topview_window->updateColorWidget( red_, green_, blue_ ); } );
 
 
-
-    connect( window->app, &RRMApplication::setCurveAsBoundering, [=]( const PolyCurve& boundary_ ){ scontroller->setCurveAsBoundering( boundary_ ); } );
-
-
-    connect( window->app, &RRMApplication::clearBounderingArea, [=](){ scontroller->clearCurveAsBoundering(); } );
-
-
     connect( window->app, &RRMApplication::addRegions, [=](){ scontroller->enableSketching( false );  } );
+
 
     connect( window->app, &RRMApplication::addRegionCrossSectionBoundary, [=]( const RegionsPtr& reg_ ){ scontroller->addRegion( reg_ );  } );
 
@@ -321,16 +362,14 @@ void SketchInterface::createSketchingActions()
     connect( window->app, &RRMApplication::clearRegions, [=](){ scontroller->clearRegions(); scontroller->enableSketching( true ); } );
 
 
-    connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundering();  } );
+    connect( window->app, &RRMApplication::updateBoundary, [=](){ scontroller->updateBoundary();  } );
 
 
     connect( window->app, &RRMApplication::updateImageInCrossSection, [=]()
     { scontroller->updateImageInScene(); } );
 
-
+    connect( window, &MainWindow::runDiagnostics, this, &SketchInterface::showOnlyMainCanvas );
 }
-
-
 
 
 void SketchInterface::init()
@@ -339,7 +378,6 @@ void SketchInterface::init()
     {
         sketch_window->disableResizeVolume( false );
         sketch_window->resetVerticalExaggeration();
-        sketch_window->setDipAngle( 0.0 );
     }
 
     if( sketch_topview_window != nullptr )

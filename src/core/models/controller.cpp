@@ -1,25 +1,29 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file controller.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class Controller
  */
-
-
 
 #include <algorithm>
 #include <random>
@@ -62,9 +66,6 @@ Controller::~Controller()
 }
 
 
-///==========================================================================
-
-
 void Controller::setApplication( RRMApplication* const& app_)
 {
     app = app_;
@@ -83,8 +84,6 @@ void Controller::init()
 }
 
 
-
-///==========================================================================
 
 ///
 /// Volumes Methods
@@ -149,12 +148,13 @@ void Controller::updateBoundingBoxInModel()
 
     model.volume->getGeometry( ox_, oy_, oz_, w_, h_, d_ );
 
-
+    // updating the bounding box of each object
     for( auto it: model.objects )
     {
         (it.second)->setBoundingBox( ox_, ox_ + w_, oy_, oy_ + h_, oz_, oz_ + d_ );
     }
 
+    // updating the RulesProcessor bounding box
     updateBoundingBoxRulesProcessor();
 }
 
@@ -172,8 +172,6 @@ void Controller::setVolumeVisibility( bool status_ )
 
 
 
-///==========================================================================
-
 
 ///
 /// Cross-Sections Methods
@@ -184,7 +182,7 @@ void Controller::createMainCrossSection()
 {
     csection = std::make_shared<CrossSection>();
     csection->setVolume( model.volume );
-    csection->setDirection(     Settings::CrossSection::CrossSectionDirections::Z );
+    csection->setDirection( Settings::CrossSection::CrossSectionDirections::Z );
     csection->setDepth( model.volume->getLenght() );
 }
 
@@ -193,6 +191,7 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
 {
     current_direction = dir_;
 
+    // if cross-section is on the 'HEIGHT'direction, move the top-view cross-section to the top of the volume
     if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
         moveTopViewCrossSection( model.volume->getHeight() );
@@ -200,6 +199,7 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
     }
 
 
+    // otherwise, move the main cross-section
     csection->setDirection( dir_ );
 
     if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
@@ -212,6 +212,7 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
         csection->setDepth( model.volume->getLenght() );
     }
 
+    // updating all curves of existents objects (stratigraphies and structurals), only if they are done
     for( auto it_: model.objects )
     {
         ObjectPtr obj_ = it_.second;
@@ -219,44 +220,23 @@ void Controller::changeMainCrossSectionDirection( const Settings::CrossSection::
             obj_->removeCrossSectionCurves();
     }
 
+    // updating all the model with the new direction
     updateModel();
 
-
-//    csection->setDirection( dir_ );
-
-//    if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        csection->setDepth( model.volume->getWidth() );
-//    }
-
-//    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
-//    {
-//        csection->setDepth( model.volume->getHeight() );
-//    }
-
-//    else if ( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-//        csection->setDepth( model.volume->getLenght() );
-//    }
-
-//    for( auto it_: model.objects )
-//    {
-//        ObjectPtr obj_ = it_.second;
-//        if( obj_->isDone() == true )
-//            obj_->removeCrossSectionCurves();
-//    }
-
-//    updateModel();
 }
 
 
 void Controller::moveMainCrossSection( double depth_ )
 {
-    std::cout << "csection depth: " << depth_ << std::endl << std::flush;
     csection->setDepth( depth_ );
 
+    // update the curves to the current cross-section position
     updateObjectsCurvesInCrossSection( depth_ );
+
+    // check if there is any image in the current position
     updateImageInMainCrossSection();
+
+    // update the regions area in the current position
     updateRegions();
 }
 
@@ -292,6 +272,8 @@ void Controller::moveTopViewCrossSection( double depth_ )
 
 void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
+
+     // creating fix cross-sections
     CrossSectionPtr csection_ = std::make_shared< CrossSection >();
     csection_->setVolume( model.volume );
     csection_->setDirection( dir_ );
@@ -299,9 +281,9 @@ void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDire
 
     ImageData image_;
 
+    // if already exist an image in this position, set the image
     if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
-
 
         if( images_csectionsX.find( depth_ ) != images_csectionsX.end() )
         {
@@ -316,9 +298,6 @@ void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDire
     {
         if( images_csectionsY.find( depth_ ) != images_csectionsY.end() )
         {
-//            image_ = images_csectionsY[ depth_ ];
-//            csection_->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
-
             csection_->setImage( image_topview.file, image_topview.ox, image_topview.oy, image_topview.w, image_topview.h );
         }
         model.csectionsY[ depth_ ] = csection_;
@@ -337,6 +316,8 @@ void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDire
         model.csectionsZ[ depth_ ] = csection_;
     }
 
+
+    // update the curves to this cross-section
     updateObjectsCurvesInCrossSection( depth_ );
 
 
@@ -346,6 +327,7 @@ void Controller::addCrossSection( const Settings::CrossSection::CrossSectionDire
 
 bool Controller::getCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, CrossSectionPtr& csection_ )
 {
+
     if ( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         if ( model.csectionsX.find( depth_ ) == model.csectionsX.end() ) return false;
@@ -412,13 +394,7 @@ void Controller::setImageToCrossSection( const std::string& file_, const Setting
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-//        images_csectionsY[ depth_ ] = std::move( image_ );
-//        if ( model.csectionsY.find( depth_ ) != model.csectionsY.end() )
-//        {
-//            CrossSectionPtr csection1_ = model.csectionsY[ depth_ ];
-//            csection1_->setImage( file_, ox_, oy_, w_, h_ );
-//        }
-
+        // the image is constant to all cross-section in the 'HEIGHT' direction
         image_topview.file = image_.file;
         image_topview.ox = image_.ox;
         image_topview.oy = image_.oy;
@@ -443,14 +419,14 @@ void Controller::setImageToCrossSection( const std::string& file_, const Setting
 
     }
 
-    if( csection->getDirection() == dir_ && csection->getDepth() == depth_ )
+    if( ( csection->getDirection() == dir_ ) && ( csection->getDepth() == depth_ ) )
         csection->setImage( file_, ox_, oy_, w_, h_ );
 
     Settings::CrossSection::CrossSectionDirections dir1_ = topview->getDirection();
     double depth1_ = topview->getDepth();
 
 
-    if(  dir1_ == dir_ &&  depth1_ == depth_ )
+    if( ( dir1_ == dir_ ) &&  ( depth1_ == depth_ ) )
         topview->setImage( file_, ox_, oy_, w_, h_ );
 
 }
@@ -458,12 +434,14 @@ void Controller::setImageToCrossSection( const std::string& file_, const Setting
 
 void Controller::clearImageInCrossSection( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
-    std::cout <<" Entering in clearImageInCrossSection method" << std::endl << std::flush;
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
+        // removing from the data structure
         images_csectionsX.erase( depth_ );
         updateImageInMainCrossSection();
+
+        // removing from the fixed cross-section
         if ( model.csectionsX.find( depth_ ) != model.csectionsX.end() )
         {
             CrossSectionPtr csection1_ = model.csectionsX[ depth_ ];
@@ -472,7 +450,6 @@ void Controller::clearImageInCrossSection( const Settings::CrossSection::CrossSe
     }
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-//        images_csectionsY.erase( depth_ );
         image_topview.file.clear();
         image_topview.ox = 0.0;
         image_topview.oy = 0.0;
@@ -509,6 +486,7 @@ void Controller::updateImageInMainCrossSection()
     bool has_image_ = false;
     ImageData image_;
 
+    // if there is a fixed cross-section in this position, also update image on it
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         if( images_csectionsX.find( depth_ ) != images_csectionsX.end() )
@@ -527,6 +505,7 @@ void Controller::updateImageInMainCrossSection()
         }
     }
 
+    // updating the image on the main cross-section
     if( has_image_ == true )
         csection->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
     else
@@ -538,32 +517,22 @@ void Controller::updateImageInMainCrossSection()
 void Controller::updateImageInTopViewCrossSection()
 {
     const Settings::CrossSection::CrossSectionDirections& dir_ = topview->getDirection();
-    double depth_ = topview->getDepth();
 
 
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         return;
 
-//    if( images_csectionsY.find( depth_ ) == images_csectionsY.end() )
-//    {
-//        topview->clearImage();
-//        return;
-//    }
-
+    // if there is no image on this position of the top-view cross-section, just clear it
     if( image_topview.file.empty() == true )
     {
         topview->clearImage();
         return;
     }
 
-//    ImageData image_= images_csectionsY[ depth_ ];
-//    topview->setImage( image_.file, image_.ox, image_.oy, image_.w, image_.h );
     topview->setImage( image_topview.file, image_topview.ox, image_topview.oy, image_topview.w, image_topview.h );
 
 }
 
-
-///==========================================================================
 
 ///
 /// Objects Methods
@@ -578,6 +547,7 @@ bool Controller::addObject( std::size_t index_ )
     double ox_ = 0.0, oy_ = 0.0, oz_ = 0.0;
     double w_ = 0.0, h_ = 0.0, d_ = 0.0;
 
+    // since all objects is inside of the volume, the volume will be the bounding box of all of them
     model.volume->getGeometry( ox_, oy_, oz_, w_, h_, d_ );
     obj_->setBoundingBox( ox_, ox_ + w_, oy_, oy_ + h_, oz_, oz_ + d_ );
 
@@ -740,8 +710,6 @@ QString Controller::getObjectLog( std::size_t index_ ) const
 }
 
 
-///==========================================================================
-
 ///
 /// Creating Curves and Surfaces of Objects
 ///
@@ -758,17 +726,21 @@ bool Controller::addCurveToObject( Settings::CrossSection::CrossSectionDirection
 
     Curve2D curve_proc_ = curve_.getCurves2D()[0];
 
+    // is it necessary?
     if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
         depth_ = topview->getDepth();
     else
+        //if the curve is on the 'WIDTH' or 'DEPTH' direction, turn the curve monotonic in X
         curve_proc_= SketchLibrary1::monotonicInX( curve_proc_ );
 
 
+    // smooth the curve before add it
     curve_proc_ = SketchLibrary1::smooth( curve_proc_ );
 
     bool added_curve_ = obj_->addCurve( depth_, PolyCurve( curve_proc_ ) );
     if ( added_curve_ == false ) return false;
 
+    // create or update the preview surface
     updatePreviewSurface();
 
     return true;
@@ -791,6 +763,7 @@ bool Controller::removeCurveFromObject( Settings::CrossSection::CrossSectionDire
     }
 
     //TODO: check this if. Remove cross-section only of vector of used csections, not from the opened fixed csections
+    // the user may want to keep to view the fixed cross-section
     //    if ( csection_->isEmpty() == true )
     //        removeCrossSection( dir_, depth_ );
 
@@ -807,13 +780,18 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
     ObjectPtr& obj_ = model.objects[ current_object ];
 
     Curve2D curve_proc_;
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
+
+
     if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
+        // if the current_direction is in the direction X, the trajectory is along the X direction in the top-view plane,
+        // so it needs to be monotonic on the direction X
         curve_proc_ = SketchLibrary1::monotonicInX( curve_.getCurves2D()[0] );
-        //        curve_proc_
     }
     else {
+
+        // if the current_direction is in the direction Z, the trajectory is along the Y direction in the top-view plane,
+        // so it needs to be monotonic on the direction Y
         curve_proc_ = SketchLibrary1::monotonicInY( curve_.getCurves2D()[0] );
     }
 
@@ -847,17 +825,21 @@ bool Controller::commitObjectSurface()
     applyStratigraphicRule();
 
     bool status_ = createObjectSurface();
-
-    ObjectPtr obj_ = model.objects[ current_object ];
     if( status_ == false )
     {
+        // it was not possible to create the surface
+        // needs to do something else?
         return false;
     }
 
+    ObjectPtr obj_ = model.objects[ current_object ];
+
+    // the surface was created, so it is not more possible to add any curve/trajectory
     obj_->setDone( true );
 
-
     updateModel();
+
+    // create a new object, with the current type of object (stratigraphy or strutural)
     addObject();
     return true;
 
@@ -872,18 +854,26 @@ bool Controller::createObjectSurface()
 
     if( obj_->getNumberOfCrossSections() == 0 ) return false;
 
+    // if there is only one curve
     bool single_csection_ = ( obj_->getNumberOfCrossSections() == 1 );
+
+    // if the object is being created in the 'HEIGHT' direction, so the curves are level curves
     bool is_level_curves_ = ( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::Y );
+
+    // there more than one curve or they are level curves?
     bool is_general_surface_ = ( !single_csection_ || is_level_curves_ );
 
 
+    // there more than one curve or they are level curves, create a surface using more general interpolation
     if( is_general_surface_ == true )
         surface_created_ = createGeneralSurface();
     else
     {
+        // if the surface has not a trajectory, create a simple extruded surface
         if( obj_->hasTrajectory() == false )
             surface_created_ = createLinearExtrudedSurface();
         else
+            // if the surface has a trajectory, create an extruded guided surface
             surface_created_ = createExtrudedSurface();
     }
 
@@ -911,14 +901,21 @@ bool Controller::createExtrudedSurface()
     ObjectPtr obj_ = model.objects[ current_object ];
     if( obj_->hasTrajectory() == false ) return false;
 
+    // return all the curves existents in the object, since the method is a guided extrusion
+    // should exist only one curve
     std::vector< double > curves_ = obj_->getCurves2D();
+
 
     std::map< double, PolyCurve > curves_map_ = obj_->getCurves();
     double depth_ = curves_map_.begin()->first;
+
+    // return the trajectory
     const PolyCurve& path_ = obj_->getTrajectory();
+
 
     bool surface_created_ = false;
 
+    // creating the surface based on the directio which the object was created
     if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
         surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPointsSwapped() );
@@ -929,6 +926,7 @@ bool Controller::createExtrudedSurface()
         surface_created_ = rules_processor.createLengthwiseExtrudedSurface( current_object, curves_, depth_, path_.getPoints() );
     }
 
+    // saving the trajectory if surface creation was successful, so that the user can reuse it to create other object
     if( surface_created_ == true )
     {
         last_trajectory =  path_;
@@ -947,6 +945,7 @@ bool Controller::createLinearExtrudedSurface()
     std::vector< double > curves_ = obj_->getCurves2D();
     bool surface_created_ = false;
 
+    // creating the surface based on the directio which the object was created
     if( obj_->getCrossSectionDirection() == Settings::CrossSection::CrossSectionDirections::X )
     {
         surface_created_ = rules_processor.createWidthwiseExtrudedSurface( current_object, curves_ );
@@ -963,8 +962,6 @@ bool Controller::createLinearExtrudedSurface()
 }
 
 
-///==========================================================================
-
 ///
 /// Updating Models Methods
 ///
@@ -973,6 +970,7 @@ bool Controller::createLinearExtrudedSurface()
 void Controller::updateModel()
 {
 
+    // setting all objects as inactive, so that we view only the actives
     setObjectsActive( false );
 
     std::vector< std::size_t > actives_ = rules_processor.getActiveSurfaces();
@@ -983,10 +981,13 @@ void Controller::updateModel()
         std::size_t id_ = actives_.at( j );
 
         setObjectActive( id_, true );
+
+        // update the surface and the curves
         updateObjectSurface( id_ );
         updateObjectCurves( id_ );
     }
 
+    // check if it is needed
     setObjectActive( current_object, true );
 
 }
@@ -996,6 +997,8 @@ void Controller::updateObjectCurveInCrossSection( const std::size_t& index_, dou
 {
     ObjectPtr obj_ = model.objects[ index_ ];
 
+    // if the object is current,only update the cross-section curve (if existent), if it was not the user that added it
+    // if it was created automatically it can be updated
     if( index_ == current_object )
     {
         bool has_curve_ = obj_->hasCurve( depth_ );
@@ -1003,14 +1006,13 @@ void Controller::updateObjectCurveInCrossSection( const std::size_t& index_, dou
     }
 
     clearAndSetCurveinCrossSectionFromRulesProcessor( index_ , depth_ );
-//    clearAndSetCurveinCrossSectionFromRulesProcessor( index_ , csection->getDirection(), csection->getDepth() );
 
 }
 
 
 void Controller::updateObjectsCurvesInCrossSection( double depth_ )
 {
-
+    // updating all curves in certain depth ( using the current direction)
     for( auto it_: model.objects )
     {
         updateObjectCurveInCrossSection( it_.first, depth_ );
@@ -1022,6 +1024,7 @@ void Controller::updateObjectsCurvesInCrossSection( double depth_ )
 void Controller::updateCrossSectionsX()
 {
 
+    // updating all curves in all depths in the 'WIDTH' direction
     for( auto it_: model.csectionsX )
     {
         updateObjectsCurvesInCrossSection( it_.first );
@@ -1032,6 +1035,7 @@ void Controller::updateCrossSectionsX()
 
 void Controller::updateCrossSectionsY()
 {
+    // updating all curves in all depths in the 'HEIGHT' direction
     for( auto it_: model.csectionsY )
     {
         updateObjectsCurvesInCrossSection( it_.first );
@@ -1042,6 +1046,7 @@ void Controller::updateCrossSectionsY()
 
 void Controller::updateCrossSectionsZ()
 {
+    // updating all curves in all depths in the 'DEPTH' direction
     for( auto it_: model.csectionsZ )
     {
         updateObjectsCurvesInCrossSection( it_.first );
@@ -1053,6 +1058,7 @@ void Controller::updateCrossSectionsZ()
 void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::size_t& index_, double depth_ )
 {
 
+    // updating the curve of the object which index is 'index_', added in the cross-section 'depth'in the current direction
     clearAndSetCurveinCrossSectionFromRulesProcessor( index_, current_direction, depth_ );
 
 }
@@ -1067,6 +1073,7 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
     std::vector< double > vertices_;
     std::vector< std::size_t > edges_;
 
+    // updating the curve of the object which index is 'index_', added in the cross-section 'depth'in the given direction
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         has_curve_ = rules_processor.getWidthCrossSectionCurve( index_, indexCrossSectionX( depth_ ), vertices_, edges_ );
@@ -1077,14 +1084,17 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
         has_curve_ = rules_processor.getLengthCrossSectionCurve( index_, indexCrossSectionZ( depth_ ), vertices_, edges_ );
     }
 
+    // rules processor did not find an intersection of the surface with the given cross-section
     if( has_curve_ == false )
     {
         std::cout << "No curve for object " << index_ << " in cross-section " << depth_ << std::endl << std::flush;
         return;
     }
 
+    // rules processor did find an intersection of the surface with the given cross-section
     PolyCurve curve_( vertices_, edges_ );
 
+    // remove the existent and update with the new one
     obj_->removeCurve( depth_ );
     obj_->updateCurve( depth_, curve_ );
 }
@@ -1094,11 +1104,13 @@ void Controller::clearAndSetCurveinCrossSectionFromRulesProcessor( const std::si
 void Controller::updateObjectCurves( const std::size_t& index_ )
 {
 
-    //    Settings::CrossSection::CrossSectionDirections dir_ = csection->getDirection();
-    Settings::CrossSection::CrossSectionDirections dir_ = current_direction;
-
     updateObjectCurveInCrossSection( index_, csection->getDepth() );
 
+    // the fixed cross-section depends on the current direction
+    // so if the current cross-section is 'WIDTH', update the object curves in all the fixed cross-section
+    // in the 'WIDTH' direction, do the same for any other direction
+
+    Settings::CrossSection::CrossSectionDirections dir_ = current_direction;
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         for( auto it_: model.csectionsX )
@@ -1116,30 +1128,6 @@ void Controller::updateObjectCurves( const std::size_t& index_ )
             updateObjectCurveInCrossSection( index_, it_.first );
     }
 
-
-
-
-////    Settings::CrossSection::CrossSectionDirections dir_ = csection->getDirection();
-//    Settings::CrossSection::CrossSectionDirections dir_ = current_direction;
-
-//    updateObjectCurveInCrossSection( index_, csection->getDepth() );
-
-//    if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        for( auto it_: model.csectionsX )
-//            updateObjectCurveInCrossSection( index_, it_.first );
-//    }
-//    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
-//    {
-//        for( auto it_: model.csectionsY )
-//            updateObjectCurveInCrossSection( index_, it_.first );
-//    }
-//    else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-//        for( auto it_: model.csectionsZ )
-//            updateObjectCurveInCrossSection( index_, it_.first );
-//    }
-
 }
 
 
@@ -1150,17 +1138,18 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
 
     ObjectPtr obj_ = model.objects[ index_ ];
 
+    // if there is no surface
     bool has_surface_ = rules_processor.getMesh( index_, vertices_, faces_ );
     if( has_surface_  == false )
     {
         obj_->removeSurface();
-        //        obj_->setActive( false );
         return;
     }
 
     std::vector< double > normals_;
     rules_processor.getNormals( index_, normals_ );
 
+    // creating the surface
     Surface surface_;
     surface_.setVertices( vertices_ );
     surface_.setFaces( faces_ );
@@ -1168,19 +1157,19 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
 
     obj_->setSurface( surface_ );
 
-
+    // getting the trajectory back
     std::vector< double > trajectory_;
     bool has_trajectory_ = rules_processor.getExtrusionPath( index_, trajectory_ );
     if( has_trajectory_ == true )
     {
         PolyCurve traj_ = PolyCurve( trajectory_ );
 
-//        if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Y )
-        if( current_direction != Settings::CrossSection::CrossSectionDirections::Y )
-        {
-            //            if( csection->getDirection() != obj_->getCrossSectionDirection() )
-            //                traj_ = PolyCurve( traj_.getPointsSwapped() );
-        }
+////        if( csection->getDirection() != Settings::CrossSection::CrossSectionDirections::Y )
+//        if( current_direction != Settings::CrossSection::CrossSectionDirections::Y )
+//        {
+//            //            if( csection->getDirection() != obj_->getCrossSectionDirection() )
+//            //                traj_ = PolyCurve( traj_.getPointsSwapped() );
+//        }
 
         obj_->removeTrajectory();
         obj_->addTrajectory( traj_ );
@@ -1194,6 +1183,8 @@ void Controller::updateObjectSurface( const std::size_t& index_ )
 
 void Controller::updatePreviewSurface()
 {
+
+    // creating the preview surface.
     rules_processor.testSurfaceInsertion();
 
     bool surface_created_ = createObjectSurface();
@@ -1204,8 +1195,6 @@ void Controller::updatePreviewSurface()
 }
 
 
-
-///==========================================================================
 
 ///
 /// Regions Methods
@@ -1221,18 +1210,27 @@ std::vector<std::size_t > Controller::defineRegions()
     std::vector< double > vertices_;
     std::vector< std::vector< std::size_t > > regions_;
     bool status_ = rules_processor.getTetrahedralMesh( vertices_, regions_ );
+
+    // there is no region mesh
     if( status_ == false ) return std::vector<std::size_t >();
 
+
+    // the region should be limited by the volume bounding box
     double w_ = 0, h_ = 0,  l_ = 0;
     double ox_ = 0, oy_ = 0, oz_ = 0;
-
     model.volume->getGeometry( ox_, oy_, oz_, w_, h_, l_ );
 
+
+    // creating region colors using a color library
     std::size_t number_of_regions_ = regions_.size();
     std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions_ );
+
+    // getting the volumes of each region
     std::vector< double > volumes_;
     rules_processor.getRegionVolumeList( volumes_ );
 
+
+    // variable to determine the total volume, i.e., the sum of each region volume
     double volume_sum_ = 0.0;
     for ( unsigned int i = 0; i < number_of_regions_; ++i)
     {
@@ -1242,7 +1240,6 @@ std::vector<std::size_t > Controller::defineRegions()
         color_.blue = colors_[ 3*i + 2 ];
 
         RegionsPtr region_ = std::make_shared< Regions >();
-
         region_->setIndex( i );
         region_->setVertices( vertices_ );
         region_->setTetrahedralCells( regions_[ i ] );
@@ -1253,11 +1250,15 @@ std::vector<std::size_t > Controller::defineRegions()
         volume_sum_ += volumes_[ i ];
 
         model.regions[region_->getIndex()] = region_;
+
+        // determining the boundary of the region intersected with the current cross-section
         getRegionCrossSectionBoundary( i );
     }
 
      model.volume->setVolume( volume_sum_ );
 
+     // returning the order of the surfaces
+     // maybe it needs to be placed in other method
     std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedActiveSurfaces();
     return surfaces_indexes_;
 }
@@ -1277,8 +1278,6 @@ std::vector<std::size_t > Controller::getOrderedActiveSurfacesIndices()
 
 bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
 {
-    //    if( model.regions.find( index_ ) == model.regions.end() )
-    //        return false;
 
     RegionsPtr region_ = model.regions[ index_ ];
 
@@ -1300,18 +1299,7 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
     }
 
 
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        rules_processor.getRegionCurveBoxesAtWidth( index_, indexCrossSectionX( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
-//    }
-
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-//        rules_processor.getRegionCurveBoxesAtLength( index_, indexCrossSectionZ( csection->getDepth() ), vertices_lower_, edges_lower_, vertices_upper_, edges_upper_ );
-//    }
-
-
-
+    // defining the boundary of the region intersected with the current cross-section
     PolyCurve lower_, upper_;
     lower_.fromVector( vertices_lower_, edges_lower_ );
     upper_.fromVector( vertices_upper_, edges_upper_ );
@@ -1326,6 +1314,7 @@ bool Controller::getRegionCrossSectionBoundary( std::size_t index_ )
 
 void Controller::updateRegions()
 {
+    // defining the boundary of each region intersected with the current cross-section
     for( auto it_: model.regions )
         getRegionCrossSectionBoundary( it_.first );
 }
@@ -1435,29 +1424,27 @@ void Controller::removeRegions()
         (it.second).reset();
     model.regions.clear();
 
-    for( auto it: model.domains1 )
+    for( auto it: model.domains )
         (it.second).clear();
-    model.domains1.clear();
+    model.domains.clear();
     regions_in_domains.clear();
 }
 
 
-
-
-///==========================================================================
 
 ///
 /// Domains Methods
 ///
 
 
-std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
+std::size_t Controller::createDomain( std::set< std::size_t > indexes_ )
 {
     std::size_t id_ = 0;
 
-    if( model.domains1.empty() == false )
+    // creating the index of the domains depending on the already existents domains
+    if( model.domains.empty() == false )
     {
-        for( auto it_: model.domains1 )
+        for( auto it_: model.domains )
         {
             id_ = it_.first;
         }
@@ -1465,9 +1452,11 @@ std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
         ++id_;
     }
 
-    model.domains1[ id_ ] = Domain();
+    model.domains[ id_ ] = Domain();
+
+    // if indexes_ is not empty, add each region inside the created domain
     for( auto it_: indexes_ )
-        addRegionToDomain1( it_, id_ );
+        addRegionToDomain( it_, id_ );
 
     return id_;
 
@@ -1476,76 +1465,88 @@ std::size_t Controller::createDomain1( std::set< std::size_t > indexes_ )
 
 void Controller::setDomainName( std::size_t index_, const std::string& name_ )
 {
-    if (model.domains1.find(index_) == model.domains1.end()) return;
-    model.domains1[ index_ ].setName( name_ );
+    if (model.domains.find(index_) == model.domains.end()) return;
+    model.domains[ index_ ].setName( name_ );
 }
 
 void Controller::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
 {
-    if (model.domains1.find(index_) == model.domains1.end()) return;
-    model.domains1[ index_ ].setColor( red_, green_, blue_ );
+    if (model.domains.find(index_) == model.domains.end()) return;
+    model.domains[ index_ ].setColor( red_, green_, blue_ );
 }
 
 
-bool Controller::addRegionToDomain1( std::size_t region_id_, std::size_t domain_id_ )
+bool Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_id_ )
 {
+
+
     if (model.regions.find(region_id_) == model.regions.end()) return false;
-    if (model.domains1.find(domain_id_) == model.domains1.end()) return false;
+    if (model.domains.find(domain_id_) == model.domains.end()) return false;
     if( regions_in_domains.find( region_id_ ) != regions_in_domains.end() ) return false;
 
-    model.domains1[ domain_id_ ].addRegion( region_id_ );
+    // if region_id_ is a region index valid
+    // if domain_id_ is a domain index valid
+    // if the regions is not added already in another domain, assign the region to the domain
+
+    model.domains[ domain_id_ ].addRegion( region_id_ );
     regions_in_domains.insert( region_id_ );
 
     RegionsPtr reg_ = model.regions[region_id_];
     reg_->setDomain(domain_id_);
 
-    double volume_ = model.domains1[ domain_id_ ].getDomainVolume();
+    double volume_ = model.domains[ domain_id_ ].getDomainVolume();
     volume_ += model.regions[region_id_]->getVolume();
 
-    model.domains1[ domain_id_ ].setDomainVolume( volume_ );
+    model.domains[ domain_id_ ].setDomainVolume( volume_ );
     return true;
 }
 
 
-bool Controller::removeRegionFromDomain1(std::size_t region_id_, std::size_t domain_id_)
+bool Controller::removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_)
 {
     if (model.regions.find(region_id_) == model.regions.end()) return false;
-    if (model.domains1.find(domain_id_) == model.domains1.end()) return false;
+    if (model.domains.find(domain_id_) == model.domains.end()) return false;
     if( regions_in_domains.find( region_id_ ) == regions_in_domains.end() ) return false;
 
-    model.domains1[domain_id_].removeRegion( region_id_ );
+    // if region_id_ is a region index valid
+    // if domain_id_ is a domain index valid
+    // if the regions belongs to the domain, remove the region from the domain
+
+    model.domains[domain_id_].removeRegion( region_id_ );
     regions_in_domains.erase( region_id_ );
 
     RegionsPtr reg_ = model.regions[region_id_];
     reg_->removeFromDomain();
 
-    double volume_ = model.domains1[ domain_id_ ].getDomainVolume();
+    // update the volume of the domain
+    double volume_ = model.domains[ domain_id_ ].getDomainVolume();
     volume_ -= model.regions[region_id_]->getVolume();
-    model.domains1[ domain_id_ ].setDomainVolume( volume_ );
+
+    model.domains[ domain_id_ ].setDomainVolume( volume_ );
 
     return true;
 }
 
 
-std::set< std::size_t> Controller::getRegionsFromDomain1(std::size_t domain_id_) const
+std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) const
 {
-    if (model.domains1.find(domain_id_) == model.domains1.end()) return std::set< std::size_t>();
+    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
 
-    const Domain& domain_ = model.domains1.at( domain_id_ );
+    const Domain& domain_ = model.domains.at( domain_id_ );
     return domain_.getRegions();
 
 }
 
 
-void Controller::removeDomain1(std::size_t domain_id_)
+void Controller::removeDomain(std::size_t domain_id_)
 {
 
-    if (model.domains1.find(domain_id_) == model.domains1.end()) return;
+    if (model.domains.find(domain_id_) == model.domains.end()) return;
 
-    Domain& domain_ = model.domains1[ domain_id_ ];
+    Domain& domain_ = model.domains[ domain_id_ ];
     domain_.clear();
 
-    model.domains1.erase( domain_id_ );
+    model.domains.erase( domain_id_ );
 }
 
 
@@ -1554,7 +1555,7 @@ std::vector< std::size_t > Controller::getDomains()
 
     std::vector< std::size_t > indexes_;
 
-    for( auto it_: model.domains1 )
+    for( auto it_: model.domains )
     {
         indexes_.push_back( it_.first );
     }
@@ -1575,74 +1576,30 @@ std::vector< std::size_t > Controller::getDomainsToFlowDiagnostics()
     for( auto it_: model.regions )
     {
         std::size_t id_ = it_.first;
+
         if( regions_in_domains.find( id_ ) != regions_in_domains.end() ) continue;
-        std::size_t domain_id_ = createDomain1();
-        addRegionToDomain1( id_, domain_id_ );
+
+        // if the region does not belong to any domain, create a domain to it
+        std::size_t domain_id_ = createDomain();
+        addRegionToDomain( id_, domain_id_ );
     }
 
-    for( auto it_: model.domains1 )
+    for( auto it_: model.domains )
     {
         indexes_.push_back( it_.first );
     }
 
     return indexes_;
 
-
 }
 
-//=== old methods
-
-
-void Controller::createDomain( std::size_t index_, std::set< std::size_t > indexes_ )
-{
-    std::size_t id_ = index_;
-    model.domains[id_].regions_set = indexes_;
-
-    for( auto it: indexes_ )
-    {
-        RegionsPtr reg_ = model.regions[ it ];
-        reg_->setDomain( index_ );
-    }
-}
-
-
-void Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_id_ )
-{
-    if (model.regions.find(region_id_) == model.regions.end()) return;
-    if (model.domains.find(domain_id_) == model.domains.end()) return;
-
-    model.domains[domain_id_].regions_set.insert(region_id_);
-    RegionsPtr reg_ = model.regions[ region_id_ ];
-    reg_->setDomain( domain_id_ );
-
-
-}
-
-
-void Controller::removeRegionFromDomain(std::size_t region_id_, std::size_t domain_id_)
-{
-    if (model.regions.find(region_id_) == model.regions.end()) return;
-    if (model.domains.find(domain_id_) == model.domains.end()) return;
-
-    model.domains[domain_id_].regions_set.erase(region_id_);
-    RegionsPtr reg_ = model.regions[ region_id_ ];
-    reg_->removeFromDomain();
-}
-
-
-std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) const
-{
-    if (model.domains.find(domain_id_) == model.domains.end()) return std::set< std::size_t>();
-    return model.domains.at(domain_id_).regions_set;
-}
 
 
 void Controller::getDomainColor( std::size_t domain_id_, int &red_, int &green_, int& blue_ )
 {
     if (model.domains.find(domain_id_) == model.domains.end()) return;
-    if( model.domains[domain_id_].regions_set.empty() == true ) return;
 
-    std::size_t reg_id_ = *model.domains[domain_id_].regions_set.begin();
+    std::size_t reg_id_ = *model.domains[ domain_id_].getRegions().begin();
 
     RegionsPtr reg_ = model.regions[ reg_id_ ];
     reg_->getColor( red_, green_, blue_ );
@@ -1650,17 +1607,6 @@ void Controller::getDomainColor( std::size_t domain_id_, int &red_, int &green_,
 }
 
 
-void Controller::removeDomain(std::size_t domain_id_)
-{
-    if (model.domains.find(domain_id_) == model.domains.end()) return;
-
-    for( auto it_: model.domains )
-        removeRegionFromDomain( it_.first, domain_id_ );
-
-    model.domains.erase( domain_id_ );
-}
-
-///==========================================================================
 
 ///
 /// Rules-Processor Methods
@@ -1692,8 +1638,6 @@ void Controller::updateBoundingBoxRulesProcessor()
 
 
 
-///==========================================================================
-
 ///
 /// Discretization Methods
 ///
@@ -1719,12 +1663,8 @@ std::size_t Controller::getCurrentDiscretization() const
         return rules_processor.getWidthResolution();
     }
     else if( current_direction == Settings::CrossSection::CrossSectionDirections::Y )
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        return rules_processor.getWidthResolution();
-//    }
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
     {
+        // so far, a hard code ... it should be modified
         return 100;
     }
     else
@@ -1752,18 +1692,6 @@ void Controller::getCurrentRange( double& min_, double& max_ ) const
         min_ = oy_;
         max_ = oy_ + height_;
     }
-
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        min_ = ox_;
-//        max_ = ox_ + width_;
-//    }
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
-//    {
-//        min_ = oy_;
-//        max_ = oy_ + height_;
-//    }
-
     else
     {
         min_ = oz_;
@@ -1786,8 +1714,6 @@ std::size_t Controller::indexCrossSectionZ( double value_ ) const
 }
 
 
-
-///==========================================================================
 
 ///
 /// Activing Rules Methods
@@ -1832,151 +1758,63 @@ void Controller::applyStratigraphicRule()
 }
 
 
-///==========================================================================
-
 ///
 /// Preserve Methods
 ///
 
 
 
-Settings::Objects::BounderingRegion Controller::getCurrentBoundaryRegion() const
+Settings::Objects::BoundaryRegion Controller::getCurrentBoundaryRegion() const
 {
-    return boundering_region;
+    return boundary_region;
 }
 
 
-
-
-// Request/Stop Create Above -- old methods
-
-bool Controller::requestCreateAbove()
-{
-
-    bool request_ = rules_processor.requestCreateAbove( selectable_objects );
-
-    if( request_ == true )
-    {
-        std::cout << "Request create accepted" << std::endl << std::flush;
-
-        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
-
-        for( std::size_t id_: selectable_objects )
-        {
-            ObjectPtr& obj_ = model.objects[ id_ ];
-            obj_->setSelectable( true );
-        }
-
-    }
-    else
-        std::cout << "Request create denied" << std::endl << std::flush;
-
-    return request_ ;
-
-}
 
 
 void Controller::stopCreateAbove()
 {
-    std::cout << "Stop create above accepted" << std::endl << std::flush;
     rules_processor.stopDefineAbove();
 
+    // if stop create above, all the objects should be not more selectable
     for( std::size_t id_: selectable_objects )
     {
         ObjectPtr& obj_ = model.objects[ id_ ];
         obj_->setSelectable( false );
     }
     selectable_objects.clear();
+
+    // neither should exist a selected object
     setObjectSelected( upper_index, false );
 
 }
 
 
-// Request/Stop Create Below -- old methods
-
-bool Controller::requestCreateBelow()
-{
-
-    boundering_region = Settings::Objects::BounderingRegion::BELOW;
-    return true;
-
-
-    /*
-
-    bool request_ = rules_processor.requestCreateBelow( selectable_objects );
-
-    if( request_ == true )
-    {
-        std::cout << "Request create accepted" << std::endl << std::flush;
-
-        boundering_region = Settings::Objects::BounderingRegion::BELOW;
-
-        for( std::size_t id_: selectable_objects )
-        {
-            ObjectPtr& obj_ = model.objects[ id_ ];
-            obj_->setSelectable( true );
-        }
-
-    }
-    else
-        std::cout << "Request create denied" << std::endl << std::flush;
-
-    return request_ ;
-
-    */
-
-}
 
 
 void Controller::stopCreateBelow()
 {
-    std::cout << "Stop create below accepted" << std::endl << std::flush;
     rules_processor.stopDefineBelow();
 
+    // if stop create below, all the objects should be not more selectable
     for( std::size_t id_: selectable_objects )
     {
         ObjectPtr& obj_ = model.objects[ id_ ];
         obj_->setSelectable( false );
     }
-    setObjectSelected( bottom_index, false );
     selectable_objects.clear();
 
+    // neither should exist a selected object
+    setObjectSelected( bottom_index, false );
+
 }
 
 
-
-// deprecated
-bool Controller::requestCreateRegion()
-{
-    //    bool request_ = rules_processor.requestPreserveRegion()
-
-
-    //    bool request_ = rules_processor.requestCreateRegion( selectable_objects );
-
-    //    if( request_ == true )
-    //    {
-    //        std::cout << "Request create accepted" << std::endl << std::flush;
-
-    //        boundering_region = Settings::Objects::BounderingRegion::BELOW;
-
-    //        for( std::size_t id_: selectable_objects )
-    //        {
-    //            ObjectPtr& obj_ = model.objects[ id_ ];
-    //            obj_->setSelectable( true );
-    //        }
-
-    //    }
-    //    else
-    //        std::cout << "Request create denied" << std::endl << std::flush;
-
-    return false;
-}
 
 
 void Controller::stopCreateRegion()
 {
 
-    std::cout << "Stop create region accepted" << std::endl << std::flush;
     //    rules_processor.stopDefineRegion();
 
     for( std::size_t id_: selectable_objects )
@@ -1995,8 +1833,12 @@ void Controller::stopCreateRegion()
 
 void Controller::enablePreserveAbove( bool status_ )
 {
+
+    // if status is true, set the boundary region option as 'ABOVE', otherwise
+    // call the stop preserve above
+
     if( status_ == true )
-        boundering_region = Settings::Objects::BounderingRegion::ABOVE;
+        boundary_region = Settings::Objects::BoundaryRegion::ABOVE;
     else
         rules_processor.stopPreserveAbove();
 }
@@ -2006,8 +1848,11 @@ void Controller::enablePreserveAbove( bool status_ )
 
 void Controller::enablePreserveBelow( bool status_ )
 {
+    // if status is true, set the boundary region option as 'BELOW', otherwise
+    // call the stop preserve below
+
     if( status_ == true )
-        boundering_region = Settings::Objects::BounderingRegion::BELOW;
+        boundary_region = Settings::Objects::BoundaryRegion::BELOW;
     else
         rules_processor.stopPreserveBelow();
 
@@ -2017,10 +1862,12 @@ void Controller::enablePreserveBelow( bool status_ )
 
 
 
-void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
+void Controller::setObjectSelectedAsBoundary( const std::size_t& index_ )
 {
 
-    if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
+    // if the boundary region option as 'ABOVE' pass it to rules processor as the defineAbove, and
+    // mark all of the rest as not selectable anymore
+    if( boundary_region == Settings::Objects::BoundaryRegion::ABOVE )
     {
         if( model.objects.find( index_ ) == model.objects.end() ) return;
 
@@ -2037,7 +1884,9 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 
     }
 
-    else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
+    // if the boundary region option as 'BELOW' pass it to rules processor as the defineBelow, and
+    // mark all of the rest as not selectable anymore
+    else if( boundary_region == Settings::Objects::BoundaryRegion::BELOW )
     {
         if( model.objects.find( index_ ) == model.objects.end() ) return;
 
@@ -2056,7 +1905,7 @@ void Controller::setObjectSelectedAsBoundering( const std::size_t& index_ )
 }
 
 
-bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve& boundary_ )
+bool Controller::setRegionBySketchAsBoundary( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, PolyCurve& boundary_ )
 {
 
     std::vector< double > curve3d_;
@@ -2064,9 +1913,11 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
     std::vector< std::size_t > edges_;
 
 
-    if( boundering_region == Settings::Objects::BounderingRegion::ABOVE )
+    if( boundary_region == Settings::Objects::BoundaryRegion::ABOVE )
     {
 
+        // Rules Processor needs the sketch curve as a 3d curve, so turn the 2d sketch into a 3d curve using the depth of
+        // the cross-section
 
         if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
         {
@@ -2093,7 +1944,7 @@ bool Controller::setRegionBySketchAsBoundering( const PolyCurve& curve_, const S
 
     }
 
-    else if( boundering_region == Settings::Objects::BounderingRegion::BELOW )
+    else if( boundary_region == Settings::Objects::BoundaryRegion::BELOW )
     {
         // pass curve to rules_processor and get the region
 
@@ -2136,16 +1987,17 @@ bool Controller::updateRegionBoundary( PolyCurve& boundary_ )
 
     boundary_.clear();
 
+    // if preserve 'ABOVE' is active, so hightlight the lower curve that delimit  the area
     if( rules_processor.preserveAboveIsActive() == true )
     {
-        getLowerBoundering( boundary_ );
+        getLowerBoundary( boundary_ );
         status_ = true;
     }
 
+    // if preserve 'BELOW' is active, so hightlight the upper curve that delimit  the area
     else if( rules_processor.preserveBelowIsActive() == true )
     {
-
-        getUpperBoundering( boundary_ );
+        getUpperBoundary( boundary_ );
         status_ = true;
     }
 
@@ -2153,55 +2005,39 @@ bool Controller::updateRegionBoundary( PolyCurve& boundary_ )
 }
 
 
-bool Controller::setRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+bool Controller::setRegionByPointAsBoundary( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
     std::vector< double > point_;
 
+
+    // Rules Processor needs the point as a 3d point, so turn the 2d point into a 3d point using the depth of
+    // the cross-section
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
         point_.push_back( depth_ );
-        point_.push_back( py_ );
-        point_.push_back( px_ );
-
-
+        point_.push_back( static_cast< double >( py_ ) );
+        point_.push_back( static_cast< double >( px_ ) );
     }
 
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Y )
     {
-        point_.push_back( px_ );
+        point_.push_back( static_cast< double >( px_ ) );
         point_.push_back( depth_ );
-        point_.push_back( py_ );
+        point_.push_back( static_cast< double >( py_ ) );
 
 
     }
 
     else if( dir_ == Settings::CrossSection::CrossSectionDirections::Z )
     {
-        point_.push_back( px_ );
-        point_.push_back( py_ );
+        point_.push_back( static_cast< double >( px_ ) );
+        point_.push_back( static_cast< double >( py_ ) );
         point_.push_back( depth_ );
 
     }
 
     bool request_ = rules_processor.requestPreserveRegion( point_ );
-
-    // get items to be selected
-
     return request_;
-
-}
-
-
-void Controller::getRegionByPointAsBoundering()
-{
-
-
-
-}
-
-
-void Controller::clearBounderingArea()
-{
 
 }
 
@@ -2209,30 +2045,28 @@ void Controller::clearBounderingArea()
 
 bool Controller::isDefineAboveActive( PolyCurve& boundary_ )
 {
-    std::size_t index_ = 0;
 
     bool status_ = rules_processor.preserveAboveIsActive();
     if( status_ == false ) return false;
 
-    getLowerBoundering( boundary_ );
+    getLowerBoundary( boundary_ );
     return true;
 }
 
 
 bool Controller::isDefineBelowActive( PolyCurve& boundary_ )
 {
-    std::size_t index_ = 0;
 
     bool status_ = rules_processor.preserveBelowIsActive();
     if( status_ == false ) return false;
 
-    getUpperBoundering( boundary_ );
+    getUpperBoundary( boundary_ );
     return true;
 
 }
 
 
-void Controller::getLowerBoundering( PolyCurve& boundary_ )
+void Controller::getLowerBoundary( PolyCurve& boundary_ )
 {
 
     std::vector< double > vertices_;
@@ -2247,20 +2081,11 @@ void Controller::getLowerBoundering( PolyCurve& boundary_ )
         rules_processor.getPreserveAboveCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
     }
 
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        rules_processor.getPreserveAboveCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
-//    }
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-//        rules_processor.getPreserveAboveCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
-//    }
-
     boundary_.fromVector( vertices_, edges_ );
 }
 
 
-void Controller::getUpperBoundering( PolyCurve& boundary_ )
+void Controller::getUpperBoundary( PolyCurve& boundary_ )
 {
 
     std::vector< double > vertices_;
@@ -2278,28 +2103,14 @@ void Controller::getUpperBoundering( PolyCurve& boundary_ )
 
     }
 
-
-//    if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::X )
-//    {
-//        rules_processor.getPreserveBelowCurveBoxAtWidth( indexCrossSectionX( csection->getDepth() ), vertices_, edges_ );
-
-//    }
-
-//    else if( csection->getDirection() == Settings::CrossSection::CrossSectionDirections::Z )
-//    {
-//        rules_processor.getPreserveBelowCurveBoxAtLength( indexCrossSectionZ( csection->getDepth() ), vertices_, edges_ );
-
-//    }
-
     boundary_.fromVector( vertices_, edges_ );
 }
 
 
-void Controller::setPointGuidedExtrusion( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+void Controller::setPointGuidedExtrusion( float , float , double , const Settings::CrossSection::CrossSectionDirections&  )
 {
 }
 
-///==========================================================================
 
 ///
 /// Application Methods
@@ -2365,6 +2176,8 @@ void Controller::saveFile( const std::string& filename )
 
 bool Controller::saveObjectsMetaData( const std::string& filename )
 {
+    //change to something that it is not Qt
+    // method too long, create new methods to modularize it
 
     std::string complete_filename = filename + ".json";
     QFile save_file( QString( complete_filename.c_str() ) );
@@ -2376,6 +2189,7 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 
     QJsonObject metadatas;
 
+    // saving the objects ( stratigraphies/structurals)
     QJsonArray objects_array_;
     for( auto it: model.objects )
     {
@@ -2389,6 +2203,7 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
     metadatas["objects"] = objects_array_;
 
 
+    // saving regions
     if( model.regions.empty() == false )
     {
         QJsonArray regions_array_;
@@ -2404,11 +2219,13 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 
     }
 
-    if( model.domains1.empty() == false )
+
+    // saving domains
+    if( model.domains.empty() == false )
     {
 
         QJsonArray domains_array_;
-        for( auto it_: model.domains1 )
+        for( auto it_: model.domains )
         {
             const Domain& dom_ = it_.second;
 
@@ -2438,7 +2255,10 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 void Controller::loadFile( const std::string& filename, Controller::MeshResolution& resol_ )
 {
 
+    // clear the current session...
     clear();
+
+    // initialize a new session
     init();
 
 
@@ -2457,16 +2277,18 @@ void Controller::loadFile( const std::string& filename, Controller::MeshResoluti
 void Controller::loadObjects( const std::string& filename, Controller::MeshResolution& resol_ )
 {
 
-    //    init();
 
     double ox, oy, oz;
     double width, height, depth;
 
+
+    // loading the volume information
     rules_processor.getOrigin( ox, oy, oz );
     rules_processor.getLenght( width, height, depth );
     model.volume->setGeometry( ox, oy, oz, width, height, depth );
     setVolumeDiscretization();
 
+    // loading the resolution
     if ( rules_processor.isLowResolution() == true )
     {
         resol_ = Controller::MeshResolution::LOW;
@@ -2480,6 +2302,7 @@ void Controller::loadObjects( const std::string& filename, Controller::MeshResol
         resol_ = Controller::MeshResolution::HIGH;
     }
 
+    // if already exist an object, remove it
     if( model.objects.find( current_object ) != model.objects.end() )
     {
         model.objects[ current_object ]->clear();
@@ -2491,11 +2314,13 @@ void Controller::loadObjects( const std::string& filename, Controller::MeshResol
 
     std::string complete_filename = filename + ".json";
 
+    // loading only the surfaces and curves with no metadata
     QFile load_file( QString( complete_filename.c_str() ) );
     if ( !load_file.open( QIODevice::ReadOnly ) ) {
         loadObjectNoMetaDatas();
     }
     else
+        // loading the surfaces and curves with metadata
         loadObjectMetaDatas( load_file );
 
 }
@@ -2507,6 +2332,7 @@ void Controller::loadObjectNoMetaDatas()
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
 
+    // TODO: comment this code
     int counter_ = 0;
     while( rules_processor.canRedo() )
     {
@@ -2514,13 +2340,13 @@ void Controller::loadObjectNoMetaDatas()
         counter_++;
     }
 
-
+    // creating randomly colors to each object
     std::vector< std::size_t > actives = rules_processor.getActiveSurfaces();
     for( auto id: actives )
     {
-        int r_ = distr( eng );
-        int g_ = distr( eng );
-        int b_ = distr( eng );
+        int r_ = static_cast< int >( distr( eng ) );
+        int g_ = static_cast< int >( distr( eng ) );
+        int b_ = static_cast< int >( distr( eng ) );
 
         addObject( id );
         setObjectColor( id, r_, g_, b_ );
@@ -2529,6 +2355,7 @@ void Controller::loadObjectNoMetaDatas()
 
     }
 
+    // TODO: comment this code
     for( int i = 0; i < counter_; ++i )
     {
         rules_processor.undo();
@@ -2604,12 +2431,14 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
     if( json.contains("regions") && json["regions"].isArray() )
     {
+        // first, create the regions and after loading the metadata to each one
         defineRegions();
 
         QJsonArray regions_array_ = json["regions"].toArray();
         int nregions_ = regions_array_.size();
         for( int i = 0; i < nregions_; ++i )
         {
+            // if it was not save the index, it is not valid
             QJsonObject region_ = regions_array_[ i ].toObject();
             if( region_.contains( "index" ) == false ) return;
 
@@ -2632,16 +2461,16 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             QJsonObject domain_ = domains_array_[ i ].toObject();
             if( domain_.contains( "index" ) == false ) return;
 
-
+            // if it was not save the index and also the regions, it is not valid
             std::size_t id_ = static_cast< std::size_t>( domain_["index"].toInt() );
             if( ( domain_.contains( "regions" ) == false ) ||
                     ( domain_["regions"].isArray()  == false ) ) return;
 
-            std::size_t index_ = createDomain1();
+            std::size_t index_ = createDomain();
 
             QJsonArray regions_set_array_ = domain_["regions"].toArray();
             for( auto it_: regions_set_array_ )
-                addRegionToDomain1( static_cast< std::size_t >( it_.toInt() ), index_ );
+                addRegionToDomain( static_cast< std::size_t >( it_.toInt() ), index_ );
 
         }
     }
@@ -2665,6 +2494,7 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
         rules_processor.setHighResolution();
     }
 
+    // after change the resolution, update the discretization information
     setVolumeDiscretization();
 }
 
@@ -2676,6 +2506,8 @@ void Controller::exportToIrapGrid()
     std::vector< float > points;
 
     std::vector< std::size_t > actives_ = rules_processor.getOrderedActiveSurfaces();
+
+    // to know how much digits should be filled with zero to help to sort the surfaces properly
     int num_digits = std::floor( std::log( actives_.size() ) );
     num_digits = ( num_digits > 0 ? num_digits : 1 );
 
@@ -2692,6 +2524,7 @@ void Controller::exportToIrapGrid()
 
         rules_processor.getQuadMesh( id_, points_list, valid_points, nu, nv );
 
+        // defining the maximum and minimum points
         double xmax = points_list[ 0 ], xmin = points_list[ 0 ];
         double ymax = points_list[ 1 ], ymin = points_list[ 1 ];
         double zmax = points_list[ 2 ], zmin = points_list[ 2 ];
@@ -2719,13 +2552,18 @@ void Controller::exportToIrapGrid()
 
         }
 
-        float dx = (float)( xmax - xmin )/( nu - 1 );
-        float dy = (float)( ymax - ymin )/( nv - 1 );
+        // defining the discretization of the grid
+        float dx = static_cast< float>( xmax - xmin )/( nu - 1 );
+        float dy = static_cast< float>( ymax - ymin )/( nv - 1 );
 
-        exporter.setBoundingBox( (float )xmin, (float)xmax, (float)ymin, (float) ymax, (float) zmin, (float) zmax );
+
+        //filling the file with the required inforation
+        exporter.setBoundingBox( static_cast< float>(xmin), static_cast< float>(xmax), static_cast< float>(ymin),
+                                 static_cast< float>(ymax), static_cast< float>(zmin), static_cast< float>(zmax));
         exporter.setVectorValues( points );
-        exporter.setSize( (int) nu,  (int) nv );
+        exporter.setSize( static_cast< int>( nu ),  static_cast< int>( nv ) );
         exporter.setSpacing( dx, dy );
+
 
         std::string name_ = getObjectName( id_ ).append( ".IRAPG" );
         if( name_.empty() == true )
@@ -2742,7 +2580,7 @@ void Controller::exportToIrapGrid()
 }
 
 
-void Controller::setGuidedExtrusion( float px_, float py_, float pz_, const PolyCurve& curve_ )
+void Controller::setGuidedExtrusion( float , float , float , const PolyCurve&  )
 {
 
 }
@@ -2764,7 +2602,7 @@ void Controller::setSurfacesMeshes( std::vector< TriangleMesh >& triangles_meshe
 }
 
 
-std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces )
+std::vector<int> Controller::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& faces )
 {
 
     std::vector< double > points;
@@ -2849,16 +2687,16 @@ void Controller::clear()
         (it.second).reset();
     model.regions.clear();
 
-    for( auto it: model.domains1 )
+    for( auto it: model.domains )
     {
         (it.second).clear();
     }
-    model.domains1.clear();
+    model.domains.clear();
     regions_in_domains.clear();
 
 
     selectable_objects.clear();
-    boundering_region = Settings::Objects::BounderingRegion::NONE ;
+    boundary_region = Settings::Objects::BoundaryRegion::NONE ;
     upper_index = 0;
     bottom_index = 0;
 
