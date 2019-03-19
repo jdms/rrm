@@ -29,6 +29,8 @@
 #ifndef LATERALBAR_H
 #define LATERALBAR_H
 
+#include <cmath>
+
 #include <QWidget>
 #include <QPushButton>
 #include <QLCDNumber>

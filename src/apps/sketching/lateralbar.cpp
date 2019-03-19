@@ -210,8 +210,8 @@ void LateralBar::resetVerticalExaggeration()
 void LateralBar::changeDipAngle( double angle_ )
 {
     double v_exag_ = sp_exagger_value->value();
-    double param_ = v_exag_*tan( angle_*PI / 180 );
-    double beta_ = atan(param_) * 180 / PI;
+    double param_ = v_exag_*std::tan( angle_*PI / 180 );
+    double beta_ = std::atan(param_) * 180 / PI;
 
     QString arg_ = QString::number( angle_, 'f', 1 );
     lcd_input_dipangle ->display( QObject::tr( arg_.append("'" ).toStdString().c_str() ) );
