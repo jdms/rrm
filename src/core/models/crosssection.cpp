@@ -1,24 +1,29 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
- */
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
 
+/**
+ * @file crosssection.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class CrossSection
+ */
 
 
 #include "crosssection.h"
@@ -31,8 +36,6 @@
 
 CrossSection::CrossSection()
 {
-    std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
-
     defineIndex();
     initialize();
 }
@@ -41,15 +44,11 @@ CrossSection::CrossSection( const std::shared_ptr< Volume >& volume_, const Sett
 {
     volume = volume_;
 
-
     defineIndex();
     initialize();
 
     setDirection( direction_ );
     setDepth( depth_ );
-
-//    updateDimensions();
-    std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
 
 }
 
@@ -67,9 +66,6 @@ CrossSection::CrossSection( const CrossSection& csection_ )
     is_visible = csection_.is_visible;
     index = csection_.index;
 
-//    updateDimensions();
-    std::cout << "CROSS-SECTION CREATED" << std::endl << std::flush;
-
 }
 
 
@@ -86,18 +82,12 @@ CrossSection& CrossSection::operator=( const CrossSection& csection_ )
     is_visible = csection_.is_visible;
     index = csection_.index;
 
-
-//    updateDimensions();
-
-
     return *this;
 }
 
 
 CrossSection::~CrossSection()
 {
-    std::cout << "CROSS-SECTION DELETED" << std::endl << std::flush;
-
     if( volume != nullptr )
         volume.reset();
     volume = nullptr;
@@ -105,7 +95,6 @@ CrossSection::~CrossSection()
     if( objects.empty() == false )
         clear();
 
-//    Object::clear();
 }
 
 
@@ -130,13 +119,8 @@ void CrossSection::updateDimensions()
         height = volume->getHeight();
     }
 
-    std::cout << "Csection width = " << volume->getWidth() << std::endl << std::flush;
-
 }
 
-
-
-///========================================================================
 
 
 void CrossSection::setIndex( const std::size_t id_ )
@@ -181,52 +165,12 @@ double CrossSection::getDepth() const
     return depth;
 }
 
-///========================================================================
-
-
-
-
-
-
-
-//CrossSection::CrossSection()
-//{
-//    defineIndex();
-//    initialize();
-//}
-
-
-//CrossSection::CrossSection( const Volume* raw_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ): volume( raw_ )
-//{
-//    defineIndex();
-//    initialize();
-
-//    setDirection( dir_ );
-//    setDepth( depth_ );
-//}
-
-
-//CrossSection& CrossSection::operator=( const CrossSection& other_ )
-//{
-//    volume = other_.volume;
-//    objects = other_.objects;
-//    direction = other_.direction;
-//    depth = other_.depth;
-//    image_path = other_.image_path;
-//    is_visible = other_.is_visible;
-//    index = other_.index;
-
-//    return *this;
-//}
-
 
 void CrossSection::defineIndex()
 {
     index = number_of_csections;
     number_of_csections++;
 }
-
-
 
 
 
@@ -245,6 +189,7 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
         else if( depth < minz )
             depth = minz;
 
+        // filling the depth coordinate
         volume->getFrontFace( vertices_ );
         vertices_[ 2 ]  = depth;
         vertices_[ 5 ]  = depth;
@@ -260,7 +205,7 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
         else if( depth < miny )
             depth = miny;
 
-
+        // filling the height coordinate
         volume->getBottomFace( vertices_ );
         vertices_[ 1 ] = depth;
         vertices_[ 4 ] = depth;
@@ -275,7 +220,7 @@ void CrossSection::getCoordinates( std::vector< double >& vertices_ )
         else if( depth < minx )
             depth = minx;
 
-
+        // filling the width coordinate
         volume->getRightFace( vertices_ );
         vertices_[ 0 ] = depth;
         vertices_[ 3 ] = depth;
@@ -349,12 +294,12 @@ bool CrossSection::isVisible() const
 }
 
 
-bool CrossSection::addObject(const Object& id_, PolyCurve* const& curve_ )
+bool CrossSection::addObject(const std::size_t& id_, PolyCurve* const& curve_ )
 {
     return objects.addElement( id_, curve_ );
 }
 
-const PolyCurve* CrossSection::getObjectCurve( const Object& id_ )
+const PolyCurve* CrossSection::getObjectCurve( const std::size_t& id_ )
 {
     if( objects.findElement( id_ ) == false )
         return nullptr;
@@ -363,7 +308,7 @@ const PolyCurve* CrossSection::getObjectCurve( const Object& id_ )
 }
 
 
-bool CrossSection::removeObjectCurve( const Object& id_ )
+bool CrossSection::removeObjectCurve( const std::size_t& id_ )
 {
     if( objects.findElement( id_ ) == false )
         return false;
@@ -406,11 +351,11 @@ void CrossSection::clear()
         image_path.clear();
 
 
-    boundering.vertices_upper.clear();
-    boundering.edges_upper.clear();
-    boundering.vertices_lower.clear();
-    boundering.edges_lower.clear();
-    boundering.empty = true;
+    boundary.vertices_upper.clear();
+    boundary.edges_upper.clear();
+    boundary.vertices_lower.clear();
+    boundary.edges_lower.clear();
+    boundary.empty = true;
 
     removeObjects();
     initialize();
@@ -428,62 +373,61 @@ void CrossSection::initialize()
     image_origin.y = 0;
     image_top_right.x = 100.0;
     image_top_right.y = 100.0;
-//    volume = nullptr;
 }
 
 
 
-void CrossSection::setBounderingArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_  )
+void CrossSection::setBoundaryArea( const std::vector< float >& vupper_,  const std::vector< std::size_t >& edupper_, const std::vector< float >& vlower_,  const std::vector< std::size_t >& edlower_  )
 {
 
-    boundering.empty = false;
+    boundary.empty = false;
 
-    boundering.vertices_upper.clear();
-    boundering.vertices_upper.assign( vupper_.begin(), vupper_.end() );
+    boundary.vertices_upper.clear();
+    boundary.vertices_upper.assign( vupper_.begin(), vupper_.end() );
 
-    boundering.edges_upper.clear();
-    boundering.edges_upper.assign( edupper_.begin(), edupper_.end() );
+    boundary.edges_upper.clear();
+    boundary.edges_upper.assign( edupper_.begin(), edupper_.end() );
 
 
-    boundering.vertices_lower.clear();
-    boundering.vertices_lower.assign( vlower_.begin(), vlower_.end() );
+    boundary.vertices_lower.clear();
+    boundary.vertices_lower.assign( vlower_.begin(), vlower_.end() );
 
-    boundering.edges_lower.clear();
-    boundering.edges_lower.assign( edlower_.begin(), edlower_.end() );
+    boundary.edges_lower.clear();
+    boundary.edges_lower.assign( edlower_.begin(), edlower_.end() );
 
 
 }
 
-void CrossSection::getBounderingArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_  ) const
+void CrossSection::getBoundaryArea( std::vector< float >& vupper_,  std::vector< std::size_t >& edupper_, std::vector< float >& vlower_,  std::vector< std::size_t >& edlower_  ) const
 {
 
     vupper_.clear();
-    vupper_.assign( boundering.vertices_upper.begin(), boundering.vertices_upper.end() );
+    vupper_.assign( boundary.vertices_upper.begin(), boundary.vertices_upper.end() );
 
     edupper_.clear();
-    edupper_.assign( boundering.edges_upper.begin(), boundering.edges_upper.end() );
+    edupper_.assign( boundary.edges_upper.begin(), boundary.edges_upper.end() );
 
     vlower_.clear();
-    vlower_.assign( boundering.vertices_lower.begin(), boundering.vertices_lower.end() );
+    vlower_.assign( boundary.vertices_lower.begin(), boundary.vertices_lower.end() );
 
     edlower_.clear();
-    edlower_.assign( boundering.edges_lower.begin(), boundering.edges_lower.end() );
+    edlower_.assign( boundary.edges_lower.begin(), boundary.edges_lower.end() );
 
 }
 
 
-void CrossSection::clearBounderingArea()
+void CrossSection::clearBoundaryArea()
 {
-    boundering.vertices_upper.clear();
-    boundering.edges_upper.clear();
-    boundering.vertices_lower.clear();
-    boundering.edges_lower.clear();
-    boundering.empty = true;
+    boundary.vertices_upper.clear();
+    boundary.edges_upper.clear();
+    boundary.vertices_lower.clear();
+    boundary.edges_lower.clear();
+    boundary.empty = true;
 }
 
-bool CrossSection::hasBounderingArea() const
+bool CrossSection::hasBoundaryArea() const
 {
-    return !(boundering.empty);
+    return !(boundary.empty);
 }
 
 

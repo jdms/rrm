@@ -1,3 +1,30 @@
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file view3dinterface.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class View3dInterface
+ */
+
 #include <QDir>
 
 #include "view3dinterface.h"
@@ -16,22 +43,6 @@ void View3dInterface::createInterface()
 
     createView3dWindow();
     createView3dActions();
-
-
-
-//    QString arg_( QDir::separator() );
-//    QString path_ = QDir::currentPath().append( arg_ ).append( "shaders" );
-//    std::cout << "Binary dir: " << path_.toStdString().c_str() << std::endl << std::flush;
-
-//    QDir dir_;
-//    bool status_ = dir_.cd( path_ );
-//    if( status_ == true )
-//        std::cout << "Path exists " << std::endl << std::flush;
-
-//    else
-//        std::cout << "Path not exists " << std::endl << std::flush;
-
-
 }
 
 
@@ -102,7 +113,7 @@ void View3dInterface::createView3dActions()
     } );
 
     connect( window->app, &RRMApplication::updateDiscretization, [=]( const std::size_t& disc_ )
-    { sl_depth_csection->setDiscretization( disc_ ); } );
+    { sl_depth_csection->setDiscretization( static_cast< int >(disc_) ); } );
 
     connect( window->app, &RRMApplication::addObject, [=]( const ObjectPtr& obj_ )
     { controller3d->addStratigraphy( obj_ ); } );

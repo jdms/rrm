@@ -1,22 +1,28 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file rrmapplication.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class RRMApplication
  */
 
 
@@ -39,7 +45,6 @@ std::size_t CrossSection::number_of_csections = 0;
 RRMApplication::RRMApplication(const RRMApplication & app_)
 {
     this->controller = app_.controller;
-
 }
 
 
@@ -64,15 +69,15 @@ void RRMApplication::setController()
 }
 
 
-///================================================================================
-
 
 void RRMApplication::init()
 {
 
     controller->init();
+    // send signal so that all sub-applications start
     emit startApplication();
 
+    // getting the initial volume geometry to initialize the widgets properly
     double ox_, oy, oz, w_, h_, d_;
     controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
@@ -100,7 +105,6 @@ void RRMApplication::setVolumeVisible( bool status_ )
 
 void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
 {
-    std::cout << "width_: " << width_ << ", height: " << height_ << std::endl << std::flush;
 
     if( dir_ == Settings::CrossSection::CrossSectionDirections::X )
     {
@@ -124,8 +128,8 @@ void RRMApplication::setVolumeDimensions( const  Settings::CrossSection::CrossSe
     controller->getVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
-
+    // once the volume dimensions has changed, the discretization information needs to be updated
+    // regarding the widgets
     setDiscretization( controller->getCurrentDirection() );
 
 }
@@ -137,7 +141,6 @@ void RRMApplication::setVolumeWidth( double width_ )
     emit updateVolume();
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -147,7 +150,6 @@ void RRMApplication::setVolumeHeight( double height_ )
     emit updateVolume();
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -157,7 +159,6 @@ void RRMApplication::setVolumeDepth( double lenght_ )
     emit updateVolume();
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 }
 
 
@@ -177,7 +178,6 @@ void RRMApplication::setDiscretization( const Settings::CrossSection::CrossSecti
 
 void RRMApplication::moveMainCrossSection( double depth_ )
 {
-//    if( controller->getMainCrossSection()->getDirection() == Settings::CrossSection::CrossSectionDirections::Y )
     if( controller->getCurrentDirection() == Settings::CrossSection::CrossSectionDirections::Y )
     {
         controller->moveTopViewCrossSection( depth_ );
@@ -203,7 +203,6 @@ void RRMApplication::changeCrossSectionDirection( Settings::CrossSection::CrossS
     else
         emit changeToCrossSectionDirection();
 
-//    emit updateVolume();
 
 }
 
@@ -269,9 +268,9 @@ void RRMApplication::getObjectLog( std::size_t index_, QString& log_ )
 }
 
 
-void RRMApplication::setObjectSelectedAsBoundering( const std::size_t& index_ )
+void RRMApplication::setObjectSelectedAsBoundary( const std::size_t& index_ )
 {
-    controller->setObjectSelectedAsBoundering( index_ );
+    controller->setObjectSelectedAsBoundary( index_ );
     emit selectEnabled( "NONE" );
 }
 
@@ -296,6 +295,8 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
     emit updateMainCrossSection();
     emit updateTopViewCrossSection();
 
+
+    // the code below should be perform only if is a new object
     if( new_obj_ == true )
     {
         const ObjectPtr& obj_ = controller->getCurrentObject();
@@ -305,15 +306,15 @@ void RRMApplication::addCurveToObject( const PolyCurve& curve_, const Settings::
 
         window->object_tree->addObject( obj_->getIndex(), obj_->getType(), obj_->getName(), r_, g_, b_ );
 
+        // once a curve was added to the model, the volume can not be resized anymore
         emit disableVolumeResizing();
         emit lockDirection( dir_ );
     }
 
 
+    // not working, but if a curve is added, show the cross-section (as a line) in the scene.
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         emit addCrossSection( dir_, depth_ );
-
-
 
 
 }
@@ -333,6 +334,7 @@ void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
     controller->addTrajectoryToObject( curve_ );
     emit updateTrajectories();
 
+    // the code below should be perform only if is a new object
     if( new_obj_ == true )
     {
         const ObjectPtr& obj_ = controller->getCurrentObject();
@@ -352,6 +354,7 @@ void RRMApplication::addTrajectoryToObject( const PolyCurve& curve_ )
 
 void RRMApplication::removeLastCurve( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
 {
+    // it is not being used yet
     controller->removeCurveFromObject( dir_, depth_ );
     emit updateObjects();
 }
@@ -360,19 +363,23 @@ void RRMApplication::removeLastCurve( const Settings::CrossSection::CrossSection
 void RRMApplication::createObjectSurface()
 {
 
-
     bool status_ = controller->commitObjectSurface();
 
     emit updateObjects();
 
 
     if( status_ == false ) return;
+
+
+    // check if it is possible to perform an undo/redo to update the actions
     checkUndoRedo();
     updateObjectTree();
 
-
+    // add a new object on the scenes
     emit addObject( controller->getCurrentObject() );
     defineRandomColor();
+
+    // allow the user to change the cross-section direction
     emit unlockDirections();
     emit updateMainCrossSection();
 
@@ -426,7 +433,7 @@ void RRMApplication::getRegions( bool status_ )
         reg_->getColor( r_, g_, b_ );
         volume_  = reg_->getVolume();
 
-        if( total_volume_ != 0 )
+        if( total_volume_ != 0.0 )
             perc_ = 100*volume_/total_volume_;
 
         window->object_tree->addRegion( reg_->getIndex(), reg_->getName(), r_, g_, b_, volume_, perc_ );
@@ -452,7 +459,7 @@ void RRMApplication::setRegionVisible( std::size_t index_, bool status_ )
 }
 
 
-void RRMApplication::setRegionName( std::size_t index_, const std::string& name_ )
+void RRMApplication::setRegionName( std::size_t , const std::string&  )
 {
 //    controller->setRegionName( index_, name_ );
     emit updateRegions();
@@ -469,8 +476,8 @@ void RRMApplication::setRegionColor( std::size_t index_, int red_, int green_, i
 
 void RRMApplication::createDomain()
 {
-    std::size_t id_ = controller->createDomain1();
-    window->object_tree->createDomain1( id_ );
+    std::size_t id_ = controller->createDomain();
+    window->object_tree->createDomain( id_ );
     double volume_ = controller->getDomainVolume( id_ );
     window->object_tree->updateVolumeDomain( id_, volume_ );
 }
@@ -490,7 +497,7 @@ void RRMApplication::setDomainColor( std::size_t index_, int red_, int green_, i
 
 void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
-    controller->addRegionToDomain1( reg_id_, domain_id_ );
+    controller->addRegionToDomain( reg_id_, domain_id_ );
     double volume_ = controller->getDomainVolume( domain_id_ );
     window->object_tree->updateVolumeDomain( domain_id_, volume_ );
 }
@@ -500,7 +507,7 @@ void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_
 
 void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
-    controller->removeRegionFromDomain1( reg_id_, domain_id_ );
+    controller->removeRegionFromDomain( reg_id_, domain_id_ );
     double volume_ = controller->getDomainVolume( domain_id_ );
     window->object_tree->updateVolumeDomain( domain_id_, volume_ );
 }
@@ -508,9 +515,8 @@ void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t do
 
 void RRMApplication::removeDomain( std::size_t index_ )
 {
-//    controller->removeDomain( index_ );
-    controller->removeDomain1( index_ );
-    window->object_tree->deleteDomain1( index_ );
+    controller->removeDomain( index_ );
+    window->object_tree->deleteDomain( index_ );
 }
 
 
@@ -521,7 +527,7 @@ void RRMApplication::addRegionsToDomain( std::size_t domain_id_, std::vector< st
     std::vector< std::size_t > regions_added_;
     for( auto id_: regions_ )
     {
-        bool status_ = controller->addRegionToDomain1( id_, domain_id_ );
+        bool status_ = controller->addRegionToDomain( id_, domain_id_ );
         if( status_ == false ) continue;
         regions_added_.push_back( id_ );
     }
@@ -541,7 +547,7 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
 
     for( std::size_t i = 0; i < nregions_; ++i )
     {
-        bool status_ = controller->removeRegionFromDomain1(  regions_[ i ], domains_[ i ] );
+        bool status_ = controller->removeRegionFromDomain(  regions_[ i ], domains_[ i ] );
         if( status_ == true )
         {
             regions_removed_.push_back( regions_[ i ] );
@@ -553,15 +559,12 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
     }
 
     if( delete_ == true )
-        window->object_tree->removeRegionsOfTheirDomains1( regions_removed_, domains_removed_ );
+        window->object_tree->removeRegionsOfTheirDomains( regions_removed_, domains_removed_ );
     else
         window->object_tree->removeRegionsOfTheirDomainsNoDelete( regions_removed_, domains_removed_ );
 
 
 }
-
-
-
 
 
 void RRMApplication::setSketchAbove( bool status_ )
@@ -586,7 +589,6 @@ void RRMApplication::setSketchRegion( bool status_ )
 
     if( status_ == false )
     {
-        controller->clearBounderingArea();
         controller->enablePreserveAbove( false );
         controller->enablePreserveBelow( false );
         window->activatePreserveAbove( false );
@@ -610,41 +612,21 @@ void RRMApplication::updateRegionBoundary()
 }
 
 
-void RRMApplication::updateUpperBoundary()
-{
-//    emit clearBounderingArea();
-
-//    PolyCurve boundary_;
-//    bool status_ = controller->updateRegionBoundary( boundary_ );
-
-
-//    if( status_ == true )
-//        emit setCurveAsBoundering( boundary_ );
-}
-
-
-void RRMApplication::updateLowerBoundary()
-{
-
-}
-
-
 // set domains for objecttree
 void RRMApplication::loadDomains()
 {
     std::vector< std::size_t > domains_ = controller->getDomains();
     for( auto it_: domains_ )
     {
-        bool status_ = window->object_tree->createDomain1( it_ );
+        bool status_ = window->object_tree->createDomain( it_ );
         if( status_ == false ) continue;
 
-        std::set< std::size_t > regions_ = controller->getRegionsFromDomain1( it_ );
+        std::set< std::size_t > regions_ = controller->getRegionsFromDomain( it_ );
         window->object_tree->addRegionsInDomain( it_, regions_ );
         double volume_ = controller->getDomainVolume( it_ );
         window->object_tree->updateVolumeDomain( it_, volume_ );
     }
 
-//    return domains_;
 }
 
 
@@ -655,10 +637,10 @@ std::vector< std::size_t > RRMApplication::getDomainsToFlowDiagnostics() const
     std::vector< std::size_t > domains_ = controller->getDomainsToFlowDiagnostics();
     for( auto it_: domains_ )
     {
-        bool status_ = window->object_tree->createDomain1( it_ );
+        bool status_ = window->object_tree->createDomain( it_ );
         if( status_ == false ) continue;
 
-        std::set< std::size_t > regions_ = controller->getRegionsFromDomain1( it_ );
+        std::set< std::size_t > regions_ = controller->getRegionsFromDomain( it_ );
         window->object_tree->addRegionsInDomain( it_, regions_ );
         double volume_ = controller->getDomainVolume( it_ );
         window->object_tree->updateVolumeDomain( it_, volume_ );
@@ -668,16 +650,16 @@ std::vector< std::size_t > RRMApplication::getDomainsToFlowDiagnostics() const
 }
 
 
-void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
+void RRMApplication::getRegionByPointAsBoundary( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ )
 {
-    bool status_ = controller->setRegionByPointAsBoundering( px_, py_, depth_, dir_ );
+    bool status_ = controller->setRegionByPointAsBoundary( px_, py_, depth_, dir_ );
 
     window->activatePreserveAbove( status_ );
     window->activatePreserveBelow( status_ );
 
     if( status_ == true )
     {
-        controller->getRegionByPointAsBoundering();
+//        controller->getRegionByPointAsBoundary();
         emit updateBoundary();
 
     }
@@ -690,11 +672,11 @@ void RRMApplication::getRegionByPointAsBoundering( float px_, float py_, double 
 
 
 
-void RRMApplication::selectBounderingBySketch(  const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  )
+void RRMApplication::selectBoundaryBySketch(  const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_  )
 {
     PolyCurve boundary_;
 
-    bool status_ = controller->setRegionBySketchAsBoundering( curve_, dir_, depth_, boundary_ );
+    controller->setRegionBySketchAsBoundary( curve_, dir_, depth_, boundary_ );
     emit updateBoundary();
 }
 
@@ -860,6 +842,7 @@ void RRMApplication::loadRegions()
         double volume_ = reg_->getVolume();
         double perc_ = 0.0;
 
+        // computing the percentage of the volume
         if( total_volume_ != 0.0 )
             perc_ = 100*volume_/total_volume_;
 
@@ -917,9 +900,9 @@ void RRMApplication::defineRandomColor()
     std::mt19937 eng( rd() );
     std::uniform_int_distribution< size_t > distr( 0, 255 );
 
-    int r_ = distr( eng );
-    int g_ = distr( eng );
-    int b_ = distr( eng );
+    int r_ = static_cast< int >( distr( eng ) );
+    int g_ = static_cast< int >( distr( eng ) );
+    int b_ = static_cast< int >( distr( eng ) );
 
    defineCurrentColor( r_, g_, b_ );
 
@@ -936,7 +919,6 @@ void RRMApplication::setMeshResolution( const std::string& resolution_ )
         controller->setMeshResolution( Controller::MeshResolution::LOW );
 
     setDiscretization( controller->getCurrentDirection() );
-//    setDiscretization( controller->getMainCrossSection()->getDirection() );
 
 }
 
@@ -1028,19 +1010,19 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
 }
 
 
-void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces,
+void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& faces,
                                              std::vector< int >& regions_, std::map< int, std::vector< float > >& colors_ )
 {
-    regions_ = controller->getTetrahedronsRegions( vertices, edges, faces );
+    regions_ = controller->getTetrahedronsRegions( vertices, faces );
 
-//    std::map< int, std::vector< float > > colors_;
     for( auto it: regions_ )
     {
+        // if the region was not found properly, the color below is assigned to it.
         int r = 192, g = 192, b = 192;
-		if (it >= 0)
-		{
-			controller->getDomainColor(static_cast<std::size_t>(it), r, g, b);
-		}
+        if (it >= 0)
+        {
+            controller->getDomainColor(static_cast<std::size_t>(it), r, g, b);
+        }
 
         std::vector< float > color_;
         color_.resize( 3 );
@@ -1052,7 +1034,5 @@ void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertice
         colors_[ it ] = color_;
 
     }
-
-//    return colors_;
 
 }

@@ -1,23 +1,30 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file sketchwindow.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class SketchWindow
  */
+
 
 #include <cmath>
 
@@ -27,11 +34,13 @@
 #include <QPushButton>
 
 #include "sketchwindow.h"
+
 #define PI 3.14159265
+
 
 SketchWindow::SketchWindow( QWidget* parent ): QMainWindow( parent )
 {
-    createToolBar();
+    createInterface();
 }
 
 
@@ -39,7 +48,6 @@ void SketchWindow::createToolBar()
 {
     cp_color = new ColorPicker( this );
     cp_color->setToolTip( "Sketch Color" );
-
 
     ac_cancel_sketch = new QAction( "Cancel", this );
     ac_cancel_sketch->setToolTip( "Cancel Sketch" );
@@ -66,7 +74,6 @@ void SketchWindow::createToolBar()
     ac_resize_image = new QAction( "Resize image", this );
     ac_resize_image->setToolTip( "Resize Image" );
     ac_resize_image->setCheckable( true );
-
     ac_remove_image = new QAction( "Remove image", this );
     ac_remove_image->setToolTip( "Remove Image" );
 
@@ -78,35 +85,16 @@ void SketchWindow::createToolBar()
     ac_fixed_csections->setIcon(QIcon(":/images/icons/fixedcsections.png"));
     ac_fixed_csections->setCheckable( true );
 
-    ac_select_regions = new QAction( "Select Regions", this );
-    ac_select_regions->setToolTip( "Select Regions" );
-    ac_select_regions->setCheckable( true );
-    ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
-
-    tb_region = addToolBar( "Region" );
-    tb_region->addAction( ac_select_regions );
-    tb_region->setVisible( false );
-
-    tb_well = addToolBar( "Well" );
-    ac_select_wells = new QAction( "Select Well", this );
-    ac_select_wells->setToolTip( "Select Wells" );
-    ac_select_wells->setCheckable( true );
-    ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
-    tb_well->addAction( ac_select_wells );
-    tb_well->setVisible( false );
-
-    tb_lateral_bar = addToolBar( "Lateral Bar" );
     ac_show_bar = new QAction( "Vertical Exaggeration", this );
     ac_show_bar->setToolTip( "Show Vertical Exaggeration and Dip Angle Bar" );
     ac_show_bar->setCheckable( true);
     ac_show_bar->setChecked( SHOW_VERTICAL_EXAGGERATION );
+    tb_lateral_bar = addToolBar( "Lateral Bar" );
     tb_lateral_bar->addAction( ac_show_bar );
 
-
-    tb_trajectory = addToolBar( "Trajectory" );
     ac_use_last_trajectory = new QAction( "Last trajectory" );
     ac_use_last_trajectory->setToolTip( "Reuse Last Trajectory" );
-
+    tb_trajectory = addToolBar( "Trajectory" );
     tb_trajectory->addAction( ac_use_last_trajectory );
 
     ac_axes = new QAction( "Axes", this );
@@ -123,38 +111,111 @@ void SketchWindow::createToolBar()
     tb_misc->addAction( ac_screenshot );
     tb_misc->addAction( ac_axes );
 
+    ac_select_regions = new QAction( "Select Regions", this );
+    ac_select_regions->setToolTip( "Select Regions" );
+    ac_select_regions->setCheckable( true );
+    ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
+
+    tb_region = addToolBar( "Region" );
+    tb_region->addAction( ac_select_regions );
+    tb_region->setVisible( false );
+
 
 
 }
 
 
-std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
+void SketchWindow::createInterface()
 {
+    createToolBar();
+
     fixed_csections_canvas = new CanvasStack();
     fixed_csections_canvas->setWindowTitle( "Fixed Cross-Sections" );
     fixed_csections_canvas->setVisible( false );
+}
 
-    sketchingcanvas = new SketchingCanvas();
+
+std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
+{
+
+    // hidding actions not associated to the main cross-sections
+    tb_trajectory->setVisible( false );
+
+    sketchingcanvas = std::make_shared< SketchingCanvas >();
+    //TODO: create a enum to identify the type of the cross-section, so that we can move the scale to inside the SketchingCanvas class
     sketchingcanvas->scale( 1, -1 );
-    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
 
     createLateralBar();
 
-    hb_central1 = new QHBoxLayout( this );
-    hb_central1->addWidget( sketchingcanvas );
-    hb_central1->addWidget( bar_ );
-
+    QHBoxLayout* hb_central = new QHBoxLayout( this );
+    hb_central->addWidget( sketchingcanvas.get() );
+    hb_central->addWidget( bar_ );
 
     QWidget* central_ = new QWidget();
-    central_->setLayout( hb_central1 );
+    central_->setLayout( hb_central );
     setCentralWidget( central_ );
 
-    tb_trajectory->setVisible( false );
 
-    connect( fixed_csections_canvas, &CanvasStack::closeSubWindow, [=]( double id_ )
-    {
-        emit removeMarkerFromSlider( id_ );
-    } );
+    // connects related to the fixed cross-sections widget
+    createFixedCrossSectionsActions();
+
+    // connects related to scene: from actions
+    createToolbarActions( sketchingcanvas.get() );
+
+    // connects related to scene: from scene
+    createMainSceneActions( sketchingcanvas.get() );
+
+    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+    return scene_;
+}
+
+
+void SketchWindow::createLateralBar()
+{
+
+    latBar = new LateralBar();
+
+    QVBoxLayout* hb_lateral_bar = new QVBoxLayout();
+    hb_lateral_bar->addWidget( latBar );
+
+    bar_ = new QWidget();
+    bar_->setMinimumWidth( 170 );
+    bar_->setLayout( hb_lateral_bar );
+    bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
+
+    createLateralBarActions();
+
+}
+
+
+std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
+{
+
+    // hidding actions not associated to the top view cross-sections
+    tb_trajectory->setVisible( true );
+    tb_lateral_bar->setVisible( false );
+
+    topviewcanvas = std::make_shared< SketchingCanvas >();
+    const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
+    setCentralWidget( topviewcanvas.get() );
+
+
+    // connects related to scene: from actions
+    createToolbarActions( topviewcanvas.get() );
+
+    // connects related to scene: from scene
+    createTopViewSceneActions( topviewcanvas.get() );
+
+
+    return scene_;
+}
+
+
+void SketchWindow::createToolbarActions( const SketchingCanvas* canvas_ )
+{
+
+    const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
+
 
     connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
     {
@@ -162,9 +223,7 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
         emit defineColorCurrent( color_.red(), color_.green(), color_.blue() );
     } );
 
-
     connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
-
 
     connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
 
@@ -174,24 +233,26 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
 
-
     connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
 
     connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
 
-
-    connect( ac_fixed_csections, &QAction::toggled, fixed_csections_canvas, &CanvasStack::setVisible );
-
-    connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
+    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
 
     connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
 
-    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
 
-    connect( fixed_csections_canvas, &CanvasStack::canvasClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
+    // if the window is the top-view window, it does not contain the lateral bar 'bar_'
+    if( bar_ == nullptr ) return;
+    connect( ac_show_bar, &QAction::toggled, bar_, &QWidget::setVisible );
+
+}
 
 
-    //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
+void SketchWindow::createMainSceneActions( const  SketchingCanvas* canvas_ )
+{
+
+    const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
 
     connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
 
@@ -222,182 +283,23 @@ std::shared_ptr< SketchScene > SketchWindow::createMainCanvas()
 
     connect( scene_.get(), &SketchScene::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ) { emit sendPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
 
-    connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
-
-
     connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
 
-
-
-
-    return scene_;
 }
 
 
-void SketchWindow::createLateralBar()
+void SketchWindow::createTopViewSceneActions( const SketchingCanvas* canvas_ )
 {
+    const std::shared_ptr< SketchScene >& scene_ = canvas_->getScene();
 
-    sl_vertical_exagg_ = new RealFeaturedSlider( Qt::Vertical );
-    sl_vertical_exagg_->setToolTip( "Vertical Exaggeration" );
-    sl_vertical_exagg_->setInvertedAppearance( false );
-//    sl_vertical_exagg_->setDiscretization( 100 );
-    sl_vertical_exagg_->setRange( 0, 100 );
-    sl_vertical_exagg_->setSingleStep( 1 );
-//    resetVerticalExaggeration();
-
-    btn_reset_exaggeration = new QPushButton( "Reset" );
-    btn_reset_exaggeration->setMaximumWidth( 45 );
-    connect( btn_reset_exaggeration, SIGNAL( clicked( bool ) ), this, SLOT( resetVerticalExaggeration() ) );
-
-    lb_exagger_value_ = new QLabel( "Value: " );
-    sp_exagger_value = new QDoubleSpinBox();
-    sp_exagger_value->setRange( 0.1, 10000. );
-    sp_exagger_value->setSingleStep( 0.1 );
-
-    steps_exagg = (max_exagg - min_exagg);
-
-    QHBoxLayout* hb_exaggerattion_ = new QHBoxLayout;
-    hb_exaggerattion_->addWidget( btn_reset_exaggeration );
-    hb_exaggerattion_->addWidget( lb_exagger_value_ );
-    hb_exaggerattion_->addWidget( sp_exagger_value );
-
-
-    QVBoxLayout* vb_layout_exag_ = new QVBoxLayout;
-    vb_layout_exag_->addWidget( sl_vertical_exagg_ );
-    vb_layout_exag_->addLayout( hb_exaggerattion_ );
-
-
-    QGroupBox* gb_exagger_ = new QGroupBox( "Vert. Exaggeration: " );
-    gb_exagger_->setLayout( vb_layout_exag_ );
-
-
-    dl_input_angle_ = new QDial();
-    dl_input_angle_->setToolTip( "Input Dip Angle" );
-    dl_input_angle_->setMaximumSize( 70, 70 );
-    dl_input_angle_->setInvertedAppearance( true );
-    dl_input_angle_->setNotchesVisible( true );
-    dl_input_angle_->setRange( 0, 90 );
-    dl_input_angle_->setSingleStep( 10 );
-
-    btn_show_oangle = new QPushButton( "Show" );
-    btn_show_oangle->setToolTip( "Show Dip Angle inside Canvas" );
-    btn_show_oangle->setCheckable( true );
-
-    btn_move_oangle = new QPushButton( "Move" );
-    btn_move_oangle->setToolTip( "Move Dip Angle Picture" );
-    btn_move_oangle->setCheckable( true );
-
-    QVBoxLayout* vb_input_angle = new QVBoxLayout();
-    vb_input_angle->addWidget( dl_input_angle_ );
-    vb_input_angle->addWidget( btn_show_oangle );
-    vb_input_angle->addWidget( btn_move_oangle );
-
-
-    lb_input_dpangle = new AnglePicture( QSize( 70, 70 ), 0 );
-    lb_input_dpangle->setToolTip( "Input Dip Angle" );
-    lb_input_angle_ = new QLCDNumber();
-    lb_input_angle_->setDecMode();
-    lb_input_angle_->setFrameShape( QFrame::NoFrame );
-    lb_input_angle_->setSegmentStyle(QLCDNumber::Flat);
-
-    QVBoxLayout* vb_input_angle_ = new QVBoxLayout;
-    vb_input_angle_->addWidget( lb_input_dpangle );
-    vb_input_angle_->addWidget( lb_input_angle_ );
-
-
-    lb_output_dpangle = new AnglePicture( QSize( 70, 70 ), 0 );
-    lb_output_dpangle->setToolTip( "Output Dip Angle" );
-    lb_output_angle_ = new QLCDNumber();
-    lb_output_angle_->setDecMode();
-    lb_output_angle_->setFrameShape( QFrame::NoFrame );
-    lb_output_angle_->setSegmentStyle(QLCDNumber::Flat);
-
-
-    QVBoxLayout* vb_output_angle_ = new QVBoxLayout;
-    vb_output_angle_->addWidget( lb_output_dpangle );
-    vb_output_angle_->addWidget( lb_output_angle_ );
-
-
-    vb_angles = new QHBoxLayout();
-    vb_angles->addLayout( vb_input_angle );
-    vb_angles->addSpacing( 10 );
-
-    vb_angles->addLayout( vb_input_angle_ );
-    vb_angles->addSpacing( 10 );
-    vb_angles->addLayout( vb_output_angle_ );
-
-
-    QGroupBox* gb_dip_angle_ = new QGroupBox( "Dip Angle: " );
-    gb_dip_angle_->setLayout( vb_angles );
-
-    hb_central = new QVBoxLayout();
-    hb_central->addWidget( gb_exagger_ );
-    hb_central->addWidget( gb_dip_angle_ );
-
-
-    bar_ = new QWidget();
-    bar_->setMinimumWidth( 170 );
-    bar_->setLayout( hb_central );
-    bar_->setVisible( SHOW_VERTICAL_EXAGGERATION );
-
-
-    connect( sl_vertical_exagg_, &QSlider::sliderMoved, this, &SketchWindow::usingVerticalExaggeration );
-
-    QObject::connect<void(QDoubleSpinBox::*)(double)>(sp_exagger_value, &QDoubleSpinBox::valueChanged,
-                                             this,  &SketchWindow::usingVerticalExaggerationSpinBox);
-
-    connect( dl_input_angle_ , &QDial::sliderMoved, this, &SketchWindow::setDipAngle );
-
-    connect( btn_show_oangle, SIGNAL( toggled( bool ) ), this, SLOT( showDipAngle( bool ) ) );
-
-    connect( btn_move_oangle, SIGNAL( toggled( bool ) ), this, SLOT( setDipAnglePictureMovable( bool ) ) );
-}
-
-
-std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
-{
-
-    topviewcanvas = new SketchingCanvas();
-    const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-//    scene_->invertImage( true );
-    setCentralWidget( topviewcanvas );
-
-    tb_trajectory->setVisible( true );
-    tb_lateral_bar->setVisible( false );
-
-
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color_ )
-    {   scene_->setSketchColor( color_ );
-        emit defineColorCurrent( color_.red(), color_.green(), color_.blue() );
-    } );
-
-
-    connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
-
-    connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
-
-    connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
-
-    connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
-
-    connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
-
-    //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
-
-    connect( ac_use_last_trajectory, &QAction::triggered, [=]()
-    { emit useLastTrajectory(); } );
-
-    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
-
-    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
-
-    connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
-
-//emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
-//        ac_resize_boundary->setChecked( false );
+    connect( ac_use_last_trajectory, &QAction::triggered, [=](){ emit useLastTrajectory(); } );
 
     connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
-    { emit updateVolumeDimensions( dir_, width_, height_ );  applyVerticalExaggeration(); ac_resize_boundary->setChecked( false ); } );
+    {
+        emit updateVolumeDimensions( dir_, width_, height_ );
+        applyVerticalExaggeration();
+        ac_resize_boundary->setChecked( false );
+    } );
 
     connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_ ){ emit addTrajectory( curve_ ); }  );
 
@@ -413,9 +315,49 @@ std::shared_ptr< SketchScene > SketchWindow::createTopViewCanvas()
 
     connect( scene_.get(), &SketchScene::sketchDoneGuidedExtrusion, [=]( const PolyCurve& curve_ ) { emit sketchDoneGuidedExtrusion( curve_ ); } );
 
+}
 
 
-    return scene_;
+void SketchWindow::createLateralBarActions()
+{
+
+    connect( latBar, &LateralBar::sgn_updateVerticalExaggeration, [=]( double v_ )
+    {
+        const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
+        Settings::CrossSection::CrossSectionDirections dir_;
+        double depth_;
+        scene_->getCrossSectionInformation( dir_, depth_ );
+
+        // if cross-section is on the height direction, dont apply since it does not have height to be scaled
+        if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
+        sketchingcanvas->setVerticalExaggeration( v_ );
+        emit setVerticalExaggeration( v_ );
+    } );
+
+
+    connect( latBar, &LateralBar::sgn_resetVerticalExaggeration, [=]()
+    {
+        sketchingcanvas->stopVerticalExaggeration();
+    } );
+
+    connect( latBar, &LateralBar::sgn_sendDipAnglePicture, this, &SketchWindow::showDipAngle );
+
+    connect( latBar, &LateralBar::sgn_setDipAnglePictureMovable, this, &SketchWindow::setDipAnglePictureMovable );
+}
+
+
+void SketchWindow::createFixedCrossSectionsActions()
+{
+
+    connect( fixed_csections_canvas, &CanvasStack::closeSubWindow, [=]( double id_ )
+    {
+        emit removeMarkerFromSlider( id_ );
+    } );
+
+    connect( ac_fixed_csections, &QAction::toggled, fixed_csections_canvas, &CanvasStack::setVisible );
+
+    connect( fixed_csections_canvas, &CanvasStack::windowClosed, [=](){ ac_fixed_csections->setChecked( false ); } );
+
 }
 
 
@@ -426,75 +368,14 @@ std::shared_ptr< SketchScene > SketchWindow::addCanvas( double depth_, const Set
     fixed_csections_canvas->addElement( depth_, canvas_ );
     fixed_csections_canvas->setVisible( true );
 
+    //TODO: create a enum to identify the type of the cross-section, so that we can move the scale to inside the SketchingCanvas class
+    // it is necessary due to the qt coordinate system
     if( dir_ != Settings::CrossSection::CrossSectionDirections::Y )
         canvas_->scale( 1, -1 );
 
+    createToolbarActions( canvas_ );
 
-    connect( cp_color, &ColorPicker::colorSelected, [=]( const QColor& color1_ )
-    {
-        scene_->setSketchColor( color1_ );
-        emit defineColorCurrent( color1_.red(), color1_.green(), color1_.blue() );
-    } );
-
-
-    connect( ac_cancel_sketch, &QAction::triggered, scene_.get(), &SketchScene::cancelSketch );
-    connect( ac_submit_sketch, &QAction::triggered, scene_.get(), &SketchScene::submitSketch );
-    connect( ac_end_object, &QAction::triggered, scene_.get(), &SketchScene::endObject );
-
-    connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
-    connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
-
-
-    connect( scene_.get(), &SketchScene::resizeVolumeDimensions, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double width_, double height_ )
-    { emit updateVolumeDimensions( dir_, width_, height_ ); applyVerticalExaggeration();
-        ac_resize_boundary->setChecked( false ); } );
-
-    connect( scene_.get(), &SketchScene::sketchDone, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit addCurve( curve_, dir_, depth_ ); }  );
-
-    connect( scene_.get(), &SketchScene::setImageToCrossSection, [=]( const std::string& file_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_, double ox_, double oy_, double w_, double h_ ){ emit setImageToCrossSection( file_, dir_, depth_, ox_, oy_, w_, h_); }  );
-
-
-   connect( scene_.get(), &SketchScene::removeLastCurve, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ){ emit removeLastCurve( dir_, depth_ );  } );
-
-    connect( ac_remove_image, &QAction::triggered, scene_.get(), &SketchScene::removeImageInCrossSectionAndUpdate );
-
-    connect( ac_resize_image, &QAction::triggered, scene_.get(), &SketchScene::setResizingImageMode );
-
-
-    connect( ac_resize_boundary, &QAction::toggled, scene_.get(), &SketchScene::setResizingBoundaryMode );
-
-    connect( ac_select_regions, &QAction::triggered, scene_.get(), &SketchScene::setSelectingRegionsMode );
-
-
-    connect( ac_screenshot, &QAction::triggered, this, &SketchWindow::screenshot );
-
-    connect( ac_axes, &QAction::triggered, scene_.get(), &SketchScene::setAxesVisible );
-
-
-    //    connect( ac_select_wells, &QAction::triggered, scene_.get(), &SketchScene::setSelectingWellsMode );
-
-
-    connect( scene_.get(), &SketchScene::createObject, [=]() { emit createObject(); } );
-
-    connect( scene_.get(), &SketchScene::removeImageFromCrossSection, [=]( const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ )
-    {
-        emit removeImageFromCrossSection( dir_, depth_ );
-    } );
-
-
-    connect( scene_.get(), &SketchScene::getRegionByPoint, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_ ){ emit getRegionByPoint( px_, py_, depth_, dir_ ); }  );
-
-    connect( scene_.get(), &SketchScene::objectSelected, [=]( const std::size_t& id_ ) { emit objectSelected( id_ ); } );
-
-    connect( scene_.get(), &SketchScene::sendSketchOfSelection, [=]( const PolyCurve& curve_, const Settings::CrossSection::CrossSectionDirections& dir_, double depth_ ) { emit sendSketchOfSelection( curve_, dir_, depth_ ); } );
-
-    connect( scene_.get(), &SketchScene::regionSelected, [=]( const std::size_t& id_, bool status_ ) { emit regionSelected( id_, status_ ); } );
-
-    connect( scene_.get(), &SketchScene::sendPointGuidedExtrusion, [=]( float px_, float py_, double depth_, const Settings::CrossSection::CrossSectionDirections& dir_  ) { emit sendPointGuidedExtrusion( px_, py_, depth_, dir_ ); } );
-
-    connect( scene_.get(), &SketchScene::setAreaChoosed, [=]() { emit setAreaChoosed();  } );
-
-    connect( scene_.get(), &SketchScene::stopSketchesOfSelection, [=]() { emit stopSketchesOfSelection(); } );
+    createMainSceneActions( canvas_ );
 
 
     return scene_;
@@ -538,7 +419,7 @@ void SketchWindow::updateColorWidget(int red_, int green_, int blue_)
     if( topviewcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = topviewcanvas->getScene();
-       scene_->setSketchColor( QColor( red_, green_, blue_ ) );
+        scene_->setSketchColor( QColor( red_, green_, blue_ ) );
     }
 
     if( fixed_csections_canvas == nullptr ) return;
@@ -562,6 +443,8 @@ void SketchWindow::disableResizeVolume( bool status_ )
 
 void SketchWindow::setModeSelecting( bool status_ )
 {
+    // this method is being used just to disable the select status.
+    // needs to be changed
     if( sketchingcanvas != nullptr )
     {
         const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
@@ -573,7 +456,6 @@ void SketchWindow::setModeSelecting( bool status_ )
         scene_->setSelectingStratigraphyMode( false );
     }
 }
-
 
 
 void SketchWindow::setModeSelectingStratigraphies( bool status_ )
@@ -591,7 +473,6 @@ void SketchWindow::setModeSelectingStratigraphies( bool status_ )
 }
 
 
-
 void SketchWindow::setModeRegionSelecting( bool status_ )
 {
     if( sketchingcanvas != nullptr )
@@ -607,107 +488,17 @@ void SketchWindow::setModeRegionSelecting( bool status_ )
 }
 
 
-
-void SketchWindow::usingVerticalExaggeration( int v_exagg_ )
-{
-
-    count++;
-
-    if( sl_vertical_exagg_ == nullptr ) return;
-    if( lb_exagger_value_ == nullptr ) return;
-    if( sp_exagger_value == nullptr ) return;
-    if( sketchingcanvas == nullptr ) return;
-
-    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
-    double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
-
-    QString arg_ = QString::number( v_exagg_db_, 'f', 1 );
-    lb_exagger_value_->setText( QString("Value: ").append( arg_ ) );
-    sp_exagger_value->setValue( v_exagg_db_ );
-    std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
-
-    if( sketchingcanvas == nullptr ) return;
-
-    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
-    Settings::CrossSection::CrossSectionDirections dir_;
-    double depth_;
-
-    scene_->getCrossSectionInformation( dir_, depth_ );
-    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
-
-    if( count < 2 )
-        sp_exagger_value->setValue( v_exagg_db_ );
-    else
-        count = 0;
-
-    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
-    emit setVerticalExaggeration( v_exagg_db_ );
-
-    updateDipAngle();
-
-
-//    count++;
-
-//    if( sl_vertical_exagg_ == nullptr ) return;
-//    if( lb_exagger_value_ == nullptr ) return;
-//    if( sp_exagger_value == nullptr ) return;
-//    if( sketchingcanvas == nullptr ) return;
-
-//    double value_ = min_exagg + v_exagg_*0.01* (max_exagg - min_exagg);
-//    double v_exagg_db_ = static_cast< double > ( pow( 10, value_ ) );
-
-//    QString arg_ = QString::number( v_exagg_db_, 'f', 1 );
-//    lb_exagger_value_->setText( QString("Value: ").append( arg_ ) );
-//    sp_exagger_value->setValue( v_exagg_db_ );
-//    std::cout << "exag: " << v_exagg_db_ << std::endl << std::flush;
-
-//    if( sketchingcanvas == nullptr ) return;
-
-//    const std::shared_ptr< SketchScene >& scene_ = sketchingcanvas->getScene();
-//    Settings::CrossSection::CrossSectionDirections dir_;
-//    double depth_;
-
-//    scene_->getCrossSectionInformation( dir_, depth_ );
-//    if( dir_ == Settings::CrossSection::CrossSectionDirections::Y ) return;
-
-//    if( count < 2 )
-//        sp_exagger_value->setValue( v_exagg_db_ );
-//    else
-//        count = 0;
-
-//    sketchingcanvas->setVerticalExaggeration( v_exagg_db_ );
-//    emit setVerticalExaggeration( v_exagg_db_ );
-
-//    updateDipAngle();
-
-}
-
-
-void SketchWindow::usingVerticalExaggerationSpinBox( double v_exagg_ )
-{
-    count++;
-
-    double lg = log10( v_exagg_ );
-    std::cout << " log10: "  << lg << std::endl << std::flush;
-
-    double value = 100*(lg - min_exagg)/(max_exagg - min_exagg);
-    std::cout << " divisao: "  << value << std::endl << std::flush;
-
-
-
-    if( count < 2 )
-        sl_vertical_exagg_->setValue( static_cast< int >( value ) );
-    else
-        count = 0;
-
-}
-
-
 void SketchWindow::resetVerticalExaggeration()
 {
 
+
     if( sketchingcanvas == nullptr ) return;
-    sl_vertical_exagg_->setValue( 20 );
+//    sl_vertical_exagg_->setValue( 20 );
+
+    if( latBar == nullptr ) return;
+
+    //resetting the widgets
+    latBar->resetVerticalExaggeration();
     sketchingcanvas->stopVerticalExaggeration();
 }
 
@@ -720,62 +511,24 @@ void SketchWindow::applyVerticalExaggeration()
     double v_exag_ = sketchingcanvas->getVerticalExaggeration();
     if( v_exag_ == 1 ) return;
 
+    // first stop the vertical exaggeration so that the matrices be right
     sketchingcanvas->stopVerticalExaggeration();
+
+    // and apply the vertical exaggeration
     sketchingcanvas->setVerticalExaggeration( v_exag_ );
 
 
 }
 
 
-void SketchWindow::setDipAngle( double angle_ )
-{
-    double v_exag_ = 1.0;
-
-    if( sketchingcanvas != nullptr )
-        v_exag_ = sketchingcanvas->getVerticalExaggeration();
-
-    double param_ = v_exag_*tan( angle_*PI / 180 );
-    double beta_ = atan(param_) * 180 / PI;
-
-    QString arg_ = QString::number( angle_, 'f', 1 );
-    lb_input_angle_ ->display( QObject::tr( arg_.append("'" ).toStdString().c_str() ) );
-    lb_input_dpangle->updateAngle( angle_ );
-
-    QString arg1_ = QString::number( beta_, 'f', 1 );
-    lb_output_angle_ ->display( QObject::tr( arg1_.append("'" ).toStdString().c_str() ) );
-    lb_output_dpangle->updateAngle( beta_ );
-
-    std::cout << "Beta value: " << beta_ << std::endl << std::flush;
-
-
-    if( sketchingcanvas == nullptr ) return;
-    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
-    const QPixmap* pix_ = lb_output_dpangle->pixmap();
-    if( pix_ == nullptr ) return;
-
-    scene_->updateDipAnglePicture( *pix_ );
-
-
-
-}
-
-
-void SketchWindow::updateDipAngle()
-{
-    double angle_ = static_cast< double >( dl_input_angle_->value() );
-    setDipAngle( angle_ );
-}
-
-
 void SketchWindow::showDipAngle( bool status_ )
 {
-    if( sketchingcanvas == nullptr ) return;
+    if( ( sketchingcanvas == nullptr ) || (latBar == nullptr) ) return;
 
-    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
-
-    const QPixmap* pix_ = lb_output_dpangle->pixmap();
+    const QPixmap* pix_ =  latBar->getDipAnglePicture(); //*/lb_output_dpangle->pixmap();
     if( pix_ == nullptr ) return;
 
+    std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
     scene_->showDipAnglePicture( status_, *pix_ );
 
 }
@@ -793,8 +546,8 @@ void SketchWindow::screenshot()
 {
     QString selectedFilter;
     QString name_of_file_ = QFileDialog::getSaveFileName( nullptr, tr( "Save Image" ), "./screenshots/",
-                                                         tr( "PNG (*.png);;SVG (*.svg)" ),
-                                                         &selectedFilter );
+                                                          tr( "PNG (*.png);;SVG (*.svg)" ),
+                                                          &selectedFilter );
     if( sketchingcanvas != nullptr )
     {
         std::shared_ptr< SketchScene > scene_ = sketchingcanvas->getScene();
@@ -824,13 +577,16 @@ void SketchWindow::screenshot()
 }
 
 
-
 void SketchWindow::reset()
 {
+
 
     resetVerticalExaggeration();
     removeAllCanvas();
     disableResizeVolume( false );
+
+    if( latBar != nullptr )
+        latBar->clear();
 
     if( ac_resize_image != nullptr )
         ac_resize_image->setChecked( false );
@@ -838,24 +594,11 @@ void SketchWindow::reset()
     if( ac_select_regions != nullptr )
         ac_select_regions->setChecked( SELECT_REGION_DEFAULT_STATUS );
 
-    if( ac_select_wells != nullptr )
-        ac_select_wells->setChecked( SELECT_WELLS_DEFAULT_STATUS );
-
-
     cp_color->setColor( QColor( 255, 0, 0 ) );
 
 
     if( ac_show_bar != nullptr )
         ac_show_bar->setChecked( SHOW_VERTICAL_EXAGGERATION );
-
-    if( btn_show_oangle != nullptr )
-        btn_show_oangle->setChecked( false );
-
-    if( btn_move_oangle != nullptr )
-        btn_move_oangle->setChecked( false );
-
-    if( dl_input_angle_ != nullptr )
-        dl_input_angle_->setValue( 0 );
 
     if( ac_axes != nullptr )
         ac_axes->setChecked( true );
@@ -864,32 +607,30 @@ void SketchWindow::reset()
 }
 
 
-
-
 void SketchWindow::keyPressEvent( QKeyEvent *event )
 {
     switch( event->key() )
     {
-        case Qt::Key_G:
-        {
-            if( sketchingcanvas == nullptr ) return;
-            const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
-            scene_->setGuidedExtrusionMode( true );
+    case Qt::Key_G:
+    {
+        if( sketchingcanvas == nullptr ) return;
+        const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
+        scene_->setGuidedExtrusionMode( true );
 
-        }
+    }
         break;
 
-        case Qt::Key_D:
-        {
-            if( sketchingcanvas == nullptr ) return;
-            const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
-            scene_->setGuidedExtrusionMode( false );
+    case Qt::Key_D:
+    {
+        if( sketchingcanvas == nullptr ) return;
+        const std::shared_ptr< SketchScene >&scene_ = sketchingcanvas->getScene();
+        scene_->setGuidedExtrusionMode( false );
 
-        }
+    }
         break;
 
-        default:
-            break;
+    default:
+        break;
     };
 }
 
@@ -905,9 +646,8 @@ SketchWindow::~SketchWindow()
         delete fixed_csections_canvas;
     fixed_csections_canvas = nullptr;
 
-    if( sketchingcanvas!= nullptr )
-        delete sketchingcanvas;
-    sketchingcanvas = nullptr;
+    sketchingcanvas.reset();
+    topviewcanvas.reset();
 
     if( ac_cancel_sketch!= nullptr )
         delete ac_cancel_sketch;
@@ -936,55 +676,6 @@ SketchWindow::~SketchWindow()
     if( ac_select_regions!= nullptr )
         delete ac_select_regions;
     ac_select_regions = nullptr;
-
-    if( tb_well!= nullptr )
-        delete tb_well;
-    tb_well = nullptr;
-
-    if( ac_select_wells!= nullptr )
-        delete ac_select_wells;
-    ac_select_wells = nullptr;
-
-
-    if( sl_vertical_exagg_!= nullptr )
-        delete sl_vertical_exagg_;
-    sl_vertical_exagg_ = nullptr;
-
-    if( dl_input_angle_!= nullptr )
-        delete dl_input_angle_;
-    dl_input_angle_ = nullptr;
-
-    if( vb_angles!= nullptr )
-        delete vb_angles;
-    vb_angles = nullptr;
-
-    if( hb_central!= nullptr )
-        delete hb_central;
-    hb_central = nullptr;
-
-    if( hb_central1!= nullptr )
-        delete hb_central1;
-    hb_central1 = nullptr;
-
-    if( lb_input_angle_!= nullptr )
-        delete lb_input_angle_;
-    lb_input_angle_  = nullptr;
-
-    if( lb_output_angle_!= nullptr )
-        delete lb_output_angle_;
-    lb_output_angle_ = nullptr;
-
-    if( lb_input_dpangle!= nullptr )
-        delete lb_input_dpangle;
-    lb_input_dpangle = nullptr;
-
-    if( lb_output_dpangle!= nullptr )
-        delete lb_output_dpangle;
-    lb_output_dpangle = nullptr;
-
-    if( btn_show_oangle!= nullptr )
-        delete btn_show_oangle;
-    btn_show_oangle  = nullptr;
 
     if( bar_!= nullptr )
         delete bar_;

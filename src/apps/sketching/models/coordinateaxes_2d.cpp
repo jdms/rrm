@@ -1,25 +1,29 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file coordinateaxes_2d.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class CoordinateAxes2d
  */
-
-
 
 #include <cmath>
 #include <iostream>
@@ -43,6 +47,8 @@ void CoordinateAxes2d::setPlane( const Plane& pl )
 {
 
     plane = pl;
+
+    // the scale invert the axes orientation
     if( pl == Plane::XY )
     {
         current_y = height_color;
@@ -86,6 +92,7 @@ void CoordinateAxes2d::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 {
     drawAxisX( painter );
 
+    // if scale_on is false so no vertical exaggeration is applied
     if( scale_on == false )
         drawAxisY( painter );
     else
@@ -95,12 +102,15 @@ void CoordinateAxes2d::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void CoordinateAxes2d::drawAxisX( QPainter* p )
 {
+    // code needs to be improve. temporary code
 
 
     QPointF tail = QPointF( -15, -15 );
 
+    // initial discretization of the X axes.
     int discX = 10;
 
+    // it changes depends on the lenght of the axes
     if( axisx_length < 150 )
         discX = 1;
 
@@ -132,9 +142,14 @@ void CoordinateAxes2d::drawAxisX( QPainter* p )
         if( value > 0 )
             dez = log10( value );
 
+
         QString value1_ = QString::number( value, 'f', 1);
+
+        // render the discretization lines
         p->drawLine( value , tail.y() - 3, value , tail.y() + 3 );
         p->scale( 1, scale );
+
+        // render the texts which spaces of each other depends on the logarithm natural
         p->drawText( QPointF( value - dez*0.1*stepX, scale*tail.y() - scale*18 ), QString( "%1" ).arg( value1_ ) );
         p->scale( 1, scale );
     }
@@ -145,6 +160,7 @@ void CoordinateAxes2d::drawAxisX( QPainter* p )
 void CoordinateAxes2d::drawAxisY( QPainter* p )
 {
 
+    // rendering the Y axes without vertical exaggeration
     QPointF tail = QPointF( -15, -15 );
 
     int discY = 10;
@@ -196,6 +212,7 @@ void CoordinateAxes2d::drawAxisY( QPainter* p )
 void CoordinateAxes2d::drawAxisYWithScale( QPainter* p )
 {
 
+    // rendering the Y axes with vertical exaggeration
     QPointF tail = QPointF( -15, -15 );
 
     int discY = 10;
@@ -231,6 +248,8 @@ void CoordinateAxes2d::drawAxisYWithScale( QPainter* p )
         p->drawLine( tail.x() - 3 , value, tail.x() + 3 , value );
 
 
+        // the value to be written is a proportion of the real height of the axes with the discretization.
+        // note that the axisy_length is scaled with the vertical exaggeration
         QString value1_ = QString::number( i*( height/discY), 'f', 1);
         p->rotate( -scale*90 );
         p->scale( 1, scale );

@@ -1,25 +1,29 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file slider.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class Slider
  */
-
-
 
 #include <iostream>
 #include <algorithm>
@@ -111,7 +115,12 @@ void Slider::saveMarkerPosition( int value, int slider_length, int slider_min, i
 {
 
     int pos = 0;
+
+    // if the
     bool inverted_ = invertedControls();
+
+    // computing the position of the marker given a value on the slider
+    // see the reference http://doc.qt.io/qt-5/qstyle.html#sliderPositionFromValue
     pos = QStyle::sliderPositionFromValue( minimum(), maximum(), maximum() - value, slider_max - slider_min,
                                                     inverted_ ) + slider_length/2.0;
 
@@ -140,9 +149,20 @@ void Slider::getSubControlDimensions( int& slider_length, int& slider_min, int& 
     QRect sr = style()->subControlRect( QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this );
     QRect gr = style()->subControlRect( QStyle::CC_Slider, &opt, QStyle::SC_SliderGroove, this );
 
+    // getting the height of the slider handle
     slider_length = sr.height();
+
+
+    //groove is a special sub-control which contains the area in which the slider handle may move.
+
+    // the minimum position of the slider groove
     slider_min = gr.y();
+
+    // the maximum position of the slider grove
     slider_max = gr.bottom() - slider_length + 1;
+
+
+    // this values will be used to compute the markers position
 }
 
 

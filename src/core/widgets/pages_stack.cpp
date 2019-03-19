@@ -1,25 +1,29 @@
-/** @license
- * RRM - Rapid Reservoir Modeling Project
- * Copyright (C) 2015
- * UofC - University of Calgary
- *
- * This file is part of RRM Software.
- *
- * RRM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * RRM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file pages_stack.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class PagesStack
  */
-
-
 
 #include <QTextDocument>
 #include <QString>
@@ -75,6 +79,8 @@ void PagesStack::createVolumePropertiesPage()
 void PagesStack::createVolumeActions()
 {
 
+
+    // synchronizing the slider with the spinbox
     connect( wd_volume_resize.hs_width_volume, SIGNAL( sliderMoved(int) ),
              wd_volume_resize.sb_width_volume, SLOT( setValue(int) ) );
 
@@ -152,11 +158,6 @@ void PagesStack::changeRangeSize( double width, double height, double depth )
     wd_volume_resize.sb_height_volume->setRange( 1, h );
     wd_volume_resize.sb_depth_volume->setRange( 1, d );
 
-
-//    wd_volume_resize.hs_width_volume->setSingleStep( SINGLE_STEP );
-//    wd_volume_resize.hs_height_volume->setSingleStep( SINGLE_STEP );
-//    wd_volume_resize.hs_depth_volume->setSingleStep( SINGLE_STEP );
-
     wd_volume_resize.hs_width_volume->setTickInterval( SINGLE_STEP );
     wd_volume_resize.hs_height_volume->setTickInterval( SINGLE_STEP );
     wd_volume_resize.hs_depth_volume->setTickInterval( SINGLE_STEP );
@@ -164,7 +165,6 @@ void PagesStack::changeRangeSize( double width, double height, double depth )
     wd_volume_resize.sb_width_volume->setSingleStep( SINGLE_STEP );
     wd_volume_resize.sb_height_volume->setSingleStep( SINGLE_STEP );
     wd_volume_resize.sb_depth_volume->setSingleStep( SINGLE_STEP );
-
 
 
 }
@@ -247,6 +247,7 @@ void PagesStack::createObjectPropertiesPage()
 
     wd_object_properties.groupBox->setTitle( "Object Log" );
 
+    // saving automatically the text
     connect( wd_object_properties.te_object_properties, &QTextEdit::textChanged, [=]() {
             QString text_ = wd_object_properties.te_object_properties->toPlainText();
             emit saveText( text_ );

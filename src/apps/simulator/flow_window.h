@@ -123,7 +123,7 @@ class FlowWindow : public  QMainWindow
         void getVolumeDimension(double& width, double& heigth, double&  depth);
 
         void requestRegionsPosition( std::map<int, Eigen::Vector3f>& region_point );
-        void sendSimplifiedMesh( const std::vector< float >& vertices, const std::vector< unsigned int >& edges, const std::vector< unsigned int >& faces );
+        void sendSimplifiedMesh( const std::vector< float >& vertices, const std::vector< unsigned int >& faces );
 
     private:
 

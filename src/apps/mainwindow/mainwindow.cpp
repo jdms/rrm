@@ -1,3 +1,31 @@
+/****************************************************************************
+ * RRM - Rapid Reservoir Modeling Project                                   *
+ * Copyright (C) 2015                                                       *
+ * UofC - University of Calgary                                             *
+ *                                                                          *
+ * This file is part of RRM Software.                                       *
+ *                                                                          *
+ * RRM is free software: you can redistribute it and/or modify              *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation, either version 3 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * RRM is distributed in the hope that it will be useful,                   *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>.             *
+ ****************************************************************************/
+
+/**
+ * @file mainwindow.cpp
+ * @author Clarissa C. Marques
+ * @brief File containing the class MainWindow
+ */
+
+
 #include <QDesktopServices>
 
 #include "mainwindow.h"
@@ -43,9 +71,6 @@ void MainWindow::createWindow()
     plug3dInterface();    
     plugSketchInterface();
     plug3dDiagnosticsInterface();
-
-
-
 
 }
 
@@ -219,7 +244,6 @@ void MainWindow::createActions()
     connect( ac_about, &QAction::triggered, about_rrm, &AboutWidget::show );
 
     connect( ac_manual, &QAction::triggered, this, &MainWindow::showHelp );
-
 
 }
 
@@ -505,7 +529,6 @@ void MainWindow::plugSketchInterface()
 {
     sketchapp = std::make_shared< SketchInterface >( this );
     sketchapp->createInterface();
-
 }
 
 
@@ -513,9 +536,6 @@ void MainWindow::plug3dInterface()
 {
     view3dapp = std::make_shared< View3dInterface >( this );
     view3dapp->createInterface();
-
-
-
 }
 
 
@@ -687,6 +707,7 @@ void MainWindow::showHelp()
     QFileInfo file_info(dir.currentPath() + "/manual/rrm-manual.pdf");
     QDesktopServices::openUrl(QUrl::fromLocalFile(file_info.absoluteFilePath()));
 }
+
 
 MainWindow::~MainWindow()
 {

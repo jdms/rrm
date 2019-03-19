@@ -43,11 +43,11 @@ class SketchLibrary
 
             Curve2D ms_;
 
-            int start = 0;
+           unsigned int start = 0;
 
             ms_.add( sketch_[ start ] );
 
-            for( std::size_t i = start; i < sketch_.size() - 1; ++i )
+            for( unsigned int i = start; i < sketch_.size() - 1; ++i )
             {
                 if( sketch_[ i ].x() != sketch_[ i + 1 ].x() ) break;
 
@@ -57,8 +57,8 @@ class SketchLibrary
 
             if( sketch_[ start ].x() <= sketch_[ start + 1 ].x() )
             {
-                std::size_t temp = start;
-                for( std::size_t i = start; i < sketch_.size() - 1; ++i )
+                unsigned int temp = start;
+                for( unsigned int i = start; i < sketch_.size() - 1; ++i )
                 {
                     if( sketch_[ temp ].x() >= sketch_[ i + 1 ].x() ) continue;
 
@@ -70,8 +70,8 @@ class SketchLibrary
 
             else if( sketch_[ start ].x() >= sketch_[ start + 1 ].x() )
             {
-                std::size_t temp = start;
-                for( std::size_t i = start; i < sketch_.size() - 1; ++i )
+                unsigned int temp = start;
+                for( unsigned int i = start; i < sketch_.size() - 1; ++i )
                 {
                     if( sketch_[ temp ].x() <= sketch_[ i + 1 ].x() ) continue;
                     ms_.add( sketch_[ i + 1 ] );
@@ -91,11 +91,11 @@ class SketchLibrary
 
             Curve2D ms_;
 
-            int start = 0;
+            unsigned int start = 0;
 
             ms_.add( sketch_[ start ] );
 
-            for( std::size_t i = start; i < sketch_.size() - 1; ++i )
+            for( unsigned int i = start; i < sketch_.size() - 1; ++i )
             {
                 if( sketch_[ i ].y() != sketch_[ i + 1 ].y() ) break;
 
@@ -105,8 +105,8 @@ class SketchLibrary
 
             if( sketch_[ start ].y() <= sketch_[ start + 1 ].y() )
             {
-                std::size_t temp = start;
-                for( std::size_t i = start; i < sketch_.size() - 1; ++i )
+                unsigned int temp = start;
+                for( unsigned int i = start; i < sketch_.size() - 1; ++i )
                 {
                     if( sketch_[ temp ].y() >= sketch_[ i + 1 ].y() ) continue;
 
@@ -118,8 +118,8 @@ class SketchLibrary
 
             else if( sketch_[ start ].y() >= sketch_[ start + 1 ].y() )
             {
-                std::size_t temp = start;
-                for( std::size_t i = start; i < sketch_.size() - 1; ++i )
+                unsigned int temp = start;
+                for( unsigned int i = start; i < sketch_.size() - 1; ++i )
                 {
                     if( sketch_[ temp ].y() <= sketch_[ i + 1 ].y() ) continue;
                     ms_.add( sketch_[ i + 1 ] );
@@ -161,9 +161,9 @@ class SketchLibrary
         {
             if( curve_.isEmpty() == true ) return;
 
-            std::size_t index_ = 0;
+            unsigned int index_ = 0;
 
-            for( std::size_t i = 0; i < curve_.size(); ++i )
+            for( unsigned int i = 0; i < curve_.size(); ++i )
             {
                 const Point2D& p_ = curve_.at( i );
 
@@ -202,7 +202,7 @@ class InputSketch: public QGraphicsPathItem
 
         enum class Direction{ X, Y, Z };
 
-        InputSketch( QGraphicsItem * parent = 0 );
+        InputSketch( QGraphicsItem * parent = nullptr );
         virtual QRectF boundingRect() const;
 
         void create( const QPointF& p_ );
