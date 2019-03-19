@@ -22,7 +22,7 @@ set(RRM_BUILD_TYPE "" CACHE STRING
 
 if(RRM_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
-end()
+endif()
 
 OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
 
