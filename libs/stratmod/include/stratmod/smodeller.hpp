@@ -29,7 +29,7 @@
 #include <vector>
 #include <memory>
 
-#include "smodeller_primitives.hpp"
+#include "stratmod/smodeller_primitives.hpp"
 
 class STRATMODLIB_DLL_HANDLER SModeller
 {

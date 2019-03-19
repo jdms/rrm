@@ -1,7 +1,7 @@
 #ifndef __SMODELLER_PRIMITIVES_HPP__
 #define __SMODELLER_PRIMITIVES_HPP__
 
-#include "stratmod_win_dll_export_handler.hpp"
+#include "stratmod/stratmod_win_dll_export_handler.hpp"
 
 
 

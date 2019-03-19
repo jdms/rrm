@@ -30,7 +30,7 @@
 
 #include "detail/planin/planin.hpp"
 
-#include "smodeller.hpp"
+#include "stratmod/smodeller.hpp"
 #include "detail/smodeller_impl.hpp"
 #include "detail/serialization_definitions.hpp"
 

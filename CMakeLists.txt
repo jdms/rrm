@@ -205,7 +205,7 @@ include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs/colorwrap/include)
 set(STRATMOD_EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
 add_subdirectory(${CMAKE_SOURCE_DIR}/libs/stratmod)
 set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
-include_directories(${STRATMOD_SOURCE}/src)
+include_directories(${STRATMOD_SOURCE}/include)
 
 #message(WARNING stratmod)
 

@@ -22,7 +22,7 @@
 
 #include <numeric>
 
-#include "sutilities.hpp"
+#include "stratmod/sutilities.hpp"
 
 #include "detail/smodeller_impl.hpp"
 
