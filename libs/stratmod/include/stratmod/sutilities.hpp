@@ -31,7 +31,7 @@
 #include <vector>
 #include <memory>
 
-#include "smodeller.hpp"
+#include "stratmod/smodeller.hpp"
 
 
 

@@ -277,10 +277,10 @@ endif()
 # include_directories(${CMAKE_SOURCE_DIR}/src)
 
 set(HEADERS 
-    src/stratmod_win_dll_export_handler.hpp
-    src/smodeller_primitives.hpp
-    src/smodeller.hpp
-    src/sutilities.hpp
+    include/stratmod/stratmod_win_dll_export_handler.hpp
+    include/stratmod/smodeller_primitives.hpp
+    include/stratmod/smodeller.hpp
+    include/stratmod/sutilities.hpp
     )
 
 set(STRATMOD_LIB_SOURCES 
@@ -315,11 +315,12 @@ endif()
 target_include_directories(stratmod
     PUBLIC
         $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
 target_include_directories(stratmod SYSTEM
     PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin>
 )
 add_dependencies(stratmod planin)

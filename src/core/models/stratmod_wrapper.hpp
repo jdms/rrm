@@ -28,8 +28,8 @@
 #include <map>
 
 
-#include <smodeller.hpp>
-#include <sutilities.hpp>
+#include <stratmod/smodeller.hpp>
+#include <stratmod/sutilities.hpp>
 
 
 

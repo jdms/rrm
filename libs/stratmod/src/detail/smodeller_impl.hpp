@@ -36,7 +36,7 @@
 #include "detail/planin/planin.hpp"
 #include "detail/planin/mesh/linear_complexes.hpp"
 
-#include "smodeller.hpp"
+#include "stratmod/smodeller.hpp"
 
 #include "serialization_definitions.hpp"
 #include "testing_definitions.hpp"

@@ -1,1 +1,1 @@
-#include "smodeller.hpp"
+#include "stratmod/smodeller.hpp"
