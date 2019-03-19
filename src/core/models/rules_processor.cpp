@@ -19,7 +19,7 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iomanip>`
+#include <iomanip>
 
 #include "rules_processor.hpp"
 #include "colorwrap.hpp"
@@ -32,14 +32,14 @@ void displayNotice( std::string, std::string ) {}
 RulesProcessor::RulesProcessor()
 {
     modeller_.useOpenGLCoordinateSystem();
-    setMediumResolution();
+    /* setMediumResolution(); */
 }
 
 std::vector<size_t> RulesProcessor::filterActiveSurfaces( std::vector<std::size_t> &surface_ids )
 {
     std::vector<size_t> active_surfaces = {};
 
-    std::vector<float> dummy_vlist;
+    std::vector<double> dummy_vlist;
     std::vector<size_t> dummy_flist;
 
     for ( auto &sid : surface_ids )
@@ -118,12 +118,16 @@ std::size_t RulesProcessor::getLengthResolution() const
 
 bool RulesProcessor::requestCreateAbove( std::vector<size_t> &eligible_surfaces )
 {
-    return modeller_.requestCreateAbove(eligible_surfaces);
+    return false;
+
+    /* return modeller_.requestCreateAbove(eligible_surfaces); */
 }
 
 bool RulesProcessor::requestCreateBelow( std::vector<size_t> &eligible_surfaces )
 {
-    return modeller_.requestCreateBelow(eligible_surfaces);
+    return false;
+
+    /* return modeller_.requestCreateBelow(eligible_surfaces); */
 }
 
 
@@ -845,70 +849,72 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
 
 bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
-    std::cout << "\n\n\nInside getUpperBoundaryLengthwise...\n\n" << std::flush;
+    return false;
 
-    std::vector<size_t> surface_indices;
-    if ( modeller_.preserveBelowIsActive(surface_indices) == false )
-    {
-        std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; 
-        return false;
-    }
+    /* std::cout << "\n\n\nInside getUpperBoundaryLengthwise...\n\n" << std::flush; */
 
-    bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( modeller_.getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
-        {
-            std::cout << "Got a first bounding curve at index: " << index 
-                << " of " << surface_indices.size() << "\n" << std::flush;
-            std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush;
+    /* std::vector<size_t> surface_indices; */
+    /* if ( modeller_.preserveBelowIsActive(surface_indices) == false ) */
+    /* { */
+    /*     std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; */ 
+    /*     return false; */
+    /* } */
 
-            success = true;
-            break;
-        }
-    }
+    /* bool success = false; */
+    /* size_t index; */
+    /* for ( index = 0; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     if ( modeller_.getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) ) */
+    /*     { */
+    /*         std::cout << "Got a first bounding curve at index: " << index */ 
+    /*             << " of " << surface_indices.size() << "\n" << std::flush; */
+    /*         std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush; */
 
-    if ( !success )
-    {
-        return false;
-    }
+    /*         success = true; */
+    /*         break; */
+    /*     } */
+    /* } */
 
-    auto tmp_vlist = vlist;
-    size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
-    {
-        std::cout << "Processing surface: " << index 
-            << " of " << surface_indices.size() -1 << "\n" << std::flush;
-        sid = surface_indices[index];
-        std::cout << "sid == " << sid << "\n" << std::flush;
+    /* if ( !success ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
-        if ( modeller_.getLengthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
-        {
-            std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush;
-            for ( size_t i = 0; i < vlist.size(); ++i )
-            {
-                if ( vlist[i] > tmp_vlist[i] )
-                    vlist[i] = tmp_vlist[i];
-            }
-        }
+    /* auto tmp_vlist = vlist; */
+    /* size_t sid; */
+    /* for ( ++index; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     std::cout << "Processing surface: " << index */ 
+    /*         << " of " << surface_indices.size() -1 << "\n" << std::flush; */
+    /*     sid = surface_indices[index]; */
+    /*     std::cout << "sid == " << sid << "\n" << std::flush; */
 
-    }
+    /*     if ( modeller_.getLengthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) ) */
+    /*     { */
+    /*         std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush; */
+    /*         for ( size_t i = 0; i < vlist.size(); ++i ) */
+    /*         { */
+    /*             if ( vlist[i] > tmp_vlist[i] ) */
+    /*                 vlist[i] = tmp_vlist[i]; */
+    /*         } */
+    /*     } */
 
-    flist.clear();
-    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
-    {
-        flist.push_back(i);
-        flist.push_back(i+1);
-    }
+    /* } */
 
-    std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
-    std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
+    /* flist.clear(); */
+    /* for ( size_t i = 0; i < vlist.size()/2 -1; ++i ) */
+    /* { */
+    /*     flist.push_back(i); */
+    /*     flist.push_back(i+1); */
+    /* } */
 
-    convertEntireCurveToBox(vlist, flist, origin_.y);
+    /* std::cout << "flist.size() == " << flist.size() << "\n" << std::flush; */
+    /* std::cout << "flist.back() == " << flist.back() << "\n" << std::flush; */
 
-    std::cout << "Got boundary curve\n\n\n" << std::flush; 
-    return true;
+    /* convertEntireCurveToBox(vlist, flist, origin_.y); */
+
+    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */ 
+    /* return true; */
 }
 
 bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
@@ -933,70 +939,72 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
 
 bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
-    std::cout << "\n\n\nInside getUpperBoundaryWidthwise...\n\n" << std::flush;
+    return false;
 
-    std::vector<size_t> surface_indices;
-    if ( modeller_.preserveBelowIsActive(surface_indices) == false )
-    {
-        std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; 
-        return false;
-    }
+    /* std::cout << "\n\n\nInside getUpperBoundaryWidthwise...\n\n" << std::flush; */
 
-    bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( modeller_.getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
-        {
-            std::cout << "Got a first bounding curve at index: " << index 
-                << " of " << surface_indices.size() << "\n" << std::flush;
-            std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush;
+    /* std::vector<size_t> surface_indices; */
+    /* if ( modeller_.preserveBelowIsActive(surface_indices) == false ) */
+    /* { */
+    /*     std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; */ 
+    /*     return false; */
+    /* } */
 
-            success = true;
-            break;
-        }
-    }
+    /* bool success = false; */
+    /* size_t index; */
+    /* for ( index = 0; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     if ( modeller_.getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) ) */
+    /*     { */
+    /*         std::cout << "Got a first bounding curve at index: " << index */ 
+    /*             << " of " << surface_indices.size() << "\n" << std::flush; */
+    /*         std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush; */
 
-    if ( !success )
-    {
-        return false;
-    }
+    /*         success = true; */
+    /*         break; */
+    /*     } */
+    /* } */
 
-    auto tmp_vlist = vlist;
-    size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
-    {
-        std::cout << "Processing surface: " << index 
-            << " of " << surface_indices.size() -1 << "\n" << std::flush;
-        sid = surface_indices[index];
-        std::cout << "sid == " << sid << "\n" << std::flush;
+    /* if ( !success ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
-        if ( modeller_.getWidthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
-        {
-            std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush;
-            for ( size_t i = 0; i < vlist.size(); ++i )
-            {
-                if ( vlist[i] > tmp_vlist[i] )
-                    vlist[i] = tmp_vlist[i];
-            }
-        }
+    /* auto tmp_vlist = vlist; */
+    /* size_t sid; */
+    /* for ( ++index; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     std::cout << "Processing surface: " << index */ 
+    /*         << " of " << surface_indices.size() -1 << "\n" << std::flush; */
+    /*     sid = surface_indices[index]; */
+    /*     std::cout << "sid == " << sid << "\n" << std::flush; */
 
-    }
+    /*     if ( modeller_.getWidthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) ) */
+    /*     { */
+    /*         std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush; */
+    /*         for ( size_t i = 0; i < vlist.size(); ++i ) */
+    /*         { */
+    /*             if ( vlist[i] > tmp_vlist[i] ) */
+    /*                 vlist[i] = tmp_vlist[i]; */
+    /*         } */
+    /*     } */
 
-    flist.clear();
-    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
-    {
-        flist.push_back(i);
-        flist.push_back(i+1);
-    }
+    /* } */
 
-    std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
-    std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
+    /* flist.clear(); */
+    /* for ( size_t i = 0; i < vlist.size()/2 -1; ++i ) */
+    /* { */
+    /*     flist.push_back(i); */
+    /*     flist.push_back(i+1); */
+    /* } */
 
-    convertEntireCurveToBox(vlist, flist, origin_.y);
+    /* std::cout << "flist.size() == " << flist.size() << "\n" << std::flush; */
+    /* std::cout << "flist.back() == " << flist.back() << "\n" << std::flush; */
 
-    std::cout << "Got boundary curve\n\n\n" << std::flush; 
-    return true;
+    /* convertEntireCurveToBox(vlist, flist, origin_.y); */
+
+    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */ 
+    /* return true; */
 }
 
 bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
@@ -1021,70 +1029,72 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
 
 bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
-    std::cout << "\n\n\nInside getLowerBoundaryLengthwise...\n\n" << std::flush;
+    return false;
 
-    std::vector<size_t> surface_indices;
-    if ( modeller_.preserveAboveIsActive(surface_indices) == false )
-    {
-        std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; 
-        return false;
-    }
+    /* std::cout << "\n\n\nInside getLowerBoundaryLengthwise...\n\n" << std::flush; */
 
-    bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( modeller_.getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
-        {
-            std::cout << "Got a first bounding curve at index: " << index 
-                << " of " << surface_indices.size() << "\n" << std::flush;
-            std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush;
+    /* std::vector<size_t> surface_indices; */
+    /* if ( modeller_.preserveAboveIsActive(surface_indices) == false ) */
+    /* { */
+    /*     std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; */ 
+    /*     return false; */
+    /* } */
 
-            success = true;
-            break;
-        }
-    }
+    /* bool success = false; */
+    /* size_t index; */
+    /* for ( index = 0; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     if ( modeller_.getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) ) */
+    /*     { */
+    /*         std::cout << "Got a first bounding curve at index: " << index */ 
+    /*             << " of " << surface_indices.size() << "\n" << std::flush; */
+    /*         std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush; */
 
-    if ( !success )
-    {
-        return false;
-    }
+    /*         success = true; */
+    /*         break; */
+    /*     } */
+    /* } */
 
-    auto tmp_vlist = vlist;
-    size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
-    {
-        std::cout << "Processing surface: " << index 
-            << " of " << surface_indices.size() -1 << "\n" << std::flush;
-        sid = surface_indices[index];
-        std::cout << "sid == " << sid << "\n" << std::flush;
+    /* if ( !success ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
-        if ( modeller_.getLengthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
-        {
-            std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush;
-            for ( size_t i = 0; i < vlist.size(); ++i )
-            {
-                if ( vlist[i] < tmp_vlist[i] )
-                    vlist[i] = tmp_vlist[i];
-            }
-        }
+    /* auto tmp_vlist = vlist; */
+    /* size_t sid; */
+    /* for ( ++index; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     std::cout << "Processing surface: " << index */ 
+    /*         << " of " << surface_indices.size() -1 << "\n" << std::flush; */
+    /*     sid = surface_indices[index]; */
+    /*     std::cout << "sid == " << sid << "\n" << std::flush; */
 
-    }
+    /*     if ( modeller_.getLengthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) ) */
+    /*     { */
+    /*         std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush; */
+    /*         for ( size_t i = 0; i < vlist.size(); ++i ) */
+    /*         { */
+    /*             if ( vlist[i] < tmp_vlist[i] ) */
+    /*                 vlist[i] = tmp_vlist[i]; */
+    /*         } */
+    /*     } */
 
-    flist.clear();
-    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
-    {
-        flist.push_back(i);
-        flist.push_back(i+1);
-    }
+    /* } */
 
-    std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
-    std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
+    /* flist.clear(); */
+    /* for ( size_t i = 0; i < vlist.size()/2 -1; ++i ) */
+    /* { */
+    /*     flist.push_back(i); */
+    /*     flist.push_back(i+1); */
+    /* } */
 
-    convertEntireCurveToBox(vlist, flist, origin_.y+length_.y);
+    /* std::cout << "flist.size() == " << flist.size() << "\n" << std::flush; */
+    /* std::cout << "flist.back() == " << flist.back() << "\n" << std::flush; */
 
-    std::cout << "Got boundary curve\n\n\n" << std::flush; 
-    return true;
+    /* convertEntireCurveToBox(vlist, flist, origin_.y+length_.y); */
+
+    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */ 
+    /* return true; */
 }
 
 bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<double> &vlist, std::vector<size_t> &flist )
@@ -1110,80 +1120,82 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
 
 bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
-    std::cout << "\n\n\nInside getUpperBoundaryWidthwise...\n\n" << std::flush;
+    return false;
 
-    std::vector<size_t> surface_indices;
-    if ( modeller_.preserveAboveIsActive(surface_indices) == false )
-    {
-        std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; 
-        return false;
-    }
+    /* std::cout << "\n\n\nInside getUpperBoundaryWidthwise...\n\n" << std::flush; */
 
-    bool success = false;
-    size_t index;
-    for ( index = 0; index < surface_indices.size(); ++index )
-    {
-        if ( modeller_.getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) )
-        {
-            std::cout << "Got a first bounding curve at index: " << index 
-                << " of " << surface_indices.size() << "\n" << std::flush;
-            std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush;
+    /* std::vector<size_t> surface_indices; */
+    /* if ( modeller_.preserveAboveIsActive(surface_indices) == false ) */
+    /* { */
+    /*     std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; */ 
+    /*     return false; */
+    /* } */
 
-            success = true;
-            break;
-        }
-    }
+    /* bool success = false; */
+    /* size_t index; */
+    /* for ( index = 0; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     if ( modeller_.getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) ) */
+    /*     { */
+    /*         std::cout << "Got a first bounding curve at index: " << index */ 
+    /*             << " of " << surface_indices.size() << "\n" << std::flush; */
+    /*         std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush; */
 
-    if ( !success )
-    {
-        return false;
-    }
+    /*         success = true; */
+    /*         break; */
+    /*     } */
+    /* } */
 
-    auto tmp_vlist = vlist;
-    size_t sid;
-    for ( ++index; index < surface_indices.size(); ++index )
-    {
-        std::cout << "Processing surface: " << index 
-            << " of " << surface_indices.size() -1 << "\n" << std::flush;
-        sid = surface_indices[index];
-        std::cout << "sid == " << sid << "\n" << std::flush;
+    /* if ( !success ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
-        if ( modeller_.getWidthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) )
-        {
-            std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush;
-            for ( size_t i = 0; i < vlist.size(); ++i )
-            {
-                if ( vlist[i] < tmp_vlist[i] )
-                    vlist[i] = tmp_vlist[i];
-            }
-        }
+    /* auto tmp_vlist = vlist; */
+    /* size_t sid; */
+    /* for ( ++index; index < surface_indices.size(); ++index ) */
+    /* { */
+    /*     std::cout << "Processing surface: " << index */ 
+    /*         << " of " << surface_indices.size() -1 << "\n" << std::flush; */
+    /*     sid = surface_indices[index]; */
+    /*     std::cout << "sid == " << sid << "\n" << std::flush; */
 
-    }
+    /*     if ( modeller_.getWidthCrossSectionCurve(sid, cross_sec, tmp_vlist, flist) ) */
+    /*     { */
+    /*         std::cout << "tmp_vlist.size() == " << tmp_vlist.size() << "\n" << std::flush; */
+    /*         for ( size_t i = 0; i < vlist.size(); ++i ) */
+    /*         { */
+    /*             if ( vlist[i] < tmp_vlist[i] ) */
+    /*                 vlist[i] = tmp_vlist[i]; */
+    /*         } */
+    /*     } */
 
-    flist.clear();
-    for ( size_t i = 0; i < vlist.size()/2 -1; ++i )
-    {
-        flist.push_back(i);
-        flist.push_back(i+1);
-    }
+    /* } */
 
-    std::cout << "flist.size() == " << flist.size() << "\n" << std::flush;
-    std::cout << "flist.back() == " << flist.back() << "\n" << std::flush;
+    /* flist.clear(); */
+    /* for ( size_t i = 0; i < vlist.size()/2 -1; ++i ) */
+    /* { */
+    /*     flist.push_back(i); */
+    /*     flist.push_back(i+1); */
+    /* } */
 
-    convertEntireCurveToBox(vlist, flist, origin_.y+length_.y);
+    /* std::cout << "flist.size() == " << flist.size() << "\n" << std::flush; */
+    /* std::cout << "flist.back() == " << flist.back() << "\n" << std::flush; */
 
-    std::cout << "Got boundary curve\n\n\n" << std::flush; 
-    return true;
+    /* convertEntireCurveToBox(vlist, flist, origin_.y+length_.y); */
+
+    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */ 
+    /* return true; */
 }
 
 
 /* Change the model's properties */
 
 
-
 bool RulesProcessor::setLowResolution()
 {
-    bool status = modeller_.tryChangeDiscretization(16, 16);
+    /* bool status = modeller_.tryChangeDiscretization(16, 16); */
+    bool status = modeller_.changeDiscretization(16, 16);
     if ( status == false )
     {
         return false;
@@ -1196,7 +1208,8 @@ bool RulesProcessor::setLowResolution()
 
 bool RulesProcessor::setMediumResolution()
 {
-    bool status = modeller_.tryChangeDiscretization(64, 64);
+    /* bool status = modeller_.tryChangeDiscretization(64, 64); */
+    bool status = modeller_.changeDiscretization(64, 64);
     if ( status == false )
     {
         return false;
@@ -1209,7 +1222,8 @@ bool RulesProcessor::setMediumResolution()
 
 bool RulesProcessor::setHighResolution()
 {
-    bool status = modeller_.tryChangeDiscretization(64, 64);
+    /* bool status = modeller_.tryChangeDiscretization(64, 64); */
+    bool status = modeller_.changeDiscretization(64, 64);
     if ( status == false )
     {
         return false;
@@ -1223,7 +1237,7 @@ bool RulesProcessor::setHighResolution()
 bool RulesProcessor::isLowResolution()
 {
     size_t num_width = getWidthResolution();
-    size_t num_depth = getDepthResolution();
+    size_t num_depth = getLengthResolution();
 
     if ( (num_width == 16) && (num_depth == 16) )
     {
@@ -1236,7 +1250,7 @@ bool RulesProcessor::isLowResolution()
 bool RulesProcessor::isMediumResolution()
 {
     size_t num_width = getWidthResolution();
-    size_t num_depth = getDepthResolution();
+    size_t num_depth = getLengthResolution();
 
     if ( (num_width == 64) && (num_depth == 64) )
     {
@@ -1249,7 +1263,7 @@ bool RulesProcessor::isMediumResolution()
 bool RulesProcessor::isHighResolution()
 {
     size_t num_width = getWidthResolution();
-    size_t num_depth = getDepthResolution();
+    size_t num_depth = getLengthResolution();
 
     if ( (num_width == 64) && (num_depth == 64) )
     {
@@ -1265,7 +1279,8 @@ bool isHighResolution();
 
 bool RulesProcessor::setModellingResolution( std::size_t width, std::size_t length )
 {
-    bool status = modeller_.tryChangeDiscretization(width, length);
+    /* bool status = modeller_.tryChangeDiscretization(width, length); */
+    bool status = modeller_.changeDiscretization(width, length);
     if ( status == false )
     {
         return false;
@@ -1279,7 +1294,8 @@ bool RulesProcessor::setModellingResolution( std::size_t width, std::size_t leng
 
 bool RulesProcessor::setDiagnosticsResolution( std::size_t width, std::size_t length)
 {
-    bool status = modeller_.tryChangeDiscretization(width, length);
+    /* bool status = modeller_.tryChangeDiscretization(width, length); */
+    bool status = modeller_.changeDiscretization(width, length);
     if ( status == false )
     {
         return false;
@@ -1365,20 +1381,22 @@ bool RulesProcessor::defineAbove( size_t surface_index )
 {
     displayNotice("Warning", "Inside defineAbove( size_t )");
     return false;
-    return modeller_.createAbove(surface_index);
+
+    /* return modeller_.createAbove(surface_index); */
 }
 
 bool RulesProcessor::defineAbove( std::vector<size_t> &surface_indices )
 {
     displayNotice("Warning", "Inside defineAbove( vector<size_t> & )");
     return false;
-    if ( surface_indices.empty() )
-    {
-        return false;
-    }
 
-    size_t surface_index = surface_indices.front();
-    return modeller_.createAbove(surface_index);
+    /* if ( surface_indices.empty() ) */
+    /* { */
+    /*     return false; */
+    /* } */
+
+    /* size_t surface_index = surface_indices.front(); */
+    /* return modeller_.createAbove(surface_index); */
 }
 
 //
@@ -1390,7 +1408,8 @@ void RulesProcessor::stopDefineAbove()
 {
     displayNotice("Warning", "Inside stopDefineAbove()");
     return;
-    return modeller_.stopCreateAbove();
+
+    /* return modeller_.stopCreateAbove(); */
 }
 
 //
@@ -1402,20 +1421,22 @@ bool RulesProcessor::defineBelow( size_t surface_index )
 {
     displayNotice("Warning", "Inside defineBelow( size_t )");
     return false;
-    return modeller_.createBelow(surface_index);
+
+    /* return modeller_.createBelow(surface_index); */
 }
 
 bool RulesProcessor::defineBelow( std::vector<size_t> surface_indices ) 
 {
     displayNotice("Warning", "Inside defineBelow( vector<size_t> & )");
     return false;
-    if ( surface_indices.empty() )
-    {
-        return false;
-    }
 
-    size_t surface_index = surface_indices.front();
-    return modeller_.createBelow(surface_index);
+    /* if ( surface_indices.empty() ) */
+    /* { */
+    /*     return false; */
+    /* } */
+
+    /* size_t surface_index = surface_indices.front(); */
+    /* return modeller_.createBelow(surface_index); */
 }
 //
 // brief:
@@ -1426,7 +1447,8 @@ void RulesProcessor::stopDefineBelow()
 {
     displayNotice("Warning", "Inside stopDefineBelow()");
     return;
-    modeller_.stopCreateBelow();
+
+    /* modeller_.stopCreateBelow(); */
 }
 
 //<<<<<<< HEAD
@@ -1442,16 +1464,18 @@ bool RulesProcessor::defineAboveIsActive()
 {
     displayNotice("Warning", "Inside defineAboveIsActive()");
     return false;
-    size_t dummy_index;
-    return modeller_.createAboveIsActive(dummy_index);
+
+    /* size_t dummy_index; */
+    /* return modeller_.createAboveIsActive(dummy_index); */
 }
 
 bool RulesProcessor::defineBelowIsActive()
 {
     displayNotice("Warning", "Inside defineBelowIsActive()");
     return false;
-    size_t dummy_index;
-    return modeller_.createBelowIsActive(dummy_index);
+
+    /* size_t dummy_index; */
+    /* return modeller_.createBelowIsActive(dummy_index); */
 }
 
 // DEPRECATED
@@ -1459,7 +1483,8 @@ bool RulesProcessor::defineAboveIsActive( size_t &boundary_index )
 {
     displayNotice("Warning", "Inside defineAboveIsActive(size_t &)");
     return false;
-    return modeller_.createAboveIsActive(boundary_index);
+
+    /* return modeller_.createAboveIsActive(boundary_index); */
 }
 
 // DEPRECATED
@@ -1467,31 +1492,34 @@ bool RulesProcessor::defineBelowIsActive( size_t &boundary_index )
 {
     displayNotice("Warning", "Inside defineBelowIsActive(size_t &)");
     return false;
-    return modeller_.createBelowIsActive(boundary_index);
+
+    /* return modeller_.createBelowIsActive(boundary_index); */
 }
 
 bool RulesProcessor::defineAboveIsActive( std::vector<size_t> &boundary_indices )
 {
     displayNotice("Warning", "Inside defineAboveIsActive(vector<size_t> &)");
     return false;
-    if ( boundary_indices.empty() )
-    {
-        return false;
-    }
 
-    return modeller_.createAboveIsActive(boundary_indices.front());
+    /* if ( boundary_indices.empty() ) */
+    /* { */
+    /*     return false; */
+    /* } */
+
+    /* return modeller_.createAboveIsActive(boundary_indices.front()); */
 }
 
 bool RulesProcessor::defineBelowIsActive( std::vector<size_t> &boundary_indices )
 {
     displayNotice("Warning", "Inside defineBelowIsActive(vector<size_t> &)");
     return false;
-    if ( boundary_indices.empty() )
-    {
-        return false;
-    }
 
-    return modeller_.createBelowIsActive(boundary_indices.front());
+    /* if ( boundary_indices.empty() ) */
+    /* { */
+    /*     return false; */
+    /* } */
+
+    /* return modeller_.createBelowIsActive(boundary_indices.front()); */
 }
 
 void RulesProcessor::removeAbove()
@@ -1577,6 +1605,8 @@ bool RulesProcessor::redo()
 
 bool RulesProcessor::getMesh( size_t surface_id, std::vector<float> &vlist, std::vector<size_t> &flist )
 {
+    return false;
+
     /* class Widget : public QWidget { */
     /*     public: */
     /*         Widget() { */
@@ -1594,7 +1624,7 @@ bool RulesProcessor::getMesh( size_t surface_id, std::vector<float> &vlist, std:
     /* w.setInformativeText("This method is deprecated"); */
     /* int ret = w.exec(); */
 
-    return modeller_.getMesh(surface_id, vlist, flist);
+    /* return modeller_.getMesh(surface_id, vlist, flist); */
 }
 
 bool RulesProcessor::getMesh( size_t surface_id, std::vector<double> &vlist, std::vector<size_t> &flist )
@@ -1611,7 +1641,9 @@ bool RulesProcessor::getNormals( size_t surface_id, std::vector<double> &nlist )
 
 bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
-    return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist);
+    return false;
+
+    /* return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist); */
 }
 
 bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
@@ -1624,7 +1656,9 @@ bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vec
 
 bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist ) 
 {
-    return modeller_.getWidthCrossSectionCurve(surface_id, width, vlist, elist);
+    return false;
+
+    /* return modeller_.getWidthCrossSectionCurve(surface_id, width, vlist, elist); */
 }
 
 bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist ) 
@@ -1647,7 +1681,9 @@ bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width,
 
 bool RulesProcessor::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
-    return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist);
+    return false;
+
+    /* return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist); */
 }
 
 bool RulesProcessor::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist ) 
@@ -1677,8 +1713,11 @@ bool RulesProcessor::saveFile( std::string filename )
         if ( modeller_.canUndo() )
         {
             /* std::cout << " -- undo!"; */
-            modeller_.undo();
-            modeller_.popUndoStack();
+
+            /* modeller_.undo(); */
+            /* modeller_.popUndoStack(); */
+            modeller_.destroyLastSurface(); // equivalent to undo() + popUndoStack()
+
             last_surface_inserted_is_a_test_ = false;
             redo_last_surface = true;
         }
@@ -1763,7 +1802,8 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
 
 bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
-    bool success = (modeller_.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
+    SUtilities u(modeller_);
+    bool success = (u.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
 
     /* if ( success ) */
     /* { */

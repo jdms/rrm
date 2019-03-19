@@ -646,6 +646,30 @@ bool SUtilities::exportToVTK( std::string filename )
     return model_.pimpl_->mesh_->exportToVTK(filename);
 }
 
+std::size_t SUtilities::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
+{
+    /* TetrahedralMeshBuilder mb(pimpl_->container_); */
+    if ( model_.pimpl_->buildTetrahedralMesh() == false )
+    {
+        return 0;
+    }
+
+    bool status = true; 
+    size_t num_elements;
+
+    status &= (model_.pimpl_->mesh_->getVertexCoordinates(vertex_coordinates) > 0);
+
+    if ( status == false )
+    {
+        return 0;
+    }
+
+
+    num_elements = model_.pimpl_->mesh_->getTetrahedronList(element_list);
+
+    return num_elements;
+}
+
 bool SUtilities::getTetrahedralMeshRegions( const std::vector<double> &vcoords, const std::vector<size_t> &elements, std::vector<int> &regions)
 {
 

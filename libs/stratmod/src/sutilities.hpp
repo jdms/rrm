@@ -45,10 +45,13 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         size_t getNumVerticesWidth();
         size_t getNumVerticesDepth();
 
+        // Duplicated in SModeller
         bool getExtrusionPath( std::size_t surface_id, std::vector<double> &path_vertices );
 
+        // Duplicated in SModeller
         bool getNormalList( std::size_t surface_id, std::vector<double> &normals );
 
+        // Duplicated in SModeller
         bool getRegionVolumeList( std::vector<double> &vlist );
 
         bool getIntersectingSurfaceIndices( size_t surface_id, std::vector<size_t> &intersecting_surfaces_indices );
@@ -69,13 +72,19 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         bool exportToTetgen( std::string filename );
         bool exportToVTK( std::string filename );
 
+        // Duplicated in SModeller
         bool getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound);
 
+        // Improved in SModeller
         bool getTetrahedralMeshRegions( const std::vector<double> &vcoords, const std::vector<size_t> &elements, std::vector<int> &regions);
+
+        std::size_t getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector<std::vector<std::size_t>> &element_list );
 
         bool liesBetweenBoundarySurfaces(double x, double y, double z);
 
+        // Duplicated in SModeller
         std::vector<size_t> getSurfacesIndicesBelowPoint(double x, double y, double z);
+        // Duplicated in SModeller
         std::vector<size_t> getSurfacesIndicesAbovePoint(double x, double y, double z);
 
         bool getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length );
