@@ -151,12 +151,8 @@ void CurveItem::setCurve( const PolyCurve& curve_ )
     std::size_t number_of_segments = curve_.getNumberOfSegments();
     for( std::size_t i = 0; i < number_of_segments; ++i )
     {
-/* <<<<<<< HEAD */
-        /* QPolygonF pol_ = std::move(SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) )); */
-/* ======= */
         // get all subpaths of the curve_ and append to the curve.
         QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
-/* >>>>>>> devel */
         curve.addPolygon( pol_ );
     }
 
@@ -182,12 +178,8 @@ void CurveItem::setCurves( const std::map< double, PolyCurve >& curves_, bool sw
             std::size_t number_of_segments = curve_.getNumberOfSegments();
             for( std::size_t i = 0; i < number_of_segments; ++i )
             {
-/* <<<<<<< HEAD */
-                /* QPolygonF pol_ = std::move(SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) )); */
-/* ======= */
                 // get all subpaths of the curve_ and append to the curve.
                 QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
-/* >>>>>>> devel */
                 curve.addPolygon( pol_ );
             }
 
@@ -205,11 +197,7 @@ void CurveItem::setCurves( const std::map< double, PolyCurve >& curves_, bool sw
             std::size_t number_of_segments = curve_.getNumberOfSegments();
             for( std::size_t i = 0; i < number_of_segments; ++i )
             {
-/* <<<<<<< HEAD */
-                /* QPolygonF pol_ = std::move(SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) )); */
-/* ======= */
                 QPolygonF pol_ = SketchLibraryWrapper::fromCurve2DToQt( curve_.getSubcurve( i ) );
-/* >>>>>>> devel */
                 curve.addPolygon( pol_ );
             }
 
