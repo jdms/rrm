@@ -109,7 +109,7 @@ macro(GetGLEW2)
     ###############################################
 
     execute_process(
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLEW_RUNTIME} ${CMAKE_BINARY_DIR}
+	    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLEW_RUNTIME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 
 
