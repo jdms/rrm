@@ -62,6 +62,9 @@ class Interpolant2D
         bool addPointEvaluation( Point2 &&p, double feval ); 
         bool addPointEvaluations( std::vector<Point2> &points, std::vector<double> &fevals ); 
 
+        bool setSmoothingParameter( double value ) { return false; };
+        double getSmoothingParameter() { return 0; };
+
         bool interpolate(); 
 
         void clear(); 
@@ -76,6 +79,8 @@ class Interpolant2D
         std::vector<Point2> points_;
         std::vector<double> fevals_; 
         std::vector<double> weights_; 
+
+        double smoothing_parameter = 0;
 
         bool interpolant_is_set_ = false;  
 

@@ -45,6 +45,9 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         size_t getNumVerticesWidth();
         size_t getNumVerticesDepth();
 
+        bool getVertexList( std::size_t surface_id, std::vector<float> &vlist );
+        bool getVertexList( std::size_t surface_id, std::vector<double> &vlist );
+
         // Duplicated in SModeller
         bool getExtrusionPath( std::size_t surface_id, std::vector<double> &path_vertices );
 
