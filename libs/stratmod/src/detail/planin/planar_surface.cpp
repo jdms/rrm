@@ -228,6 +228,8 @@ void PlanarSurface::setOrigin( const Point3 &o )
     origin.x = o.x; 
     origin.y = o.y; 
     origin.z = o.z; 
+
+    ++global_discretization_state_;
 } 
 
 void PlanarSurface::setOrigin( Point3 &&o ) 
@@ -252,6 +254,8 @@ bool PlanarSurface::setLenght( const Point3 &l )
     lenght.x = l.x; 
     lenght.y = l.y; 
     lenght.z = l.z; 
+
+    ++global_discretization_state_;
 
     return true; 
 }

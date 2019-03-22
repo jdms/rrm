@@ -279,6 +279,27 @@ bool SRules::isValidSurfaceForInsertion( const PlanarSurface::Ptr &sptr, size_t 
     return true; 
 }
 
+void SRules::setOrigin( Point3 o )
+{
+    PlanarSurface::setOrigin(o);
+
+    updateDiscretization();
+    updateCache();
+}
+
+bool SRules::setLength( Point3 p )
+{
+    bool success = PlanarSurface::setLenght(p);
+
+    if (success)
+    {
+        updateDiscretization();
+        updateCache();
+    }
+
+    return success;
+}
+
 bool SRules::setBoundingBox( const Point3 &origin, const Point3 &lenght ) 
 {
     bool status = PlanarSurface::setLenght(lenght); 
@@ -287,6 +308,9 @@ bool SRules::setBoundingBox( const Point3 &origin, const Point3 &lenght )
     }
 
     PlanarSurface::setOrigin(origin); 
+
+    updateDiscretization();
+    updateCache();
 
     return status;
 }

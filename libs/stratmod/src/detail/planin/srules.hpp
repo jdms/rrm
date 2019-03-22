@@ -90,6 +90,22 @@ class SRules
         bool getSurfaceIndex( const PlanarSurface::SurfaceId id, size_t &surface_index ); 
 
 
+        /** \brief Set the bounding box's origin for all PlanarSurfaces
+         *
+         * \param origin: bounding box's origin. 
+         *
+         * \return Whether the bounding box's origin was set or not. 
+         */ 
+        void setOrigin( Point3 origin );
+
+        /** \brief Set the bounding box's length for all PlanarSurfaces
+         *
+         * \param length: bounding box's length. 
+         *
+         * \return Whether the bounding box's length was set or not. 
+         */ 
+        bool setLength( Point3 p );
+
         /** \brief Set the bounding box for all PlanarSurfaces
          *
          * \param origin: bounding box's origin. 

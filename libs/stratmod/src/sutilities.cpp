@@ -42,6 +42,16 @@ size_t SUtilities::getNumVerticesDepth()
     return 2*model_.getLengthDiscretization()+ 1;
 }
 
+bool SUtilities::getVertexList( size_t surface_id, std::vector<float> &vlist )
+{
+    return model_.pimpl_->getVertexList(surface_id, vlist);
+}
+
+bool SUtilities::getVertexList( size_t surface_id, std::vector<double> &vlist )
+{
+    return model_.pimpl_->getVertexList(surface_id, vlist);
+}
+
 bool SUtilities::getExtrusionPath( size_t surface_id, std::vector<double> &path_vertex_list )
 {
     size_t index; 

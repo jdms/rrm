@@ -334,6 +334,7 @@ void SModeller::setOrigin( double x, double y, double z )
     /* } */
 
     pimpl_->origin_ = pimpl_->point3(x, y, z);
+    pimpl_->container_.setOrigin(pimpl_->origin_);
 
     pimpl_->got_origin_ = true; 
 }
@@ -341,7 +342,10 @@ void SModeller::setOrigin( double x, double y, double z )
 
 bool SModeller::setSize( double x, double y, double z )
 {
-    if ( ( x > 0 ) && ( y > 0 ) && ( z > 0 ) ) 
+    bool success = pimpl_->container_.setLength( pimpl_->point3(x, y, z) );
+
+    if ( success )
+    /* if ( ( x > 0 ) && ( y > 0 ) && ( z > 0 ) ) */ 
     { 
         /* if ( pimpl_->default_coordinate_system_ ) */
         /* { */
@@ -359,11 +363,9 @@ bool SModeller::setSize( double x, double y, double z )
         pimpl_->lenght_ = pimpl_->point3(x, y, z);
 
         pimpl_->got_lenght_ = true; 
-
-        return true;
     }
 
-    return false; 
+    return success; 
 }
 
 void SModeller::getOrigin( double &x, double &y, double &z )

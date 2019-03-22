@@ -276,11 +276,12 @@ endif()
 
 # include_directories(${CMAKE_SOURCE_DIR}/src)
 
+set(STRATMOD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/stratmod)
 set(HEADERS 
-    include/stratmod/stratmod_win_dll_export_handler.hpp
-    include/stratmod/smodeller_primitives.hpp
-    include/stratmod/smodeller.hpp
-    include/stratmod/sutilities.hpp
+    ${STRATMOD_INCLUDE_DIR}/stratmod_win_dll_export_handler.hpp
+    ${STRATMOD_INCLUDE_DIR}/smodeller_primitives.hpp
+    ${STRATMOD_INCLUDE_DIR}/smodeller.hpp
+    ${STRATMOD_INCLUDE_DIR}/sutilities.hpp
     )
 
 set(STRATMOD_LIB_SOURCES 
@@ -307,9 +308,14 @@ if(STRATMOD_BUILD_SHARED_LIBRARY)
 endif()
 
 if( ${STRATMOD_BUILD_USING_OPENMP} )
-    target_link_libraries(stratmod planin OpenMP::OpenMP_CXX)
+    target_link_libraries(stratmod 
+        PRIVATE 
+            planin 
+        PUBLIC 
+            OpenMP::OpenMP_CXX
+        )
 else()
-    target_link_libraries(stratmod planin)
+    target_link_libraries(stratmod PRIVATE planin)
 endif()
 
 target_include_directories(stratmod
@@ -335,7 +341,7 @@ install(TARGETS stratmod
     COMPONENT library
     )
 
-install(FILES ${HEADERS}
+install(DIRECTORY ${STRATMOD_INCLUDE_DIR}
     DESTINATION ${INSTALL_DESTINATION}/include
     )
 
