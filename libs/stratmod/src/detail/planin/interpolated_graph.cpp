@@ -333,6 +333,16 @@ bool InterpolatedGraph::addPoints( const std::vector<Point3> &points )
     return status; 
 } 
 
+bool InterpolatedGraph::setFillDistance( double value )
+{
+    return f.setFillDistance(value);
+}
+
+double InterpolatedGraph::getFillDistance()
+{
+    return f.getFillDistance();
+}
+
 bool InterpolatedGraph::generateSurface() 
 {
     if ( surfaceIsSet() == true ) { 

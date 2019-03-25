@@ -62,8 +62,8 @@ class Interpolant2D
         bool addPointEvaluation( Point2 &&p, double feval ); 
         bool addPointEvaluations( std::vector<Point2> &points, std::vector<double> &fevals ); 
 
-        bool setSmoothingParameter( double value ) { return false; };
-        double getSmoothingParameter() { return 0; };
+        bool setFillDistance( double value );
+        double getFillDistance();
 
         bool interpolate(); 
 
@@ -80,7 +80,7 @@ class Interpolant2D
         std::vector<double> fevals_; 
         std::vector<double> weights_; 
 
-        double smoothing_parameter = 0;
+        double fill_distance_ = 1.E-11; // based on the fact that DBL_EPSILON ~ 1.E-16
 
         bool interpolant_is_set_ = false;  
 
@@ -97,7 +97,6 @@ class Interpolant2D
     template<typename Archive>
     void Interpolant2D::serialize( Archive &ar, const std::uint32_t version )
     {
-        (void)(version);
         ar(
             dim_, 
             poly_dim_, 
@@ -106,9 +105,16 @@ class Interpolant2D
             weights_, 
             interpolant_is_set_
           );
+
+        if ( version >= 2 )
+        {
+            ar(
+                fill_distance_
+              );
+        }
     }
 
-    CEREAL_CLASS_VERSION(Interpolant2D, 1);
+    CEREAL_CLASS_VERSION(Interpolant2D, 2);
 
 #else
     template<typename Archive>

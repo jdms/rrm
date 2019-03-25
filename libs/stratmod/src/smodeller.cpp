@@ -563,10 +563,12 @@ void SModeller::removeBelowIntersection()
 /* } */
 
 bool SModeller::createSurface( size_t surface_id, const std::vector<double> &point_data, 
+                double fill_distance,
                 const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
 {
     bool extruded_surface = false; 
-    return pimpl_->insertSurface(point_data, surface_id, lower_bound_ids, upper_bound_ids, extruded_surface); 
+    bool orthogonally_oriented = false;
+    return pimpl_->insertSurface(point_data, surface_id, lower_bound_ids, upper_bound_ids, extruded_surface, orthogonally_oriented, fill_distance); 
 }
 
 /* bool SModeller::createExtrudedSurface( size_t surface_id, const std::vector<double> &point_data ) */
@@ -575,8 +577,11 @@ bool SModeller::createSurface( size_t surface_id, const std::vector<double> &poi
 /*     return pimpl_->insertSurface(point_data, surface_id, std::vector<size_t>(), std::vector<size_t>(), extruded_surface); */
 /* } */
 
-bool SModeller::createLengthwiseExtrudedSurface( size_t surface_id, const std::vector<double> &point_data, 
-                const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
+bool SModeller::createLengthwiseExtrudedSurface( size_t surface_id, 
+        const std::vector<double> &point_data, 
+        double fill_distance,
+        const std::vector<size_t> lower_bound_ids, 
+        const std::vector<size_t> upper_bound_ids )
 {
     bool orthogonally_oriented = false; 
     size_t cross_section_depth = 0;
@@ -585,25 +590,28 @@ bool SModeller::createLengthwiseExtrudedSurface( size_t surface_id, const std::v
     return pimpl_->insertExtrusionAlongPath(surface_id, 
             point_data, cross_section_depth, 
             empty_path, 
-            lower_bound_ids, upper_bound_ids, orthogonally_oriented); 
+            lower_bound_ids, upper_bound_ids, orthogonally_oriented, fill_distance); 
 }
 
 
 bool SModeller::createLengthwiseExtrudedSurface( size_t surface_id, 
         const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
         const std::vector<double> &path_curve_point_data, 
-
+        double fill_distance,
         const std::vector<size_t> lower_bound_ids,
         const std::vector<size_t> upper_bound_ids
         )
 {
     bool orthogonally_oriented = false; 
-    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids, orthogonally_oriented);
+    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids, orthogonally_oriented, fill_distance);
 }
 
 
-bool SModeller::createWidthwiseExtrudedSurface( size_t surface_id, const std::vector<double> &point_data, 
-                const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
+bool SModeller::createWidthwiseExtrudedSurface( size_t surface_id, 
+        const std::vector<double> &point_data, 
+        double fill_distance,
+        const std::vector<size_t> lower_bound_ids, 
+        const std::vector<size_t> upper_bound_ids )
 {
     bool orthogonally_oriented = true; 
     size_t cross_section_depth = 0;
@@ -612,32 +620,32 @@ bool SModeller::createWidthwiseExtrudedSurface( size_t surface_id, const std::ve
     return pimpl_->insertExtrusionAlongPath(surface_id, 
             point_data, cross_section_depth, 
             empty_path, 
-            lower_bound_ids, upper_bound_ids, orthogonally_oriented); 
+            lower_bound_ids, upper_bound_ids, orthogonally_oriented, fill_distance); 
 }
 
 
 bool SModeller::createWidthwiseExtrudedSurface( size_t surface_id, 
         const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
         const std::vector<double> &path_curve_point_data, 
-
+        double fill_distance,
         const std::vector<size_t> lower_bound_ids,
         const std::vector<size_t> upper_bound_ids
         )
 {
     bool orthogonally_oriented = true; 
-    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids, orthogonally_oriented);
+    return pimpl_->insertExtrusionAlongPath(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids, orthogonally_oriented, fill_distance);
 }
 
 
 bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
         const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
         const std::vector<double> &path_curve_point_data, 
-
+        double fill_distance,
         const std::vector<size_t> lower_bound_ids,
         const std::vector<size_t> upper_bound_ids
         )
 {
-    bool status = createLengthwiseExtrudedSurface(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids);
+    bool status = createLengthwiseExtrudedSurface(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, fill_distance, lower_bound_ids, upper_bound_ids);
 
     if ( status == false )
     {
@@ -659,12 +667,12 @@ bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vect
 bool SModeller::tryCreateWidthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
         const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
         const std::vector<double> &path_curve_point_data, 
-
+        double fill_distance,
         const std::vector<size_t> lower_bound_ids,
         const std::vector<size_t> upper_bound_ids
         )
 {
-    bool status = createWidthwiseExtrudedSurface(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, lower_bound_ids, upper_bound_ids);
+    bool status = createWidthwiseExtrudedSurface(surface_id, cross_section_curve_point_data, cross_section_depth, path_curve_point_data, fill_distance, lower_bound_ids, upper_bound_ids);
 
     if ( status == false )
     {
@@ -690,14 +698,14 @@ bool SModeller::tryCreateWidthwiseExtrudedSurface( size_t surface_id, std::vecto
 /* } */
 
 bool SModeller::tryCreateSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces, 
-        const std::vector<double> &point_data, 
+        const std::vector<double> &point_data, double fill_distance, 
         const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
 {
     /* State current = pimpl_->current_.state_; */
     /* pimpl_->current_.state_ = State::SKETCHING; */
 
     /* std::cout << "Trying to create a surface...\n"; */ 
-    bool status = createSurface(surface_id, point_data, lower_bound_ids, upper_bound_ids); 
+    bool status = createSurface(surface_id, point_data, fill_distance, lower_bound_ids, upper_bound_ids); 
 
     /* pimpl_->current_.state_ = current; */ 
 
@@ -728,12 +736,14 @@ bool SModeller::tryCreateSurface( size_t surface_id, std::vector<size_t> &inters
 
 bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
         const std::vector<double> &point_data,
-        const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
+        double fill_distance,
+        const std::vector<size_t> lower_bound_ids, 
+        const std::vector<size_t> upper_bound_ids )
 {
     /* State current = pimpl_->current_.state_; */
     /* pimpl_->current_.state_ = State::SKETCHING; */
 
-    bool status = createLengthwiseExtrudedSurface(surface_id, point_data, lower_bound_ids, upper_bound_ids); 
+    bool status = createLengthwiseExtrudedSurface(surface_id, point_data, fill_distance, lower_bound_ids, upper_bound_ids); 
 
     /* pimpl_->current_.state_ = current; */ 
 
@@ -756,12 +766,14 @@ bool SModeller::tryCreateLengthwiseExtrudedSurface( size_t surface_id, std::vect
 
 bool SModeller::tryCreateWidthwiseExtrudedSurface( size_t surface_id, std::vector<size_t> &intersected_surfaces,
         const std::vector<double> &point_data,
-        const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids )
+        double fill_distance,
+        const std::vector<size_t> lower_bound_ids, 
+        const std::vector<size_t> upper_bound_ids )
 {
     /* State current = pimpl_->current_.state_; */
     /* pimpl_->current_.state_ = State::SKETCHING; */
 
-    bool status = createWidthwiseExtrudedSurface(surface_id, point_data, lower_bound_ids, upper_bound_ids); 
+    bool status = createWidthwiseExtrudedSurface(surface_id, point_data, fill_distance, lower_bound_ids, upper_bound_ids); 
 
     /* pimpl_->current_.state_ = current; */ 
 

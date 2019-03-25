@@ -1466,7 +1466,44 @@ void PlanarSurface::setPathOrigin( double abscissa, double ordinate )
     f->setPathOrigin(abscissa, ordinate);
 }
 
-bool PlanarSurface::generateSurface() { 
+bool PlanarSurface::setMeshFillDistance()
+{
+    double mesh_fill_distance = 0; 
+    
+    if ( isExtrudedSurface() ) 
+    {
+        if ( isOrthogonallyOrientedSurface() )
+        {
+            mesh_fill_distance = 0.5*(lenght.x - origin.x)/discretization_X;
+        }
+        else
+        {
+            mesh_fill_distance = 0.5*(lenght.y - origin.y)/discretization_Y;
+        }
+    }
+    else
+    {
+        mesh_fill_distance = 0.5*std::max( 
+                (lenght.x - origin.x)/discretization_X, 
+                (lenght.y - origin.y)/discretization_Y 
+                );
+    }
+
+    return f->setFillDistance(mesh_fill_distance);
+}
+
+bool PlanarSurface::setFillDistance( double value )
+{
+    return f->setFillDistance(value);
+}
+
+double PlanarSurface::getFillDistance()
+{
+    return f->getFillDistance();
+}
+
+bool PlanarSurface::generateSurface() 
+{ 
     if ( f->generateSurface() == false ) { 
         interpolant_is_set_ = false; 
         /* std::cout << "No interpolant today...\n\n"; */ 

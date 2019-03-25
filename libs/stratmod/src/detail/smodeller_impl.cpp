@@ -334,7 +334,7 @@ bool SModellerImplementation::isInitialized()
 
 bool SModellerImplementation::insertSurface( const std::vector<double> &point_data, size_t surface_id, 
         const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids, 
-        bool extruded_surface, bool orthogonally_oriented  )
+        bool extruded_surface, bool orthogonally_oriented, double fill_distance )
 {
     INFO( "Got into pimpl_->insertSurface(...)" );
 
@@ -379,6 +379,14 @@ bool SModellerImplementation::insertSurface( const std::vector<double> &point_da
         sptr->addPoint( point3(point_data[i+0], point_data[i+1], point_data[i+2]) );
     }
 
+    if ( fill_distance < 0 )
+    {
+        sptr->setMeshFillDistance();
+    }
+    else
+    {
+        sptr->setFillDistance(fill_distance);
+    }
     sptr->generateSurface(); 
 
     /* Execute selected Geologic Rule */
@@ -399,7 +407,8 @@ bool SModellerImplementation::insertExtrusionAlongPath( size_t surface_id,
         const std::vector<double> &cross_section_curve, double cross_section_depth,
         const std::vector<double> &path_curve,
         const std::vector<size_t> lower_bound_ids, const std::vector<size_t> upper_bound_ids, 
-        bool orthogonally_oriented )
+        bool orthogonally_oriented, 
+        double fill_distance )
 {
     INFO( "Got into pimpl_->insertSurface(...)" );
 
@@ -457,6 +466,14 @@ bool SModellerImplementation::insertExtrusionAlongPath( size_t surface_id,
     }
     sptr->setPathOrigin( cross_section_depth, 0. );
 
+    if ( fill_distance < 0 )
+    {
+        sptr->setMeshFillDistance();
+    }
+    else
+    {
+        sptr->setFillDistance(fill_distance);
+    }
     sptr->generateSurface(); 
 
     /* Execute selected Geologic Rule */

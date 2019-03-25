@@ -2210,7 +2210,8 @@ bool RulesProcessor::createSurface( size_t surface_index, std::vector<double> &p
 
     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool 
     {
-        return this->modeller_.createSurface(s_id, pts);
+        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
+        return this->modeller_.createSurface(s_id, pts, fill_distance);
     };
 
     bool success = processSurfaceCreation(surfaceCreator, surface_index, points);
@@ -2239,7 +2240,8 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 {
     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
     {
-        return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts);
+        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
+        return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, fill_distance);
     };
 
     bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data);
@@ -2256,7 +2258,8 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
             size_t s_id, const std::vector<double> &cross_sec_pts, 
             double cross_sec, const std::vector<double> &path_pts ) -> bool 
     {
-        return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts);
+        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
+        return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance);
     };
 
     bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 
@@ -2271,7 +2274,8 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
 {
     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
     {
-        return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts);
+        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
+        return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, fill_distance);
     };
 
     bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data);
@@ -2288,7 +2292,8 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
             size_t s_id, const std::vector<double> &cross_sec_pts, 
             double cross_sec, const std::vector<double> &path_pts ) -> bool 
     {
-        return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts);
+        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
+        return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance);
     };
 
     bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 

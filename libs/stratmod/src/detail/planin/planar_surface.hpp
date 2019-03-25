@@ -87,6 +87,10 @@ class PlanarSurface {
         static bool setLenght( Point3 &&l ); 
 
         /* Create surface. */ 
+        bool setMeshFillDistance();
+        bool setFillDistance( double value );
+        double getFillDistance();
+
         bool generateSurface(); 
         bool updateRawCache(); 
         bool updateCache();
