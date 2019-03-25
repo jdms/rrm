@@ -2153,7 +2153,7 @@ bool RulesProcessor::processSurfaceCreation( FunctionType &&surfaceCreator, size
 {
     if ( last_surface_inserted_is_a_test_ == true )
     {
-        modeller_.undo();
+        modeller_.destroyLastSurface();
         last_surface_inserted_is_a_test_ = false;
     }
 
@@ -2175,7 +2175,7 @@ bool RulesProcessor::processSurfaceCreation( FunctionType &&surfaceCreator, size
 
         if ( success == false )
         {
-            modeller_.undo();
+            modeller_.destroyLastSurface();
         }
     }
 
