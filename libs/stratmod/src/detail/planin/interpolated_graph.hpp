@@ -95,6 +95,9 @@ class InterpolatedGraph
         bool addExtrusionPathPoint( double abscissa, double ordinate );
         void setPathOrigin( double abscissa, double ordinate = 0. );
 
+        bool setFillDistance( double value );
+        double getFillDistance();
+
         bool generateSurface(); 
 
         /* bool getMesh( BoundBox bbox, MeshType *mesh ); */ 

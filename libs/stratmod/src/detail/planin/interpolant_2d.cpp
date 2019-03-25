@@ -178,6 +178,26 @@ bool Interpolant2D::addPointEvaluations( std::vector<Point2> &points, std::vecto
     return true; 
 }
 
+bool Interpolant2D::setFillDistance( double value ) 
+{ 
+    if ( value < 0 )
+    {
+        return false; 
+    }
+
+    // Compromise between accuracy and the reality of numerically solving a linear problem
+    double min_eigenvalue_sqrt = 1E-5; 
+    fill_distance_ = (value >= min_eigenvalue_sqrt) ? value : min_eigenvalue_sqrt;
+
+    return true;
+}
+
+double Interpolant2D::getFillDistance() 
+{ 
+    return fill_distance_; 
+};
+
+
 bool Interpolant2D::interpolate() 
 {
     /* TODO: this methos assumes that input points_ is always valid, beware */
@@ -198,7 +218,9 @@ bool Interpolant2D::interpolate()
         local_fevals.push_back(0.0);
     }
 
-    const double eigenvalues_lower_bound = 0.01; 
+    // TODO: the actual smoothing parameter depends on the kernel -- the following 
+    // corresponds to the smoothing parameter of a ThinPlateSpline22
+    const double eigenvalues_lower_bound = fill_distance_*fill_distance_; 
     double aij = 0; 
     Point2 pi, pj; 
     Eigen::MatrixXd A(size + poly_dim_, size + poly_dim_); 

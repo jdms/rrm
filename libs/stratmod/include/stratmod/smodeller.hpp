@@ -160,12 +160,14 @@ class STRATMODLIB_DLL_HANDLER SModeller
         
         bool createSurface( std::size_t surface_id, 
                 const std::vector<double> &point_data,
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(), 
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>() 
                 );
 
         bool createLengthwiseExtrudedSurface( std::size_t surface_id, 
                 const std::vector<double> &cross_section_curve_point_data,
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
@@ -173,12 +175,14 @@ class STRATMODLIB_DLL_HANDLER SModeller
         bool createLengthwiseExtrudedSurface( std::size_t surface_id, 
                 const std::vector<double> &cross_section_curve_point_data, double cross_section, 
                 const std::vector<double> &path_curve_point_data, 
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
 
         bool createWidthwiseExtrudedSurface( std::size_t surface_id, 
                 const std::vector<double> &cross_section_curve_point_data,
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
@@ -186,18 +190,21 @@ class STRATMODLIB_DLL_HANDLER SModeller
         bool createWidthwiseExtrudedSurface( std::size_t surface_id, 
                 const std::vector<double> &cross_section_curve_point_data, double cross_section, 
                 const std::vector<double> &path_curve_point_data, 
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
 
         bool tryCreateSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
                 const std::vector<double> &point_data,
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(), 
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>() 
                 );
 
         bool tryCreateLengthwiseExtrudedSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
                 const std::vector<double> &cross_section_curve_point_data,
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(), 
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
@@ -205,12 +212,14 @@ class STRATMODLIB_DLL_HANDLER SModeller
         bool tryCreateLengthwiseExtrudedSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
                 const std::vector<double> &cross_section_curve_point_data, double cross_section, 
                 const std::vector<double> &path_curve_point_data, 
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
 
         bool tryCreateWidthwiseExtrudedSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
                 const std::vector<double> &cross_section_curve_point_data,
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(), 
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
@@ -218,6 +227,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
         bool tryCreateWidthwiseExtrudedSurface( std::size_t surface_id, std::vector<std::size_t> &intersected_surfaces,
                 const std::vector<double> &cross_section_curve_point_data, double cross_section, 
                 const std::vector<double> &path_curve_point_data, 
+                double fill_distance = 0.0,
                 const std::vector<std::size_t> lower_bound_ids = std::vector<std::size_t>(),
                 const std::vector<std::size_t> upper_bound_ids = std::vector<std::size_t>()
                 );
