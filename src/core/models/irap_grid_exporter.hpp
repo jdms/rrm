@@ -34,9 +34,6 @@
 #include <istream>
 #include <fstream>
 
-#include <QString>
-
-
 #include <math.h>
 #include <iomanip>
 #include <float.h>
@@ -44,96 +41,84 @@
 #include <vector>
 
 /**
- *  A wrapper to export surfaces meshes to the format Irap Grid
+ *  A wrapper to export surfaces' meshes to the Irap Grid format
  */
 
 class IrapGridExporter
 {
-
     public:
-
-
         /**
-        * Constructor.
-        */
+         * Constructor.
+         */
         IrapGridExporter();
 
-
         /**
-        * Method to set the bounding box of the object
-        * @param xMax the maximum value of X
-        * @param yMax the maximum value of Y
-        * @param zMax the maximum value of Z
-        * @param xMin the minimum value of X
-        * @param yMin the minimum value of Y
-        * @param zMin the minimum value of Z
-        * @return Void
-        */
+         * Method to set the bounding box of the object
+         * @param xMax the maximum value of X
+         * @param yMax the maximum value of Y
+         * @param zMax the maximum value of Z
+         * @param xMin the minimum value of X
+         * @param yMin the minimum value of Y
+         * @param zMin the minimum value of Z
+         * @return Void
+         */
         void setBoundingBox(float xMin, float xMax, float yMin, float yMax , float zMin, float zMax );
 
-
         /**
-        * Method to set the height values of each vertice of the surface mesh
-        * @param vvalues the height values of each vertice of the surface mesh
-        * @return Void
-        */
+         * Method to set the height values of each vertex of the surface mesh
+         * @param values the height values of each vertex of the surface mesh
+         * @return Void
+         */
         void setVectorValues( const std::vector<float>& vvalues );
 
-
         /**
-        * Method to set the size of the grid, i.e., the number of discretization in both directions, 'WIDTH' and 'DEPTH'
-        * @param nlinesI the number of discretization in the direction 'WIDTH'
-        * @param nlinesJ the number of discretization in the direction 'DEPTH'
-        * @return Void
-        */
+         * Method to set the size of the grid, i.e., the number of discretization in both directions, 'WIDTH' and 'DEPTH'
+         * @param nlinesI the number of discretization in the direction 'WIDTH'
+         * @param nlinesJ the number of discretization in the direction 'DEPTH'
+         * @return Void
+         */
         void setSize( int nlinesI, int nlinesJ );
 
-
         /**
-        * Method to set the discretization intervals in both directions, 'WIDTH' and 'DEPTH'
-        * @param dx the discretization interval in the direction 'WIDTH'
-        * @param dy the discretization interval in the direction 'DEPTH'
-        * @return Void
-        */
+         * Method to set the discretization intervals in both directions, 'WIDTH' and 'DEPTH'
+         * @param dx the discretization interval in the direction 'WIDTH'
+         * @param dy the discretization interval in the direction 'DEPTH'
+         * @return Void
+         */
         void setSpacing( float dx, float dy );
 
-
         /**
-        * Method to save the mesh information in a file
-        * @param filename the name of the file to be saved
-        * @return boolean returns true if the file was saved with success and false otherwise
-        */
+         * Method to save the mesh information in a file
+         * @param filename the name of the file to be saved
+         * @return boolean returns true if the file was saved with success and false otherwise
+         */
         bool writeGridData( const std::string& filename ) const;
 
-
         /**
-        * Method to clear all mesh information
-        * @return Void
-        */
+         * Method to clear all mesh information
+         * @return Void
+         */
         void clearData();
 
 
     protected:
+        std::string fileName;               /**< Name of the file to be read or written. */
 
-        std::string fileName;                                               /**< Name of the file to be read or write. */
+        static const int NCOLUMNSGRID = 6;  /**< Number of columns for each row to write the elements. */
 
-        static const int NCOLUMNSGRID = 6;                                  /**< Number of columns for each row to write the elements. */
+        int             nI, nJ, nK;         /**< Discretization in each direction ('WIDTH', 'HEIGHT' and 'DEPTH', respectively). */
 
-        int             nI, nJ, nK;                                         /**< Number of discretization in each direction 'WIDTH', 'HEIGHT' and 'DEPTH', respectively. */
+        float           dX, dY, dZ;         /**< Interval of discretization in each direction ('WIDTH', 'HEIGHT' and 'DEPTH', respectively). */
 
-        float           dX, dY, dZ;                                         /**< Interval of discretization in each direction 'WIDTH', 'HEIGHT' and 'DEPTH', respectively. */
+        float           maximum[ 3 ];       /**< The maximum of the bounding box. */
 
-        float           maximum[ 3 ];                                       /**< The maximum point of the bounding box. */
+        float           minimum[ 3 ];       /**< The minimum of the bounding box. */
 
-        float           minimum[ 3 ];                                       /**< The minimum point of the bounding box. */
+        std::string undefValueGrid;         /**< Constant set to represent undefined values. */
 
-        std::string undefValueGrid;                                         /**< Define the used value to represent undefined values. */
+        std::vector< float > values;        /**< Vector with the height coordinate of each vertex. */
 
-        std::vector< float > values;                                        /**< Vector with the height coordinate of each vertice */
-
-        float           angle;                                              /**< Define the angle of rotation applied to the vertices, if existent. */
-
-
+        float           angle;              /**< Angle of rotation to be applied to the vertices, if defined. */
 };
 
 #endif // IRAPGRIDEXPORTER_H
