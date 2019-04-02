@@ -69,6 +69,14 @@ void FlowWindow::createWindow()
     createRegionModule();
     createFluidModule();
 
+    //
+    // Felipe suggestions to move FlowDiag forms into tabs
+    //
+    this->tabifyDockWidget(dockWellContainer_, dockWellSceneContainer_);
+    // Why the following line instead of `tabifyDockWidget(dockWellSceneContainer_, dockFluidContainer_)`?
+    this->tabifyDockWidget(dockWellContainer_, dockFluidContainer_);
+    this->tabifyDockWidget(dockFluidContainer_, dockRegionContainer_);
+
 	save_ = new QAction(tr("&Save"));
 	open_ = new QAction(tr("&Open"));
 
