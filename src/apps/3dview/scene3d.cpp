@@ -238,12 +238,8 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     //applying a scale regarding the vertical exaggeration. v_exag should be 1 if the vertical exaggeration is not applied.
     Eigen::Affine3f V_ =  V*Eigen::Scaling( Eigen::Vector3f ( 1., v_exag, 1.) );
 
-
     if( volume != nullptr )
         volume->draw( V_, P, w, h );
-
-    if( main_csection != nullptr )
-        main_csection->draw( V_, P, w, h );
 
     for ( auto it: stratigraphies )
     {
@@ -256,6 +252,17 @@ void Scene3d::draw( const Eigen::Affine3f& V, const Eigen::Matrix4f& P, const in
     {
         std::shared_ptr < RegionShader > region_ = it.second;
         region_->draw( V_, P, w, h );
+    }
+
+    // The visualization is wrong when regions and cross-sections are
+    // co-visualized (transparency issues).  As a work-around, cross sections
+    // are not beeing visualized when regions exist -- cross-sections are only
+    // useful during modelling, anyway. 
+    
+    if ( regions.empty() )
+    {
+        if( main_csection != nullptr )
+            main_csection->draw( V_, P, w, h );
     }
 
 }
