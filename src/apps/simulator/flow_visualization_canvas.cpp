@@ -28,6 +28,7 @@ FlowVisualizationCanvas::FlowVisualizationCanvas(QWidget *parent, QString _curre
     show_axis = true;
 
     this->current_directory = _current_dir.toStdString();
+    std::cout << "FlowVisualizationCanvas::current_directory -- "<< current_directory << std::endl << std::flush;
 }
 
 void FlowVisualizationCanvas::initializeGL()
@@ -439,7 +440,7 @@ void FlowVisualizationCanvas::loadBackGround()
     background->setUniform( "viewportSize", width(), height() );
 
     glBindVertexArray ( va_background );
-        glDrawArrays ( GL_POINTS , 0 , 1 );
+    glDrawArrays ( GL_POINTS , 0 , 1 );
     glBindVertexArray ( 0 );
 
     background->unbind();

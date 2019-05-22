@@ -24,7 +24,9 @@
 #define __MISC__
 
 #include <GL/glew.h>
-#include <GL/glu.h>
+#ifndef __APPLE__
+    #include <GL/glu.h>
+#endif
 
 #include <iostream>
 #include <string>

@@ -598,19 +598,23 @@ QString FlowWindow::getCurrentDirectory()
 {
 
     QDir app_dir = QDir(qApp->applicationDirPath());
-
-#if defined(_WIN32) || defined(_WIN64) // Windows Directory Style
-    QString current_dir(app_dir.path() + "\\");
-
-#elif defined(__linux__)               // Linux Directory Style
     QString current_dir(app_dir.path() + "/");
 
-#else
-    /* Error, both can't be defined or undefined same time */
-    std::cout << "Operate System not supported !"
-        halt();
+/* // */
+/* // BUG: Is this really necessary? Qt is supposed to figure out the system's dir */
+/* // style by itself. */
+/* // */
+/* #if defined(_WIN32) || defined(_WIN64) // Windows Directory Style QString */
+/*     QString current_dir(app_dir.path() + "\\"); */
 
-#endif
+/* #elif defined(__unix__)               // Linux Directory Style */
+/*     QString current_dir(app_dir.path() + "/"); */
+
+/* #else */
+/*     /1* Error, both can't be defined or undefined same time *1/ */
+/*     std::cout << "Operating System not supported!"; */
+/*     exit(1); */
+/* #endif */
 
     //canvas->setCurrentDirectory( current_dir.toStdString() );
 
