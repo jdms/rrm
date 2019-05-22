@@ -457,7 +457,7 @@ bool SModellerImplementation::insertExtrusionAlongPath( size_t surface_id,
         /*     sptr->addPoint( {{{ cross_section_curve[i+0], cross_section_curve[i+2], cross_section_curve[i+1] }}} ); */ 
         /* } */
 
-        sptr->addPoint( point3(cross_section_curve[i+0], cross_section_curve[i+1], cross_section_depth) );
+        sptr->addPoint( Point3{ {{cross_section_curve[i+0], cross_section_depth, cross_section_curve[i+1]}} } );
     }
 
     for ( size_t i = 0; i < path_curve.size(); i += dim )
