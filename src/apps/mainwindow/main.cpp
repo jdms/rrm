@@ -43,22 +43,25 @@ int main( int argc, char *argv[] )
     app.setAttribute( Qt::AA_ShareOpenGLContexts );
     //app.setAttribute( Qt::AA_EnableHighDpiScaling );
 
-    bool testingNativeDriver = app.testAttribute( Qt::AA_UseDesktopOpenGL );
-    if ( !testingNativeDriver )
-    {
-        std::cout << "Neither, your system do not have the hardware requirement " << std::endl
-                  << "nor the driver are not load properly" << std::endl;
-        return 0;
-    }
-
-    QSurfaceFormat format;
-    format.setDepthBufferSize( 16 );
-    format.setSamples( 16 );
+    QSurfaceFormat format; 
+    format.setProfile( QSurfaceFormat::CoreProfile );
+    format.setMajorVersion( 4 );
+    format.setMinorVersion( 1 );
+    /* format.setDepthBufferSize( 16 ); */
+    format.setSamples( 4 );
 
     QSurfaceFormat::setDefaultFormat( format );
 
-    MainWindow w1;
-    w1.show();
+    bool testingNativeDriver = app.testAttribute( Qt::AA_UseDesktopOpenGL );
+    if ( !testingNativeDriver )
+    {
+        std::cout << "Failure to initialize OpenGL: either your system does not have the hardware requirements, or " << std::endl
+                  << "the GPU driver was not loaded properly" << std::endl;
+        return 1;
+    }
+
+    MainWindow w;
+    w.show();
 
     return app.exec();
 }
