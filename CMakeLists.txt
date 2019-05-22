@@ -151,11 +151,16 @@ if(WIN32)
     endif()
     include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
     find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
+
 else()
-    find_package(OpenMP REQUIRED)
-    set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
-    include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
-    find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
+    find_package(OpenMP)
+    # set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
+    # include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
+    # find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
+    execute_process(COMMAND git submodule update --init -- libs/hypre-src
+                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+    add_subdirectory(${CMAKE_SOURCE_DIR}/libs/hypre-src/src)
 endif()
 
 add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/tinyobjloader EXCLUDE_FROM_ALL )
