@@ -1073,122 +1073,122 @@ bool SRules::weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &
 
     return true;
 
-    if ( surfaces.empty() )
-    {
-        return false;
-    }
+/*     if ( surfaces.empty() ) */
+/*     { */
+/*         return false; */
+/*     } */
 
-    std::vector<PlanarSurface::Ptr> lower_bound;
-    bool has_lower_boundary = false;
-    if ( define_above_ )
-    {
-        for ( auto &wptr : lower_bound_ )
-        {
-            if ( auto sptr = wptr.lock() )
-                if ( (sptr != nullptr) && sptr->surfaceIsSet() )
-                {
-                    lower_bound.push_back(sptr);
-                    has_lower_boundary = true;
-                }
-        }
-    }
+/*     std::vector<PlanarSurface::Ptr> lower_bound; */
+/*     bool has_lower_boundary = false; */
+/*     if ( define_above_ ) */
+/*     { */
+/*         for ( auto &wptr : lower_bound_ ) */
+/*         { */
+/*             if ( auto sptr = wptr.lock() ) */
+/*                 if ( (sptr != nullptr) && sptr->surfaceIsSet() ) */
+/*                 { */
+/*                     lower_bound.push_back(sptr); */
+/*                     has_lower_boundary = true; */
+/*                 } */
+/*         } */
+/*     } */
 
-    std::vector<PlanarSurface::Ptr> upper_bound;
-    bool has_upper_boundary = false; 
-    if ( define_below_ )
-    {
-        for ( auto &wptr : upper_bound_ )
-        {
-            if ( auto sptr = wptr.lock() )
-                if ( (sptr != nullptr) && sptr->surfaceIsSet() )
-                {
-                    upper_bound.push_back(sptr);
-                    has_upper_boundary = true;
-                }
-        }
-    }
+/*     std::vector<PlanarSurface::Ptr> upper_bound; */
+/*     bool has_upper_boundary = false; */ 
+/*     if ( define_below_ ) */
+/*     { */
+/*         for ( auto &wptr : upper_bound_ ) */
+/*         { */
+/*             if ( auto sptr = wptr.lock() ) */
+/*                 if ( (sptr != nullptr) && sptr->surfaceIsSet() ) */
+/*                 { */
+/*                     upper_bound.push_back(sptr); */
+/*                     has_upper_boundary = true; */
+/*                 } */
+/*         } */
+/*     } */
 
-    bool isEntireSurface = true; 
-    bool point_status, status, lstatus, ustatus; 
+/*     bool isEntireSurface = true; */ 
+/*     bool point_status, status, lstatus, ustatus; */ 
 
-    // bug
-    auto origin = surfaces.front()->PlanarSurface::getOrigin();
-    auto lenght = surfaces.front()->PlanarSurface::getLenght();
+/*     // bug */
+/*     auto origin = surfaces.front()->PlanarSurface::getOrigin(); */
+/*     auto lenght = surfaces.front()->PlanarSurface::getLenght(); */
 
-    const double lb = origin.z;  
-    const double ub = origin.z + lenght.z;  
+/*     const double lb = origin.z; */  
+/*     const double ub = origin.z + lenght.z; */  
 
-    double height, lheight, uheight; ; 
-    double min_height = origin.z + lenght.z;
-    double max_height = origin.z;
+/*     double height, lheight, uheight; ; */ 
+/*     double min_height = origin.z + lenght.z; */
+/*     double max_height = origin.z; */
 
-    auto num_vertices_omp = surfaces.front()->getNumVertices(); 
-    auto tolerance = surfaces.front()->getTolerance();
+/*     auto num_vertices_omp = surfaces.front()->getNumVertices(); */ 
+/*     auto tolerance = surfaces.front()->getTolerance(); */
 
-    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    /* #pragma omp parallel for shared(lower_surfaces, upper_surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary) private(status, lstatus, ustatus, height, lheight, uheight) default(none) reduction(&&: isEntireSurface) */ 
-    for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) 
-    {
-        status = false;
-        point_status = false;
+/*     // VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type */ 
+/*     // #pragma omp parallel for shared(lower_surfaces, upper_surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, has_upper_boundary) private(status, lstatus, ustatus, height, lheight, uheight) default(none) reduction(&&: isEntireSurface) */ 
+/*     for ( long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i ) */ 
+/*     { */
+/*         status = false; */
+/*         point_status = false; */
 
-        for ( auto &sptr : surfaces )
-        {
-            point_status = sptr->getHeight(i, height); 
-            if ( point_status == false )
-            { 
-                if ( std::fabs(lb - height) <= tolerance ) {
-                    point_status = true; 
-                }
+/*         for ( auto &sptr : surfaces ) */
+/*         { */
+/*             point_status = sptr->getHeight(i, height); */ 
+/*             if ( point_status == false ) */
+/*             { */ 
+/*                 if ( std::fabs(lb - height) <= tolerance ) { */
+/*                     point_status = true; */ 
+/*                 } */
 
-                else if ( std::fabs(height - ub) <= tolerance ) { 
-                    point_status = true; 
-                }
-            }
+/*                 else if ( std::fabs(height - ub) <= tolerance ) { */ 
+/*                     point_status = true; */ 
+/*                 } */
+/*             } */
 
-            if ( max_height < height )
-                max_height = height;
+/*             if ( max_height < height ) */
+/*                 max_height = height; */
 
-            if ( min_height > height )
-                min_height = height;
+/*             if ( min_height > height ) */
+/*                 min_height = height; */
 
-            status |= point_status;
-        }
+/*             status |= point_status; */
+/*         } */
 
-        if ( status == false ) 
-        { 
-            if ( has_lower_boundary ) 
-            { 
-                for ( auto &lower_surface : lower_bound )
-                {
-                    lstatus = lower_surface->getHeight(i, lheight); 
-                    /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; */ 
-                    // which height to compare?
-                    if ( lstatus && ( std::fabs(lheight - min_height) <= tolerance ) ) {
-                        status |= true; 
-                    }
-                    else { 
-                        /* std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; */ 
-                    }
-                }
-            }
-            if ( has_upper_boundary ) 
-            {
-                for ( auto &upper_surface : upper_bound )
-                {
-                    ustatus = upper_surface->getHeight(i, uheight); 
-                    // which height to compare?
-                    if ( ustatus && ( std::fabs(max_height - uheight) <= tolerance ) ) { 
-                        status |= true; 
-                    }
-                }
-            }
-        }
+/*         if ( status == false ) */ 
+/*         { */ 
+/*             if ( has_lower_boundary ) */ 
+/*             { */ 
+/*                 for ( auto &lower_surface : lower_bound ) */
+/*                 { */
+/*                     lstatus = lower_surface->getHeight(i, lheight); */ 
+/*                     /1* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; *1/ */ 
+/*                     // which height to compare? */
+/*                     if ( lstatus && ( std::fabs(lheight - min_height) <= tolerance ) ) { */
+/*                         status |= true; */ 
+/*                     } */
+/*                     else { */ 
+/*                         /1* std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; *1/ */ 
+/*                     } */
+/*                 } */
+/*             } */
+/*             if ( has_upper_boundary ) */ 
+/*             { */
+/*                 for ( auto &upper_surface : upper_bound ) */
+/*                 { */
+/*                     ustatus = upper_surface->getHeight(i, uheight); */ 
+/*                     // which height to compare? */
+/*                     if ( ustatus && ( std::fabs(max_height - uheight) <= tolerance ) ) { */ 
+/*                         status |= true; */ 
+/*                     } */
+/*                 } */
+/*             } */
+/*         } */
 
-        isEntireSurface = isEntireSurface && status; 
-    }
+/*         isEntireSurface = isEntireSurface && status; */ 
+/*     } */
 
-    return isEntireSurface; 
+/*     return isEntireSurface; */ 
 } 
 
 bool SRules::weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces )
@@ -1201,195 +1201,195 @@ bool SRules::weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSur
 
     return true;
 
-    if ( surfaces.empty() )
-    {
-        return false;
-    }
+/*     if ( surfaces.empty() ) */
+/*     { */
+/*         return false; */
+/*     } */
 
-    std::vector<PlanarSurface::Ptr> lower_bound;
-    bool has_lower_boundary = false;
-    if ( define_above_ )
-    {
-        for ( auto &wptr : lower_bound_ )
-        {
-            if ( auto sptr = wptr.lock() )
-                if ( (sptr != nullptr) && sptr->surfaceIsSet() )
-                {
-                    lower_bound.push_back(sptr);
-                    has_lower_boundary = true;
-                }
-        }
-    }
+/*     std::vector<PlanarSurface::Ptr> lower_bound; */
+/*     bool has_lower_boundary = false; */
+/*     if ( define_above_ ) */
+/*     { */
+/*         for ( auto &wptr : lower_bound_ ) */
+/*         { */
+/*             if ( auto sptr = wptr.lock() ) */
+/*                 if ( (sptr != nullptr) && sptr->surfaceIsSet() ) */
+/*                 { */
+/*                     lower_bound.push_back(sptr); */
+/*                     has_lower_boundary = true; */
+/*                 } */
+/*         } */
+/*     } */
 
-    bool isEntireSurface = true; 
-    bool point_status, status, lstatus; 
+/*     bool isEntireSurface = true; */ 
+/*     bool point_status, status, lstatus; */ 
 
-    // bug
-    auto origin = surfaces.front()->PlanarSurface::getOrigin();
-    auto lenght = surfaces.front()->PlanarSurface::getLenght();
+/*     // bug */
+/*     auto origin = surfaces.front()->PlanarSurface::getOrigin(); */
+/*     auto lenght = surfaces.front()->PlanarSurface::getLenght(); */
 
-    const double lb = origin.z;  
-    const double ub = origin.z + lenght.z;  
+/*     const double lb = origin.z; */  
+/*     const double ub = origin.z + lenght.z; */  
 
-    double height, lheight, min_height, max_height;
+/*     double height, lheight, min_height, max_height; */
 
-    auto num_vertices_omp = surfaces.front()->getNumVertices(); 
-    auto tolerance = surfaces.front()->getTolerance();
+/*     auto num_vertices_omp = surfaces.front()->getNumVertices(); */ 
+/*     auto tolerance = surfaces.front()->getTolerance(); */
 
-    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(lower_bound, surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, tolerance, origin, lenght) private(status, lstatus, point_status, height, lheight, min_height, max_height) default(none) reduction(&&: isEntireSurface) 
-    for (long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i)
-    {
-        status = false;
-        point_status = false;
-        min_height = origin.z + lenght.z;
-        max_height = origin.z;
+/*     // VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type */ 
+/*     #pragma omp parallel for shared(lower_bound, surfaces) firstprivate(ub, lb, num_vertices_omp, has_lower_boundary, tolerance, origin, lenght) private(status, lstatus, point_status, height, lheight, min_height, max_height) default(none) reduction(&&: isEntireSurface) */ 
+/*     for (long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i) */
+/*     { */
+/*         status = false; */
+/*         point_status = false; */
+/*         min_height = origin.z + lenght.z; */
+/*         max_height = origin.z; */
 
-        for (auto &sptr : surfaces)
-        {
-            point_status = sptr->getHeight(i, height);
-            if (point_status == false)
-            {
-                if (std::fabs(lb - height) <= tolerance) {
-                    point_status = true;
-                }
+/*         for (auto &sptr : surfaces) */
+/*         { */
+/*             point_status = sptr->getHeight(i, height); */
+/*             if (point_status == false) */
+/*             { */
+/*                 if (std::fabs(lb - height) <= tolerance) { */
+/*                     point_status = true; */
+/*                 } */
 
-                else if (std::fabs(height - ub) <= tolerance) {
-                    point_status = true;
-                }
-            }
+/*                 else if (std::fabs(height - ub) <= tolerance) { */
+/*                     point_status = true; */
+/*                 } */
+/*             } */
 
-            if (max_height < height)
-                max_height = height;
+/*             if (max_height < height) */
+/*                 max_height = height; */
 
-            if (min_height > height)
-                min_height = height;
+/*             if (min_height > height) */
+/*                 min_height = height; */
 
-            status |= point_status;
-        }
+/*             status |= point_status; */
+/*         } */
 
-        if (status == false)
-        {
-            if (has_lower_boundary)
-            {
-                for (auto &lower_surface : lower_bound)
-                {
-                    lstatus = lower_surface->getHeight(i, lheight);
-                    /* std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; */
-                    // which height to compare?
-                    if (lstatus && (std::fabs(lheight - min_height) <= tolerance)) {
-                        status |= true;
-                    }
-                    else {
-                        /* std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; */
-                    }
-                }
-            }
-        }
+/*         if (status == false) */
+/*         { */
+/*             if (has_lower_boundary) */
+/*             { */
+/*                 for (auto &lower_surface : lower_bound) */
+/*                 { */
+/*                     lstatus = lower_surface->getHeight(i, lheight); */
+/*                     // std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(8) << "lstatus value: " << lstatus; */
+/*                     // which height to compare? */
+/*                     if (lstatus && (std::fabs(lheight - min_height) <= tolerance)) { */
+/*                         status |= true; */
+/*                     } */
+/*                     else { */
+/*                         // std::cout << " missed index: " << i << ", distance: " << height - lheight << ", tolerance: " << tolerance << std::endl; */
+/*                     } */
+/*                 } */
+/*             } */
+/*         } */
 
-        isEntireSurface = isEntireSurface && status;
-    }
+/*         isEntireSurface = isEntireSurface && status; */
+/*     } */
 
-    return isEntireSurface; 
+/*     return isEntireSurface; */ 
 } 
 
 bool SRules::weakUpperBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces )
 { 
-    return true;
-
     //
     // Changed to always return true to allow the creation of volumes bounded
     // by non-entire surfaces.  Will leave the old implementation available in
     // case of need.
     //
 
-    if ( surfaces.empty() )
-    {
-        return false;
-    }
+    return true;
 
-    std::vector<PlanarSurface::Ptr> upper_bound;
-    bool has_upper_boundary = false; 
-    if ( define_below_ )
-    {
-        for ( auto &wptr : upper_bound_ )
-        {
-            if ( auto sptr = wptr.lock() )
-                if ( (sptr != nullptr) && sptr->surfaceIsSet() )
-                {
-                    upper_bound.push_back(sptr);
-                    has_upper_boundary = true;
-                }
-        }
-    }
+/*     if ( surfaces.empty() ) */
+/*     { */
+/*         return false; */
+/*     } */
 
-    bool isEntireSurface = true; 
-    bool point_status, status, ustatus; 
+/*     std::vector<PlanarSurface::Ptr> upper_bound; */
+/*     bool has_upper_boundary = false; */ 
+/*     if ( define_below_ ) */
+/*     { */
+/*         for ( auto &wptr : upper_bound_ ) */
+/*         { */
+/*             if ( auto sptr = wptr.lock() ) */
+/*                 if ( (sptr != nullptr) && sptr->surfaceIsSet() ) */
+/*                 { */
+/*                     upper_bound.push_back(sptr); */
+/*                     has_upper_boundary = true; */
+/*                 } */
+/*         } */
+/*     } */
 
-    // bug
-    auto origin = surfaces.front()->PlanarSurface::getOrigin();
-    auto lenght = surfaces.front()->PlanarSurface::getLenght();
+/*     bool isEntireSurface = true; */ 
+/*     bool point_status, status, ustatus; */ 
 
-    const double lb = origin.z;  
-    const double ub = origin.z + lenght.z;  
+/*     // bug */
+/*     auto origin = surfaces.front()->PlanarSurface::getOrigin(); */
+/*     auto lenght = surfaces.front()->PlanarSurface::getLenght(); */
 
-    double height, uheight, min_height, max_height;
+/*     const double lb = origin.z; */  
+/*     const double ub = origin.z + lenght.z; */  
 
-    auto num_vertices_omp = surfaces.front()->getNumVertices(); 
-    auto tolerance = surfaces.front()->getTolerance();
+/*     double height, uheight, min_height, max_height; */
 
-    /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(surfaces, upper_bound) firstprivate(ub, lb, num_vertices_omp, has_upper_boundary, tolerance, origin, lenght) private(status, point_status, ustatus, height, uheight, min_height, max_height) default(none) reduction(&&: isEntireSurface) 
-    for (long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i)
-    {
-        status = false;
-        point_status = false;
-        min_height = origin.z + lenght.z;
-        max_height = origin.z;
+/*     auto num_vertices_omp = surfaces.front()->getNumVertices(); */ 
+/*     auto tolerance = surfaces.front()->getTolerance(); */
 
-        for (auto &sptr : surfaces)
-        {
-            point_status = sptr->getHeight(i, height);
-            if (point_status == false)
-            {
-                if (std::fabs(lb - height) <= tolerance) {
-                    point_status = true;
-                }
+/*     // VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type */ 
+/*     #pragma omp parallel for shared(surfaces, upper_bound) firstprivate(ub, lb, num_vertices_omp, has_upper_boundary, tolerance, origin, lenght) private(status, point_status, ustatus, height, uheight, min_height, max_height) default(none) reduction(&&: isEntireSurface) */ 
+/*     for (long int i = 0; i < static_cast<long int>(num_vertices_omp); ++i) */
+/*     { */
+/*         status = false; */
+/*         point_status = false; */
+/*         min_height = origin.z + lenght.z; */
+/*         max_height = origin.z; */
 
-                else if (std::fabs(height - ub) <= tolerance) {
-                    point_status = true;
-                }
-            }
+/*         for (auto &sptr : surfaces) */
+/*         { */
+/*             point_status = sptr->getHeight(i, height); */
+/*             if (point_status == false) */
+/*             { */
+/*                 if (std::fabs(lb - height) <= tolerance) { */
+/*                     point_status = true; */
+/*                 } */
 
-            if (max_height < height)
-                max_height = height;
+/*                 else if (std::fabs(height - ub) <= tolerance) { */
+/*                     point_status = true; */
+/*                 } */
+/*             } */
 
-            if (min_height > height)
-                min_height = height;
+/*             if (max_height < height) */
+/*                 max_height = height; */
 
-            status |= point_status;
-        }
+/*             if (min_height > height) */
+/*                 min_height = height; */
+
+/*             status |= point_status; */
+/*         } */
 
 
-        if (status == false)
-        {
-            if (has_upper_boundary)
-            {
-                for (auto &upper_surface : upper_bound)
-                {
-                    ustatus = upper_surface->getHeight(i, uheight);
-                    // which height to compare?
-                    if (ustatus && (std::fabs(max_height - uheight) <= tolerance)) {
-                        status |= true;
-                    }
-                }
-            }
-        }
+/*         if (status == false) */
+/*         { */
+/*             if (has_upper_boundary) */
+/*             { */
+/*                 for (auto &upper_surface : upper_bound) */
+/*                 { */
+/*                     ustatus = upper_surface->getHeight(i, uheight); */
+/*                     // which height to compare? */
+/*                     if (ustatus && (std::fabs(max_height - uheight) <= tolerance)) { */
+/*                         status |= true; */
+/*                     } */
+/*                 } */
+/*             } */
+/*         } */
 
-        isEntireSurface = isEntireSurface && status;
-    }
+/*         isEntireSurface = isEntireSurface && status; */
+/*     } */
 
-    return isEntireSurface; 
+/*     return isEntireSurface; */ 
 } 
 
 bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface )  
