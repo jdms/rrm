@@ -54,6 +54,7 @@ endif()
 # target_link_libraries( ${PROJECT_NAME} OpenGL::GL )
 # target_link_libraries( ${PROJECT_NAME} ${GLEW_LIBRARY} ${OPENGL_LIBRARY} )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
 
 ######################################################
 # POST BUILD COMMANDS: COPYING FILES TO EXEC DIRECTORY
