@@ -406,7 +406,9 @@ void FlowVisualizationCanvas::initializeShader()
     /// Requesting Vertex Buffers to the GPU
     glGenBuffers(1, &vb_background);
     glBindBuffer(GL_ARRAY_BUFFER, vb_background);
-    glBufferData(GL_ARRAY_BUFFER, 0, 0, GL_STATIC_DRAW);
+
+    std::vector<GLfloat> vertices = { 0.f, 0.f, 0.f };
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
