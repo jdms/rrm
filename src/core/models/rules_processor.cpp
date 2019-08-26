@@ -1751,6 +1751,7 @@ bool status = modeller_.loadJSON(filename);
 
     if ( status )
     {
+        modeller_.useOpenGLCoordinateSystem();
 		pa_is_active_ = modeller_.preserveAboveIsActive(lower_model_);
 		pb_is_active_ = modeller_.preserveBelowIsActive(upper_model_);
         // enforcePreserveRegion();
