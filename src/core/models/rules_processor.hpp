@@ -20,8 +20,8 @@
  */
 
 
-#ifndef __RULES_PROCESSOR__
-#define __RULES_PROCESSOR__
+#ifndef RRM_CORE_MODELS_RULES_PROCESSOR
+#define RRM_CORE_MODELS_RULES_PROCESSOR
 
 #include <iostream>
 #include <vector>

@@ -20,16 +20,15 @@
  */
 
 
-#ifndef __Stratmod_Wrapper__
-#define __Stratmod_Wrapper__
+#ifndef RRM_CORE_MODELS_STRATMOD_WRAPPER
+#define RRM_CORE_MODELS_STRATMOD_WRAPPER
+
+#include <stratmod/smodeller.hpp>
+#include <stratmod/sutilities.hpp>
 
 #include <iostream>
 #include <vector>
 #include <map>
-
-
-#include <stratmod/smodeller.hpp>
-#include <stratmod/sutilities.hpp>
 
 
 
