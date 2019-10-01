@@ -91,6 +91,7 @@ OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
 
 if( RRM_DIRECTORY_LIBRARIES )
     if(WIN32)
+        set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
         # if(WIN64)
         if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
             set( Qt5_DIR "C:/Qt/5.9.7/msvc2017_64/lib/cmake/Qt5" )
@@ -102,7 +103,6 @@ if( RRM_DIRECTORY_LIBRARIES )
         set( Qt5_DIR "/opt/Qt/5.8/gcc_64/lib/cmake/Qt5" )
     endif()
 
-    set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
 endif()
 
 
