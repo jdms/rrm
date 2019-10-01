@@ -21,66 +21,42 @@
 /******************************************************************************/
 
 
-#ifndef __TRIANGLE_SOUP_WRAPPER__
-#define __TRIANGLE_SOUP_WRAPPER__
+#ifndef TRIANGLE_MESH_PARSER
+#define TRIANGLE_MESH_PARSER
 
 #include <vector> 
 #include <memory> 
 #include <limits> 
 #include <atomic>
+#include <optional>
 #include <cmath>
-#include "core.hpp" 
-
-// For the mesh utilities. 
-#include <map>
-
-// For std::referenc_wrapper
+#include <unordered_map>
 #include <functional> 
 
+#include "core.hpp" 
 
-class lexicographicOrderOnVertices 
+
+class lexicographicOrderOnPoint3 
 { 
     public: 
-        bool operator()( const Point3& lvertex, const Point3& rvertex ) const { 
-            /* std::sort( std::begin(lvertex), std::end(lvertex) ); */ 
-            /* std::sort( std::begin(rvertex), std::end(rvertex) ); */ 
+        lexicographicOrderOnPoint3(double tol = 1E-15) : tolerance(tol) {}
 
-            bool result; 
-            result = (lvertex[0] - tolerance > rvertex[0]); 
-            if (result) { 
+        bool operator()( const Point3& lvertex, const Point3& rvertex ) const 
+        { 
+            bool result0 = (lvertex[0] - tolerance > rvertex[0]); 
+            if (result0) { 
                 return false;
             }
-            /* result = (lvertex[0] > rvertex[0] - tolerance); */ 
-            /* if (result) { */ 
-            /*     return false; */ 
-            /* } */
 
-            result = (lvertex[1] - tolerance > rvertex[1]); 
-            if (result) { 
+            bool result1 = (lvertex[1] - tolerance > rvertex[1]); 
+            if (result1) { 
                 return false;
             }
-            /* result = (lvertex[1] > rvertex[1] - tolerance); */ 
-            /* if (result) { */ 
-            /*     return false; */ 
-            /* } */
 
-            result = (lvertex[2] - tolerance > rvertex[2]); 
-            if (result) { 
+            bool result2 = (lvertex[2] - tolerance > rvertex[2]); 
+            if (result2) { 
                 return false;
             }
-            /* result = (lvertex[2] > rvertex[2] - tolerance); */ 
-            /* if (result) { */ 
-            /*     return false; */ 
-            /* } */
-
-            /* result = (lvertex[3] < rvertex[3] - tolerance); */ 
-            /* if (result) { */ 
-            /*     return true; */
-            /* } */
-            /* result = (lvertex[3] > rvertex[3] - tolerance); */ 
-            /* if (result) { */ 
-            /*     return false; */ 
-            /* } */
 
             bool equal_v0 = std::fabs(lvertex[0] - rvertex[0]) < tolerance;
             bool equal_v1 = std::fabs(lvertex[1] - rvertex[1]) < tolerance;
@@ -95,16 +71,113 @@ class lexicographicOrderOnVertices
             return true;
         }
 
-        static void setTolerance( double t ) 
+        bool setTolerance(double tol) 
         { 
-            tolerance = t > 0 ? t : tolerance; 
+            if ( tol <= 0 )
+            {
+                return false;
+            }
+
+            tolerance = tol > 0 ? tol : tolerance; 
+
+            return true;
         } 
 
     private: 
-        static double tolerance; 
+        double tolerance; 
 };
 
-/* double lexicographicOrderOnVertices::tolerance = std::numeric_limits<double>::epsilon(); */ 
+class lexicographicOrderOnTriangle
+{ 
+    public: 
+        lexicographicOrderOnTriangle(double tol = 1E-15) : tolerance(tol) {}
+
+        bool operator()(const std::array<Point3, 3>& ltriangle, const std::array<Point3, 3>& rtriangle) const 
+        { 
+            lexicographicOrderOnPoint3 lessThan(tolerance);
+
+            // Check if lt0 >= rt0
+            bool lt0_greater_rt0 = !lessThan(ltriangle[0], rtriangle[0]); 
+            if (lt0_greater_rt0) { 
+                return false;
+            }
+
+            // Check if lt1 >= rt1
+            bool lt1_greater_rt1 = !lessThan(ltriangle[1], rtriangle[1]); 
+            if (lt1_greater_rt1) { 
+                return false;
+            }
+
+            // Check if lt2 >= rt2
+            bool lt2_greater_rt2 = !lessThan(ltriangle[2], rtriangle[2]); 
+            if (lt2_greater_rt2) { 
+                return false;
+            }
+
+            // So far ltriangle <= rtriangle, lets check whether rtriangle <= ltriangle as well
+            bool equal_t0 = lessThan(rtriangle[0], ltriangle[0]);
+            bool equal_t1 = lessThan(rtriangle[1], ltriangle[1]);
+            bool equal_t2 = lessThan(rtriangle[2], ltriangle[2]);
+
+            // Enforce that t < t is false
+            if (equal_t0 && equal_t1 && equal_t2)
+            {
+                return false; 
+            }
+
+            return true;
+        }
+
+        bool setTolerance(double tol) 
+        { 
+            if ( tol <= 0 )
+            {
+                return false;
+            }
+
+            tolerance = tol > 0 ? tol : tolerance; 
+
+            return true;
+        } 
+
+    private: 
+        double tolerance; 
+};
+
+template<typename CoordinatesType, typename IndicesType>
+class MeshParser {
+    public:
+        using CoordinatesList = std::vector<CoordinatesType>;
+        using FaceList = std::vector<IndicesType>;
+        using Face = std::array<IndicesType, 3>;
+        using Triangle = std::array<Point3, 3>;
+
+        MeshParser(double tolerance = 1E-15)
+        {
+            tolerance = tolerance > 0 ? tolerance : 1E-15;
+            vertex_map = std::unordered_map<Point3, Face, lexicographicOrderOnPoint3>(lexicographicOrderOnPoint3(tolerance));
+        }
+
+        template<typename T>
+        std::optional<T> addTriangle(const std::vector<CoordinatesType>& vlist, const T& face)
+        {
+            if ( (vlist.size() == 0) || (vlist.size() % 3 != 0) )
+            {
+                return std::optional<T>();
+            }
+
+            if ( face.size() != 3 )
+            {
+                return std::optional<T>();
+            }
+        }
+
+    private:
+        std::vector<CoordinatesType> vertex_list;
+        std::vector<IndicesType> face_list;
+
+        std::unordered_map<Point3, Face, lexicographicOrderOnPoint3> vertex_map;
+};
 
 
 /* 
@@ -130,6 +203,13 @@ class TriangleSoupWrapper {
         {
             vertices_coordinates.clear(); 
             face_list.clear(); 
+        }
+
+        template<typename T>
+        std::optional<T> addTriangle(CoordinatesListType& vertices, const T& face_ids)
+        {
+            (void)(vertices);
+            return face_ids;
         }
 
         template<typename T>
@@ -270,7 +350,7 @@ class TriangleSoupWrapper {
                 return false; 
             }
 
-            lexicographicOrderOnVertices::setTolerance(tolerance); 
+            /* lexicographicOrderOnPoint3::setTolerance(tolerance); */ 
 
             VertexContainer container; 
             Point3 v; 
@@ -321,9 +401,9 @@ class TriangleSoupWrapper {
 
 
         using VerticesIndices = std::vector<size_t>; 
-        using VertexContainer = std::map<Point3, VerticesIndices, lexicographicOrderOnVertices>; 
+        using VertexContainer = std::unordered_map<Point3, VerticesIndices, lexicographicOrderOnPoint3>; 
 
-        using VertexMap = std::map<unsigned long int, unsigned long int>; 
+        using VertexMap = std::unordered_map<unsigned long int, unsigned long int>; 
 };
 
 

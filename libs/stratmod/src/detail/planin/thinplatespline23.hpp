@@ -32,17 +32,94 @@
 class ThinPlateSpline23 : public BasisFunction2D 
 {
     public: 
-        double operator()( double x1, double x2 ) const  
+        ThinPlateSpline23() = default;
+        ThinPlateSpline23( double ) {}
+        ~ThinPlateSpline23() = default;
+
+        ThinPlateSpline23( const ThinPlateSpline23& ) = default;
+        ThinPlateSpline23& operator=( const ThinPlateSpline23& ) = default;
+
+        double operator()( double x, double y ) const  
         {
-            double r2 = x1*x1 + x2*x2; 
+            double r2 = x*x + y*y; 
             double r4 = r2*r2; 
-            /* std::cout << "x = " << x1 << ", y = " << x2 << std::endl; */ //debug
+            /* std::cout << "x = " << x << ", y = " << y << std::endl; */ //debug
 
             if ( r4 < epsilon ) { 
                 return -r4/2; 
             }
 
             return ( r4*log( sqrt(r2) ) ); 
+        }
+
+        double Dx( double x, double y ) const 
+        { 
+            double r2 = x*x + y*y; 
+
+            if ( r2 < epsilon )
+            {
+                return (x*r2 - 2*r2);
+            }
+
+            return x*r2*(1 + 2*log(r2));
+        }
+
+        double Dy( double x, double y ) const 
+        { 
+            double r2 = x*x + y*y; 
+
+            if ( r2 < epsilon )
+            {
+                return (x*r2 - 2*r2);
+            }
+
+            return y*r2*(1 + 2*log(r2));
+        }
+
+        double Dxx( double x, double y ) const 
+        { 
+            double r2 = x*x + y*y; 
+
+            if ( r2 < epsilon )
+            {
+                return 2*x*x;
+            }
+
+            return (4*x*x + r2)*log(r2) + 6*x*x + r2;
+        }
+
+        double Dxy( double x, double y ) const 
+        { 
+            double r2 = x*x + y*y; 
+
+            if ( r2 < epsilon )
+            {
+                return 2*x*y;
+            }
+
+            return 2*x*y*(2*log(r2) + 3);
+        }
+
+        double Dyx( double x, double y ) const
+        {
+            return Dxy(x, y);
+        }
+
+        double Dyy( double x, double y ) const 
+        { 
+            double r2 = x*x + y*y; 
+
+            if ( r2 < epsilon )
+            {
+                return 2*y*y;
+            }
+
+            return (4*y*y + r2)*log(r2) + 6*y*y + 2*r2;
+        }
+
+        int isSmooth() const 
+        { 
+            return 2; 
         }
 
         unsigned int get_order() const  

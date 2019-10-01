@@ -2004,6 +2004,7 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     //
 
     std::vector< std::size_t > surfacesIDs = getSurfaces();
+    SUtilitiesWrapper u(modeller_);
 
     for( auto it: surfacesIDs )
     {
@@ -2016,7 +2017,9 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
 
 
         /* bool has_surface = getMesh( it, surface_vertices, surface_faces ); */
-        bool has_surface = getMesh( it, t.vertex_list, t.face_list );
+        bool has_surface = true;
+        has_surface &= u.getVertexList( it, t.vertex_list );
+        has_surface &= u.getUniqueFacesList(it, t.face_list ) > 0;
 
         if( has_surface  == false ) continue;
 

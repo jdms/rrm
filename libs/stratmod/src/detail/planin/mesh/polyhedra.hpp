@@ -213,7 +213,13 @@ struct TriangleHeights
 
     bool operator==( const TriangleHeights &rhs ) const
     {
-        return !( operator<(rhs) ) && !( rhs.operator<(*this) );
+        /* return !( operator<(rhs) ) && !( rhs.operator<(*this) ); */
+        return operator<=(rhs) && operator>=(rhs);
+    }
+
+    bool operator!=( const TriangleHeights &rhs ) const
+    {
+        return !operator==(rhs);
     }
 };
 
@@ -565,6 +571,13 @@ class Prism
 
             return tetrahedra;
         }
+        
+        bool verticesAreSet() const
+        {
+            bool vertices_are_set_ = std::all_of( vertex_is_set_.begin(), vertex_is_set_.end(), []( bool b ) -> bool { return b; } );
+
+            return vertices_are_set_;
+        }
 
         bool isValid() const
         {
@@ -620,13 +633,6 @@ class Prism
         std::array<bool, 6> vertex_is_set_; //= {{false, false, false, false, false, false}};
         // BUG: VS2013 does not support empty initializer lists
         AttributeType region_attribute_; //= {};
-        
-        bool verticesAreSet() const
-        {
-            bool vertices_are_set_ = std::all_of( vertex_is_set_.begin(), vertex_is_set_.end(), []( bool b ) -> bool { return b; } );
-
-            return vertices_are_set_;
-        }
 };
 
 #endif

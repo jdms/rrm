@@ -47,21 +47,25 @@
 #include "kernels.hpp"
 #include "polynomial.hpp" 
 
-using Kernel = Wendland23; 
+using VFKernel = Wendland23; 
 
 class DivFreeVectorField2D 
 { 
     public: 
-        DivFreeVectorField2D( Kernel k ); 
+        DivFreeVectorField2D() = default; 
+        DivFreeVectorField2D( VFKernel k, unsigned int poly_dim_ = 2 ); 
 
-        DivFreeVectorField2D( const DivFreeVectorField2D & ) = default; 
-        DivFreeVectorField2D& operator=( const DivFreeVectorField2D & ) = default;
+        DivFreeVectorField2D( const DivFreeVectorField2D& ) = default;
+        DivFreeVectorField2D& operator=( const DivFreeVectorField2D& ) = default;
 
-        /* Interpolant2D( Interpolant2D && ) = default; */ 
-        /* Interpolant2D& operator=( Interpolant2D && ) = default; */ 
+        /* DivFreeVectorField2D( Interpolant2D && ) = default; */ 
+        /* DivFreeVectorField2D& operator=( Interpolant2D && ) = default; */ 
 
         Vector2 operator()( double x, double y ); 
-        Vector2 operator()( Point2 &p ); 
+        Vector2 operator()( const Point2 &p ); 
+
+        template<typename T> 
+        T operator()(const T& p);
 
         /* double Dx( double x, double y ); */ 
         /* double Dx( Point2 &p ); */ 
@@ -72,12 +76,12 @@ class DivFreeVectorField2D
         bool interpolantIsSet(); 
         int isSmooth(); 
 
-        bool addVectorEvaluation( const Point2 &p, const Vector2 &v_eval);
-        bool addVectorEvaluation( Point2 &&p, Vector2 &&v_eval);
-        bool addVectorEvaluations( std::vector<Point2> &points, std::vector<Vector2> &v_evals);
+        bool addVectorEvaluation( const Point2 &p, const Vector2 &v_eval );
+        bool addVectorEvaluation( Point2 &&p, Vector2 &&v_eval );
+        bool addVectorEvaluations( std::vector<Point2> &points, std::vector<Vector2> &v_evals );
 
-        bool addComponentEvaluation( const Point2 &p, const Point2 &l, double lom_eval ); 
-        bool addComponentEvaluation( Point2 &&p, const Point2 &l, double lom_eval ); 
+        bool addFunctionalEvaluation( const Point2 &p, const Point2 &l, double lom_eval ); 
+        bool addFunctionalEvaluation( Point2 &&p, const Point2 &l, double lom_eval ); 
         bool addComponentEvaluations( std::vector<Point2> &points, std::vector<Point2> &lambdas, std::vector<double> &lom_evals ); 
 
         bool interpolate(); 
@@ -85,7 +89,7 @@ class DivFreeVectorField2D
         void clear(); 
 
     private:
-        Kernel k_; 
+        VFKernel k_; 
         unsigned int dim_; 
         unsigned int poly_dim_; 
 
@@ -104,6 +108,18 @@ class DivFreeVectorField2D
         template<typename Archive>
         void serialize( Archive &ar, const std::uint32_t version );
 };
+
+template<typename T> 
+T DivFreeVectorField2D::operator()(const T& p)
+{
+    T Fp = p;
+    
+    auto Fp2 = operator()(p[0], p[1]);
+    Fp[0] = static_cast<decltype(p[0])>(Fp2[0]);
+    Fp[1] = static_cast<decltype(p[1])>(Fp2[1]);
+
+    return Fp;
+}
 
 #if defined( BUILD_WITH_SERIALIZATION )
     #include "cereal/types/vector.hpp"

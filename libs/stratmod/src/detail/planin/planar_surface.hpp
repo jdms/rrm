@@ -27,6 +27,8 @@
 #include <array>
 #include <vector> 
 #include <list> 
+#include <unordered_map>
+#include <tuple>
 #include <memory> 
 #include <type_traits>
 #include <cstdint>
@@ -54,6 +56,8 @@ class PlanarSurface {
         enum class Coordinate : Natural { WIDTH = 0, HEIGHT = 1, DEPTH = 2 };  
 
         using IndicesType = std::array<Natural, 2>; 
+
+        using PointCache = std::unordered_map<SurfaceId, std::tuple<bool, double>>;
 
         PlanarSurface( bool extruded_surface = false, bool orthogonally_oriented = false ); 
 
@@ -108,6 +112,9 @@ class PlanarSurface {
 
         template<typename FList>
         unsigned int getFaceList( FList &flist ); 
+
+        template<typename FList>
+        unsigned int getUniqueFacesList( FList &flist ); 
 
         template<typename VList, typename FList> 
         unsigned int getMesh( VList &vertex_list, FList &face_list ); 
@@ -170,8 +177,10 @@ class PlanarSurface {
         bool getHeight( Natural vertex_index, double &height, SurfaceId &bounding_surface_id );
         bool getHeight( Natural i, Natural j, double &height, SurfaceId &bounding_surface_id );
 
-        bool getHeight( const Point2 &p, double &height );
-        bool getHeight( Point2 &&p, double &height );
+        template<typename T = PointCache>
+        bool getHeight( const Point2 &p, double &height, T &&cache = {} );
+        template<typename T = PointCache>
+        bool getHeight( Point2 &&p, double &height, T &&cache = {} );
 
         bool getCachedHeight( Natural vertex_index, double &height );
         bool getCachedHeight( Natural i, Natural j, double &height );
@@ -204,13 +213,19 @@ class PlanarSurface {
         Point3 getOrigin(); 
         Point3 getLenght(); 
 
-        bool liesAbove( const Point3 &p ); 
-        bool liesAbove( Point3 &&p ); 
+        template<typename T = PointCache>
+        bool liesAbove( const Point3 &p, T &&cache = {} ); 
+        template<typename T = PointCache>
+        bool liesAbove( Point3 &&p, T &&cache = {} ); 
+
         bool liesAboveRawSurface( const Point3 &p ); 
         bool liesAboveRawSurface( Point3 &&p ); 
 
-        bool liesBelow( const Point3 &p ); 
-        bool liesBelow( Point3 &&p ); 
+        template<typename T = PointCache>
+        bool liesBelow( const Point3 &p, T &&cache = {} ); 
+        template<typename T = PointCache>
+        bool liesBelow( Point3 &&p, T &&cache = {} ); 
+
         bool liesBelowRawSurface( const Point3 &p ); 
         bool liesBelowRawSurface( Point3 &&p ); 
 
@@ -308,6 +323,10 @@ class PlanarSurface {
         bool rangeCheck( Natural i, Natural j );
         bool getVertexIndices( Natural v, IndicesType &indices ); 
 
+        Natural numBlocks();
+        Natural numTrianglesPerBlock();
+        Natural numTriangles();
+
         size_t getBlockIndex( size_t i, size_t j ) const;
         IndicesType getBlockIndices( size_t b ) const;
 
@@ -322,6 +341,8 @@ class PlanarSurface {
         size_t getTriangleIndexFromConnectivity( std::vector<size_t> t_connectivity );
 
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
+
+        PlanarSurface::Ptr getBoundingSurface(SurfaceId id);
 
         friend class SRules;
 
@@ -608,6 +629,86 @@ unsigned int PlanarSurface::getFaceList( FList &flist )
 
     return face_count; 
 }
+
+template<typename FList>
+unsigned int PlanarSurface::getUniqueFacesList( FList &flist ) 
+{
+    updateDiscretization(); 
+
+    flist.clear(); 
+
+    /* std::cout << "Getting face list for surface: " << getID() << "\n" << std::flush; */ 
+    const std::size_t num_blocks = discretization_X * discretization_Y;
+    const std::size_t num_triangles_per_block = 8;
+    const std::size_t num_triangles = num_triangles_per_block * num_blocks;
+    const std::size_t num_indices_per_triangle = 3;
+    unsigned int triangle_count = 0; 
+
+    flist.reserve(num_indices_per_triangle * num_triangles);
+
+    // Check if triangles' heights agree within tolerance
+    auto are_equal = [](TriangleHeights &lhs, TriangleHeights &rhs, double tolerance = 1E-10) -> bool {
+        bool equal_v0 = std::fabs( lhs.vertex_height[0] - rhs.vertex_height[0] ) < tolerance;
+        bool equal_v1 = std::fabs( lhs.vertex_height[1] - rhs.vertex_height[1] ) < tolerance;
+        bool equal_v2 = std::fabs( lhs.vertex_height[2] - rhs.vertex_height[2] ) < tolerance;
+
+        if ( equal_v0 && equal_v1 && equal_v2 )
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    for ( Natural b = 0; b < num_blocks; ++b ) 
+    { 
+        for ( Natural t = 0; t < num_triangles_per_block; ++t ) 
+        { 
+            auto th = getTriangleHeightsFromPositionInBlock(t, b);
+            auto tindex = getTriangleIndexFromPositionInBlock(t, b);
+            auto triangle = getTriangleConnectivityFromIndex(tindex);
+
+            // If at least one vertex is valid then triangle must be unique
+            if ( th.isValid() )
+            {
+                flist.insert(flist.end(), triangle.begin(), triangle.end());
+                ++triangle_count;
+            }
+            // If all vertices are invalid then see whether this triangle
+            // matches any in this surface's dependency list; if it doesn't
+            // then it must be unique
+            else
+            {
+                bool new_triangle = true;
+                for ( auto id : dependency_list_ )
+                {
+                    if ( id != this->getID() )
+                    {
+                        auto bounding_sptr = getBoundingSurface(id);
+                        if (bounding_sptr != nullptr)
+                        {
+                            auto bounding_th = bounding_sptr->getTriangleHeightsFromPositionInBlock(t, b);
+                            if ( are_equal(bounding_th, th) )
+                            {
+                                new_triangle = false;
+                            }
+                        }
+                    }
+                }
+
+                if (new_triangle)
+                {
+                    flist.insert(flist.end(), triangle.begin(), triangle.end());
+                    ++triangle_count;
+                }
+            }
+        }
+    }
+
+    /* std::cout << "Got " << triangle_count << " triangles. \n" << std::flush; */ 
+    return triangle_count; 
+}
+
 
 template<typename VList, typename FList> 
 unsigned int PlanarSurface::getMesh( VList &vertex_list, FList &face_list ) {

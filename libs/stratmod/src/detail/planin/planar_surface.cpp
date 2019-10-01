@@ -1044,7 +1044,8 @@ bool PlanarSurface::checkIfDependsOn( unsigned long int surface_id ) {
     return true;
 }
 
-bool PlanarSurface::getHeight( const Point2 &p, double &height ) { 
+template<typename T>
+bool PlanarSurface::getHeight( const Point2 &p, double &height, T &&cache ) { 
 
     /* double lb = origin.z; */  
     /* double ub = origin.z + lenght.z; */  
@@ -1064,8 +1065,17 @@ bool PlanarSurface::getHeight( const Point2 &p, double &height ) {
     /* } */
 
     /* return status; */ 
+    bool status; 
+    
+    auto entry = cache.find(getID());
+    if ( entry != cache.end() )
+    {
+        std::tie(status, height) = entry->second;
 
-    bool status = f->getRawHeight(p, height);  
+        return status;
+    }
+
+    status = f->getRawHeight(p, height);  
 
     if ( status == false ) { 
         return false; 
@@ -1093,7 +1103,7 @@ bool PlanarSurface::getHeight( const Point2 &p, double &height ) {
         if ( auto upper_surface = p_upper_bound_.lock() ) { 
             /* if ( upper_surface->getHeight(p, ub) ) */
             if ( upper_surface->surfaceIsSet() ) { 
-                upper_surface->getHeight(p, ub); 
+                upper_surface->getHeight(p, ub, cache); 
                 if ( height >= ub ) { 
                     /* #pragma omp critical */
                     /* std::cout << "failed above! \n"; */ 
@@ -1109,7 +1119,7 @@ bool PlanarSurface::getHeight( const Point2 &p, double &height ) {
         if ( auto lower_surface = p_lower_bound_.lock() ) { 
             /* if ( lower_surface->getHeight(p, lb) ) */  
             if ( lower_surface->surfaceIsSet() ) { 
-                lower_surface->getHeight(p, lb); 
+                lower_surface->getHeight(p, lb, cache); 
                 if ( height <= lb ) { 
                     /* #pragma omp critical */
                     /* std::cout << "failed below! \n"; */ 
@@ -1122,9 +1132,13 @@ bool PlanarSurface::getHeight( const Point2 &p, double &height ) {
 
     /* #pragma omp critical */
     /* std::cout << "worked! \n"; */  
+    cache.insert( {getID(), std::tuple<bool, double>(status, height)} );
 
     return status; 
 }
+template bool PlanarSurface::getHeight<PlanarSurface::PointCache>(const Point2 &, double &, PointCache &&);
+template bool PlanarSurface::getHeight<PlanarSurface::PointCache &>(const Point2 &, double &,  PointCache &);
+
 
 bool PlanarSurface::getHeight( Natural vertex_index, double &height, SurfaceId &bounding_surface_id ) 
 { 
@@ -1440,9 +1454,13 @@ std::size_t PlanarSurface::getNumVertices()
     return num_vertices_;
 }
 
-bool PlanarSurface::getHeight( Point2 &&p, double &height ) { 
-    return getHeight(p, height);
+template<typename T>
+bool PlanarSurface::getHeight( Point2 &&p, double &height, T &&cache ) { 
+    return getHeight(p, height, cache);
 }
+template bool PlanarSurface::getHeight<PlanarSurface::PointCache>(Point2 &&, double &, PointCache &&);
+template bool PlanarSurface::getHeight<PlanarSurface::PointCache &>(Point2 &&, double &,  PointCache &);
+
 
 bool PlanarSurface::addPoint( const Point3 &p ) { 
     return f->addPoint(p); 
@@ -1678,7 +1696,8 @@ bool PlanarSurface::updateCache()
     return true;
 }
 
-bool PlanarSurface::liesAbove( const Point3 &p ) 
+template<typename T>
+bool PlanarSurface::liesAbove( const Point3 &p, T &&cache ) 
 { 
  
     Point2 p2; 
@@ -1686,7 +1705,7 @@ bool PlanarSurface::liesAbove( const Point3 &p )
     p2.y = p.y; 
     double height; 
 
-    getHeight(p2, height );
+    getHeight(p2, height, cache );
 
     if ( p.z < height ) { 
         return false; 
@@ -1694,20 +1713,26 @@ bool PlanarSurface::liesAbove( const Point3 &p )
 
     return true; 
 }
+template bool PlanarSurface::liesAbove<PlanarSurface::PointCache>(const Point3 &, PointCache &&);
+template bool PlanarSurface::liesAbove<PlanarSurface::PointCache &>(const Point3 &, PointCache &);
 
-bool PlanarSurface::liesAbove( Point3 &&p ) 
+template<typename T>
+bool PlanarSurface::liesAbove( Point3 &&p, T &&cache ) 
 { 
-    return liesAbove(p); 
+    return liesAbove(p, cache); 
 }
+template bool PlanarSurface::liesAbove<PlanarSurface::PointCache>(Point3 &&, PointCache &&);
+template bool PlanarSurface::liesAbove<PlanarSurface::PointCache &>(Point3 &&, PointCache &);
 
-bool PlanarSurface::liesBelow( const Point3 &p ) 
+template<typename T>
+bool PlanarSurface::liesBelow( const Point3 &p, T &&cache ) 
 { 
     Point2 p2; 
     p2.x = p.x; 
     p2.y = p.y; 
     double height; 
 
-    getHeight(p2, height );
+    getHeight(p2, height, cache );
 
     if ( p.z > height ) { 
         return false; 
@@ -1715,11 +1740,16 @@ bool PlanarSurface::liesBelow( const Point3 &p )
 
     return true; 
 }
+template bool PlanarSurface::liesBelow<PlanarSurface::PointCache>(const Point3 &, PointCache &&);
+template bool PlanarSurface::liesBelow<PlanarSurface::PointCache &>(const Point3 &, PointCache &);
 
-bool PlanarSurface::liesBelow( Point3 &&p ) 
+template<typename T>
+bool PlanarSurface::liesBelow( Point3 &&p, T &&cache ) 
 { 
-    return liesBelow(p); 
+    return liesBelow(p, cache); 
 }
+template bool PlanarSurface::liesBelow<PlanarSurface::PointCache>(Point3 &&, PointCache &&);
+template bool PlanarSurface::liesBelow<PlanarSurface::PointCache &>(Point3 &&, PointCache &);
 
 bool PlanarSurface::liesAboveRawSurface( const Point3 &p ) { 
     return f->liesAboveRawSurface(p);
@@ -2369,6 +2399,33 @@ bool PlanarSurface::compareSurfaceWptr( const PlanarSurface::WeakPtr &left, cons
     }
 
     return false; 
+}
+
+PlanarSurface::Ptr PlanarSurface::getBoundingSurface(SurfaceId id)
+{
+    for ( auto wptr : upper_bound_ )
+    {
+        if ( auto sptr = wptr.lock() )
+        {
+            if (sptr->getID() == id )
+            {
+                return sptr;
+            }
+        }
+    }
+
+    for ( auto wptr : lower_bound_ )
+    {
+        if ( auto sptr = wptr.lock() )
+        {
+            if (sptr->getID() == id )
+            {
+                return sptr;
+            }
+        }
+    }
+
+    return nullptr;
 }
 
 bool PlanarSurface::getRawData( std::vector<Point2> &points, std::vector<double> &fevals )

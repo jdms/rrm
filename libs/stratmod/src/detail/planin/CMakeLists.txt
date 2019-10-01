@@ -256,10 +256,21 @@ if(PLANIN_BUILD_USING_CEREAL OR STRATMOD_BUILD_USING_CEREAL)
     #    include_directories(${CEREAL_SOURCE}/include)
 
     # include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/cereal)
-    set(CEREAL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/cereal)
+    set(CEREAL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cereal)
     add_definitions(-DBUILD_WITH_SERIALIZATION)
 endif()
 
+#
+# Use BLAS/Lapack to speed-up numerics
+#
+find_package(BLAS)
+find_package(LAPACK)
+
+# Accelerate framework in macOS does not include C wrapper?
+# https://eigen.tuxfamily.org/dox/TopicUsingBlasLapack.html
+if(LAPACK_FOUND)
+    find_package(LAPACKE)
+endif()
 
 ###############################################
 # Main library
@@ -279,6 +290,7 @@ set(HEADERS
   wendland23.hpp
   basis_function_2d.hpp
   srules.hpp
+  vector_field/div_free_vector_field_2d.hpp
   mesh/polyhedra.hpp
   mesh/tetrahedral_mesh_builder.hpp
   mesh/linear_complexes.hpp
@@ -290,6 +302,7 @@ set(PLANIN_LIB_SOURCES
     planar_surface.cpp
     srules.cpp
     triangle_soup_wrapper.cpp
+    vector_field/div_free_vector_field_2d.cpp
     mesh/tetrahedral_mesh_builder.cpp
     mesh/linear_complexes.cpp
     ) 
@@ -300,6 +313,7 @@ target_include_directories(planin
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mesh>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vector_field>
 )
 
 target_include_directories(planin SYSTEM
@@ -316,6 +330,20 @@ if(MSVC)
     target_compile_options(planin PRIVATE -EHsc -W3)
 else()
     target_compile_options(planin PRIVATE -Wall -Wno-unknown-pragmas)
+endif()
+
+if(BLAS_FOUND)
+    target_compile_options(planin PUBLIC -DEIGEN_USE_BLAS)
+    target_link_libraries(planin PUBLIC ${BLAS_LIBRARIES})
+    message(STATUS "Found blas libraries: " ${BLAS_LIBRARIES})
+endif()
+
+if(LAPACK_FOUND)
+    target_compile_options(planin PUBLIC -DEIGEN_USE_LAPACKE_STRICT)
+    target_link_libraries(planin PUBLIC ${LAPACK_LIBRARIES})
+    target_link_libraries(planin PUBLIC ${LAPACKE_LIBRARIES})
+    message(STATUS "Found lapack libraries: " ${LAPACK_LIBRARIES})
+    message(STATUS "Found lapacke libraries: " ${LAPACKE_LIBRARIES})
 endif()
 
 if( ${PLANIN_BUILD_USING_OPENMP} )
