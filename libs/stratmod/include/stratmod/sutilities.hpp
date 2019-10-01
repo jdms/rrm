@@ -48,6 +48,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         bool getVertexList( std::size_t surface_id, std::vector<float> &vlist );
         bool getVertexList( std::size_t surface_id, std::vector<double> &vlist );
 
+        std::size_t getUniqueFacesList( std::size_t surface_id, std::vector<std::size_t> &flist );
+
         // Duplicated in SModeller
         bool getExtrusionPath( std::size_t surface_id, std::vector<double> &path_vertices );
 

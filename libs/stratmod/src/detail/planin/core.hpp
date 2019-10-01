@@ -76,7 +76,9 @@ struct Point2 {
     RealType& operator[]( NaturalType i ) { return data[i]; }; 
     RealType  operator[]( NaturalType i ) const { return data[i]; }; 
     NaturalType size() const { return ::size(data); } 
+    RealType dot( const Point2 &p ) { return (u*p.u + v*p.v); }
 }; 
+
 
 using Vector2 = Point2;
 
@@ -108,11 +110,18 @@ struct Point4 {
 
 using Point3 = Point4; 
 
-class Matrix22 : public Point4 {
-    RealType operator()( NaturalType i, NaturalType j )
-    {
-        return data[i + 2*j];
-    }
+class Matrix22 : public Point4 
+{
+    public:
+        RealType operator()( NaturalType i, NaturalType j ) const
+        {
+            return data[i + 2*j];
+        }
+
+        RealType& operator()( NaturalType i, NaturalType j )
+        {
+            return data[i + 2*j];
+        }
 };
 
 template<typename Archive>

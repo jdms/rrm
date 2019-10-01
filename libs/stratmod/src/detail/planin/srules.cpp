@@ -1507,10 +1507,12 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
             /* } */
 
             /* bool lies_above_all_surfaces = true; */
+            PlanarSurface::PointCache cache;
+            cache.reserve( size() );
 
             for ( size_t i = 0; i < size(); ++i )
             {
-                if ( operator[](i)->liesAbove(p) )
+                if ( operator[](i)->liesAbove(p, cache) )
                 {
                     descriptor.push_back(i);
                 }
@@ -1585,9 +1587,12 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 
             /* bool lies_below_all_surfaces = true; */
 
+            PlanarSurface::PointCache cache;
+            cache.reserve( size() );
+
             for ( size_t i = 0; i < size(); ++i )
             {
-                if ( operator[](i)->liesBelow(p) )
+                if ( operator[](i)->liesBelow(p, cache) )
                 {
                     descriptor.push_back(i);
                 }
@@ -1663,6 +1668,9 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
                     }
             }
 
+            PlanarSurface::PointCache cache;
+            cache.reserve( size() );
+
             for ( size_t i = 0; i < size(); ++i )
             {
                 /* std::cout << "Processing surface: " << i << std::flush; */
@@ -1670,7 +1678,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 
                 if ( ( height >= lb_height ) && ( height <= ub_height ) )
                 {
-                    if ( operator[](i)->liesAbove(p) )
+                    if ( operator[](i)->liesAbove(p, cache) )
                     {
                         /* std::cout << "-> point lies above surface" << std::endl << std::flush; */
                         descriptor.push_back(i);
@@ -1780,13 +1788,16 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
                     }
             }
 
+            PlanarSurface::PointCache cache;
+            cache.reserve( size() );
+
             for ( size_t i = 0; i < size(); ++i )
             {
                 operator[](i)->getHeight(p2, height);
 
                 if ( ( height >= lb_height ) && ( height <= ub_height ) )
                 {
-                    if ( operator[](i)->liesBelow(p) )
+                    if ( operator[](i)->liesBelow(p, cache) )
                     {
                         descriptor.push_back(i);
                     }

@@ -22,6 +22,7 @@
 
 
 #include "div_free_vector_field_2d.hpp"
+/* #include "util/prettyprint.hpp" */
 
 /* Disable MSVC warnings due to the following (GCC) unknown pragmas */
 /* https://msdn.microsoft.com/en-us/library/2c8f766e.aspx 
@@ -42,32 +43,42 @@
 
 /* #include "prettyprint.hpp" */ //debug 
 
-DivFreeVectorField2D::DivFreeVectorField2D( Kernel k, unsigned int poly_dim ) : 
-    k_(k), dim_(2) 
-{
-    UNUSED(dim_); 
+/* DivFreeVectorField2D::DivFreeVectorField2D( Kernel k, unsigned int poly_dim ) : */ 
+/*     k_(k), dim_(2) */ 
+/* { */
+/*     UNUSED(dim_); */ 
 
-    if ( (poly_dim == 2) || (poly_dim == 3) ) 
-        poly_dim_ = poly_dim; 
-    else
-        poly_dim_ = 3; 
-}  
+/*     if ( (poly_dim == 2) || (poly_dim == 3) ) */ 
+/*         poly_dim_ = poly_dim; */ 
+/*     else */
+/*         poly_dim_ = 3; */ 
+/* } */  
+
+DivFreeVectorField2D::DivFreeVectorField2D( VFKernel k, unsigned int poly_dim ) : k_(k), poly_dim_(poly_dim) 
+{
+    if ( poly_dim < 2 || poly_dim > 3 )
+    {
+        poly_dim_ = 2;
+    }
+
+    poly_dim_ = 3;
+} 
 
 Matrix22 DivFreeVectorField2D::mKernelEval( double x, double y )
 {
     Matrix22 M;
 
-    /* H11 = D2phi(X, Y, zeros(size(X)), 1, 1, delta); */
-    /* H12 = D2phi(X, Y, zeros(size(X)), 1, 2, delta); */
-    /* H21 = D2phi(X, Y, zeros(size(X)), 2, 1, delta); */
-    /* H22 = D2phi(X, Y, zeros(size(X)), 2, 2, delta); */
+    double H11 = k_.Dxx(x, y);
+    double H12 = k_.Dxy(x, y);
+    double H21 = k_.Dyx(x, y);
+    double H22 = k_.Dyy(x, y);
 
-    /* L = H11 + H22; */
+    double L = H11 + H22;
 
-    /* M11 = H11 - L; */
-    /* M12 = H12; */
-    /* M21 = H21; */
-    /* M22 = H22 - L; */
+    M(0,0) = H11 - L;
+    M(0,1) = H12;
+    M(1,0) = H21;
+    M(1,1) = H22 - L;
 
     return M;
 };
@@ -82,12 +93,29 @@ Vector2 DivFreeVectorField2D::operator()( double x, double y )
 
     const size_t size = points_.size(); 
     Matrix22 M;
+    double Ui, Vi;
 
     for ( size_t i = 0; i < size; ++i )
     {
         M = mKernelEval(x - points_[i].x, y - points_[i].y);
-        Fxy.u += weights_[i] * M(1,1) * lambdas_[i].u + M(1,2) * lambdas_[i].v; 
-        Fxy.v += weights_[i] * M(2,1) * lambdas_[i].u + M(2,2) * lambdas_[i].v; 
+        Ui = M(0,0) * lambdas_[i].u + M(0,1) * lambdas_[i].v; 
+        Vi = M(1,0) * lambdas_[i].u + M(1,1) * lambdas_[i].v; 
+
+        Fxy.u += weights_[i] * Ui; 
+        Fxy.v += weights_[i] * Vi; 
+    }
+
+    if ( poly_dim_ >= 2 ) 
+    {
+        /* Vector2 lu = {{{ 1, 0 }}}, lv = {{{ 0, 1 }}}; */
+        Fxy.u += weights_[size + 0];
+        Fxy.v += weights_[size + 1];
+    }
+
+    if ( poly_dim_ == 3 )
+    {
+        Fxy.u += weights_[size + 2] * x;
+        Fxy.v += weights_[size + 2] * (-y);
     }
 
     /* for ( size_t i = 0; i < size; ++i ) */ 
@@ -105,7 +133,7 @@ Vector2 DivFreeVectorField2D::operator()( double x, double y )
     return Fxy; 
 }
 
-Vector2 DivFreeVectorField2D::operator()( Point2 &p ) 
+Vector2 DivFreeVectorField2D::operator()( const Point2 &p ) 
 {
     return operator()(p.x, p.y); 
 }
@@ -186,8 +214,9 @@ bool DivFreeVectorField2D::addVectorEvaluation( const Point2 &p, const Vector2 &
     Vector2 lu = {{{ 1, 0 }}}, lv = {{{ 0, 1 }}};
     bool success = true;
 
-    success &= addComponentEvaluation(p, lu, vector_eval.u );
-    success &= addComponentEvaluation(p, lv, vector_eval.v );
+    /* std::cout << "Point (" << p.x << ", " << p.y << ") :: Vector (" << vector_eval.x << ", " << vector_eval.y << ")\n"; */
+    success &= addFunctionalEvaluation(p, lu, vector_eval.u );
+    success &= addFunctionalEvaluation(p, lv, vector_eval.v );
 
     return true;
 }
@@ -213,7 +242,7 @@ bool DivFreeVectorField2D::addVectorEvaluations( std::vector<Point2> &points, st
     return success;
 }
 
-bool DivFreeVectorField2D::addComponentEvaluation(  const Point2 &p, const Point2 &l, double lom_eval ) 
+bool DivFreeVectorField2D::addFunctionalEvaluation(  const Point2 &p, const Point2 &l, double lom_eval ) 
 {
     points_.push_back(p); 
     lambdas_.push_back(l);
@@ -222,9 +251,9 @@ bool DivFreeVectorField2D::addComponentEvaluation(  const Point2 &p, const Point
     return true; 
 } 
 
-bool DivFreeVectorField2D::addComponentEvaluation(  Point2 &&p, const Point2 &l, double lom_eval ) 
+bool DivFreeVectorField2D::addFunctionalEvaluation(  Point2 &&p, const Point2 &l, double lom_eval ) 
 {
-    return addComponentEvaluation(p, l, lom_eval); 
+    return addFunctionalEvaluation(p, l, lom_eval); 
 }
 
 bool DivFreeVectorField2D::addComponentEvaluations(  std::vector<Point2> &points, std::vector<Point2> &lambdas, std::vector<double> &lom_evals ) 
@@ -246,6 +275,10 @@ bool DivFreeVectorField2D::interpolate()
     if ( points_.size() != lom_evals_.size() ) { 
         return false; 
     }
+
+    if ( points_.size() != lambdas_.size() ) {
+        return false;
+    }
     
     if ( points_.size() == 0 )
     {
@@ -253,43 +286,84 @@ bool DivFreeVectorField2D::interpolate()
     }
 
     size_t size = points_.size(); 
-    weights_.resize(size); 
+    weights_.resize(size + poly_dim_); 
 
     /* auto local_fevals = fevals_; */ 
     /* for ( size_t i = 0; i < poly_dim_; ++i ) { */ 
     /*     local_fevals.push_back(0.0); */
     /* } */
 
-    const double eigenvalues_lower_bound = 0.01; 
+    auto local_lom_evals_ = lom_evals_;
+    for ( size_t i = 0; i < poly_dim_; ++i )
+    {
+        local_lom_evals_.push_back(0.0);
+    }
+
+    const double eigenvalues_lower_bound = 1E-9; 
     double aij = 0; 
     Point2 pi, pj; 
     Vector2 li, lj;
+    Vector2 lu = {{{ 1, 0 }}}, lv = {{{ 0, 1 }}};
     Matrix22 M;
-    Eigen::MatrixXd A(size, size);
-    /* Eigen::MatrixXd A(size + poly_dim_, size + poly_dim_); */ 
-    /* Eigen::MatrixXd P(size, poly_dim_); */ 
-    Eigen::Map<Eigen::VectorXd> weights( weights_.data(), size, 1); 
-    Eigen::Map<Eigen::VectorXd> lom_evaluations( lom_evals_.data(), size, 1); 
+    /* Eigen::MatrixXd A(size, size); */
+    Eigen::MatrixXd A(size + poly_dim_, size + poly_dim_); 
+    Eigen::MatrixXd P(size, poly_dim_); 
+    Eigen::Map<Eigen::VectorXd> weights( weights_.data(), size + poly_dim_, 1); 
+    Eigen::Map<Eigen::VectorXd> lom_evaluations( local_lom_evals_.data(), size + poly_dim_, 1); 
+    /* std::cout << "Size = " << size << "\n" << std::flush; */
+    /* std::cout << "Points = " << points_ << "\n" << std::flush; */
+    /* std::cout << "Points = "; */
+    /* for ( size_t i = 0; i < points_.size(); ++i ) */
+    /* { */
+        /* std::cout << "(" << points_[i].x << ", " << points_[i].y << "), "; */
+    /* } */
+    /* std::cout << "\n" << std::flush; */
+    /* std::cout << "Lambdas = " << lambdas_ << "\n" << std::flush; */
+    /* std::cout << "LOM = " << lom_evals_ << "\n" << std::flush; */
 
     for ( size_t i = 0; i < size; ++i )
     {
+        /* std::cout << "Getting point_i\n" << std::flush; */
         pi = points_[i]; 
+        /* std::cout << "Getting lambda_i\n" << std::flush; */
         li = lambdas_[i];
+        /* std::cout << "Got point_i and lambda_i\n" << std::flush; */
+
+        if ( poly_dim_ >= 2 )
+        {
+            P(i,0) = li.dot(lu); 
+            P(i,1) = li.dot(lv); 
+            /* std::cout << "i = " << i << " :: P(i,0) = " << P(i,0) << ", P(i,1) = " << P(i, 1) << "\n" << std::flush; */
+        }
+
+        if ( poly_dim_ == 3 )
+        {
+            P(i,2) = li.dot({{{pi.x, -pi.y}}});
+        }
 
         for ( size_t j = 0; j < size; ++j )
         {
+            /* std::cout << "Getting point_j\n" << std::flush; */
             pj = points_[j]; 
+            /* std::cout << "Getting lambda_j\n" << std::flush; */
             lj = lambdas_[j]; 
+            /* std::cout << "Got point_j and lambda_j\n" << std::flush; */
             M = mKernelEval(pi.x - pj.x, pi.y - pj.y);
 
-            aij = ( li.u * M(1,1) + li.v * M(2,1) ) * lj.u + ( li.u * M(1,2) + li.v * M(2,2) ) * lj.v; 
+            aij = ( li.u * M(0,0) + li.v * M(1,0) ) * lj.u + ( li.u * M(0,1) + li.v * M(1,1) ) * lj.v; 
             aij += ( i == j ) ? eigenvalues_lower_bound : 0.0; 
 
             A(i,j) = aij;
+            /* std::cout << "i = " << i << ", j = " << j << " :: aij = " << aij << "\n" << std::flush; */
         }
     }
 
-    weights = A.householderQr().solve(lom_evaluations); 
+    /* std::cout << "Trying to solve linear system\n" << std::flush; */
+    A.block(0, size, size, poly_dim_) = P; 
+    A.block(size, 0, poly_dim_, size) = P.transpose(); 
+    A.block(size, size, poly_dim_, poly_dim_) = Eigen::MatrixXd::Constant(poly_dim_, poly_dim_, 0); 
+    /* weights = A.householderQr().solve(lom_evaluations); */ 
+    weights = A.llt().solve(lom_evaluations); 
 
     /* for ( size_t i = 0; i < size; ++i ) { */ 
     /*     pi = points_[i]; */ 

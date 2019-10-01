@@ -52,6 +52,19 @@ bool SUtilities::getVertexList( size_t surface_id, std::vector<double> &vlist )
     return model_.pimpl_->getVertexList(surface_id, vlist);
 }
 
+std::size_t SUtilities::getUniqueFacesList( std::size_t surface_id, std::vector<std::size_t> &flist )
+{
+    std::size_t id;
+    bool success = model_.pimpl_->getSurfaceIndex(surface_id, id);
+
+    if (!success)
+    {
+        return 0;
+    }
+
+    return model_.pimpl_->container_[id]->getUniqueFacesList(flist);
+}
+
 bool SUtilities::getExtrusionPath( size_t surface_id, std::vector<double> &path_vertex_list )
 {
     size_t index; 
