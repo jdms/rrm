@@ -309,9 +309,10 @@ endif()
 
 if( ${STRATMOD_BUILD_USING_OPENMP} )
     target_link_libraries(stratmod 
-        PRIVATE 
-            planin 
+        # PRIVATE 
+            # planin 
         PUBLIC 
+            planin 
             OpenMP::OpenMP_CXX
         )
 else()

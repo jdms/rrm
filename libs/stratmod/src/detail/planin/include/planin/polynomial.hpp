@@ -21,39 +21,77 @@
 /******************************************************************************/
 
 
-#ifndef __THIN_PLATE_SPLINE_24__
-#define __THIN_PLATE_SPLINE_24__
+#ifndef __POLYNOMIAL__
+#define __POLYNOMIAL__
 
 #include <cmath> 
-/* #include <iostream> */ //debug
+#include "planin/core.hpp"
 
-#include "basis_function_2d.hpp" 
-
-class ThinPlateSpline24 : public BasisFunction2D 
+template<unsigned int k>
+class Polynomial2 
 {
-    public: 
-        double operator()( double x1, double x2 ) const  
-        {
-            double r2 = x1*x1 + x2*x2; 
-            double r6 = r2*r2*r2; 
-            /* std::cout << "x = " << x1 << ", y = " << x2 << std::endl; */ //debug
+    double operator()( double x1, double x2 ) { 
+        UNUSED(x1);
+        UNUSED(x2); 
 
-            if ( r6 < epsilon ) { 
-                return -r6/2; 
-            }
+        return 0; 
+    }
+}; 
 
-            return ( r6*log( sqrt(r2) ) ); 
-        }
+template<>
+class Polynomial2<0> 
+{
+    double operator()( double x1, double x2 ) { 
+        UNUSED(x1); UNUSED(x2); 
+        return 1; 
+    }
+}; 
 
-        unsigned int get_order() const  
-        {
-            return order; 
-        }
-
-    private: 
-        static const unsigned int order = 2; 
-        double epsilon = 1E-9; 
+template<>
+class Polynomial2<1>
+{
+    double operator()( double x1, double x2 ) { 
+        UNUSED(x2); 
+        return x1; 
+    }
 };
+
+template<>
+class Polynomial2<2>
+{
+    double operator()( double x1, double x2 ) {
+        UNUSED(x1); 
+        return x2; 
+    }
+}; 
+
+template<>
+class Polynomial2<3>
+{
+    double operator()( double x1, double x2 ) {
+        UNUSED(x2); 
+        return x1*x1; 
+    }
+}; 
+
+template<>
+class Polynomial2<4>
+{
+    double operator()( double x1, double x2 ) {
+        return x1*x2; 
+    }
+}; 
+
+template<>
+class Polynomial2<5>
+{
+    double operator()( double x1, double x2 ) {
+        UNUSED(x1); 
+        return x2*x2; 
+    }
+}; 
+
+
 
 #endif 
 

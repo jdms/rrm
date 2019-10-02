@@ -31,12 +31,12 @@
 #include <memory>
 #include <cstdint>
 
-#include "use_openmp.hpp"
-#include "serialization_primitives.hpp"
+#include "planin/use_openmp.hpp"
+#include "planin/serialization_primitives.hpp"
 
-#include "interpolant_2d.hpp" 
-#include "core.hpp" 
-#include "triangle_soup_wrapper.hpp" 
+#include "planin/interpolant_2d.hpp" 
+#include "planin/core.hpp" 
+#include "planin/triangle_soup_wrapper.hpp" 
 
 /* Class InterpolatedGraph is not reentrant. */ 
 

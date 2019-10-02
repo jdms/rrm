@@ -29,7 +29,7 @@
 #include <limits> 
 #include <atomic>
 #include <cmath>
-#include "core.hpp" 
+#include "planin/core.hpp" 
 
 // For the mesh utilities. 
 #include <map>

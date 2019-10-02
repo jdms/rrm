@@ -33,8 +33,8 @@
 #include <memory>
 #include <cstdint>
 
-#include "detail/planin/planin.hpp"
-#include "detail/planin/mesh/linear_complexes.hpp"
+#include "planin/planin.hpp"
+#include "planin/mesh/linear_complexes.hpp"
 
 #include "stratmod/smodeller.hpp"
 

@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 
-#include "detail/planin/planin.hpp"
+#include "planin/planin.hpp"
 
 #include "smodeller_impl.hpp"
 

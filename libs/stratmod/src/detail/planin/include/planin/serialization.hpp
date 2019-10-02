@@ -11,7 +11,7 @@ namespace cereal {
 /*     (void)(archive); */
 /* } */
 
-#include "interpolant_2d.hpp" 
+#include "planin/interpolant_2d.hpp" 
 
 /* template<typename Archive> */
 /* void Interpolant2D::serialize( Archive &archive, const std::uint32_t version) */
@@ -21,7 +21,7 @@ namespace cereal {
 /* } */
 
 
-#include "interpolated_graph.hpp"
+#include "planin/interpolated_graph.hpp"
 
 /* template<typename Archive> */
 /* void InterpolatedGraph::serialize( Archive &archive, const std::uint32_t version) */
@@ -31,7 +31,7 @@ namespace cereal {
 /* } */
 
 
-#include "planar_surface.hpp"
+#include "planin/planar_surface.hpp"
 
 /* template<typename Archive> */
 /* void PlanarSurface::serialize( Archive &archive, const std::uint32_t version) */
@@ -41,7 +41,7 @@ namespace cereal {
 /* } */
 
 
-#include "srules.hpp"
+#include "planin/srules.hpp"
 
 /* template<typename Archive> */
 /* void SRules::serialize( Archive &archive, const std::uint32_t version) */

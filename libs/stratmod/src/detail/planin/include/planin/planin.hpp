@@ -20,16 +20,16 @@
 /*                                                                            */
 /******************************************************************************/
 
-#include "core.hpp" 
-#include "triangle_soup_wrapper.hpp"
+#include "planin/core.hpp" 
+#include "planin/triangle_soup_wrapper.hpp"
 
-#include "kernels.hpp"
-#include "interpolant_2d.hpp"
+#include "planin/kernels.hpp"
+#include "planin/interpolant_2d.hpp"
 
-#include "interpolated_graph.hpp"
-#include "planar_surface.hpp"
+#include "planin/interpolated_graph.hpp"
+#include "planin/planar_surface.hpp"
 
-#include "srules.hpp"
+#include "planin/srules.hpp"
 
-#include "mesh/polyhedra.hpp"
-#include "mesh/tetrahedral_mesh_builder.hpp"
+#include "planin/mesh/polyhedra.hpp"
+#include "planin/mesh/tetrahedral_mesh_builder.hpp"

@@ -21,26 +21,39 @@
 /******************************************************************************/
 
 
-#ifndef __BASIS_FUNCTION_2D__ 
-#define __BASIS_FUNCTION_2D__ 
+#ifndef __THIN_PLATE_SPLINE_24__
+#define __THIN_PLATE_SPLINE_24__
 
-#include "core.hpp" 
+#include <cmath> 
+/* #include <iostream> */ //debug
 
-class BasisFunction2D
+#include "planin/basis_function_2d.hpp" 
+
+class ThinPlateSpline24 : public BasisFunction2D 
 {
     public: 
-        double operator()( double x, double y ) const { UNUSED(x); UNUSED(y); return 0; }
+        double operator()( double x1, double x2 ) const  
+        {
+            double r2 = x1*x1 + x2*x2; 
+            double r6 = r2*r2*r2; 
+            /* std::cout << "x = " << x1 << ", y = " << x2 << std::endl; */ //debug
 
-        double Dx( double x, double y ) const { UNUSED(x); UNUSED(y); return 0; }
-        double Dy( double x, double y ) const { UNUSED(x); UNUSED(y); return 0; }
+            if ( r6 < epsilon ) { 
+                return -r6/2; 
+            }
 
-        double Dxx( double x, double y ) const { UNUSED(x); UNUSED(y); return 0; }
-        double Dxy( double x, double y ) const { UNUSED(x); UNUSED(y); return 0; }
-        double Dyy( double x, double y ) const { UNUSED(x); UNUSED(y); return 0; }
+            return ( r6*log( sqrt(r2) ) ); 
+        }
 
-        int isSmooth() const { return 0; } 
-        unsigned int get_order() const { return 0; } 
-}; 
+        unsigned int get_order() const  
+        {
+            return order; 
+        }
+
+    private: 
+        static const unsigned int order = 2; 
+        double epsilon = 1E-9; 
+};
 
 #endif 
 

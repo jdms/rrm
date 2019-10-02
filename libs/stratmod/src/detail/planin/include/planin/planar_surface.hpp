@@ -33,13 +33,13 @@
 #include <type_traits>
 #include <cstdint>
 
-#include "use_openmp.hpp"
-#include "serialization_primitives.hpp"
+#include "planin/use_openmp.hpp"
+#include "planin/serialization_primitives.hpp"
 
-#include "interpolated_graph.hpp"
-#include "triangle_soup_wrapper.hpp" 
+#include "planin/interpolated_graph.hpp"
+#include "planin/triangle_soup_wrapper.hpp" 
 
-#include "mesh/polyhedra.hpp"
+#include "planin/mesh/polyhedra.hpp"
 
 /* Class PlanarSurface is not reentrant. */ 
 

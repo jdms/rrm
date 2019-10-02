@@ -277,23 +277,23 @@ endif()
 ###############################################
 
 set(HEADERS 
-  use_openmp.hpp
-  interpolant_2d.hpp
-  interpolated_graph.hpp
-  planar_surface.hpp 
-  polynomial.hpp
-  core.hpp
-  kernels.hpp
-  thinplatespline22.hpp
-  thinplatespline23.hpp
-  thinplatespline24.hpp
-  wendland23.hpp
-  basis_function_2d.hpp
-  srules.hpp
-  vector_field/div_free_vector_field_2d.hpp
-  mesh/polyhedra.hpp
-  mesh/tetrahedral_mesh_builder.hpp
-  mesh/linear_complexes.hpp
+  include/planin/use_openmp.hpp
+  include/planin/interpolant_2d.hpp
+  include/planin/interpolated_graph.hpp
+  include/planin/planar_surface.hpp 
+  include/planin/polynomial.hpp
+  include/planin/core.hpp
+  include/planin/kernels.hpp
+  include/planin/thinplatespline22.hpp
+  include/planin/thinplatespline23.hpp
+  include/planin/thinplatespline24.hpp
+  include/planin/wendland23.hpp
+  include/planin/basis_function_2d.hpp
+  include/planin/srules.hpp
+  include/planin/vector_field/div_free_vector_field_2d.hpp
+  include/planin/mesh/polyhedra.hpp
+  include/planin/mesh/tetrahedral_mesh_builder.hpp
+  include/planin/mesh/linear_complexes.hpp
   )
 
 set(PLANIN_LIB_SOURCES 
@@ -311,9 +311,11 @@ add_library(planin STATIC ${PLANIN_LIB_SOURCES} ${HEADERS})
 
 target_include_directories(planin
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mesh>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/vector_field>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin/mesh>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin/vector_field>
 )
 
 target_include_directories(planin SYSTEM

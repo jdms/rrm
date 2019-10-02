@@ -27,7 +27,7 @@
 #include <cmath> 
 /* #include <iostream> */ //debug
 
-#include "basis_function_2d.hpp" 
+#include "planin/basis_function_2d.hpp" 
 
 class ThinPlateSpline23 : public BasisFunction2D 
 {
