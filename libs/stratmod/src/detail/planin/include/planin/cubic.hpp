@@ -21,77 +21,83 @@
 /******************************************************************************/
 
 
-#ifndef __POLYNOMIAL__
-#define __POLYNOMIAL__
+#ifndef __CUBIC__
+#define __CUBIC__
 
 #include <cmath> 
-#include "core.hpp"
+/* #include <iostream> */ //debug
 
-template<unsigned int k>
-class Polynomial2 
+#include "planin/basis_function_2d.hpp" 
+
+class Cubic : public BasisFunction2D 
 {
-    double operator()( double x1, double x2 ) { 
-        UNUSED(x1);
-        UNUSED(x2); 
+    public: 
+        double operator()( double x1, double x2 ) const  
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
 
-        return 0; 
-    }
-}; 
+            return r*r*r;
+        }
 
-template<>
-class Polynomial2<0> 
-{
-    double operator()( double x1, double x2 ) { 
-        UNUSED(x1); UNUSED(x2); 
-        return 1; 
-    }
-}; 
+        unsigned int get_order() const  
+        {
+            return order; 
+        }
 
-template<>
-class Polynomial2<1>
-{
-    double operator()( double x1, double x2 ) { 
-        UNUSED(x2); 
-        return x1; 
-    }
+        double Dx( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
+
+            return 3*r*x1;
+        }
+
+        double Dy( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
+
+            return 3*r*x2;
+        }
+
+        double Dxx( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
+
+            if ( r < epsilon )
+            {
+                return 3*(r + x1);
+            }
+
+            return 3*(r + x1*x1/r);
+        }
+
+        double Dxy( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
+
+            if ( r < epsilon )
+            {
+                return r/2;
+            }
+
+            return 3*x1*x2/r;
+        }
+
+        double Dyy( double x1, double x2 ) const
+        {
+            double r = sqrt(x1*x1 + x2*x2); 
+
+            if ( r < epsilon )
+            {
+                return 3*(r + x2);
+            }
+
+            return 3*(r + x2*x2/r);
+        }
+
+    private: 
+        static const unsigned int order = 1; 
+        double epsilon = 1E-9; 
 };
-
-template<>
-class Polynomial2<2>
-{
-    double operator()( double x1, double x2 ) {
-        UNUSED(x1); 
-        return x2; 
-    }
-}; 
-
-template<>
-class Polynomial2<3>
-{
-    double operator()( double x1, double x2 ) {
-        UNUSED(x2); 
-        return x1*x1; 
-    }
-}; 
-
-template<>
-class Polynomial2<4>
-{
-    double operator()( double x1, double x2 ) {
-        return x1*x2; 
-    }
-}; 
-
-template<>
-class Polynomial2<5>
-{
-    double operator()( double x1, double x2 ) {
-        UNUSED(x1); 
-        return x2*x2; 
-    }
-}; 
-
-
 
 #endif 
 

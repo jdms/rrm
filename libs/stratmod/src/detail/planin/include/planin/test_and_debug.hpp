@@ -26,7 +26,7 @@
 
 #include <iostream>
 #include <cmath> 
-#include "interpolated_graph.hpp"
+#include "planin/interpolated_graph.hpp"
 
 template<typename T>
 void print_data( T &input, T &output ) 

@@ -26,7 +26,7 @@
 
 #include "detail/smodeller_impl.hpp"
 
-#include "detail/planin/interpolated_graph.hpp"
+#include "planin/interpolated_graph.hpp"
 
 
 

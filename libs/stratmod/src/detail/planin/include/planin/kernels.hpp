@@ -21,83 +21,16 @@
 /******************************************************************************/
 
 
-#ifndef __CUBIC__
-#define __CUBIC__
+#ifndef __KERNELS_HPP__
+#define __KERNELS_HPP__
 
-#include <cmath> 
-/* #include <iostream> */ //debug
+#include "planin/wendland23.hpp" 
 
-#include "basis_function_2d.hpp" 
+#include "planin/thinplatespline22.hpp"
+#include "planin/thinplatespline23.hpp"
+#include "planin/thinplatespline24.hpp"
 
-class Cubic : public BasisFunction2D 
-{
-    public: 
-        double operator()( double x1, double x2 ) const  
-        {
-            double r = sqrt(x1*x1 + x2*x2); 
+#include "planin/cubic.hpp"
 
-            return r*r*r;
-        }
-
-        unsigned int get_order() const  
-        {
-            return order; 
-        }
-
-        double Dx( double x1, double x2 ) const
-        {
-            double r = sqrt(x1*x1 + x2*x2); 
-
-            return 3*r*x1;
-        }
-
-        double Dy( double x1, double x2 ) const
-        {
-            double r = sqrt(x1*x1 + x2*x2); 
-
-            return 3*r*x2;
-        }
-
-        double Dxx( double x1, double x2 ) const
-        {
-            double r = sqrt(x1*x1 + x2*x2); 
-
-            if ( r < epsilon )
-            {
-                return 3*(r + x1);
-            }
-
-            return 3*(r + x1*x1/r);
-        }
-
-        double Dxy( double x1, double x2 ) const
-        {
-            double r = sqrt(x1*x1 + x2*x2); 
-
-            if ( r < epsilon )
-            {
-                return r/2;
-            }
-
-            return 3*x1*x2/r;
-        }
-
-        double Dyy( double x1, double x2 ) const
-        {
-            double r = sqrt(x1*x1 + x2*x2); 
-
-            if ( r < epsilon )
-            {
-                return 3*(r + x2);
-            }
-
-            return 3*(r + x2*x2/r);
-        }
-
-    private: 
-        static const unsigned int order = 1; 
-        double epsilon = 1E-9; 
-};
-
-#endif 
+#endif
 

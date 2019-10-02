@@ -41,11 +41,11 @@
 /* #include "Eigen/Dense" */ 
 /* #pragma GCC diagnostic pop */ 
 
-#include "serialization_primitives.hpp"
+#include "planin/serialization_primitives.hpp"
 
-#include "core.hpp" // Dummy definitions to be replaced by the project's definitions. 
-#include "kernels.hpp"
-#include "polynomial.hpp" 
+#include "planin/core.hpp" // Dummy definitions to be replaced by the project's definitions. 
+#include "planin/kernels.hpp"
+#include "planin/polynomial.hpp" 
 
 using VFKernel = Wendland23; 
 

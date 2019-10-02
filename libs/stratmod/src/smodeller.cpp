@@ -28,7 +28,7 @@
 #include <memory>
 #include <fstream>
 
-#include "detail/planin/planin.hpp"
+#include "planin/planin.hpp"
 
 #include "stratmod/smodeller.hpp"
 #include "detail/smodeller_impl.hpp"

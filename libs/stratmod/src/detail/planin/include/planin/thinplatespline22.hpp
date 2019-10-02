@@ -21,16 +21,74 @@
 /******************************************************************************/
 
 
-#ifndef __KERNELS_HPP__
-#define __KERNELS_HPP__
+#ifndef __THIN_PLATE_SPLINE_22__
+#define __THIN_PLATE_SPLINE_22__
 
-#include "wendland23.hpp" 
+#include <cmath> 
+/* #include <iostream> */ //debug
 
-#include "thinplatespline22.hpp"
-#include "thinplatespline23.hpp"
-#include "thinplatespline24.hpp"
+#include "planin/basis_function_2d.hpp" 
 
-#include "cubic.hpp"
+class ThinPlateSpline22 : public BasisFunction2D 
+{
+    public: 
+        double operator()( double x1, double x2 ) const  
+        {
+            double r2 = x1*x1 + x2*x2; 
+            /* std::cout << "x = " << x1 << ", y = " << x2 << std::endl; */ //debug
 
-#endif
+            if ( r2 < epsilon ) { 
+                return -r2/2; 
+            }
+
+            /* return ( r2*log( sqrt(r2) ) ); */ 
+            return ( r2*log( r2 )/2 ); 
+        }
+
+        double Dx( double x1, double x2 ) const
+        {
+            double r2 = x1*x1 + x2*x2; 
+
+            if ( r2 < epsilon )
+            {
+                /* return -2*x1*x1*x1/r2 + x1; */
+                return -x1;
+            }
+
+            /* return x1 * ( 2*log( sqrt(r2) ) + 1 ); */
+            return x1 * ( log(r2) + 1 );
+        }
+
+        double Dy( double x1, double x2 ) const
+        {
+            double r2 = x1*x1 + x2*x2; 
+
+            if ( r2 < epsilon )
+            {
+                /* return -2*x2*x2*x2/r2 + x2; */
+                return -x2;
+            }
+
+            /* return x2 * ( 2*log( sqrt(r2) ) + 1 ); */
+            return x2 * ( log(r2) + 1 );
+        }
+
+        int isSmooth() const
+        {
+            return smoothness; 
+        }
+
+        unsigned int get_order() const  
+        {
+            return order; 
+        }
+
+    private: 
+        static const unsigned int order = 2; 
+        double epsilon = 1E-9; 
+
+        static const int smoothness = 1; 
+};
+
+#endif 
 
