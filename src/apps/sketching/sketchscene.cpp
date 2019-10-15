@@ -462,13 +462,14 @@ void SketchScene::processSketch()
 {
     if( sketch->isEmpty() == true ) return;
 
-
-    if( csection_direction == Settings::CrossSection::CrossSectionDirections::Y )
-        sketch->getMonotonicY();
-    else
-        sketch->getMonotonicX();
-
-
+    /* if( csection_direction == Settings::CrossSection::CrossSectionDirections::Y ) */
+    /* { */
+        /* sketch->getMonotonicY(); */
+    /* } */
+    /* else */
+    /* { */
+        /* sketch->getMonotonicX(); */
+    /* } */
 }
 
 

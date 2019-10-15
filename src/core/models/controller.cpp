@@ -779,20 +779,20 @@ void Controller::addTrajectoryToObject( const PolyCurve& curve_ )
 
     ObjectPtr& obj_ = model.objects[ current_object ];
 
-    Curve2D curve_proc_;
+    Curve2D curve_proc_ = curve_.getCurves2D()[0];
 
 
     if( current_direction == Settings::CrossSection::CrossSectionDirections::X )
     {
         // if the current_direction is in the direction X, the trajectory is along the X direction in the top-view plane,
         // so it needs to be monotonic on the direction X
-        curve_proc_ = SketchLibrary1::monotonicInX( curve_.getCurves2D()[0] );
+        /* curve_proc_ = SketchLibrary1::monotonicInX( curve_.getCurves2D()[0] ); */
     }
     else {
 
         // if the current_direction is in the direction Z, the trajectory is along the Y direction in the top-view plane,
         // so it needs to be monotonic on the direction Y
-        curve_proc_ = SketchLibrary1::monotonicInY( curve_.getCurves2D()[0] );
+        /* curve_proc_ = SketchLibrary1::monotonicInY( curve_.getCurves2D()[0] ); */
     }
 
     curve_proc_ = SketchLibrary1::smooth( curve_proc_ );
