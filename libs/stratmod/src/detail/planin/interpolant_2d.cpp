@@ -22,6 +22,7 @@
 
 
 #include "interpolant_2d.hpp"
+/* #include "lapacke.h" */
 
 /* Disable MSVC warnings due to the following (GCC) unknown pragmas */
 /* https://msdn.microsoft.com/en-us/library/2c8f766e.aspx 
@@ -197,7 +198,7 @@ double Interpolant2D::getFillDistance()
     return fill_distance_; 
 };
 
-
+#include <chrono>
 bool Interpolant2D::interpolate() 
 {
     /* TODO: this methos assumes that input points_ is always valid, beware */
@@ -223,7 +224,9 @@ bool Interpolant2D::interpolate()
     const double eigenvalues_lower_bound = fill_distance_*fill_distance_; 
     double aij = 0; 
     Point2 pi, pj; 
-    Eigen::MatrixXd A(size + poly_dim_, size + poly_dim_); 
+    std::vector<double> matrix_a( (size + poly_dim_)*(size + poly_dim_) );
+    /* Eigen::MatrixXd A(size + poly_dim_, size + poly_dim_); */ 
+    Eigen::Map<Eigen::MatrixXd> A(matrix_a.data(), size + poly_dim_, size + poly_dim_);
     Eigen::MatrixXd P(size, poly_dim_); 
     Eigen::Map<Eigen::VectorXd> weights( weights_.data(), size + poly_dim_, 1); 
     Eigen::Map<Eigen::VectorXd> fevaluations( local_fevals.data(), size + poly_dim_, 1); 
@@ -250,7 +253,41 @@ bool Interpolant2D::interpolate()
     A.block(size, 0, poly_dim_, size) = P.transpose(); 
     A.block(size, size, poly_dim_, poly_dim_) = Eigen::MatrixXd::Constant(poly_dim_, poly_dim_, 0); 
 
-    weights = A.householderQr().solve(fevaluations); 
+    /* std::cout << "Interpolation times:\n"; */
+
+    /* auto t0 = std::chrono::high_resolution_clock::now(); */
+    /* weights = A.householderQr().solve(fevaluations); */ 
+    /* auto t1 = std::chrono::high_resolution_clock::now(); */
+    /* auto dt_eigen_hh = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count(); */
+    /* std::cout << "---> Eigen(hh): " << dt_eigen_hh << std::endl << std::flush; */
+
+    /* t0 = std::chrono::high_resolution_clock::now(); */
+    weights = A.lu().solve(fevaluations); 
+    /* t1 = std::chrono::high_resolution_clock::now(); */
+    /* auto dt_eigen_lu = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count(); */
+    /* std::cout << "---> Eigen(lu): " << dt_eigen_lu << std::endl << std::flush; */
+
+    /* t0 = std::chrono::high_resolution_clock::now(); */
+    /* { */
+    /*     int matrix_layout = LAPACK_ROW_MAJOR; */
+    /*     char uplo = 'U'; */
+    /*     int n = size + poly_dim_; */
+    /*     int nrhs = 1; */
+    /*     int lda = n; */
+    /*     int ldb = nrhs; */
+    /*     std::vector<int> ipiv(n); */
+
+    /*     LAPACKE_dsysv(matrix_layout, uplo, n, nrhs, matrix_a.data(), lda,  ipiv.data(), local_fevals.data(), ldb); */
+    /*     /1* LAPACKE_dgesv(matrix_layout, n, nrhs, matrix_a.data(), lda,  ipiv.data(), local_fevals.data(), ldb); *1/ */
+
+    /*     weights = fevaluations; */
+    /* } */
+    /* t1 = std::chrono::high_resolution_clock::now(); */
+    /* auto dt_lapacke = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count(); */
+    /* std::cout << "---> Lapacke: " << dt_lapacke << std::endl << std::flush; */
+
+    /* std::cout << "Interpolation times:\n" << "---> Eigen(hh): " << dt_eigen_hh << "; Eigen(lu): " << dt_eigen_lu << "; Lapacke: " << dt_lapacke << std::endl; */
+
     /* std::cout << "weights: " << weights << std::endl; */ //debug
     /* std::cout << "fevals: " << fevals_ << std::endl; */ //debug
 

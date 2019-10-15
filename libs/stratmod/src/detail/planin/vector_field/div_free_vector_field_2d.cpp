@@ -56,12 +56,10 @@
 
 DivFreeVectorField2D::DivFreeVectorField2D( VFKernel k, unsigned int poly_dim ) : k_(k), poly_dim_(poly_dim) 
 {
-    if ( poly_dim < 2 || poly_dim > 3 )
+    if ( poly_dim < 2 || poly_dim > 4 )
     {
-        poly_dim_ = 2;
+        poly_dim_ = 4;
     }
-
-    poly_dim_ = 3;
 } 
 
 Matrix22 DivFreeVectorField2D::mKernelEval( double x, double y )
@@ -83,6 +81,21 @@ Matrix22 DivFreeVectorField2D::mKernelEval( double x, double y )
     return M;
 };
 
+void DivFreeVectorField2D::mKernelEval( double x, double y, Matrix22 &M )
+{
+    double H11 = k_.Dxx(x, y);
+    double H12 = k_.Dxy(x, y);
+    double H21 = k_.Dyx(x, y);
+    double H22 = k_.Dyy(x, y);
+
+    double L = H11 + H22;
+
+    M(0,0) = H11 - L;
+    M(0,1) = H12;
+    M(1,0) = H21;
+    M(1,1) = H22 - L;
+}
+
 Vector2 DivFreeVectorField2D::operator()( double x, double y ) 
 {
     Vector2 Fxy {};
@@ -97,7 +110,8 @@ Vector2 DivFreeVectorField2D::operator()( double x, double y )
 
     for ( size_t i = 0; i < size; ++i )
     {
-        M = mKernelEval(x - points_[i].x, y - points_[i].y);
+        /* M = mKernelEval(x - points_[i].x, y - points_[i].y); */
+        mKernelEval(x - points_[i].x, y - points_[i].y, M);
         Ui = M(0,0) * lambdas_[i].u + M(0,1) * lambdas_[i].v; 
         Vi = M(1,0) * lambdas_[i].u + M(1,1) * lambdas_[i].v; 
 
@@ -112,10 +126,16 @@ Vector2 DivFreeVectorField2D::operator()( double x, double y )
         Fxy.v += weights_[size + 1];
     }
 
-    if ( poly_dim_ == 3 )
+    if ( poly_dim_ >= 3 )
     {
         Fxy.u += weights_[size + 2] * x;
         Fxy.v += weights_[size + 2] * (-y);
+    }
+
+    if ( poly_dim_ >= 4 )
+    {
+        Fxy.u += weights_[size + 3] * y;
+        Fxy.v += weights_[size + 3] * (-x);
     }
 
     /* for ( size_t i = 0; i < size; ++i ) */ 
@@ -218,7 +238,7 @@ bool DivFreeVectorField2D::addVectorEvaluation( const Point2 &p, const Vector2 &
     success &= addFunctionalEvaluation(p, lu, vector_eval.u );
     success &= addFunctionalEvaluation(p, lv, vector_eval.v );
 
-    return true;
+    return success;
 }
 
 bool DivFreeVectorField2D::addVectorEvaluation( Point2 &&p, Vector2 &&vector_eval)
@@ -336,9 +356,14 @@ bool DivFreeVectorField2D::interpolate()
             /* std::cout << "i = " << i << " :: P(i,0) = " << P(i,0) << ", P(i,1) = " << P(i, 1) << "\n" << std::flush; */
         }
 
-        if ( poly_dim_ == 3 )
+        if ( poly_dim_ >= 3 )
         {
             P(i,2) = li.dot({{{pi.x, -pi.y}}});
+        }
+
+        if ( poly_dim_ >= 4 )
+        {
+            P(i,3) = li.dot({{{pi.y, -pi.x}}});
         }
 
         for ( size_t j = 0; j < size; ++j )
@@ -348,7 +373,8 @@ bool DivFreeVectorField2D::interpolate()
             /* std::cout << "Getting lambda_j\n" << std::flush; */
             lj = lambdas_[j]; 
             /* std::cout << "Got point_j and lambda_j\n" << std::flush; */
-            M = mKernelEval(pi.x - pj.x, pi.y - pj.y);
+            /* M = mKernelEval(pi.x - pj.x, pi.y - pj.y); */
+            mKernelEval(pi.x - pj.x, pi.y - pj.y, M);
 
             aij = ( li.u * M(0,0) + li.v * M(1,0) ) * lj.u + ( li.u * M(0,1) + li.v * M(1,1) ) * lj.v; 
             aij += ( i == j ) ? eigenvalues_lower_bound : 0.0; 

@@ -53,7 +53,7 @@ class DivFreeVectorField2D
 { 
     public: 
         DivFreeVectorField2D() = default; 
-        DivFreeVectorField2D( VFKernel k, unsigned int poly_dim_ = 2 ); 
+        DivFreeVectorField2D( VFKernel k, unsigned int poly_dim_ = 4 ); 
 
         DivFreeVectorField2D( const DivFreeVectorField2D& ) = default;
         DivFreeVectorField2D& operator=( const DivFreeVectorField2D& ) = default;
@@ -66,6 +66,9 @@ class DivFreeVectorField2D
 
         template<typename T> 
         T operator()(const T& p);
+
+        template<typename T> 
+        void operator()(const T& p, T& Fp);
 
         /* double Dx( double x, double y ); */ 
         /* double Dx( Point2 &p ); */ 
@@ -101,6 +104,7 @@ class DivFreeVectorField2D
         bool interpolant_is_set_ = false;  
 
         Matrix22 mKernelEval( double x, double y );
+        void mKernelEval( double x, double y, Matrix22 &M );
 
         // Cereal provides an easy way to serialize objects
         friend class cereal::access;

@@ -313,6 +313,7 @@ target_include_directories(planin
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin/mesh>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin/vector_field>
