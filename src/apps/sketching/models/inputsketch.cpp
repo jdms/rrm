@@ -97,10 +97,10 @@ PolyCurve InputSketch::done( const InputSketch::Direction& dir_ )
     //TODO: create a method to smooth the curve
 
     Curve2D sketch_ = fromQtToCurve2D( curve.toSubpathPolygons()[ 0 ] );
-    if( dir_ == InputSketch::Direction::X )
-        sketch_ = SketchLibrary::xmonotonicSketch( sketch_ );
-    else if( dir_ == InputSketch::Direction::Y )
-        sketch_ = SketchLibrary::ymonotonicSketch( sketch_ );
+    /* if( dir_ == InputSketch::Direction::X ) */
+        /* sketch_ = SketchLibrary::xmonotonicSketch( sketch_ ); */
+    /* else if( dir_ == InputSketch::Direction::Y ) */
+        /* sketch_ = SketchLibrary::ymonotonicSketch( sketch_ ); */
 
     sketch_ = SketchLibrary::smooth( sketch_ );
     setSketch( fromCurve2DToQt( sketch_ ) );
