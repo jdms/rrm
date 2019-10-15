@@ -19,10 +19,14 @@
  * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <chrono>
 #include <iomanip>
 
 #include "rules_processor.hpp"
 #include "colorwrap.hpp"
+
+#include "ode_solver_2d.hpp"
+
 /* #include "qt_popup.hpp" */
 void displayNotice( std::string, std::string ) {}
 
@@ -2244,7 +2248,7 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 {
     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
     {
-        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
+        double fill_distance = 1E-3; // force modeller to pick a default smoothing factor based on discretization
         return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, fill_distance);
     };
 
@@ -2257,20 +2261,138 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
         const std::vector<double> &path_curve_point_data 
         )
+/* { */
+/*     auto surfaceCreator = [this]( */ 
+/*             size_t s_id, const std::vector<double> &cross_sec_pts, */ 
+/*             double cross_sec, const std::vector<double> &path_pts ) -> bool */ 
+/*     { */
+/*         double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization */
+/*         return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance); */
+/*     }; */
+
+/*     bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, */ 
+/*             cross_section_depth, path_curve_point_data); */
+
+/*     return success; */
+/* } */
 {
-    auto surfaceCreator = [this]( 
-            size_t s_id, const std::vector<double> &cross_sec_pts, 
-            double cross_sec, const std::vector<double> &path_pts ) -> bool 
+    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool 
     {
-        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
-        return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance);
+        const double fill_distance_factor = 1.0/(10.0*std::sqrt(2));
+        auto sqr = [](double x) -> double { return x*x; };
+        double fill_distance = std::sqrt(sqr(length_.x-origin_.x) + sqr(length_.z-origin_.z))*fill_distance_factor;
+
+        return this->modeller_.createSurface(s_id, pts, fill_distance);
     };
 
-    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 
-            cross_section_depth, path_curve_point_data);
+    std::cout << "Trying to create path guided surface:\n"; 
+    std::cout << "---> Setting solver properties\n"; 
+    odeSolver2D S;
+
+    double tol_x = 0.05 * length_.x;
+    double tol_z = 0.05 * length_.z;
+    S.setDomainOrigin(origin_.x-tol_x, origin_.z-tol_z);
+    S.setDomainSize(length_.x+2*tol_x, length_.z+2*tol_z);
+
+    auto curve_size = path_curve_point_data.size()/2;
+    std::vector<double> path_w(curve_size), path_l(curve_size);
+
+    std::cout << "---> Setting solver input\n"; 
+    auto getCurve = [] (const std::vector<double>& curve) -> odeSolver2D::Curve {
+        size_t num_points = curve.size()/2;
+        std::vector<double> path_x(num_points);
+        std::vector<double> path_y(num_points);
+
+        for (size_t i = 0; i < num_points; ++i )
+        {
+            path_x[i] = curve[2*i + 0];
+            path_y[i] = curve[2*i + 1];
+            /* std::cout << "::: Adding point: (" << path_w[i] << ", " << path_l[i] << ")\n"; */
+        }
+
+        return std::make_tuple(path_x, path_y);
+    };
+    std::tie(path_w, path_l) = getCurve(path_curve_point_data);
+    /* std::tie(path_w, path_l) = odeSolver2D::sampleCurve(path_w, path_l, 32); */
+    S.inputCurveTangentVectors(path_w, path_l, 256);
+
+    std::cout << "---> Interpolating vector field\n"; 
+    if ( !S.interpolateVectorField() )
+    {
+        std::cout << "---> ---> Could not interpolate vector field\n"; 
+        return false;
+    }
+    
+    auto get_curve_len = [](const odeSolver2D::XCoordinates &xcoords, const odeSolver2D::YCoordinates &ycoords) -> double {
+        double len = 0.0;
+        auto numel = xcoords.size();
+        if ( (numel < 2) || (xcoords.size() != ycoords.size()) )
+        {
+            return len;
+        }
+
+        auto dist = [](const odeSolver2D::XCoordinates &xcoords, const odeSolver2D::YCoordinates &ycoords, size_t i0, size_t i1) -> double {
+            double x = xcoords[i0] - xcoords[i1];
+            double y = ycoords[i0] - ycoords[i1];
+            double d = std::sqrt(x*x + y*y);
+
+            return d;
+        };
+
+        for (size_t i = 0; i < numel-1; ++i)
+        {
+            len += dist(xcoords, ycoords, i, i+1);
+        }
+
+        return len;
+    };
+
+    std::vector<double> surface_points, cross_w, cross_h;
+    double wi, li = cross_section_depth, hi;
+    std::cout << "---> Sampling final surface: " << std::flush; 
+    auto t0 = std::chrono::high_resolution_clock::now();
+    odeSolver2D::XCoordinates orbit_w;
+    odeSolver2D::YCoordinates orbit_l;
+    std::tie(cross_w, cross_h) = getCurve(cross_section_curve_point_data);
+    double disc_x = 72, disc_z = 72;
+    double disc = std::sqrt(length_.x*length_.x + length_.z*length_.z)/std::sqrt(disc_x*disc_x + disc_z*disc_z);
+    double orbit_len;
+    size_t num_samples;
+    for ( size_t i = 0; i < cross_w.size(); ++i )
+    {
+        /* wi = cross_section_curve_point_data[2*i + 0]; */
+        /* hi = cross_section_curve_point_data[2*i + 1]; */
+        wi = cross_w[i];
+        hi = cross_h[i];
+
+        /* std::tie(orbit_w, orbit_l) = odeSolver2D::sampleCurve(S.getOrbit(wi, li), 128); */
+        std::tie(orbit_w, orbit_l) = S.getOrbit(wi, li);
+        std::cout << "---> ---> iteration " << i << "; orbit points: " << orbit_l.size() << "; orbit height: " << hi << "\n"; 
+        if (orbit_l.size() > 1)
+        {
+            orbit_len = get_curve_len(orbit_w, orbit_l);
+            num_samples = std::ceil(orbit_len/disc);
+            std::tie(orbit_w, orbit_l) = odeSolver2D::sampleCurve(orbit_w, orbit_l, num_samples);
+            std::cout << "---> ---> iteration " << i << "; sampled points: " << orbit_l.size() << "; orbit height: " << hi << "\n"; 
+            for (size_t j = 0; j < orbit_l.size(); ++j)
+            {
+                surface_points.push_back(orbit_w[j]);
+                surface_points.push_back(hi);
+                surface_points.push_back(orbit_l[j]);
+            }
+        }
+    }
+    auto t1 = std::chrono::high_resolution_clock::now();
+    auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
+    std::cout << dt << " milliseconds, for " << surface_points.size()/3 << "points\n" << std::flush;
+
+    std::cout << "---> Creating final surface\n"; 
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points);
 
     return success;
 }
+
+
 
 bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data
@@ -2278,7 +2400,7 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
 {
     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
     {
-        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
+        double fill_distance = 1E-3; // force modeller to pick a default smoothing factor based on discretization
         return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, fill_distance);
     };
 
@@ -2291,17 +2413,68 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data, double cross_section_depth, 
         const std::vector<double> &path_curve_point_data 
         )
+/* { */
+/*     auto surfaceCreator = [this]( */ 
+/*             size_t s_id, const std::vector<double> &cross_sec_pts, */ 
+/*             double cross_sec, const std::vector<double> &path_pts ) -> bool */ 
+/*     { */
+/*         double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization */
+/*         return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance); */
+/*     }; */
+
+/*     bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, */ 
+/*             cross_section_depth, path_curve_point_data); */
+
+/*     return success; */
+/* } */
 {
-    auto surfaceCreator = [this]( 
-            size_t s_id, const std::vector<double> &cross_sec_pts, 
-            double cross_sec, const std::vector<double> &path_pts ) -> bool 
+    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool 
     {
-        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
-        return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance);
+        double fill_distance = 50.0; // force modeller to pick a default smoothing factor based on discretization
+        return this->modeller_.createSurface(s_id, pts, fill_distance);
     };
 
-    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 
-            cross_section_depth, path_curve_point_data);
+    std::cout << "Trying to create path guided surface:\n"; 
+    std::cout << "---> Setting solver properties\n"; 
+    odeSolver2D S;
+    S.setDomainOrigin(origin_.x, origin_.z);
+    S.setDomainSize(length_.x, length_.z);
+
+    auto curve_size = path_curve_point_data.size()/2;
+    std::vector<double> path_w(curve_size), path_l(curve_size);
+
+    std::cout << "---> Setting solver input\n"; 
+    for (size_t i = 0; i < curve_size; ++i )
+    {
+        path_w[i] = path_curve_point_data[2*i + 0];
+        path_l[i] = path_curve_point_data[2*i + 1];
+        std::cout << "::: Adding point: (" << path_w.back() << ", " << path_l.back() << ")\n";
+    }
+    S.inputCurveTangentVectors(path_l, path_w, -1);
+
+    std::cout << "---> Interpolating vector field\n"; 
+    S.interpolateVectorField();
+    
+    std::vector<double> surface_points;
+    double wi = cross_section_depth, li, hi;
+    std::cout << "---> Sampling final surface\n"; 
+    for ( size_t i = 0; i < cross_section_curve_point_data.size()/2; ++i )
+    {
+        li = cross_section_curve_point_data[2*i + 0];
+        hi = cross_section_curve_point_data[2*i + 1];
+
+        auto [orbit_w, orbit_l] = odeSolver2D::sampleCurve(S.getOrbit(wi, li), 64);
+        std::cout << "---> ---> iteration " << i << "; sampled points: " << orbit_l.size() << "\n"; 
+        for (size_t j = 0; j < orbit_l.size(); ++j)
+        {
+            surface_points.push_back(orbit_w[j]);
+            surface_points.push_back(hi);
+            surface_points.push_back(orbit_l[j]);
+        }
+    }
+
+    std::cout << "---> Creating final surface\n"; 
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points);
 
     return success;
 }
