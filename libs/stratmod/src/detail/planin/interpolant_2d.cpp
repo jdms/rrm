@@ -229,7 +229,9 @@ bool Interpolant2D::interpolate()
     Eigen::Map<Eigen::MatrixXd> A(matrix_a.data(), size + poly_dim_, size + poly_dim_);
     Eigen::MatrixXd P(size, poly_dim_); 
     Eigen::Map<Eigen::VectorXd> weights( weights_.data(), size + poly_dim_, 1); 
+    std::cout << "weights_.size() = " << weights_.size() << ", size + poly_dim_ = " << size + poly_dim_ << "\n";
     Eigen::Map<Eigen::VectorXd> fevaluations( local_fevals.data(), size + poly_dim_, 1); 
+    std::cout << "local_fevals.size() = " << local_fevals.size() << ", size + poly_dim_ = " << size + poly_dim_ << "\n";
 
     for ( size_t i = 0; i < size; ++i ) { 
         pi = points_[i]; 

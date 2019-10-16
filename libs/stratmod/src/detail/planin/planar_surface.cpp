@@ -1662,7 +1662,7 @@ bool PlanarSurface::updateCache()
 
     double height{};
     bool valid_vertex{};
-    PlanarSurface::SurfaceId bounding_surface_id;
+    PlanarSurface::SurfaceId bounding_surface_id = getID();
     
     surface_is_empty_ = true;
 

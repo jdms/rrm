@@ -282,13 +282,13 @@ bool SModellerImplementation::getControllerIndexFromPlanarSurfaceId( const Plana
     size_t index;
     bool success = container_.getSurfaceIndex(surface_id, index);
 
-    success = getControllerIndex(index, controller_index);
+    success &= getControllerIndex(index, controller_index);
     if ( !success )
     {
         controller_index = std::numeric_limits<ControllerSurfaceIndex>::max();
     }
 
-    return false;
+    return success;
 }
 
 bool SModellerImplementation::parseTruncateSurfaces( std::vector<size_t> &lbounds, std::vector<size_t> &ubounds )
