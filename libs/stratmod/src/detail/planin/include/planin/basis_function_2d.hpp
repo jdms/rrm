@@ -40,6 +40,7 @@ class BasisFunction2D
 
         int isSmooth() const { return 0; } 
         unsigned int get_order() const { return 0; } 
+        bool setScale( double /* scale */ ) { return true; }
 }; 
 
 #endif 

@@ -316,7 +316,7 @@ if( ${STRATMOD_BUILD_USING_OPENMP} )
             OpenMP::OpenMP_CXX
         )
 else()
-    target_link_libraries(stratmod PRIVATE planin)
+    target_link_libraries(stratmod PUBLIC planin)
 endif()
 
 target_include_directories(stratmod

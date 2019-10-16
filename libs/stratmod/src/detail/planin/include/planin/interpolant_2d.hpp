@@ -112,6 +112,13 @@ class Interpolant2D
                 fill_distance_
               );
         }
+
+        /* if ( version >= 3 ) */
+        /* { */
+        /*     ar( */
+        /*         k_ */
+        /*       ); */
+        /* } */
     }
 
     CEREAL_CLASS_VERSION(Interpolant2D, 2);

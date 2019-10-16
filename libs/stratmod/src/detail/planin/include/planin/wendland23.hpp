@@ -25,7 +25,7 @@
 #define __WENDLAND_23__
 
 #include <cmath> 
-/* #include <iostream> */ //debug
+#include <iostream> //debug
 
 #include "planin/basis_function_2d.hpp" 
 
@@ -150,6 +150,19 @@ class Wendland23 : public BasisFunction2D
         unsigned int get_order() const  
         {
             return order; 
+        }
+
+        bool setScale(double scale)
+        {
+            if ( scale <= 0 )
+            {
+                return false;
+            }
+
+            support_size = scale;
+            std::cout << "Support size = " << support_size << "\n";
+
+            return true;
         }
 
     private: 

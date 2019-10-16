@@ -89,6 +89,8 @@ class DivFreeVectorField2D
 
         bool interpolate(); 
 
+        bool setBasisFunctionScale(double scale);
+
         void clear(); 
 
     private:
@@ -141,9 +143,16 @@ T DivFreeVectorField2D::operator()(const T& p)
             weights_, 
             interpolant_is_set_
           );
+
+        if (version >= 2)
+        {
+            ar(
+                k_
+              );
+        }
     }
 
-    CEREAL_CLASS_VERSION(DivFreeVectorField2D, 1);
+    CEREAL_CLASS_VERSION(DivFreeVectorField2D, 2);
 
 #else
     template<typename Archive>

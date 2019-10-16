@@ -421,6 +421,11 @@ bool DivFreeVectorField2D::interpolate()
     return true; 
 }
 
+bool DivFreeVectorField2D::setBasisFunctionScale(double scale)
+{
+    return k_.setScale(scale);
+}
+
 void DivFreeVectorField2D::clear() 
 {
     points_.clear(); 
