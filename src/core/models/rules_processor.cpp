@@ -25,8 +25,8 @@
 #include "rules_processor.hpp"
 #include "colorwrap.hpp"
 
-#include "ode_solver_2d.hpp"
-#include "path_guided_surface.hpp"
+/* #include "ode_solver_2d.hpp" */
+/* #include "path_guided_surface.hpp" */
 
 /* #include "qt_popup.hpp" */
 void displayNotice( std::string, std::string ) {}
@@ -2262,62 +2262,62 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data, double cross_section_length, 
         const std::vector<double> &path_curve_point_data 
         )
-/* { */
-/*     auto surfaceCreator = [this]( */ 
-/*             size_t s_id, const std::vector<double> &cross_sec_pts, */ 
-/*             double cross_sec, const std::vector<double> &path_pts ) -> bool */ 
-/*     { */
-/*         double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization */
-/*         return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance); */
-/*     }; */
-
-/*     bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, */ 
-/*             cross_section_length, path_curve_point_data); */
-
-/*     return success; */
-/* } */
 {
-    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool 
+    auto surfaceCreator = [this]( 
+            size_t s_id, const std::vector<double> &cross_sec_pts, 
+            double cross_sec, const std::vector<double> &path_pts ) -> bool 
     {
-        const double fill_distance_factor = 1.0/(10.0*std::sqrt(2));
-        auto sqr = [](double x) -> double { return x*x; };
-        double fill_distance = std::sqrt(sqr(length_.x-origin_.x) + sqr(length_.z-origin_.z))*fill_distance_factor;
-
-        return this->modeller_.createSurface(s_id, pts, fill_distance);
+        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
+        return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance);
     };
 
-    PathGuidedSurface surface;
-
-    // Set boundary
-    double m = 0.2;
-    surface.setOrigin(origin_.x - m*length_.x, origin_.z - m*length_.z);
-    surface.setSize(length_.x*(1.0 + 2*m), length_.z*(1.0 + 2*m));
-    
-    // Input path
-    size_t path_max_disc = 256;
-    double path_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(path_max_disc);
-    surface.addGuidingPathTangentVectors(path_curve_point_data, path_disc_per_unit_of_length, path_max_disc);
-    surface.setGuidingPaths();
-    
-    // Compute orbits
-    size_t orbit_max_disc = 72;
-    double orbit_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(orbit_max_disc);
-    double width, length = cross_section_length, height;
-    for (size_t i = 0; i < cross_section_curve_point_data.size()/2; ++i)
-    {
-        width = cross_section_curve_point_data[2*i + 0];
-        height = cross_section_curve_point_data[2*i + 1];
-
-        surface.addOrbitToSurfaceSamples(width, length, height, orbit_disc_per_unit_of_length, orbit_max_disc);
-    }
-
-    // Create final surface
-    /* std::cout << "---> Creating final surface\n"; */ 
-    auto surface_points = surface.getSurfaceSamples();
-    bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points);
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 
+            cross_section_length, path_curve_point_data);
 
     return success;
 }
+/* { */
+/*     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */ 
+/*     { */
+/*         const double fill_distance_factor = 1.0/(10.0*std::sqrt(2)); */
+/*         auto sqr = [](double x) -> double { return x*x; }; */
+/*         double fill_distance = std::sqrt(sqr(length_.x-origin_.x) + sqr(length_.z-origin_.z))*fill_distance_factor; */
+
+/*         return this->modeller_.createSurface(s_id, pts, fill_distance); */
+/*     }; */
+
+/*     PathGuidedSurface surface; */
+
+/*     // Set boundary */
+/*     double m = 0.2; */
+/*     surface.setOrigin(origin_.x - m*length_.x, origin_.z - m*length_.z); */
+/*     surface.setSize(length_.x*(1.0 + 2*m), length_.z*(1.0 + 2*m)); */
+    
+/*     // Input path */
+/*     size_t path_max_disc = 256; */
+/*     double path_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(path_max_disc); */
+/*     surface.addGuidingPathTangentVectors(path_curve_point_data, path_disc_per_unit_of_length, path_max_disc); */
+/*     surface.setGuidingPaths(); */
+    
+/*     // Compute orbits */
+/*     size_t orbit_max_disc = 72; */
+/*     double orbit_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(orbit_max_disc); */
+/*     double width, length = cross_section_length, height; */
+/*     for (size_t i = 0; i < cross_section_curve_point_data.size()/2; ++i) */
+/*     { */
+/*         width = cross_section_curve_point_data[2*i + 0]; */
+/*         height = cross_section_curve_point_data[2*i + 1]; */
+
+/*         surface.addOrbitToSurfaceSamples(width, length, height, orbit_disc_per_unit_of_length, orbit_max_disc); */
+/*     } */
+
+/*     // Create final surface */
+/*     /1* std::cout << "---> Creating final surface\n"; *1/ */ 
+/*     auto surface_points = surface.getSurfaceSamples(); */
+/*     bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points); */
+
+/*     return success; */
+/* } */
 /* { */
 /*     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */ 
 /*     { */
@@ -2456,68 +2456,68 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data, double cross_section_width, 
         const std::vector<double> &path_curve_point_data 
         )
-/* { */
-/*     auto surfaceCreator = [this]( */ 
-/*             size_t s_id, const std::vector<double> &cross_sec_pts, */ 
-/*             double cross_sec, const std::vector<double> &path_pts ) -> bool */ 
-/*     { */
-/*         double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization */
-/*         return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance); */
-/*     }; */
-
-/*     bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, */ 
-/*             cross_section_width, path_curve_point_data); */
-
-/*     return success; */
-/* } */
 {
-    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool 
+    auto surfaceCreator = [this]( 
+            size_t s_id, const std::vector<double> &cross_sec_pts, 
+            double cross_sec, const std::vector<double> &path_pts ) -> bool 
     {
-        const double fill_distance_factor = 1.0/(10.0*std::sqrt(2));
-        auto sqr = [](double x) -> double { return x*x; };
-        double fill_distance = std::sqrt(sqr(length_.x-origin_.x) + sqr(length_.z-origin_.z))*fill_distance_factor;
-
-        return this->modeller_.createSurface(s_id, pts, fill_distance);
+        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
+        return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance);
     };
 
-    PathGuidedSurface surface;
-
-    // Set boundary
-    double m = 0.2;
-    surface.setOrigin(origin_.x - m*length_.x, origin_.z - m*length_.z);
-    surface.setSize(length_.x*(1.0 + 2*m), length_.z*(1.0 + 2*m));
-    
-    // Input path
-    size_t path_max_disc = 256;
-    double path_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(path_max_disc);
-    std::vector<double> path_curve(path_curve_point_data.size());
-    for (size_t i = 0; i < cross_section_curve_point_data.size()/2; ++i)
-    {
-        path_curve[2*i + 0] = path_curve_point_data[2*i + 1];
-        path_curve[2*i + 1] = path_curve_point_data[2*i + 0];
-    }
-    surface.addGuidingPathTangentVectors(path_curve, path_disc_per_unit_of_length, path_max_disc);
-    surface.setGuidingPaths();
-    
-    // Compute orbits
-    size_t orbit_max_disc = 72;
-    double orbit_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(orbit_max_disc);
-    double width = cross_section_width, length, height;
-    for (size_t i = 0; i < cross_section_curve_point_data.size()/2; ++i)
-    {
-        length = cross_section_curve_point_data[2*i + 0];
-        height = cross_section_curve_point_data[2*i + 1];
-
-        surface.addOrbitToSurfaceSamples(width, length, height, orbit_disc_per_unit_of_length, orbit_max_disc);
-    }
-
-    // Create final surface
-    /* std::cout << "---> Creating final surface\n"; */ 
-    auto surface_points = surface.getSurfaceSamples();
-    bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points);
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 
+            cross_section_width, path_curve_point_data);
 
     return success;
 }
+/* { */
+/*     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */ 
+/*     { */
+/*         const double fill_distance_factor = 1.0/(10.0*std::sqrt(2)); */
+/*         auto sqr = [](double x) -> double { return x*x; }; */
+/*         double fill_distance = std::sqrt(sqr(length_.x-origin_.x) + sqr(length_.z-origin_.z))*fill_distance_factor; */
+
+/*         return this->modeller_.createSurface(s_id, pts, fill_distance); */
+/*     }; */
+
+/*     PathGuidedSurface surface; */
+
+/*     // Set boundary */
+/*     double m = 0.2; */
+/*     surface.setOrigin(origin_.x - m*length_.x, origin_.z - m*length_.z); */
+/*     surface.setSize(length_.x*(1.0 + 2*m), length_.z*(1.0 + 2*m)); */
+    
+/*     // Input path */
+/*     size_t path_max_disc = 256; */
+/*     double path_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(path_max_disc); */
+/*     std::vector<double> path_curve(path_curve_point_data.size()); */
+/*     for (size_t i = 0; i < cross_section_curve_point_data.size()/2; ++i) */
+/*     { */
+/*         path_curve[2*i + 0] = path_curve_point_data[2*i + 1]; */
+/*         path_curve[2*i + 1] = path_curve_point_data[2*i + 0]; */
+/*     } */
+/*     surface.addGuidingPathTangentVectors(path_curve, path_disc_per_unit_of_length, path_max_disc); */
+/*     surface.setGuidingPaths(); */
+    
+/*     // Compute orbits */
+/*     size_t orbit_max_disc = 72; */
+/*     double orbit_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(orbit_max_disc); */
+/*     double width = cross_section_width, length, height; */
+/*     for (size_t i = 0; i < cross_section_curve_point_data.size()/2; ++i) */
+/*     { */
+/*         length = cross_section_curve_point_data[2*i + 0]; */
+/*         height = cross_section_curve_point_data[2*i + 1]; */
+
+/*         surface.addOrbitToSurfaceSamples(width, length, height, orbit_disc_per_unit_of_length, orbit_max_disc); */
+/*     } */
+
+/*     // Create final surface */
+/*     /1* std::cout << "---> Creating final surface\n"; *1/ */ 
+/*     auto surface_points = surface.getSurfaceSamples(); */
+/*     bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points); */
+
+/*     return success; */
+/* } */
 /* { */
     /* auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */ 
     /* { */
