@@ -4,6 +4,7 @@ libs/stratmod/stratmod
 libs/glew-*
 src/core/models/nspline
 src/core/models/odeint_wrapper
+src/core/models/vector_field
 
 # Git files       #
 ###################
