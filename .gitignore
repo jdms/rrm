@@ -2,6 +2,8 @@
 ########################
 libs/stratmod/stratmod
 libs/glew-*
+src/core/models/nspline
+src/core/models/odeint_wrapper
 
 # Git files       #
 ###################
