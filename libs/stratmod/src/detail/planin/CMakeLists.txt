@@ -132,7 +132,7 @@ option(PLANIN_BUILD_DAISY_EXAMPLE_5B "" OFF)
 # Auxiliary config files. 
 ###############################################
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # include_directories("./")
 
@@ -164,7 +164,7 @@ endif()
 # Let's keep the old hack commented out in case this breaks.  
 
 if(PLANIN_BUILD_USING_OPENMP OR STRATMOD_BUILD_USING_OPENMP)
-    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
+    include(PatchOpenMPApple)
     find_package(OpenMP REQUIRED)
 endif()
 
