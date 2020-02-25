@@ -99,8 +99,12 @@ if( RRM_DIRECTORY_LIBRARIES )
         else()
             set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
         endif()
-    else()
+    elseif(UNIX AND NOT APPLE)
         set( Qt5_DIR "/opt/Qt/5.8/gcc_64/lib/cmake/Qt5" )
+    elseif(APPLE)
+        set(Qt5_DIR "/usr/local/Cellar/qt/5.14.1/lib/cmake/Qt5")
+        set(LAPACKE_DIR "/usr/local/opt/lapack")
+
     endif()
 
 endif()
