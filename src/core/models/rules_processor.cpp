@@ -2249,7 +2249,7 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 {
     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
     {
-        double fill_distance = 1E-3; // force modeller to pick a default smoothing factor based on discretization
+        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
         return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, fill_distance);
     };
 
@@ -2443,7 +2443,7 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
 {
     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
     {
-        double fill_distance = 1E-3; // force modeller to pick a default smoothing factor based on discretization
+        double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
         return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, fill_distance);
     };
 
