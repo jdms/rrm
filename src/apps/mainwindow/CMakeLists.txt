@@ -44,7 +44,7 @@ add_subdirectory( ../sketching ${CMAKE_BINARY_DIR}/sketching )
 include_directories( ${SKETCHING_HEADERS} )
 
 
-add_subdirectory( ../simulator ${CMAKE_BINARY_DIR}/simulator )
+# add_subdirectory( ../simulator ${CMAKE_BINARY_DIR}/simulator )
 include_directories( ${SIMULATOR_HEADERS} )
 
 
