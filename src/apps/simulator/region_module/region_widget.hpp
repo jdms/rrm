@@ -38,7 +38,7 @@
 #include "ui_region_widget_form.h"
 
 #include "../widgets/SpanSlider/qxtspanslider.h"
-#include "../core/widgets/color_picker.h"
+#include "core/widgets/color_picker.h"
 
 namespace RRM
 {
