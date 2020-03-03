@@ -49,7 +49,7 @@ include_directories (${PROJECT_BINARY_DIR})
 
 add_library( ${PROJECT_NAME} STATIC ${3DVIEW_MOC_SRCS} ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} )
 if(WIN32)
-    target_link_libraries( ${PROJECT_NAME} ${GLEW_LIBRARIES} )
+    target_link_libraries( ${PROJECT_NAME} GLEW )
     target_link_libraries( ${PROJECT_NAME} ${OPENGL_LIBRARY} )
 else()
     target_link_libraries( ${PROJECT_NAME} GLEW::GLEW )
