@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __TEST_AND_DEBUG_HPP__
-#define __TEST_AND_DEBUG_HPP__
+#ifndef PLANIN_TEST_AND_DEBUG_HPP
+#define PLANIN_TEST_AND_DEBUG_HPP
 
 #include <iostream>
 #include <cmath> 

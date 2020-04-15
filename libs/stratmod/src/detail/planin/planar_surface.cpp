@@ -1075,7 +1075,10 @@ bool PlanarSurface::getHeight( const Point2 &p, double &height, T &&cache ) {
         return status;
     }
 
-    status = f->getRawHeight(p, height);  
+    /* status = f->getRawHeight(p, height); */  
+
+    status = interpolant_is_set_;
+    height = linear_graph_.height(p);
 
     if ( status == false ) { 
         return false; 
@@ -1138,6 +1141,86 @@ bool PlanarSurface::getHeight( const Point2 &p, double &height, T &&cache ) {
 }
 template bool PlanarSurface::getHeight<PlanarSurface::PointCache>(const Point2 &, double &, PointCache &&);
 template bool PlanarSurface::getHeight<PlanarSurface::PointCache &>(const Point2 &, double &,  PointCache &);
+
+template<typename T>
+bool PlanarSurface::getHeight(PiecewiseLinearGraph<Point2>::Natural tindex, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates& bcoords, double& height, T&& cache)
+{ 
+    /* return status; */ 
+    bool status; 
+    
+    auto entry = cache.find(getID());
+    if ( entry != cache.end() )
+    {
+        std::tie(status, height) = entry->second;
+
+        return status;
+    }
+
+    status = interpolant_is_set_;
+    if ( status == false ) { 
+        return false; 
+    }
+
+    height = linear_graph_.height(tindex, bcoords);
+
+    double lb = origin.z;  
+    double ub = origin.z + lenght.z;  
+
+    if ( height > ub ) { 
+        height = ub; 
+        /* status &= false; */ 
+    }
+    else if ( height < lb ) { 
+        height = lb; 
+        /* status &= false; */ 
+    }
+
+    /* #pragma omp critical */
+    /* std::cout << "Trying: " << vertex_index << "... "; */  
+
+    /* std::cout << "I'm here! \n\n"; */ 
+
+    for ( auto &p_upper_bound_ : upper_bound_ )
+    /* for ( auto &p_upper_bound_ : ub_list ) */
+        if ( auto upper_surface = p_upper_bound_.lock() ) { 
+            /* if ( upper_surface->getHeight(p, ub) ) */
+            if ( upper_surface->surfaceIsSet() ) { 
+                upper_surface->getHeight(tindex, bcoords, ub, cache); 
+                if ( height >= ub ) { 
+                    /* #pragma omp critical */
+                    /* std::cout << "failed above! \n"; */ 
+                    height = ub; 
+                    status &= false; 
+                    /* return false; */ 
+                }
+            }
+        }
+
+    for ( auto &p_lower_bound_ : lower_bound_ )
+    /* for ( auto &p_lower_bound_ : lb_list ) */
+        if ( auto lower_surface = p_lower_bound_.lock() ) { 
+            /* if ( lower_surface->getHeight(p, lb) ) */  
+            if ( lower_surface->surfaceIsSet() ) { 
+                lower_surface->getHeight(tindex, bcoords, lb, cache); 
+                if ( height <= lb ) { 
+                    /* #pragma omp critical */
+                    /* std::cout << "failed below! \n"; */ 
+                    height = lb; 
+                    status &= false; 
+                    /* return false; */ 
+                }
+            }
+        }
+
+    /* #pragma omp critical */
+    /* std::cout << "worked! \n"; */  
+    cache.insert( {getID(), std::tuple<bool, double>(status, height)} );
+
+    return status; 
+}
+template bool PlanarSurface::getHeight<PlanarSurface::PointCache>(PiecewiseLinearGraph<Point2>::Natural, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates&, double &, PointCache &&);
+template bool PlanarSurface::getHeight<PlanarSurface::PointCache&>(PiecewiseLinearGraph<Point2>::Natural, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates&, double &, PointCache &);
+
 
 
 bool PlanarSurface::getHeight( Natural vertex_index, double &height, SurfaceId &bounding_surface_id ) 
@@ -1623,7 +1706,11 @@ bool PlanarSurface::updateRawCache()
 
     mesh_is_set_ = true; 
 
-    std::cout << "Raw cache is built for surface: " << id_ << std::endl << std::flush;
+    linear_graph_.setData({discretization_X, discretization_Y}, heights, normals);
+    linear_graph_.setDomainOrigin({origin[0], origin[1]});
+    linear_graph_.setDomainLength({lenght[0], lenght[1]});
+
+    /* std::cout << "Raw cache is built for surface: " << id_ << std::endl << std::flush; */
 
     return true; 
 }
@@ -1642,7 +1729,7 @@ bool PlanarSurface::updateCache()
         return true;
     }
 
-    std::cout << "Processing cache for surface: " << id_ << std::endl << std::flush;
+    /* std::cout << "Processing cache for surface: " << id_ << std::endl << std::flush; */
 
     for ( auto &wptr: upper_bound_ )
     {
@@ -1691,7 +1778,7 @@ bool PlanarSurface::updateCache()
     /* unprocessed_upper_bound_.clear(); */
 
     cache_is_fresh_ = true;
-    std::cout << "Cache is built for surface: " << id_ << std::endl << std::flush;
+    /* std::cout << "Cache is built for surface: " << id_ << std::endl << std::flush; */
 
     return true;
 }
@@ -1725,6 +1812,21 @@ template bool PlanarSurface::liesAbove<PlanarSurface::PointCache>(Point3 &&, Poi
 template bool PlanarSurface::liesAbove<PlanarSurface::PointCache &>(Point3 &&, PointCache &);
 
 template<typename T>
+bool PlanarSurface::liesAbove(PiecewiseLinearGraph<Point2>::Natural tindex, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates& coord, double point_height, T&& cache)
+{ 
+    double height; 
+    getHeight(tindex, coord, height, cache );
+
+    if ( point_height < height ) { 
+        return false; 
+    }
+
+    return true; 
+}
+template bool PlanarSurface::liesAbove<PlanarSurface::PointCache>(PiecewiseLinearGraph<Point2>::Natural, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates&, double, PointCache &&);
+template bool PlanarSurface::liesAbove<PlanarSurface::PointCache&>(PiecewiseLinearGraph<Point2>::Natural, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates&, double, PointCache&);
+
+template<typename T>
 bool PlanarSurface::liesBelow( const Point3 &p, T &&cache ) 
 { 
     Point2 p2; 
@@ -1750,6 +1852,21 @@ bool PlanarSurface::liesBelow( Point3 &&p, T &&cache )
 }
 template bool PlanarSurface::liesBelow<PlanarSurface::PointCache>(Point3 &&, PointCache &&);
 template bool PlanarSurface::liesBelow<PlanarSurface::PointCache &>(Point3 &&, PointCache &);
+
+template<typename T>
+bool PlanarSurface::liesBelow(PiecewiseLinearGraph<Point2>::Natural tindex, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates& coord, double point_height, T&& cache)
+{ 
+    double height; 
+    getHeight(tindex, coord, height, cache );
+
+    if ( point_height > height ) { 
+        return false; 
+    }
+
+    return true; 
+}
+template bool PlanarSurface::liesBelow<PlanarSurface::PointCache>(PiecewiseLinearGraph<Point2>::Natural, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates&, double, PointCache &&);
+template bool PlanarSurface::liesBelow<PlanarSurface::PointCache&>(PiecewiseLinearGraph<Point2>::Natural, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates&, double, PointCache&);
 
 bool PlanarSurface::liesAboveRawSurface( const Point3 &p ) { 
     return f->liesAboveRawSurface(p);
@@ -1982,7 +2099,7 @@ void PlanarSurface::pruneBoundingLists()
         {
             itu = upper_bound_.erase(itu);
             cache_is_fresh_ = false;
-            std::cout << "Cache was marked unfresh for surface: " << id_ << std::endl << std::flush;
+            /* std::cout << "Cache was marked unfresh for surface: " << id_ << std::endl << std::flush; */
         }
         else
         {
@@ -1997,7 +2114,7 @@ void PlanarSurface::pruneBoundingLists()
         {
             itl = lower_bound_.erase(itl);
             cache_is_fresh_ = false;
-            std::cout << "Cache was marked unfresh for surface: " << id_ << std::endl << std::flush;
+            /* std::cout << "Cache was marked unfresh for surface: " << id_ << std::endl << std::flush; */
         }
         else
         {

@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef TRIANGLE_MESH_PARSER
-#define TRIANGLE_MESH_PARSER
+#ifndef PLANINTRIANGLE_MESH_PARSER_HPP
+#define PLANINTRIANGLE_MESH_PARSER_HPP
 
 #include <vector> 
 #include <memory> 

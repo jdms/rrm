@@ -1,9 +1,9 @@
 #include <fstream>
 #include <chrono>
 
-#include "smodeller.hpp"
-#include "sutilities.hpp"
-#include "detail/planin/planin.hpp"
+#include "stratmod/smodeller.hpp"
+#include "stratmod/sutilities.hpp"
+#include "planin/planin.hpp"
 
 enum callerCodes { 
     CALLED_WITHOUT_ARGUMENTS = 1,
@@ -15,8 +15,8 @@ enum callerCodes {
 int main( int argc, char **argv )
 {
 
-    size_t numX = 128;
-    size_t numY = 128;
+    size_t numX = 256;
+    size_t numY = 256;
 
     // A file suffix is not needed as SModeller::exportToVTK() adds it automatically
     std::string file_sufix = ""; // ".vtk";
@@ -51,6 +51,7 @@ int main( int argc, char **argv )
     }
 
     // Actual logic of utility
+    model.changeDiscretization(numX, numY);
     SUtilities u(model);
 
     auto time1 = std::chrono::high_resolution_clock::now();

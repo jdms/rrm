@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __INTERPOLATED_GRAPH__
-#define __INTERPOLATED_GRAPH__
+#ifndef PLANIN_INTERPOLATED_GRAPH_HPP
+#define PLANIN_INTERPOLATED_GRAPH_HPP
 
 #include <algorithm>
 #include <vector> 

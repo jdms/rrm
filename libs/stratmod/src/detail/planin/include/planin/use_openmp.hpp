@@ -1,5 +1,5 @@
-#ifndef __USE_OPENMP__ 
-#define __USE_OPENMP__ 
+#ifndef PLANIN_USE_OPENMP_HPP
+#define PLANIN_USE_OPENMP_HPP
 
 #if defined( USE_OPENMP )
     #include <omp.h>

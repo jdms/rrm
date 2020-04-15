@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __CORE_HPP__
-#define __CORE_HPP__
+#ifndef PLANIN_CORE_HPP
+#define PLANIN_CORE_HPP
 
 #define UNUSED(X) (void)(X)
 
@@ -48,17 +48,17 @@ NaturalType size( T (&)[n] ) { return n; }
 template<typename PointK>
 bool assign( PointK &p, std::initializer_list<RealType> l ) 
 {
-    if ( l.size() > size(p.data) ) { 
+    if ( l.size() > size(p.data_) ) { 
         return false; 
     }
 
-    std::copy(l.begin(), l.end(), p.data); 
+    std::copy(l.begin(), l.end(), p.data_); 
     return true; 
 }
 
 struct Point2 { 
     union { 
-        RealType data[2];
+        RealType data_[2];
         struct { 
             RealType x0, x1; 
         };
@@ -73,10 +73,12 @@ struct Point2 {
         };
     };
 
-    RealType& operator[]( NaturalType i ) { return data[i]; }; 
-    RealType  operator[]( NaturalType i ) const { return data[i]; }; 
-    NaturalType size() const { return ::size(data); } 
+    RealType& operator[]( NaturalType i ) { return data_[i]; }; 
+    RealType  operator[]( NaturalType i ) const { return data_[i]; }; 
+    NaturalType size() const { return ::size(data_); } 
     RealType dot( const Point2 &p ) { return (u*p.u + v*p.v); }
+    RealType* data() { return data_; }
+    const RealType* data() const { return data_; }
 }; 
 
 
@@ -84,7 +86,7 @@ using Vector2 = Point2;
 
 struct Point4 { 
     union { 
-        RealType data[4];
+        RealType data_[4];
         struct { 
             RealType x0, x1, x2, x3; 
         };
@@ -102,9 +104,11 @@ struct Point4 {
         }; 
     };
 
-    RealType& operator[]( NaturalType i ) { return data[i]; }; 
-    RealType  operator[]( NaturalType i ) const { return data[i]; }; 
-    NaturalType size() const { return ::size(data); } 
+    RealType& operator[]( NaturalType i ) { return data_[i]; }; 
+    RealType  operator[]( NaturalType i ) const { return data_[i]; }; 
+    NaturalType size() const { return ::size(data_); } 
+    RealType* data() { return data_; }
+    const RealType* data() const { return data_; }
     /* friend RealType operator()( NaturalType i, NaturalType j) ; */
 };
 
@@ -115,12 +119,12 @@ class Matrix22 : public Point4
     public:
         RealType operator()( NaturalType i, NaturalType j ) const
         {
-            return data[i + 2*j];
+            return data_[i + 2*j];
         }
 
         RealType& operator()( NaturalType i, NaturalType j )
         {
-            return data[i + 2*j];
+            return data_[i + 2*j];
         }
 };
 
@@ -128,7 +132,7 @@ template<typename Archive>
 void serialize( Archive &ar, Point2 &p, const std::int32_t version )
 {
     (void)(version);
-    ar( p.data[0], p.data[1] );
+    ar( p.data_[0], p.data_[1] );
 }
 
 CEREAL_CLASS_VERSION(Point2, 1);
@@ -138,7 +142,7 @@ template<typename Archive>
 void serialize( Archive &ar, Point4 &p, const std::int32_t version )
 {
     (void)(version);
-    ar( p.data[0], p.data[1], p.data[2], p.data[3] );
+    ar( p.data_[0], p.data_[1], p.data_[2], p.data_[3] );
 }
 
 CEREAL_CLASS_VERSION(Point4, 1);

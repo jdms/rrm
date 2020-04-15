@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __INTERPOLANT_2D__
-#define __INTERPOLANT_2D__
+#ifndef PLANIN_INTERPOLANT_2D_HPP
+#define PLANIN_INTERPOLANT_2D_HPP
 
 #include <vector> 
 #include <cstdint>

@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __PLANAR_SURFACE__
-#define __PLANAR_SURFACE__
+#ifndef PLANIN_PLANAR_SURFACE_HPP
+#define PLANIN_PLANAR_SURFACE_HPP
 
 #include <array>
 #include <vector> 
@@ -40,6 +40,8 @@
 #include "planin/triangle_soup_wrapper.hpp" 
 
 #include "planin/mesh/polyhedra.hpp"
+
+#include "planin/piecewise_linear_graph.hpp"
 
 /* Class PlanarSurface is not reentrant. */ 
 
@@ -182,6 +184,9 @@ class PlanarSurface {
         template<typename T = PointCache>
         bool getHeight( Point2 &&p, double &height, T &&cache = {} );
 
+        template<typename T = PointCache>
+        bool getHeight(PiecewiseLinearGraph<Point2>::Natural tindex, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates& coord, double& height, T&& cache = {});
+
         bool getCachedHeight( Natural vertex_index, double &height );
         bool getCachedHeight( Natural i, Natural j, double &height );
 
@@ -218,6 +223,9 @@ class PlanarSurface {
         template<typename T = PointCache>
         bool liesAbove( Point3 &&p, T &&cache = {} ); 
 
+        template<typename T = PointCache>
+        bool liesAbove(PiecewiseLinearGraph<Point2>::Natural tindex, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates& coord, double point_height, T&& cache = {});
+
         bool liesAboveRawSurface( const Point3 &p ); 
         bool liesAboveRawSurface( Point3 &&p ); 
 
@@ -225,6 +233,9 @@ class PlanarSurface {
         bool liesBelow( const Point3 &p, T &&cache = {} ); 
         template<typename T = PointCache>
         bool liesBelow( Point3 &&p, T &&cache = {} ); 
+
+        template<typename T = PointCache>
+        bool liesBelow(PiecewiseLinearGraph<Point2>::Natural tindex, const PiecewiseLinearGraph<Point2>::BaricentricCoordinates& coord, double point_height, T&& cache = {});
 
         bool liesBelowRawSurface( const Point3 &p ); 
         bool liesBelowRawSurface( Point3 &&p ); 
@@ -290,6 +301,8 @@ class PlanarSurface {
         std::vector<double> heights; 
         std::vector<double> normals;
         /* std::vector<bool> valid_heights; */ 
+
+        PiecewiseLinearGraph<Point2> linear_graph_;
 
         bool interpolant_is_set_ = false; 
 

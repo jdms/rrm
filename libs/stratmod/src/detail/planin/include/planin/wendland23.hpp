@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __WENDLAND_23__
-#define __WENDLAND_23__
+#ifndef PLANIN_WENDLAND_23_HPP
+#define PLANIN_WENDLAND_23_HPP
 
 #include <cmath> 
 #include <iostream> //debug
