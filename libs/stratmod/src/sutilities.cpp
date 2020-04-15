@@ -65,6 +65,29 @@ std::size_t SUtilities::getUniqueFacesList( std::size_t surface_id, std::vector<
     return model_.pimpl_->container_[id]->getUniqueFacesList(flist);
 }
 
+bool SUtilities::getRawData( size_t surface_id, std::vector<double> &plist )
+{
+    size_t id;
+    if ( model_.pimpl_->getSurfaceIndex(surface_id, id) == false )
+    {
+        return false;
+    }
+
+    std::vector<Point2> point2_list;
+    std::vector<double> height_list;
+    bool success = model_.pimpl_->container_[id]->getRawData(point2_list, height_list);
+    size_t dim = point2_list.size();
+
+    for (size_t i = 0; i < dim; ++i)
+    {
+        plist.push_back(point2_list[i][0]);
+        plist.push_back(point2_list[i][1]);
+        plist.push_back(height_list[i]);
+    }
+
+    return success;
+}
+
 bool SUtilities::getExtrusionPath( size_t surface_id, std::vector<double> &path_vertex_list )
 {
     size_t index; 
@@ -658,7 +681,7 @@ bool SUtilities::exportToTetgen( std::string filename )
 }
 
 
-bool SUtilities::exportToVTK( std::string filename )
+bool SUtilities::exportToVTK( std::string filename, const std::vector<int>& region_to_domain_map )
 {
     /* TetrahedralMeshBuilder mb(model_.pimpl_->container_); */
     if ( model_.pimpl_->buildTetrahedralMesh() == false )
@@ -666,7 +689,12 @@ bool SUtilities::exportToVTK( std::string filename )
         return false;
     }
     
-    return model_.pimpl_->mesh_->exportToVTK(filename);
+    if (region_to_domain_map.empty())
+    {
+        return model_.pimpl_->mesh_->exportToVTK(filename);
+    }
+
+    return model_.pimpl_->mesh_->exportToVTK(filename, region_to_domain_map);
 }
 
 std::size_t SUtilities::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )

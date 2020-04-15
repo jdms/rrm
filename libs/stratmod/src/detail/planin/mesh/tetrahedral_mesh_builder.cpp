@@ -149,6 +149,90 @@ bool TetrahedralMeshBuilder::exportToVTK( std::string filename )
     return true;
 }
 
+bool TetrahedralMeshBuilder::exportToVTK( std::string filename, const std::vector<int>& region_to_domain_map )
+{
+    /* Create vtk file */
+    std::ofstream vtkfs(filename + ".vtk");
+
+    if ( !vtkfs.good() )
+    {
+        return false; 
+    }
+
+
+    // Create mesh
+    /* std::vector<Prism> prism_list; */
+
+    std::vector<double> vcoords;
+    std::vector<size_t> elist;
+    std::vector<size_t> attribute_list;
+
+    /* bool status = buildPrismMesh(prism_list); */
+
+    /* if ( status == false ) */
+    /* { */
+        /* return false; */
+    /* } */
+
+    size_t num_vertices = getVertexCoordinates(vcoords);
+    /* size_t num_tetrahedra = getElementList(prism_list, elelist, attlist); */
+    size_t num_tetrahedra = getTetrahedronList(elist, attribute_list);
+
+
+    // Write file
+    vtkfs << "# vtk DataFile Version 2.0\n";
+    vtkfs << "Unstructured Grid\n";
+    vtkfs << "ASCII\n";
+    vtkfs << "DATASET UNSTRUCTURED_GRID\n\n";
+
+    vtkfs << "POINTS " << num_vertices << " double\n";
+    for ( size_t i = 0; i < num_vertices; ++i )
+    {
+        vtkfs << vcoords[3*i + 0] << " "
+            << vcoords[3*i + 1] << " "
+            << vcoords[3*i + 2] << "\n";
+    }
+    vtkfs << "\n";
+
+    vtkfs << "CELLS " << num_tetrahedra << " " << num_tetrahedra*5 << "\n";
+    for ( size_t i = 0; i < num_tetrahedra; ++i )
+    {
+        vtkfs << "4" << " "
+            << elist[4*i + 0] << " " 
+            << elist[4*i + 1] << " " 
+            << elist[4*i + 2] << " " 
+            << elist[4*i + 3] << "\n"; 
+    }
+    vtkfs << "\n";
+
+    vtkfs << "CELL_TYPES " << num_tetrahedra << "\n";
+    for ( size_t i = 0; i < num_tetrahedra; ++i )
+    {
+        // the number "10" corresponds to "VTK_TETRA"
+        vtkfs << "10" << "\n";
+    }
+    vtkfs << "\n";
+
+    vtkfs << "CELL_DATA " << num_tetrahedra << "\n";
+    vtkfs << "SCALARS cell_scalars int 1\n";
+    vtkfs << "LOOKUP_TABLE default\n";
+    try
+    {
+        for ( size_t i = 0; i < num_tetrahedra; ++i )
+        {
+            vtkfs << region_to_domain_map.at(attribute_list[i]) << "\n";
+        }
+    }
+    catch(const std::out_of_range& e)
+    {
+        std::cerr << "Failed to export vtk file -- out of range error: " << e.what() << std::endl;
+        return false;
+    }
+    vtkfs << "\n";
+
+    return true;
+}
+
 #include <algorithm>
 
 bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> &ordered_surface_indices )
@@ -166,7 +250,7 @@ bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> 
         return false;
     }
 
-    std::cout << "\n\n\nTrying to order the surfaces.\n\n";
+    /* std::cout << "\n\n\nTrying to order the surfaces.\n\n"; */
 
     auto set_minus = [] ( std::vector<size_t> minuend, std::vector<size_t> subtrahend ) -> std::vector<size_t>
     {
@@ -216,88 +300,88 @@ bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> 
         success = mapAttributeToBoundingSurfaces(attribute, lower_bound, upper_bound);
         if ( !success )
         {
-            std::cout << "\nFailed to get lower and upper bounds\n" << std::flush;
+            /* std::cout << "\nFailed to get lower and upper bounds\n" << std::flush; */
             return false;
         }
 
         if ( it == attributes_map.begin() )
         {
-            std::cout << "Initial step:\n    lower_bound --> ";
-            for ( auto &i : lower_bound )
-            {
-                std::cout << i << " ";
-            }
+            /* std::cout << "Initial step:\n    lower_bound --> "; */
+            /* for ( auto &i : lower_bound ) */
+            /* { */
+                /* std::cout << i << " "; */
+            /* } */
 
-            if ( lower_bound.size() > 1 )
-            {
-                std::cout << "\nInitial step: lower_bound.size() =" << lower_bound.size() << "\n" << std::flush;
+            /* if ( lower_bound.size() > 1 ) */
+            /* { */
+                /* std::cout << "\nInitial step: lower_bound.size() =" << lower_bound.size() << "\n" << std::flush; */
                 /* return false; */
-            }
+            /* } */
 
             /* ordered_surface_indices.push_back( lower_bound.back() ); */
             cat_in_place(ordered_surface_indices, lower_bound);
 
-            std::cout << "\n    ordered_surface_indices --> ";
-            for ( auto &i : ordered_surface_indices )
-            {
-                std::cout << i << " ";
-            }
-            std::cout << "\n" << std::flush;
+            /* std::cout << "\n    ordered_surface_indices --> "; */
+            /* for ( auto &i : ordered_surface_indices ) */
+            /* { */
+                /* std::cout << i << " "; */
+            /* } */
+            /* std::cout << "\n" << std::flush; */
         }
         else
         {
             current = set_minus(lower_bound, ordered_surface_indices);
 
-            std::cout << "Intermediate step:\n    lower_bound --> ";
-            for ( auto &i : lower_bound )
-            {
-                std::cout << i << " ";
-            }
-            std::cout << "\n    current --> ";
-            for ( auto &i : current )
-            {
-                std::cout << i << " ";
-            }
+            /* std::cout << "Intermediate step:\n    lower_bound --> "; */
+            /* for ( auto &i : lower_bound ) */
+            /* { */
+                /* std::cout << i << " "; */
+            /* } */
+            /* std::cout << "\n    current --> "; */
+            /* for ( auto &i : current ) */
+            /* { */
+                /* std::cout << i << " "; */
+            /* } */
 
-            if ( current.size() > 1 )
-            {
-                std::cout << "\nIntermediate step: current.size() =" << current.size() << "\n" << std::flush;
+            /* if ( current.size() > 1 ) */
+            /* { */
+                /* std::cout << "\nIntermediate step: current.size() =" << current.size() << "\n" << std::flush; */
                 /* return false; */
-            }
+            /* } */
 
             /* ordered_surface_indices.push_back( current.back() ); */
             cat_in_place(ordered_surface_indices, current);
 
-            std::cout << "\n    ordered_surface_indices --> ";
-            for ( auto &i : ordered_surface_indices )
-            {
-                std::cout << i << " ";
-            }
-            std::cout << "\n" << std::flush;
+            /* std::cout << "\n    ordered_surface_indices --> "; */
+            /* for ( auto &i : ordered_surface_indices ) */
+            /* { */
+                /* std::cout << i << " "; */
+            /* } */
+            /* std::cout << "\n" << std::flush; */
         }
     }
 
-    std::cout << "Final step:\n    upper_bound --> ";
-    for ( auto &i : upper_bound )
-    {
-        std::cout << i << " ";
-    }
+    /* std::cout << "Final step:\n    upper_bound --> "; */
+    /* for ( auto &i : upper_bound ) */
+    /* { */
+        /* std::cout << i << " "; */
+    /* } */
 
-    if ( upper_bound.size() > 1 )
-    {
-        std::cout << "\nFinal step: upper_bound.size() =" << upper_bound.size() << "\n" << std::flush;
+    /* if ( upper_bound.size() > 1 ) */
+    /* { */
+        /* std::cout << "\nFinal step: upper_bound.size() =" << upper_bound.size() << "\n" << std::flush; */
         /* return false; */
-    }
+    /* } */
     
     /* ordered_surface_indices.push_back( upper_bound.back() ); */
     cat_in_place(ordered_surface_indices, upper_bound);
     
-    std::cout << "\n    ordered_surface_indices --> ";
-    for ( auto &i : ordered_surface_indices )
-    {
-        std::cout << i << " ";
-    }
-    std::cout << "\n" << std::flush;
+    /* std::cout << "\n    ordered_surface_indices --> "; */
+    /* for ( auto &i : ordered_surface_indices ) */
+    /* { */
+        /* std::cout << i << " "; */
+    /* } */
+    /* std::cout << "\n" << std::flush; */
 
     //
     // O0 = empty;

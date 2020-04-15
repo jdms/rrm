@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __SRULES_HPP__
-#define __SRULES_HPP__
+#ifndef PLANIN_SRULES_HPP
+#define PLANIN_SRULES_HPP
 
 #include <vector>
 #include <unordered_map>

@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __KERNELS_HPP__
-#define __KERNELS_HPP__
+#ifndef PLANIN_KERNELS_HPP_HPP
+#define PLANIN_KERNELS_HPP_HPP
 
 #include "planin/wendland23.hpp" 
 

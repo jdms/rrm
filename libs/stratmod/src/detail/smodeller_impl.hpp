@@ -22,8 +22,8 @@
 
 
 
-#ifndef __S_MODELLER_IMPLEMENTATION__
-#define __S_MODELLER_IMPLEMENTATION__
+#ifndef STRATMOD_SMODELLER_IMPLEMENTATION_HPP
+#define STRATMOD_SMODELLER_IMPLEMENTATION_HPP
 
 
 
@@ -33,13 +33,13 @@
 #include <memory>
 #include <cstdint>
 
-#include "planin/planin.hpp"
-#include "planin/mesh/linear_complexes.hpp"
-
 #include "stratmod/smodeller.hpp"
 
 #include "serialization_definitions.hpp"
 #include "testing_definitions.hpp"
+
+#include "planin/planin.hpp"
+#include "planin/mesh/linear_complexes.hpp"
 
 
 #define TODO_UNUSED(x) (void)(x)

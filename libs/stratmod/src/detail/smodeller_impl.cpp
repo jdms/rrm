@@ -4,11 +4,11 @@
 #include <map>
 #include <memory>
 
-#include "planin/planin.hpp"
-
 #include "smodeller_impl.hpp"
 
 #include "testing_definitions.hpp"
+
+#include "planin/planin.hpp"
 
 
 
@@ -163,7 +163,7 @@ std::vector<std::size_t> SModellerImplementation::getOrderedSurfacesIndices()
 
     if ( buildTetrahedralMesh() == false )
     {
-        return surfaces_ids;
+    /*     return surfaces_ids; */
     }
 
     mesh_->getOrderedSurfaceIndicesList(surfaces_ids);

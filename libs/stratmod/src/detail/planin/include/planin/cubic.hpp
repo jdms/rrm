@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __CUBIC__
-#define __CUBIC__
+#ifndef PLANIN_CUBIC_HPP
+#define PLANIN_CUBIC_HPP
 
 #include <cmath> 
 /* #include <iostream> */ //debug

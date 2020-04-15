@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __POLYNOMIAL__
-#define __POLYNOMIAL__
+#ifndef PLANIN_POLYNOMIAL_HPP
+#define PLANIN_POLYNOMIAL_HPP
 
 #include <cmath> 
 #include "planin/core.hpp"
