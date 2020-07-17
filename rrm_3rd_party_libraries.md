@@ -1,23 +1,27 @@
-RRM 3rd party libraries
-===================================
+RRM 3^rd^ party libraries
+=========================
+
+July 17, 2020
 
 
 ## Introduction 
 
-This list contains all third party source code and libraries currently being
-used by RRM, complete with brief descriptions, the last known URL the code was
-available at, the date it was retrieved, the license(s) in which the code was
-made available by their authors at the retrieving date, and URL links to
-publicly available copies of such licenses when possible.  
+This document contains all third party libraries that are either being
+currently used in RRM or that are being considered to be added to the project.
+It includes brief descriptions, the last known URL the code was made available
+at, the date it was retrieved, the license(s) in which the code was made
+available by their authors at the retrieving date, and URL links to publicly
+available copies of such licenses when possible.
 
-When adding or updating an entry, please provide all the aforementioned
-information and update this document's header with the modification date.  
+<!-- Note for developers: -->
+<!-- When adding or updating an entry, please provide all the aforementioned -->
+<!-- information and update this document's header with the modification date. -->
 
 
 ## Libraries currently in use
 
-#. [Qt 5.11](https://www.qt.io/)
-    + Retrieved: August 15, 2018
+#. [Qt](https://www.qt.io/)
+    + Retrieved: July 17, 2020
     + License: [LGPL v3.0], [GPL v3.0], [GPL v2.0]
     + Description: Qt is a cross-platform application framework and widget
       toolkit for creating classic and embedded graphical user interfaces, and
@@ -26,19 +30,19 @@ information and update this document's header with the modification date.
       native application with native capabilities and speed.
 
 #. [curvendimension](https://github.com/esperanc/curvendimension)
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + License: [LGPL v2.1]
     + Description: This is a C++ library for handling n-dimensional curves, or,
       actually, n-dimensional polygonal lines.
 
-#. [Tucano](https://github.com/LCG-UFRJ/tucano)
-    + Retrieved: August 15, 2018
+#. [Tucano](https://gitlab.com/LCG-UFRJ/tucano)
+    + Retrieved: July 17, 2020
     + License: [GPL v3.0]
     + Description: Tucano Lib - A library for rapid prototyping with modern
-      OpenGL and GLSL
+      OpenGL and GLSL.
 
 #. [GSL - GNU Scientific Library](https://www.gnu.org/software/gsl/)
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + License: [GPL v3.0]
     + Description: The GNU Scientific Library (GSL) is a numerical library for
       C and C++ programmers. It is free software under the GNU General Public
@@ -46,8 +50,8 @@ information and update this document's header with the modification date.
       as random number generators, special functions and least-squares fitting.
       There are over 1000 functions in total with an extensive test suite.
 
-#. [Glew](http://glew.sourceforge.net/glew.txt)
-    + Retrieved: August 15, 2018
+#. [Glew](http://glew.sourceforge.net/)
+    + Retrieved: July 17, 2020
     + Licenses: [Glew Modified BSD], [MESA 3-D], [KHRONOS]
     + Description: The OpenGL Extension Wrangler Library (GLEW) is a
       cross-platform open-source C/C++ extension loading library. GLEW provides
@@ -58,20 +62,20 @@ information and update this document's header with the modification date.
       Solaris.
 
 #. [Eigen3](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-    + Retrieved: August 15, 2018
-    + License: [MPL 2.0]
+    + Retrieved: July 17, 2020
+    + License: [MPL 2.0], but also uses code released as [BSD-3-Clause], [LGPL v2.1], [MINPACK]
     + Description: Eigen is a C++ template library for linear algebra:
       matrices, vectors, numerical solvers, and related algorithms.
 
 #. [TinyObjLoader](https://github.com/syoyo/tinyobjloader)
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + License: [MIT]
     + Description: Tiny but powerful single file wavefront obj loader written
       in C++. No dependency except for C++ STL. It can parse over 10M polygons
       with moderate memory and time.
 
 #. [cereal](https://github.com/USCiLab/cereal) 
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + License: [BSD-3-Clause]
     + Description: cereal is a header-only C++11 serialization library. cereal
       takes arbitrary data types and reversibly turns them into different
@@ -80,16 +84,16 @@ information and update this document's header with the modification date.
       external dependencies and can be easily bundled with other code or used
       standalone.
 
-#. [Catch](https://github.com/catchorg/Catch2)
-    + Retrieved: August 15, 2018
+#. [Catch2](https://github.com/catchorg/Catch2)
+    + Retrieved: July 17, 2020
     + License: [Boost Software License - Version 1.0]
     + Description: Catch stands for C++ Automated Test Cases in a Header and is
-      a multi-paradigm test framework for C++. which also supports Objective-C
+      a multi-paradigm test framework for C++, which also supports Objective-C
       (and maybe C). It is primarily distributed as a single header file,
       although certain extensions may require additional headers.
 
 #. [glog](https://github.com/google/glog)
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + License: [BSD-3-Clause]
     + Description: Google glog is a library that implements application-level
       logging.  This library provides logging APIs based on C++-style streams
@@ -97,12 +101,12 @@ information and update this document's header with the modification date.
       things to LOG to a particular severity level.
 
 #. [argh](https://github.com/adishavit/argh)
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + License: [BSD-3-Clause]
     + Description: Frustration-free command line processing.
 
 #. [ColorBrewer for C++](https://github.com/schulzch/colorbrewercpp)
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + License: [Apache 2.0]
     + Description: This header-only library implements the ColorBrewer palette
       using C++11.  About the ColorBrewer palette: web tool for guidance in
@@ -110,21 +114,21 @@ information and update this document's header with the modification date.
       Cynthia Brewer. Built and maintained by Axis Maps.
 
 #. [LibQtx](https://bitbucket.org/libqxt/libqxt/overview)
-    + Retrieved: August 15, 2018
-    + License: [BSD-3-Clause]
+    + Retrieved: July 17, 2020
+    + License: [BSD-3-Clause], [LGPL v2.1]
     + Description: LibQxt is an extension library for Qt providing a suite of
       cross-platform utility classes to add functionality not readily available
       in the Qt toolkit by Qt Development Frameworks, Nokia. As of August 15,
       2018 it is stated in their website that LibQtx is no longer maintained.  
 
 #. [Tetgen](http://wias-berlin.de/software/index.jsp?id=TetGen&lang=1)
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + Licence: [Affero GPL v3.0]
     + Description: A Quality Tetrahedral Mesh Generator and a 3D Delaunay
       Triangulator.
 
 #. [HYPRE](https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods)
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + License: [LGPL v2.1]
     + Description: Livermore’s HYPRE library of linear solvers makes possible
       larger, more detailed simulations by solving problems faster than
@@ -135,7 +139,7 @@ information and update this document's header with the modification date.
       languages.
 
 #. [Triangle](https://www.cs.cmu.edu/~quake/triangle.html)
-    + Retrieved: August 15, 2018
+    + Retrieved: July 17, 2020
     + License: [Shewchuck's license] is freely available for private, research or
       institutional use; commercial use requires direct arrangement with
       the library's author: [Jonathan Richard Shewchuk](jrs@cs.berkeley.edu)
@@ -145,14 +149,164 @@ information and update this document's header with the modification date.
       generated with no small or large angles, and are thus suitable for finite
       element analysis. 
 
+#. [predicates.c](https://www.cs.cmu.edu/~quake/robust.html)
+    + Retrieved: July 17, 2020
+    + License: Public domain
+    + Description: C implementation of algorithms for exact addition and
+      multiplication of floating-point numbers, and predicates for robustly
+      performing the orientation and incircle tests used in computational
+      geometry.  The algorithms and underlying theory are described in Jonathan
+      Richard Shewchuk. "Adaptive Precision Floating-Point Arithmetic and Fast
+      Robust Geometric Predicates." Technical Report CMU-CS-96-140, School of
+      Computer Science, Carnegie Mellon University, Pittsburgh, Pennsylvania,
+      May 1996.  (Submitted to Discrete & Computational Geometry.)
 
-## Unused libraries still present in the main repository
+#. [JSON for Modern C++](https://github.com/nlohmann/json)
+    + Retrieved: July 17, 2020
+    + License: [MIT]
+    + Description: There are myriads of JSON libraries out there, and each may
+      even have its reason to exist. Our class had these design goals:
+      Intuitive syntax. In languages such as Python, JSON feels like a first
+      class data type. We used all the operator magic of modern C++ to achieve
+      the same feeling in your code. Check out the examples below and you'll
+      know what I mean. Trivial integration. Our whole code consists of
+      a single header file json.hpp. That's it. No library, no subproject, no
+      dependencies, no complex build system. The class is written in vanilla
+      C++11. All in all, everything should require no adjustment of your
+      compiler flags or project settings. Serious testing. Our class is heavily
+      unit-tested and covers 100% of the code, including all exceptional
+      behavior. Furthermore, we checked with Valgrind and the Clang Sanitizers
+      that there are no memory leaks. Google OSS-Fuzz additionally runs fuzz
+      tests against all parsers 24/7, effectively executing billions of tests
+      so far. To maintain high quality, the project is following the Core
+      Infrastructure Initiative (CII) best practices.
 
-#. [OpenVolumeMesh](https://www.openvolumemesh.org)
-    + Retrieved: August 15, 2018
+#. [Boost](https://www.boost.org)
+    + Retrieved: July 17, 2020
+    + License: [Boost Software License - Version 1.0]
+    + Description: Boost provides free peer-reviewed portable C++ source
+      libraries. We emphasize libraries that work well with the C++ Standard
+      Library. Boost libraries are intended to be widely useful, and usable
+      across a broad spectrum of applications. The Boost license encourages the
+      use of Boost libraries for all users with minimal restrictions. We aim to
+      establish "existing practice" and provide reference implementations so
+      that Boost libraries are suitable for eventual standardization. Beginning
+      with the ten Boost Libraries included in the Library Technical Report
+      (TR1) and continuing with every release of the ISO standard for C++ since
+      2011, the C++ Standards Committee has continued to rely on Boost as
+      a valuable source for additions to the Standard C++ Library.
+
+#. [VTK](https://vtk.org)
+    + Retrieved: July 17, 2020
+    + License: [BSD-3-Clause]
+    + Description: The Visualization Toolkit (VTK) is an open-source, freely
+      available software system for 3D computer graphics, modeling, image
+      processing, volume rendering, scientific visualization, and 2D plotting.
+      It supports a wide variety of visualization algorithms and advanced
+      modeling techniques, and it takes advantage of both threaded and
+      distributed memory parallel processing for speed and scalability,
+      respectively.
+
+
+## Libraries under evaluation to be included in the project
+
+#. [libigl](https://libigl.github.io)
+    + Retrieved: July 17, 2020
+    + License: [MPL 2.0], but depends on code under the [GPL v3.0] license.
+    + Description: A simple C++ geometry processing library. We have
+      a wide functionality including construction of sparse discrete
+      differential geometry operators and finite-elements matrices such as the
+      cotangent Laplacian and diagonalized mass matrix, simple facet and
+      edge-based topology data structures, mesh-viewing utilities for OpenGL
+      and GLSL, and many core functions for matrix manipulation which make
+      Eigen feel a lot more like MATLAB.
+
+#. [CoMISo](http://www.graphics.rwth-aachen.de/software/comiso/)
+    + Retrieved: July 17, 2020
+    + License: [GPL v3.0]
+    + Description: The Constrained Mixed-Integer Solver provides a convenient
+      tool for setting up and solving linear systems stemming from quadratic
+      energies subject to linear equality constraints as well as to integer
+      constraints. Basically only the system matrix, the constraints and the
+      variables to be rounded are provided to the solver which returns
+      a properly indexed solution vector. This drastically minimizes the
+      programmer's effort as a proper elimination of the constraints and the
+      necessary reindexing is taken care of internally. The difference to
+      popular constraining techniques such as Lagrangian Multipliers, which
+      require no reindexning (but unfortunately result in larger, non-positive
+      semidefinite systems), is that CoMISo efficiently eliminates the
+      constraints from the system matrix, yielding a smaller system while at
+      the same time preserving positive semidefiniteness.
+
+#. [GMP](https://gmplib.org)
+    + Retrieved: July 17, 2020
+    + License: [LGPL v3.0], [GPL v2.0]
+    + Description: GMP is a free library for arbitrary precision arithmetic,
+      operating on signed integers, rational numbers, and floating-point
+      numbers. There is no practical limit to the precision except the ones
+      implied by the available memory in the machine GMP runs on. GMP has
+      a rich set of functions, and the functions have a regular interface.
+
+
+#. [MPFR](https://www.mpfr.org)
+    + Retrieved: July 17, 2020
     + License: [LGPL v3.0]
-    + Description: A Generic and Versatile Index-Based Data Structure for
-      Polytopal Meshes.
+    + Description: The MPFR library is a C library for multiple-precision
+      floating-point computations with correct rounding.
+
+#. [cgal](https://www.cgal.org)
+    + Retrieved: July 17, 2020
+    + License: [LGPL v3.0], [GPL v3.0], 
+    + Description: CGAL is a software project that provides easy access to
+      efficient and reliable geometric algorithms in the form of a C++ library.
+      CGAL is used in various areas needing geometric computation, such as
+      geographic information systems, computer aided design, molecular biology,
+      medical imaging, computer graphics, and robotics.
+
+#. [Embree](https://www.embree.org)
+    + Retrieved: July 17, 2020
+    + License: [Apache 2.0] 
+    + Description: Intel® Embree is a collection of high-performance ray
+      tracing kernels, developed at Intel. The target users of Intel® Embree
+      are graphics application engineers who want to improve the performance of
+      their photo-realistic rendering application by leveraging Embree's
+      performance-optimized ray tracing kernels. 
+
+#. [glad](https://github.com/Dav1dde/glad)
+    + Retrieved: July 17, 2020
+    + License: [MIT]
+    + Description: GL/GLES/EGL/GLX/WGL Loader-Generator based on the official
+      specs.
+
+#. [glfw](https://www.glfw.org)
+    + Retrieved: July 17, 2020
+    + License: [Zlib-Libpng]
+    + Description: GLFW is an Open Source, multi-platform library for OpenGL,
+      OpenGL ES and Vulkan development on the desktop. It provides a simple API
+      for creating windows, contexts and surfaces, receiving input and events.
+
+#. [Dear ImGui](https://github.com/ocornut/imgui)
+    + Retrieved: July 17, 2020
+    + License: [MIT]
+    + Description: Dear ImGui is a bloat-free graphical user interface library
+      for C++. It outputs optimized vertex buffers that you can render anytime
+      in your 3D-pipeline enabled application. It is fast, portable, renderer
+      agnostic and self-contained (no external dependencies).
+
+
+#. [TinyXML-2](http://www.grinninglizard.com/tinyxml2/index.html)
+    + Retrieved: July 17, 2020
+    + License: [Zlib-Libpng]
+    + Description: TinyXML-2 is a simple, small, efficient, C++ XML parser that
+      can be easily integrated into other programs.
+
+
+<!-- ## Unused libraries still present in the source code -->
+
+<!-- #. []() -->
+<!--     + Retrieved: -->
+<!--     + License: -->
+<!--     + Description: -->
 
 
 [LGPL v2.1]: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
@@ -167,6 +321,8 @@ information and update this document's header with the modification date.
 [MPL 2.0]: https://www.mozilla.org/en-US/MPL/2.0/
 [Glew Modified BSD]: http://glew.sourceforge.net/glew.txt
 [MESA 3-D]: http://glew.sourceforge.net/mesa.txt
+[MINPACK]: https://www.netlib.org/minpack/disclaimer
 [KHRONOS]: http://glew.sourceforge.net/khronos.txt
 [Shewchuck's license]: https://www.cs.cmu.edu/~quake/triangle.html
+[Zlib-Libpng]: https://www.glfw.org/license.html
 
