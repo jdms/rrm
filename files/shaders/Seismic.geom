@@ -1,4 +1,4 @@
-#version 410 core
+#version 330 core
 /** @license
  * RRM - Rapid Reservoir Modeling Project
  * Copyright (C) 2015

@@ -28,13 +28,13 @@
 #include <memory>
 #include <fstream>
 
-#include "planin/planin.hpp"
-
 #include "stratmod/smodeller.hpp"
 #include "detail/smodeller_impl.hpp"
 #include "detail/serialization_definitions.hpp"
 
 #include "detail/testing_definitions.hpp"
+
+#include "planin/planin.hpp"
 
 
 /*****************************/
@@ -497,12 +497,12 @@ void SModeller::clear()
 /*     return pimpl_->createBelowIsActive(boundary_index); */
 /* } */
 
-bool SModeller::preserveAbove( std::vector<size_t> &bounding_surfaces_list )
+bool SModeller::preserveAbove( const std::vector<size_t> &bounding_surfaces_list )
 {
     return pimpl_->preserveAbove(bounding_surfaces_list);
 }
 
-bool SModeller::preserveBelow( std::vector<size_t> &bounding_surfaces_list )
+bool SModeller::preserveBelow( const std::vector<size_t> &bounding_surfaces_list )
 {
     return pimpl_->preserveBelow(bounding_surfaces_list);
 }
@@ -1041,7 +1041,7 @@ bool SModeller::getExtrusionPath( std::size_t surface_id, std::vector<double> &p
         return false; 
     }
 
-    return pimpl_->container_[index]->getPathVertexList(path_vertex_list);
+    return pimpl_->container_[index]->getRawPathVertexList(path_vertex_list);
 }
 
 bool SModeller::computeTetrahedralMeshVolumes( std::vector<double> &vlist )
@@ -1123,13 +1123,13 @@ bool SModeller::saveBinary( std::string filename )
         }
         catch( const std::exception &e )
         {
-            std::cerr << "Exception caught while trying to save file: " << e.what() << std::endl << std::flush;
+            /* std::cerr << "Exception caught while trying to save file: " << e.what() << std::endl << std::flush; */
 
             return false;
         }
         catch(...)
         {
-            std::cerr << "Unknown exception caught in method SModeller::saveBinary(...)\n\n" << std::flush;
+            /* std::cerr << "Unknown exception caught in method SModeller::saveBinary(...)\n\n" << std::flush; */
 
             return false;
         }
@@ -1161,13 +1161,13 @@ bool SModeller::saveJSON( std::string filename )
         }
         catch( const std::exception &e )
         {
-            std::cerr << "Exception caught while trying to save file: " << e.what() << std::endl << std::flush;
+            /* std::cerr << "Exception caught while trying to save file: " << e.what() << std::endl << std::flush; */
 
             return false;
         }
         catch(...)
         {
-            std::cerr << "Unknown exception caught in method SModeller::saveJSON(...)\n\n" << std::flush;
+            /* std::cerr << "Unknown exception caught in method SModeller::saveJSON(...)\n\n" << std::flush; */
 
             return false;
         }
@@ -1193,28 +1193,28 @@ bool SModeller::loadBinary( std::string filename )
 
         unsigned int version;
 
-        std::cout << "Trying to load binary file: " + filename + " >> ";
+        /* std::cout << "Trying to load binary file: " + filename + " >> "; */
         try
         {
             iarchive( version, *pimpl_ );
         }
         catch( const std::exception &e )
         {
-            std::cout << "failure\n";
-            std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
+            /* std::cout << "failure\n"; */
+            /* std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush; */
             clear();
 
             return false;
         }
         catch(...)
         {
-            std::cout << "failure\n";
-            std::cerr << "Unknown exception caught in method SModeller::loadBinary(...)\n\n" << std::flush;
+            /* std::cout << "failure\n"; */
+            /* std::cerr << "Unknown exception caught in method SModeller::loadBinary(...)\n\n" << std::flush; */
             clear();
 
             return false;
         }
-        std::cout << "success\n" << std::flush;
+        /* std::cout << "success\n" << std::flush; */
 
 
         return true;
@@ -1236,7 +1236,7 @@ bool SModeller::loadJSON( std::string filename )
 
         unsigned int version;
 
-        std::cout << "Trying to load JSON file: " + filename + " >> ";
+        /* std::cout << "Trying to load JSON file: " + filename + " >> "; */
         try
         {
             iarchive( version, *pimpl_ );
@@ -1244,7 +1244,7 @@ bool SModeller::loadJSON( std::string filename )
         catch( const std::exception &e )
         {
             std::cout << "failure\n";
-            std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush;
+            /* std::cerr << "Exception caught while trying to load file: " << e.what() << std::endl << std::flush; */
             clear();
 
             return false;
@@ -1252,12 +1252,12 @@ bool SModeller::loadJSON( std::string filename )
         catch(...)
         {
             std::cout << "failure\n";
-            std::cerr << "Unknown exception caught in method SModeller::loadJSON(...)\n\n" << std::flush;
+            /* std::cerr << "Unknown exception caught in method SModeller::loadJSON(...)\n\n" << std::flush; */
             clear();
 
             return false;
         }
-        std::cout << "success\n" << std::flush;
+        /* std::cout << "success\n" << std::flush; */
 
 
         return true;

@@ -54,25 +54,39 @@ endif()
 ###############################################
 # Build forcing position independent code
 ###############################################
-option(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE "" ON) 
+option(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE "" OFF) 
 
 
 ###############################################
 # Use OpenMP
 ###############################################
-option(PLANIN_BUILD_USING_OPENMP "" OFF) 
+if(NOT DEFINED PLANIN_BUILD_USING_OPENMP)
+    option(PLANIN_BUILD_USING_OPENMP "" OFF) 
+endif()
+
+
+###############################################
+# Use OpenMP
+###############################################
+if(NOT DEFINED PLANIN_BUILD_USE_LAPACK)
+    option(PLANIN_BUILD_USE_LAPACK "" OFF) 
+endif()
 
 
 ###############################################
 # Use Cereal for serialization
 ###############################################
-option(PLANIN_BUILD_USING_CEREAL "" OFF) 
+if(NOT DEFINED PLANIN_BUILD_USING_CEREAL)
+    option(PLANIN_BUILD_USING_CEREAL "" OFF) 
+endif()
 
 
 ###############################################
 # Allow doxygen to build documentation.  
 ###############################################
-option(PLANIN_BUILD_DOCS "" OFF) 
+if(NOT DEFINED PLANIN_BUILD_DOCS)
+    option(PLANIN_BUILD_DOCS "" OFF) 
+endif()
 
 
 ###############################################
@@ -90,17 +104,17 @@ option(PLANIN_BUILD_TEST_MESH "" OFF)
 ###############################################
 # Use Backward-cpp
 ###############################################
-option(PLANIN_BUILD_USING_BACKWARD_CPP "" ON)
+# option(PLANIN_BUILD_USING_BACKWARD_CPP "" ON)
 
-if(UNIX AND NOT APPLE)
-    set(LINUX TRUE)
-endif()
+# if(UNIX AND NOT APPLE)
+#     set(LINUX TRUE)
+# endif()
 
-if(PLANIN_BUILD_USING_BACKWARD_CPP AND LINUX)
-    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/backward-cpp" EXCLUDE_FROM_ALL)
-    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/backward-cpp")
-    find_package(Backward)
-endif()
+# if(PLANIN_BUILD_USING_BACKWARD_CPP AND LINUX)
+#     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/backward-cpp" EXCLUDE_FROM_ALL)
+#     list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/backward-cpp")
+#     find_package(Backward)
+# endif()
 
 
 ###############################################
@@ -156,15 +170,14 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
 endif()
 
 
 # Finally a way to use OpenMP with AppleClang!  (It's still a hack, though...)
 # Let's keep the old hack commented out in case this breaks.  
-
 if(PLANIN_BUILD_USING_OPENMP OR STRATMOD_BUILD_USING_OPENMP)
-    include(PatchOpenMPApple)
+    # Looks like new versions of FindOpenMP.cmake have macos sorted out already
+    # include(PatchOpenMPApple)
     find_package(OpenMP REQUIRED)
 endif()
 
@@ -189,8 +202,9 @@ endif()
 # Docs
 ###############################################
 
-if (PLANIN_BUILD_DOCS OR STRATMOD_BUILD_DOCS)
-    include("${CMAKE_MODULE_PATH}/BuildDocumentation.cmake") 
+if (PLANIN_BUILD_DOCS)
+    # message(STATUS "Docs in planin: ${PLANIN_BUILD_DOCS}")
+    include(BuildDocumentation) 
 endif()
 
 ###############################################
@@ -263,14 +277,45 @@ endif()
 #
 # Use BLAS/Lapack to speed-up numerics
 #
-find_package(BLAS)
-find_package(LAPACK)
+if(PLANIN_BUILD_USE_LAPACK)
 
-# Accelerate framework in macOS does not include C wrapper?
-# https://eigen.tuxfamily.org/dox/TopicUsingBlasLapack.html
-if(LAPACK_FOUND)
-    find_package(LAPACKE)
+    find_package(BLAS)
+    find_package(LAPACK)
+
+    # Accelerate framework in macOS does not include C wrapper?
+    # https://eigen.tuxfamily.org/dox/TopicUsingBlasLapack.html
+    if(LAPACK_FOUND)
+        # if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang" AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9")
+        if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+
+            message(STATUS "AppleClang, looking for Homebrew Lapacke")
+
+            find_program(BREW NAMES brew)
+            if(BREW)
+                execute_process(COMMAND ${BREW} ls lapack RESULT_VARIABLE BREW_RESULT_CODE OUTPUT_QUIET ERROR_QUIET)
+                if(BREW_RESULT_CODE)
+                    message(STATUS "Could not find Homebrew's lapack/lapacke package")
+                else()
+                    execute_process(COMMAND ${BREW} --prefix lapack OUTPUT_VARIABLE BREW_LAPACK_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+                    set(LAPACKE_DIR "${BREW_LAPACK_PREFIX}" CACHE STRING "" FORCE)
+                endif()
+            else()
+                message(STATUS "Could not find command `brew`, installing Homebrew is recommmended --> https://brew.sh")
+            endif()
+        endif()
+
+        # if (APPLE)
+        # list(APPEND LAPACKE_DIR "/usr/local/opt/lapack")
+        # endif()
+
+        find_package(LAPACKE)
+    endif()
 endif()
+
+#
+# Use Shewchuk's robust predicates
+#
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/predicates)
 
 ###############################################
 # Main library
@@ -294,6 +339,9 @@ set(HEADERS
   include/planin/mesh/polyhedra.hpp
   include/planin/mesh/tetrahedral_mesh_builder.hpp
   include/planin/mesh/linear_complexes.hpp
+  include/planin/structured_triangle_mesh_2d.hpp
+  include/planin/piecewise_linear_graph.hpp
+  include/planin/predicates.hpp
   )
 
 set(PLANIN_LIB_SOURCES 
@@ -302,6 +350,9 @@ set(PLANIN_LIB_SOURCES
     planar_surface.cpp
     srules.cpp
     triangle_soup_wrapper.cpp
+    structured_triangle_mesh_2d.cpp
+    piecewise_linear_graph.cpp
+    predicates.cpp
     vector_field/div_free_vector_field_2d.cpp
     mesh/tetrahedral_mesh_builder.cpp
     mesh/linear_complexes.cpp
@@ -312,7 +363,7 @@ add_library(planin STATIC ${PLANIN_LIB_SOURCES} ${HEADERS})
 target_include_directories(planin
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    PRIVATE
+    # PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin/mesh>
@@ -325,14 +376,14 @@ target_include_directories(planin SYSTEM
         $<BUILD_INTERFACE:${CEREAL_INCLUDE_DIR}>
 )
 
-target_link_libraries(planin)
+target_link_libraries(planin PUBLIC predicates)
 
-target_compile_features(planin PUBLIC cxx_std_11)
+target_compile_features(planin PUBLIC cxx_std_17)
 
 if(MSVC)
     target_compile_options(planin PRIVATE -EHsc -W3)
 else()
-    target_compile_options(planin PRIVATE -Wall -Wno-unknown-pragmas)
+    target_compile_options(planin PRIVATE -Wall -Wextra -Wno-missing-braces -Wno-unknown-pragmas)
 endif()
 
 if(BLAS_FOUND)
@@ -368,6 +419,46 @@ endif()
 # install(TARGETS planin
     # ARCHIVE DESTINATION ${CMAKE_SOURCE_DIR}/lib)
 
+
+
+###############################################
+# Logging 
+###############################################
+
+##
+## Use glog for logging
+##
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/glog)
+
+
+###############################################
+# Tests 
+###############################################
+
+#
+# Use Catch2 for testing
+#
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/catch2)
+add_library(Catch2::Catch2 IMPORTED INTERFACE)
+set_property(TARGET Catch2::Catch2 
+    PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/catch2
+    )
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/catch2/contrib)
+
+add_executable(tests_planin 
+    tests/test_main.cpp
+    tests/test_structured_triangle_mesh_2d.cpp 
+    )
+target_compile_features(tests_planin PUBLIC cxx_std_17)
+target_link_libraries(tests_planin planin Catch2::Catch2)
+target_include_directories(tests_planin
+    PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+    )
+
+include(CTest)
+include(Catch)
+catch_discover_tests(tests_planin)
 
 ###############################################
 # Utilities 

@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef MATLAB_UTILITIES_H
-#define MATLAB_UTILITIES_H
+#ifndef PLANIN_MATLAB_UTILITIES_HPP
+#define PLANIN_MATLAB_UTILITIES_HPP
 
 #include <vector> 
 #include <string> 

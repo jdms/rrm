@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __BASIS_FUNCTION_2D__ 
-#define __BASIS_FUNCTION_2D__ 
+#ifndef PLANIN_BASIS_FUNCTION_2D_HPP 
+#define PLANIN_BASIS_FUNCTION_2D_HPP 
 
 #include "planin/core.hpp" 
 
