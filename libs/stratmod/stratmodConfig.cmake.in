@@ -1,0 +1,51 @@
+include(CMakeFindDependencyMacro)
+
+##############################################################################
+# Capture values from configure
+##############################################################################
+
+set(STRATMOD_CONFIGURED_WITH_OPENMP @STRATMOD_BUILD_USING_OPENMP@)
+set(STRATMOD_CONFIGURED_WITH_LAPACK @STRATMOD_BUILD_USING_LAPACK@)
+
+
+##############################################################################
+# Extra setup
+##############################################################################
+
+if(STRATMOD_CONFIGURED_WITH_OPENMP)
+    find_dependency(OpenMP REQUIRED)
+endif()
+
+if(STRATMOD_CONFIGURED_WITH_LAPACK)
+    find_dependency(BLAS REQUIRED)
+    find_dependency(LAPACK REQUIRED)
+
+    if(LAPACK_FOUND)
+        if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+
+            message(STATUS "AppleClang, looking for Homebrew Lapacke")
+
+            find_program(BREW NAMES brew)
+            if(BREW)
+                execute_process(COMMAND ${BREW} ls lapack RESULT_VARIABLE BREW_RESULT_CODE OUTPUT_QUIET ERROR_QUIET)
+                if(BREW_RESULT_CODE)
+                    message(STATUS "Could not find Homebrew's lapack/lapacke package")
+                else()
+                    execute_process(COMMAND ${BREW} --prefix lapack OUTPUT_VARIABLE BREW_LAPACK_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+                    set(LAPACKE_DIR "${BREW_LAPACK_PREFIX}" CACHE STRING "" FORCE)
+                endif()
+            else()
+                message(STATUS "Could not find command `brew`, installing Homebrew is recommmended --> https://brew.sh")
+            endif()
+        endif()
+
+        find_dependency(LAPACKE)
+    endif()
+endif()
+
+
+##############################################################################
+# Add the targets file
+##############################################################################
+
+include("${CMAKE_CURRENT_LIST_DIR}/stratmodTargets.cmake")

@@ -22,8 +22,8 @@
 
 
 
-#ifndef __S_MODELLER__
-#define __S_MODELLER__
+#ifndef STRATMOD_SMODELLER_HPP
+#define STRATMOD_SMODELLER_HPP
 
 #include <iostream>
 #include <vector>
@@ -122,8 +122,8 @@ class STRATMODLIB_DLL_HANDLER SModeller
         // New structure aware preserve methods
         ///////////////////////////////////////////////////////
 
-        bool preserveAbove( std::vector<size_t> &bounding_surfaces_list );
-        bool preserveBelow( std::vector<size_t> &bounding_surfaces_list );
+        bool preserveAbove( const std::vector<size_t> &bounding_surfaces_list );
+        bool preserveBelow( const std::vector<size_t> &bounding_surfaces_list );
 
         void stopPreserveAbove();
         void stopPreserveBelow();

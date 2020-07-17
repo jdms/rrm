@@ -34,6 +34,9 @@ set(VERSION_MINOR 1 CACHE STRING "Project minor version number.")
 set(VERSION_PATCH 0 CACHE STRING "Project patch version number.")
 mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 
+set(STRATMOD_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+mark_as_advanced(STRATMOD_VERSION)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
@@ -53,13 +56,40 @@ if(STRATMOD_BUILD_TYPE)
 endif()
 
 
-option(STRATMOD_BUILD_SHARED_LIBRARY "Build a shared library instead of static library" ON)
-option(STRATMOD_BUILD_USING_OPENMP   "Use OpenMP for parallelization"                   ON)
-option(STRATMOD_BUILD_USING_CEREAL   "Use Cereal library for serialization"             ON)
-option(STRATMOD_BUILD_DOCS           "Build documentation with Doxygen"                 OFF)
-option(STRATMOD_BUILD_TESTS          "Build with support for testing using Catch"       OFF)
-option(STRATMOD_BUILD_EXAMPLE        "Build examples"                                   OFF) 
-option(STRATMOD_BUILD_UTILITIES      "Build command line utilities"                     OFF) 
+if(NOT DEFINED STRATMOD_BUILD_SHARED_LIBRARY)
+    option(STRATMOD_BUILD_SHARED_LIBRARY "Build a shared library instead of static library" ON)
+endif()
+
+if(NOT DEFINED STRATMOD_BUILD_USING_OPENMP)
+    option(STRATMOD_BUILD_USING_OPENMP   "Use OpenMP for parallelization"                   ON)
+endif()
+
+if(NOT DEFINED STRATMOD_BUILD_USING_LAPACK)
+    option(STRATMOD_BUILD_USING_LAPACK   "Use lapack to accelerate linear algebra"          ON)
+endif()
+
+if(NOT DEFINED STRATMOD_BUILD_USING_CEREAL)
+    option(STRATMOD_BUILD_USING_CEREAL   "Use Cereal library for serialization"             ON)
+endif()
+
+if(NOT DEFINED STRATMOD_BUILD_VTK_EXPORTER_UTILITY)
+    option(STRATMOD_BUILD_VTK_EXPORTER_UTILITY   "Build utility to export models to vtk"    ON)
+endif()
+
+# # Detects whether this is a top-level project
+# get_directory_property(STRATMOD_PARENT_DIR PARENT_DIRECTORY)
+# if(NOT STRATMOD_PARENT_DIR)
+#     set(STRATMOD_TOP_LEVEL_PROJECT ON)
+# else()
+#     set(STRATMOD_TOP_LEVEL_PROJECT OFF)
+# endif()
+
+set(STRATMOD_TOP_LEVEL_PROJECT OFF)
+
+option(STRATMOD_BUILD_DOCS           "Build documentation with Doxygen"                 ${STRATMOD_TOP_LEVEL_PROJECT})
+option(STRATMOD_BUILD_TESTS          "Build with support for testing using Catch"       ${STRATMOD_TOP_LEVEL_PROJECT})
+option(STRATMOD_BUILD_EXAMPLE        "Build examples"                                   ${STRATMOD_TOP_LEVEL_PROJECT}) 
+option(STRATMOD_BUILD_UTILITIES      "Build command line utilities"                     ${STRATMOD_TOP_LEVEL_PROJECT}) 
 
 # regarding testing, see also: https://cmake.org/Wiki/CMake/Testing_With_CTest
 
@@ -69,7 +99,7 @@ option(STRATMOD_BUILD_UTILITIES      "Build command line utilities"             
 # Auxiliary config files. 
 ###############################################
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # include_directories("./")
 
@@ -83,7 +113,7 @@ if(STRATMOD_BUILD_SHARED_LIBRARY)
     add_definitions(-DSTRATMOD_BUILD_SHARED)
     set(LIB_TYPE SHARED)
     # set(PLANIN_FORCE_POSITION_INDEPENDENT_CODE ON)
-    set(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE ON)
+    # set(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE ON)
 
 else()
     set(LIB_TYPE STATIC)
@@ -115,7 +145,8 @@ endif()
 ###############################################
 
 if(STRATMOD_BUILD_USING_OPENMP)
-    include(${CMAKE_MODULE_PATH}/PatchOpenMPApple.cmake)
+    # Looks like new versions of FindOpenMP.cmake have macos sorted out already
+    # include(PatchOpenMPApple)
     find_package(OpenMP REQUIRED)
     set(PLANIN_BUILD_USING_OPENMP "" ON) 
 endif()
@@ -155,8 +186,8 @@ endif()
 ###############################################
 
 if (STRATMOD_BUILD_DOCS)
-    include("${CMAKE_MODULE_PATH}/BuildDocumentation.cmake") 
-    set(PLANIN_BUILD_DOCS "" OFF) 
+    include(BuildDocumentation) 
+    set(PLANIN_BUILD_DOCS OFF) 
 endif(STRATMOD_BUILD_DOCS)
 
 
@@ -176,6 +207,9 @@ if(STRATMOD_EIGEN3_INCLUDE_DIR)
     set(PLANIN_EIGEN3_INCLUDE_DIR ${STRATMOD_EIGEN3_INCLUDE_DIR})
 endif()
 
+if(STRATMOD_BUILD_USING_LAPACK)
+    set(PLANIN_BUILD_USE_LAPACK ON)
+endif()
 
 ###############################################
 # External projects
@@ -189,8 +223,12 @@ include(ExternalProject)
 # PlanIn processes all modelling primitives
 ###############################################
 
-set(PLANIN_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin)
-add_subdirectory(${PLANIN_SOURCE})
+set(PLANIN_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin)
+add_subdirectory(${PLANIN_PATH})
+
+if(STRATMOD_BUILD_SHARED_LIBRARY)
+    set_property(TARGET planin PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
 
 # set(PLANIN_CMAKE_ARGS 
 #     -DPLANIN_EIGEN3_INCLUDE_DIR=${STRATMOD_EIGEN3_INCLUDE_DIR}
@@ -264,7 +302,7 @@ if(STRATMOD_BUILD_TESTS)
         EXCLUDE_FROM_ALL TRUE
         )
 
-    include_directories(${CATCH_SOURCE})
+    # include_directories(${CATCH_SOURCE})
 
 endif()
 
@@ -277,7 +315,7 @@ endif()
 # include_directories(${CMAKE_SOURCE_DIR}/src)
 
 set(STRATMOD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/stratmod)
-set(HEADERS 
+set(STRATMOD_LIB_HEADERS 
     ${STRATMOD_INCLUDE_DIR}/stratmod_win_dll_export_handler.hpp
     ${STRATMOD_INCLUDE_DIR}/smodeller_primitives.hpp
     ${STRATMOD_INCLUDE_DIR}/smodeller.hpp
@@ -293,30 +331,25 @@ set(STRATMOD_LIB_SOURCES
     ) 
 
 
-add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${HEADERS})  
+add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${STRATMOD_LIB_HEADERS})  
+add_library(stratmod::stratmod ALIAS stratmod)
 
 target_compile_features(stratmod PUBLIC cxx_std_11)
 
 if(MSVC)
     target_compile_options(stratmod PRIVATE -EHsc -W3)
 else()
-    target_compile_options(stratmod PRIVATE -Wall -Wno-unknown-pragmas)
+    target_compile_options(stratmod PRIVATE -Wall -Wextra -Wno-unknown-pragmas)
 endif()
 
 if(STRATMOD_BUILD_SHARED_LIBRARY)
     target_compile_options(stratmod PUBLIC -DSTRATMOD_BUILD_SHARED_LIBRARY)
 endif()
 
+target_link_libraries(stratmod PRIVATE planin)
+
 if( ${STRATMOD_BUILD_USING_OPENMP} )
-    target_link_libraries(stratmod 
-        # PRIVATE 
-            # planin 
-        PUBLIC 
-            planin 
-            OpenMP::OpenMP_CXX
-        )
-else()
-    target_link_libraries(stratmod PUBLIC planin)
+    target_link_libraries(stratmod PUBLIC OpenMP::OpenMP_CXX)
 endif()
 
 target_include_directories(stratmod
@@ -329,23 +362,54 @@ target_include_directories(stratmod SYSTEM
     PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin>
+        $<BUILD_INTERFACE:${CATCH_SOURCE}>
 )
 add_dependencies(stratmod planin)
 
 
-set(INSTALL_DESTINATION ${CMAKE_SOURCE_DIR}/stratmod)
+# Prepare exports
+if(STRATMOD_BUILD_SHARED_LIBRARY)
+    include(CMakePackageConfigHelpers)
+    write_basic_package_version_file(
+        stratmodConfigVersion.cmake
+        VERSION ${STRATMOD_VERSION}
+        COMPATIBILITY AnyNewerVersion
+        )
 
-install(TARGETS stratmod
-    ARCHIVE DESTINATION ${INSTALL_DESTINATION}/lib
-    LIBRARY DESTINATION ${INSTALL_DESTINATION}/lib
-    RUNTIME DESTINATION ${INSTALL_DESTINATION}/lib
-    COMPONENT library
-    )
+    # set(INSTALL_DESTINATION ${CMAKE_BINARY_DIR}/stratmod)
 
-install(DIRECTORY ${STRATMOD_INCLUDE_DIR}
-    DESTINATION ${INSTALL_DESTINATION}/include
-    )
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        set(CMAKE_INSTALL_PREFIX "libs/stratmod" CACHE PATH "..." FORCE)
+    endif()
 
+    install(TARGETS stratmod
+        EXPORT stratmodTargets
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION ${INSTALL_DESTINATION}/include
+        # COMPONENT library
+        )
+
+    install(EXPORT stratmodTargets
+        FILE stratmodTargets.cmake
+        NAMESPACE stratmod::
+        DESTINATION ${INSTALL_DESTINATION}/cmake
+        )
+
+    # install(DIRECTORY ${STRATMOD_INCLUDE_DIR}
+    #     DESTINATION ${INSTALL_DESTINATION}/include
+    #     )
+
+    configure_file(stratmodConfig.cmake.in stratmodConfig.cmake @ONLY)
+    install(
+        FILES 
+        "${CMAKE_CURRENT_BINARY_DIR}/stratmodConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/stratmodConfigVersion.cmake"
+        DESTINATION 
+        cmake
+        )
+endif() #if(STRATMOD_BUILD_SHARED_LIBRARY)
 
 ###############################################
 # Executables and utilities 
@@ -353,7 +417,7 @@ install(DIRECTORY ${STRATMOD_INCLUDE_DIR}
 
 if(${STRATMOD_BUILD_TESTS}) 
     set(TESTING_SOURCES src/test/main_tests.cpp src/test/first_test.cpp src/detail/smodeller_impl.cpp)
-    add_executable (run_tests ${TESTING_SOURCES} ${HEADERS})
+    add_executable (run_tests ${TESTING_SOURCES} ${STRATMOD_LIB_HEADERS})
     target_link_libraries(run_tests planin OpenMP::OpenMP_CXX)
     add_dependencies(run_tests planin)
     add_dependencies(run_tests Catch-build)
@@ -366,7 +430,7 @@ endif()
 
 if(${STRATMOD_BUILD_EXAMPLE})
     set(SOURCES src/main.cpp)
-    add_executable(run_me ${SOURCES} ${HEADERS})
+    add_executable(run_me ${SOURCES} ${STRATMOD_LIB_HEADERS})
     target_link_libraries(run_me stratmod)
     #    add_dependencies(run_me planin)
 
@@ -374,31 +438,36 @@ endif()
 
 if(${STRATMOD_BUILD_UTILITIES})
     set(SOURCES src/test/test_boundary.cpp)
-    add_executable(test_boundary ${SOURCES} ${HEADERS})
+    add_executable(test_boundary ${SOURCES} ${STRATMOD_LIB_HEADERS})
     target_link_libraries(test_boundary stratmod)
 
     set(SOURCES src/test/test_mesh.cpp)
-    add_executable(test_mesh ${SOURCES} ${HEADERS})
+    add_executable(test_mesh ${SOURCES} ${STRATMOD_LIB_HEADERS})
     target_link_libraries(test_mesh stratmod)
 
     set(SOURCES src/test/test_regions.cpp)
-    add_executable(test_regions ${SOURCES} ${HEADERS})
+    add_executable(test_regions ${SOURCES} ${STRATMOD_LIB_HEADERS})
     target_link_libraries(test_regions stratmod)
 
     set(SOURCES src/cl_util/binary2json.cpp)
-    add_executable(binary2json ${SOURCES} ${HEADERS})
+    add_executable(binary2json ${SOURCES} ${STRATMOD_LIB_HEADERS})
     target_link_libraries(binary2json stratmod)
 
     set(SOURCES src/cl_util/json2binary.cpp)
-    add_executable(json2binary ${SOURCES} ${HEADERS})
+    add_executable(json2binary ${SOURCES} ${STRATMOD_LIB_HEADERS})
     target_link_libraries(json2binary stratmod)
 
     set(SOURCES src/cl_util/resample.cpp)
-    add_executable(resample ${SOURCES} ${HEADERS})
+    add_executable(resample ${SOURCES} ${STRATMOD_LIB_HEADERS})
     target_link_libraries(resample stratmod)
 
     set(SOURCES src/cl_util/export2VTK.cpp)
-    add_executable(export2VTK ${SOURCES} ${HEADERS})
+    add_executable(export2VTK ${SOURCES} ${STRATMOD_LIB_HEADERS})
     target_link_libraries(export2VTK stratmod)
 endif()
 
+if(STRATMOD_BUILD_VTK_EXPORTER_UTILITY)
+    set(SOURCES src/cl_util/rrm2vtk.cpp)
+    add_executable(rrm2vtk ${SOURCES} ${STRATMOD_LIB_HEADERS})
+    target_link_libraries(rrm2vtk stratmod planin)
+endif()

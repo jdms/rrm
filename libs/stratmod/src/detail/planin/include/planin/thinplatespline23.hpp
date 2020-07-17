@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __THIN_PLATE_SPLINE_23__
-#define __THIN_PLATE_SPLINE_23__
+#ifndef PLANIN_THIN_PLATE_SPLINE_23_HPP
+#define PLANIN_THIN_PLATE_SPLINE_23_HPP
 
 #include <cmath> 
 /* #include <iostream> */ //debug

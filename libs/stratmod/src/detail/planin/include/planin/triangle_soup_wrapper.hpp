@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __TRIANGLE_SOUP_WRAPPER__
-#define __TRIANGLE_SOUP_WRAPPER__
+#ifndef PLANIN_TRIANGLE_SOUP_WRAPPER_HPP
+#define PLANIN_TRIANGLE_SOUP_WRAPPER_HPP
 
 #include <vector> 
 #include <memory> 

@@ -2,7 +2,7 @@
 #include <chrono>
 #include <string>
 
-#include "smodeller.hpp"
+#include "stratmod/smodeller.hpp"
 #include "sutilities.hpp"
 #include "detail/planin/planin.hpp"
 

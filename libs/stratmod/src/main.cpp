@@ -74,7 +74,7 @@ int main()
     /* A call to the tryChangeDiscretization(...) method will only return true if
      * the model is empty.
      */
-    modeller.tryChangeDiscretization(128, 128);
+    modeller.changeDiscretization(128, 128);
 
     /* In the defaul coordinate systems, the axis are as follows: 
      *

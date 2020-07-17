@@ -21,8 +21,8 @@
 /******************************************************************************/
 
 
-#ifndef __LINEAR_COMPLEXES__
-#define __LINEAR_COMPLEXES__
+#ifndef PLANIN_LINEAR_COMPLEXES_HPP
+#define PLANIN_LINEAR_COMPLEXES_HPP
 
 #include <limits>
 #include <cmath>

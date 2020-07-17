@@ -22,8 +22,8 @@
 
 
 
-#ifndef __S_UTILITIES__
-#define __S_UTILITIES__
+#ifndef STRATMOD_S_UTILITIES_HPP
+#define STRATMOD_S_UTILITIES_HPP
 
 
 
@@ -50,6 +50,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
 
         std::size_t getUniqueFacesList( std::size_t surface_id, std::vector<std::size_t> &flist );
 
+        bool getRawData( std::size_t surface_id, std::vector<double> &plist );
+
         // Duplicated in SModeller
         bool getExtrusionPath( std::size_t surface_id, std::vector<double> &path_vertices );
 
@@ -75,7 +77,7 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         bool getRightBoundary3DCurves( std::vector<std::vector<double>> &vlist, std::vector<std::vector<size_t>> &elist);
         
         bool exportToTetgen( std::string filename );
-        bool exportToVTK( std::string filename );
+        bool exportToVTK( std::string filename, const std::vector<int>& region_to_domain_map = {} );
 
         // Duplicated in SModeller
         bool getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound);

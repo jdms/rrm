@@ -20,7 +20,7 @@
  */
 
 
-//#version 410 core
+//#version 330 core
 //
 //layout( lines_adjance ) in;
 //layout( triangle_strip, max_vertices = 3 ) out;
@@ -80,7 +80,7 @@
 //}
 
 
-#version 410 core
+#version 330 core
 
 layout(lines_adjacency) in;
 layout(triangle_strip, max_vertices=4) out;

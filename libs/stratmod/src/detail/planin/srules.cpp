@@ -1063,7 +1063,7 @@ bool SRules::weakEntireSurfaceCheck( const PlanarSurface::Ptr &s )
     return status; 
 }
 
-bool SRules::weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces )
+bool SRules::weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &/* surfaces */)
 { 
     //
     // Changed to always return true to allow the creation of volumes bounded
@@ -1191,7 +1191,7 @@ bool SRules::weakEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &
 /*     return isEntireSurface; */ 
 } 
 
-bool SRules::weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces )
+bool SRules::weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &/* surfaces */)
 { 
     //
     // Changed to always return true to allow the creation of volumes bounded
@@ -1293,7 +1293,7 @@ bool SRules::weakLowerBoundedEntireSurfaceListCheck( const std::vector<PlanarSur
 /*     return isEntireSurface; */ 
 } 
 
-bool SRules::weakUpperBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &surfaces )
+bool SRules::weakUpperBoundedEntireSurfaceListCheck( const std::vector<PlanarSurface::Ptr> &/* surfaces */)
 { 
     //
     // Changed to always return true to allow the creation of volumes bounded
@@ -1509,10 +1509,11 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
             /* bool lies_above_all_surfaces = true; */
             PlanarSurface::PointCache cache;
             cache.reserve( size() );
+            auto [tindex, bcoords] = container.front()->linear_graph_.baricentricCoordinates({p.x, p.y});
 
             for ( size_t i = 0; i < size(); ++i )
             {
-                if ( operator[](i)->liesAbove(p, cache) )
+                if ( operator[](i)->liesAbove(tindex, bcoords, p.z, cache) )
                 {
                     descriptor.push_back(i);
                 }
@@ -1589,10 +1590,11 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 
             PlanarSurface::PointCache cache;
             cache.reserve( size() );
+            auto [tindex, bcoords] = container.front()->linear_graph_.baricentricCoordinates({p.x, p.y});
 
             for ( size_t i = 0; i < size(); ++i )
             {
-                if ( operator[](i)->liesBelow(p, cache) )
+                if ( operator[](i)->liesBelow(tindex, bcoords, p.z, cache) )
                 {
                     descriptor.push_back(i);
                 }
