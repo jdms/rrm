@@ -6,12 +6,12 @@ July 17, 2020
 
 ## Introduction 
 
-This document contains all third party libraries that are either being
-currently used in RRM or that are being considered to be added to the project.
-It includes brief descriptions, the last known URL the code was made available
-at, the date it was retrieved, the license(s) in which the code was made
-available by their authors at the retrieving date, and URL links to publicly
-available copies of such licenses when possible.
+This document lists third party libraries that are either being currently used
+in RRM or that are being considered to be added to the project. It includes
+brief descriptions, the last known URL the code was made available at, the date
+it was retrieved, the license(s) in which the code was made available by their
+authors at the retrieving date, and URL links to publicly available copies of
+such licenses when possible.
 
 <!-- Note for developers: -->
 <!-- When adding or updating an entry, please provide all the aforementioned -->
@@ -40,15 +40,6 @@ available copies of such licenses when possible.
     + License: [GPL v3.0]
     + Description: Tucano Lib - A library for rapid prototyping with modern
       OpenGL and GLSL.
-
-#. [GSL - GNU Scientific Library](https://www.gnu.org/software/gsl/)
-    + Retrieved: July 17, 2020
-    + License: [GPL v3.0]
-    + Description: The GNU Scientific Library (GSL) is a numerical library for
-      C and C++ programmers. It is free software under the GNU General Public
-      License.  The library provides a wide range of mathematical routines such
-      as random number generators, special functions and least-squares fitting.
-      There are over 1000 functions in total with an extensive test suite.
 
 #. [Glew](http://glew.sourceforge.net/)
     + Retrieved: July 17, 2020
@@ -299,6 +290,15 @@ available copies of such licenses when possible.
     + License: [Zlib-Libpng]
     + Description: TinyXML-2 is a simple, small, efficient, C++ XML parser that
       can be easily integrated into other programs.
+
+#. [GSL - GNU Scientific Library](https://www.gnu.org/software/gsl/)
+    + Retrieved: July 17, 2020
+    + License: [GPL v3.0]
+    + Description: The GNU Scientific Library (GSL) is a numerical library for
+      C and C++ programmers. It is free software under the GNU General Public
+      License.  The library provides a wide range of mathematical routines such
+      as random number generators, special functions and least-squares fitting.
+      There are over 1000 functions in total with an extensive test suite.
 
 
 <!-- ## Unused libraries still present in the source code -->
