@@ -1,6 +1,6 @@
-[submodule "libs/stratmod"]
-	path = libs/stratmod
-	url = https://bitbucket.org/jdms/stratmod.git
-[submodule "libs/hypre-src"]
-	path = libs/hypre-src
-	url = git@bitbucket.org:rapidreservoirmodelling/hypre-fork.git
+; [submodule "libs/stratmod"]
+; 	path = libs/stratmod
+; 	url = https://bitbucket.org/jdms/stratmod.git
+; [submodule "libs/hypre-src"]
+; 	path = libs/hypre-src
+; 	url = git@bitbucket.org:rapidreservoirmodelling/hypre-fork.git
