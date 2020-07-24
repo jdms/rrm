@@ -2288,19 +2288,19 @@ void Controller::loadObjects( const std::string& filename, Controller::MeshResol
     model.volume->setGeometry( ox, oy, oz, width, height, depth );
     setVolumeDiscretization();
 
-    // loading the resolution
-    if ( rules_processor.isLowResolution() == true )
-    {
-        resol_ = Controller::MeshResolution::LOW;
-    }
-    else if ( rules_processor.isMediumResolution() == true )
-    {
-        resol_ = Controller::MeshResolution::MEDIUM;
-    }
-    else if ( rules_processor.isHighResolution() == true )
-    {
-        resol_ = Controller::MeshResolution::HIGH;
-    }
+    /* // loading the resolution */
+    /* if ( rules_processor.isLowResolution() == true ) */
+    /* { */
+    /*     resol_ = Controller::MeshResolution::LOW; */
+    /* } */
+    /* else if ( rules_processor.isMediumResolution() == true ) */
+    /* { */
+    /*     resol_ = Controller::MeshResolution::MEDIUM; */
+    /* } */
+    /* else if ( rules_processor.isHighResolution() == true ) */
+    /* { */
+    /*     resol_ = Controller::MeshResolution::HIGH; */
+    /* } */
 
     // if already exist an object, remove it
     if( model.objects.find( current_object ) != model.objects.end() )
@@ -2341,8 +2341,10 @@ void Controller::loadObjectNoMetaDatas()
     }
 
     // creating randomly colors to each object
+    std::vector< std::size_t > surfaces = rules_processor.getSurfaces();
     std::vector< std::size_t > actives = rules_processor.getActiveSurfaces();
-    for( auto id: actives )
+    
+    for( auto id: surfaces )
     {
         int r_ = static_cast< int >( distr( eng ) );
         int g_ = static_cast< int >( distr( eng ) );
@@ -2352,7 +2354,16 @@ void Controller::loadObjectNoMetaDatas()
         setObjectColor( id, r_, g_, b_ );
 
         model.objects[ id ]->setDone( true );
-
+        
+        auto it = std::find(actives.begin(), actives.end(), id);
+        if (it != actives.end())
+        {
+            model.objects[ id ]->setActive(true);
+        }
+        else
+        {
+            model.objects[ id ]->setActive(false);
+        }
     }
 
     // TODO: comment this code
@@ -2390,10 +2401,24 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
         QJsonArray objects_array_ = json["objects"].toArray();
 
+        std::vector< std::size_t > surfaces = rules_processor.getSurfaces();
+        // std::cout << "\nModel surfaces are (size = " << actives.size() << "):\n";
+        // for (auto& sid : actives)
+        // {
+        //     std::cout << " " << sid;
+        // }
+        // std::cout << std::endl << std::flush;
+        
         std::vector< std::size_t > actives = rules_processor.getActiveSurfaces();
-
+        // std::cout << "\nActive surfaces are (size = " << actives.size() << "):\n";
+        // for (auto& sid : actives)
+        // {
+        //     std::cout << " " << sid;
+        // }
+        // std::cout << std::endl << std::flush;
+        
         int obj_id_ = 0;
-        for( auto id: actives )
+        for( auto id: surfaces )
         {
             int r_= static_cast< int >( distr( eng ) );
             int g_= static_cast< int >( distr( eng ) );
@@ -2407,17 +2432,28 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
                 const ObjectPtr& obj_ = model.objects[ id ];
                 obj_->read( object_ );
-                obj_->getColor( r_, g_, b_ );
+                // obj_->getColor( r_, g_, b_ );
 
                 obj_id_++;
             }
             else
             {
                 setObjectColor( id, r_, g_, b_ );
+                
+                model.objects[ id ]->setDone( true );
+                
+                auto it = std::find(actives.begin(), actives.end(), id);
+                if (it != actives.end())
+                {
+                    model.objects[ id ]->setActive(true);
+                }
+                else
+                {
+                    model.objects[ id ]->setActive(false);
+                }
             }
-
         }
-
+        
 
         for( int i = 0; i < counter_; ++i )
         {

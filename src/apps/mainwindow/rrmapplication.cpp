@@ -797,7 +797,7 @@ void RRMApplication::load( const std::string& filename_ )
 {
     emit resetApplication();
 
-    Controller::MeshResolution resol_;
+    Controller::MeshResolution resol_ = Controller::MeshResolution::MEDIUM;
     controller->loadFile( filename_, resol_ );
 
     emit startApplication();
@@ -819,7 +819,7 @@ void RRMApplication::load( const std::string& filename_ )
     checkUndoRedo();
     checkPreserveStatus();
 
-
+    updateObjectTree();
 
 }
 
