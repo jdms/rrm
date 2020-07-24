@@ -442,7 +442,11 @@ bool RulesProcessor::getModelInfCurveAtLength( std::vector<std::size_t> &surface
     bool success = false;
     size_t index = 0;
     
-    modeller_.getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist);
+    success = modeller_.getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist);
+    if (!success)
+    {
+        return false;
+    }
     /* for ( index = 0; index < surface_indices.size(); ++index ) */
     /* { */
     /*     if ( modeller_.getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist) ) */
@@ -497,7 +501,11 @@ bool RulesProcessor::getModelSupCurveAtLength( std::vector<std::size_t> &surface
     bool success = false;
     size_t index = 0;
 
-    modeller_.getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist);
+    success = modeller_.getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist);
+    if (!success)
+    {
+        return false;
+    }
     /* for ( index = 0; index < surface_indices.size(); ++index ) */
     /* { */
     /*     if ( modeller_.getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist) ) */
@@ -551,7 +559,11 @@ bool RulesProcessor::getModelInfCurveAtWidth( std::vector<std::size_t> &surface_
     bool success = false;
     size_t index = 0;
 
-    modeller_.getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist);
+    success = modeller_.getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist);
+    if (!success)
+    {
+        return false;
+    }
     /* for ( index = 0; index < surface_indices.size(); ++index ) */
     /* { */
     /*     if ( modeller_.getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist) ) */
@@ -606,7 +618,11 @@ bool RulesProcessor::getModelSupCurveAtWidth( std::vector<std::size_t> &surface_
     bool success = false;
     size_t index = 0;
 
-    modeller_.getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist);
+    success = modeller_.getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist);
+    if (!success)
+    {
+        return false;
+    }
     /* for ( index = 0; index < surface_indices.size(); ++index ) */
     /* { */
     /*     if ( modeller_.getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist) ) */
