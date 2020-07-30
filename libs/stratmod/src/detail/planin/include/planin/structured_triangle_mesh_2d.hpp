@@ -931,7 +931,7 @@ typename StructuredTriangleMesh2D<Point2D>::Triangle StructuredTriangleMesh2D<Po
     Natural num_triangles_per_block = numTrianglesPerBlock();
     auto num_triangles = numTriangles();
 
-    Triangle triangle;
+    Triangle triangle{};
     if ( tindex >= num_triangles )
     {
         return triangle;

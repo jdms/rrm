@@ -328,14 +328,26 @@ bool SRules::addSurface( PlanarSurface::Ptr &sptr, size_t &surface_index )
 
     if ( defineAboveIsActive() == true ) {
         /* cout << "Someone was defined above!\n"; */ 
+        std::vector<PlanarSurface::SurfaceId> lb_plannar_surface_ids;
+        for ( auto &s : lower_bound_ids_ )
+        {
+            lb_plannar_surface_ids.push_back(container[s]->getID());
+        }
+
         for ( auto &lower_bound : lower_bound_ )
-            sptr->removeBelow(lower_bound); 
+            sptr->removeBelow(lower_bound, lb_plannar_surface_ids); 
     }
 
     if ( defineBelowIsActive() == true ) { 
         /* cout << "Someone was defined below!\n"; */ 
+        std::vector<PlanarSurface::SurfaceId> ub_planar_surface_ids;
+        for ( auto &s : upper_bound_ids_ )
+        {
+            ub_planar_surface_ids.push_back(container[s]->getID());
+        }
+
         for ( auto &upper_bound : upper_bound_ )
-            sptr->removeAbove(upper_bound); 
+            sptr->removeAbove(upper_bound, ub_planar_surface_ids); 
     }
 
     surface_index = container.size(); 
@@ -495,6 +507,7 @@ bool SRules::defineAbove()
 void SRules::stopDefineAbove() { 
     lower_bound_ = std::vector<PlanarSurface::WeakPtr>(); 
     lower_bound_ids_ = {};
+    sup_lower_bound_ids_ = {};
     define_above_ = false; 
 }
 
@@ -510,6 +523,7 @@ bool SRules::defineBelow()
 void SRules::stopDefineBelow() { 
     upper_bound_ = std::vector<PlanarSurface::WeakPtr>();
     upper_bound_ids_ = {};
+    inf_upper_bound_ids_ = {};
     define_below_ = false; 
 }
 
@@ -829,7 +843,7 @@ bool SRules::defineBelow( std::vector<PlanarSurface::Ptr> &bounding_surfaces )
     }
 
     if ( weakLowerBoundedEntireSurfaceListCheck(bounding_surfaces) == false ) { 
-        stopDefineAbove(); 
+        stopDefineBelow(); 
         return false; 
     }
 
@@ -880,22 +894,28 @@ bool SRules::removeBelowIntersection( std::size_t surface_index )
 
 bool SRules::defineAbove( std::size_t surface_index )
 {
-    if ( surface_index >= size() )
-    {
-        return false;
-    }
+    /* if ( surface_index >= size() ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
-    return defineAbove( container[surface_index] );
+    /* return defineAbove( container[surface_index] ); */
+
+    std::vector<size_t> surface_indices = {surface_index};
+    return defineAbove(surface_indices);
 }
 
 bool SRules::defineBelow( std::size_t surface_index )
 {
-    if ( surface_index >= size() )
-    {
-        return false;
-    }
+    /* if ( surface_index >= size() ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
-    return defineBelow( container[surface_index] );
+    /* return defineBelow( container[surface_index] ); */
+
+    std::vector<size_t> surface_indices = {surface_index};
+    return defineBelow(surface_indices);
 }
 
 bool SRules::defineAbove( std::vector<size_t> surface_indices )
@@ -915,6 +935,7 @@ bool SRules::defineAbove( std::vector<size_t> surface_indices )
     {
         if ( sid >= size() )
         {
+            stopDefineAbove();
             return false;
         }
 
@@ -940,6 +961,7 @@ bool SRules::defineBelow( std::vector<size_t> surface_indices )
     {
         if ( sid >= size() )
         {
+            stopDefineBelow();
             return false;
         }
 
@@ -1857,7 +1879,14 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
                     for ( auto s : surface_ids )
                     {
                         th = -container[s]->getTriangleHeightsFromPositionInBlock(tpos, bindex);
-                        dictionary.insert(std::make_pair(th, s));
+                        try
+                        {
+                            dictionary.insert(std::make_pair(th, s));
+                        }
+                        catch(...)
+                        {
+                            std::cerr << "DERROR: MSVC tags TH ordering as invalid\n";
+                        }
                     }
                     /* std::cout << "For pair (b, t) " << "(" << bindex << ", " << tpos << ")" << " ordered indices are:"; */
 
@@ -1922,7 +1951,14 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
                     for ( auto s : surface_ids )
                     {
                         th = container[s]->getTriangleHeightsFromPositionInBlock(tpos, bindex);
-                        dictionary.insert(std::make_pair(th, s));
+                        try
+                        {
+                            dictionary.insert(std::make_pair(th, s));
+                        }
+                        catch(...)
+                        {
+                            std::cerr << "DERROR: MSVC tags TH ordering as invalid\n";
+                        }
                     }
                     /* std::cout << "For pair (b, t) " << "(" << bindex << ", " << tpos << ")" << " ordered indices are:"; */
 

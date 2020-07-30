@@ -1885,7 +1885,7 @@ bool PlanarSurface::liesBelowRawSurface( Point3 &&p ) {
 }
 
 // TODO: clean-up this method and either syncrhonize or ignore f's bounding lists
-bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) { 
+bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s, const std::vector<SurfaceId>& surface_ids_above_or_equal_s ) { 
     if ( s->surfaceIsSet() == false ) { 
         return false; 
     }
@@ -1948,6 +1948,15 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) {
     for ( auto &lb : lbound )
     {
         new_bound = true;
+        if ( auto slb = lb.lock() )
+        {
+            auto it = std::find(surface_ids_above_or_equal_s.begin(), surface_ids_above_or_equal_s.end(), slb->getID());
+            if ( it != surface_ids_above_or_equal_s.end() )
+            {
+                new_bound = false;
+            }
+        }
+
 
         for (auto this_lb : lower_bound_)
             if (compareSurfaceWptr(lb, this_lb) == true)
@@ -1969,18 +1978,18 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s ) {
     return true; 
 }
 
-bool PlanarSurface::removeAbove( PlanarSurface::WeakPtr s ) 
+bool PlanarSurface::removeAbove( PlanarSurface::WeakPtr s, const std::vector<SurfaceId>& surface_ids_above_or_equal_s ) 
 { 
     auto sptr = s.lock(); 
     if ( s.expired() ) { 
         return false; 
     }
 
-    return removeAbove(sptr); 
+    return removeAbove(sptr, surface_ids_above_or_equal_s); 
 }
 
 // TODO: clean-up this method and either syncrhonize or ignore f's bounding lists
-bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s ) 
+bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s, const std::vector<SurfaceId>& surface_ids_below_or_equal_s ) 
 { 
     if ( s->surfaceIsSet() == false ) { 
         return false; 
@@ -2047,6 +2056,14 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s )
     for (auto &ub : ubound)
     {
         new_bound = true;
+        if ( auto sub = ub.lock() )
+        {
+            auto it = std::find(surface_ids_below_or_equal_s.begin(), surface_ids_below_or_equal_s.end(), sub->getID());
+            if ( it != surface_ids_below_or_equal_s.end() )
+            {
+                new_bound = false;
+            }
+        }
 
         for (auto this_ub: upper_bound_)
             if (compareSurfaceWptr(ub, this_ub) == true)
@@ -2068,14 +2085,14 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s )
     return true; 
 }
 
-bool PlanarSurface::removeBelow( PlanarSurface::WeakPtr s ) 
+bool PlanarSurface::removeBelow( PlanarSurface::WeakPtr s, const std::vector<SurfaceId>& surface_ids_below_or_equal_s ) 
 { 
     auto sptr = s.lock(); 
     if ( s.expired() ) { 
         return false; 
     }
 
-    return removeBelow(sptr); 
+    return removeBelow(sptr, surface_ids_below_or_equal_s); 
 }
 
 bool PlanarSurface::project( Point3 &p ) { 
