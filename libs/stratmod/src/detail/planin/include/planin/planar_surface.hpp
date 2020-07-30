@@ -252,11 +252,11 @@ class PlanarSurface {
         template<typename T>
         void getLowerBoundList( T &list ) const; 
 
-        bool removeAbove( PlanarSurface::Ptr &s ); 
-        bool removeAbove( PlanarSurface::WeakPtr s ); 
+        bool removeAbove( PlanarSurface::Ptr &s, const std::vector<SurfaceId>& surfaces_above = {} ); 
+        bool removeAbove( PlanarSurface::WeakPtr s, const std::vector<SurfaceId>& surfaces_above = {} ); 
 
-        bool removeBelow( PlanarSurface::Ptr &s ); 
-        bool removeBelow( PlanarSurface::WeakPtr s ); 
+        bool removeBelow( PlanarSurface::Ptr &s, const std::vector<SurfaceId>& surfaces_below = {} ); 
+        bool removeBelow( PlanarSurface::WeakPtr s, const std::vector<SurfaceId>& surfaces_below = {} ); 
 
         /* Maintenance */ 
         void pruneBoundingLists(); 

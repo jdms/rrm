@@ -179,8 +179,24 @@ struct TriangleHeights
         return true;
     }
 
+    bool operator==( const TriangleHeights &rhs ) const
+    {
+        bool equal = true;
+
+        equal &= (vertex_height == rhs.vertex_height); //= {};
+        equal &= (vertex_status == rhs.vertex_status); //= {};
+        equal &= (tolerance == rhs.tolerance);
+
+        return equal;
+    }
+
     bool operator<( const TriangleHeights &rhs ) const
     {
+        if ( this->operator==(rhs) )
+        {
+            return false;
+        }
+
         if ( vertex_height[0] - tolerance > rhs.vertex_height[0] )
         {
             return false;
@@ -232,12 +248,6 @@ struct TriangleHeights
     bool operator<=( const TriangleHeights &rhs ) const
     {
         return rhs.operator>=(*this);
-    }
-
-    bool operator==( const TriangleHeights &rhs ) const
-    {
-        /* return !( operator<(rhs) ) && !( rhs.operator<(*this) ); */
-        return operator<=(rhs) && operator>=(rhs);
     }
 
     bool operator!=( const TriangleHeights &rhs ) const
