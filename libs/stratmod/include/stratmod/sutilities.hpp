@@ -25,16 +25,20 @@
 #ifndef STRATMOD_S_UTILITIES_HPP
 #define STRATMOD_S_UTILITIES_HPP
 
-
-
 #include <iostream>
 #include <vector>
 #include <memory>
 
 #include "stratmod/smodeller.hpp"
 
-
-
+/** 
+ * @brief Utility methods used in RRM.
+ *
+ * These methods are meant for exclusive use of RRM, as they depend on internal structures
+ * that may change without notice from release to release and may be deprecated at any time.
+ *
+ * Use of this class in external software is strongly discouraged.
+ **/
 class STRATMODLIB_DLL_HANDLER SUtilities
 {
     public:
