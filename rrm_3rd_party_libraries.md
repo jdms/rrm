@@ -300,6 +300,15 @@ such licenses when possible.
       as random number generators, special functions and least-squares fitting.
       There are over 1000 functions in total with an extensive test suite.
 
+#. [QuickVtk](https://github.com/qCring/QuickVtk)
+    + Retrieved: July 24, 2020
+    + License: [BSD-3-Clause]
+    + Description: QuickVtk is a live QML interpeter with built-in support for
+      the VTK-Framework. You can simply learn or test QML code and develop
+      prototypes in the domain of 2D/3D visualization by accessing VTK in
+      a declarative way. To put it in one sentence: QuickVtk's main purpose is
+      to enable reactive programming for VTK by utilizing the QML engine.
+
 
 <!-- ## Unused libraries still present in the source code -->
 
