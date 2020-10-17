@@ -44,7 +44,8 @@
 
 #include "./apps/3dview/canvas3d.h"
 #include "./apps/sketching/sketchwindow.h"
-#include "./apps/simulator/flow_window.h"
+/* #include "./apps/simulator/flow_window.h" */
+#include "./apps/mainwindow/flow_window.h"
 
 #include "./core/definitions/constants.hpp"
 #include "./core/widgets/realfeaturedslider.h"
