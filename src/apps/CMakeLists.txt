@@ -16,8 +16,8 @@ ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 # Main source -- Subprojects
 ###############################################
 
+add_subdirectory( simulator )
 add_subdirectory( mainwindow )
-#add_subdirectory( simulator )
 
 
 

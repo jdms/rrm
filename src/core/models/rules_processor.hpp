@@ -60,6 +60,8 @@
             RulesProcessor();
             ~RulesProcessor() = default;
 
+            SModeller& getModel();
+
             std::vector<std::size_t> getSurfaces();
             std::vector<std::size_t> getActiveSurfaces();
 
