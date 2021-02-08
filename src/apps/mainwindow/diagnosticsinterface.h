@@ -29,6 +29,8 @@
 #ifndef DIAGNOSTICSINTERFACE_H
 #define DIAGNOSTICSINTERFACE_H
 
+#include <memory>
+
 #include <QDockWidget>
 
 class MainWindow;
@@ -38,7 +40,6 @@ class FlowWindow;
 /**
  *   Class responsible for initializing the diagnostics application
  */
-
 
 class DiagnosticsInterface: public QObject
 {
@@ -53,6 +54,31 @@ class DiagnosticsInterface: public QObject
         */
         DiagnosticsInterface( MainWindow* const& window_ );
 
+        /**
+        * Default Destructor.
+        */
+        ~DiagnosticsInterface();
+
+
+        /**
+        * Deleted copy constructor.
+        */
+        DiagnosticsInterface(const DiagnosticsInterface&) = delete;
+
+        /**
+        * Deleted copy assigment operator.
+        */
+        DiagnosticsInterface& operator=(const DiagnosticsInterface&) = delete;
+
+        /**
+        * Deleted move constructor.
+        */
+        DiagnosticsInterface(DiagnosticsInterface&&) = delete;
+
+        /**
+        * Deleted move assigment operator.
+        */
+        DiagnosticsInterface& operator=(DiagnosticsInterface&&) = delete;
 
         /**
         * Method to creates the interface of the diagnostics application
@@ -60,25 +86,31 @@ class DiagnosticsInterface: public QObject
         */
         void createInterface();
 
+        /**
+        * Method to check if the flow diagnostics application is implemented
+        * @return true is flow diagnostics works, false otherwise.
+        */
+        bool isImplemented();
+
 
     public slots:
 
 
         /**
-        * Method to set the inital setup for the Flow Diagnostics app.
-        * @param status boolean to indicate if the Flow Diagnostics is active or not.
+        * Method to update the Flow Diagnostics app.
+        * @param status boolean to indicate if Flow Diagnostics is active or not.
         * @return void.
         */
-        void init( bool status_ );
+        void update( bool status_ );
 
     protected:
 
 
         /**
-        * Method to create the Flow Diagnostics interface
+        * Method to create a docked Flow Diagnostics interface
         * @return void.
         */
-        void createDiagnosticsWindow();
+        void createDockedDiagnosticsWindow();
 
 
         /**
@@ -93,9 +125,9 @@ class DiagnosticsInterface: public QObject
 
         MainWindow* window = nullptr;                                       /**< Main Window */
 
-        FlowWindow* flow_window = nullptr;                                 /**< Flow Diagnostics window */
+        std::unique_ptr<FlowWindow> flow_window = nullptr;                  /**< Flow Diagnostics window */
 
-        QDockWidget* dw_flow_window = nullptr;                             /**< DockWidget to hold the Flow Diagnostics window */
+        std::unique_ptr<QDockWidget> dw_flow_window = nullptr;              /**< DockWidget to hold the Flow Diagnostics window */
 
 
 };

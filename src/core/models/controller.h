@@ -996,6 +996,12 @@ class Controller
         */
         void initRulesProcessor();
 
+        /**
+        * Method to get the Rules Processor model
+        * @see RulesProcessor
+        * @return Reference to a stradmod::SModeller object.
+        */
+        SModeller& getRulesProcessorModel();
 
         /**
         * Method to update the volume boundary in the Rules Processor

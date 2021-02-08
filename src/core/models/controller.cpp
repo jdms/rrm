@@ -1621,6 +1621,10 @@ void Controller::initRulesProcessor()
 
 }
 
+SModeller& Controller::getRulesProcessorModel()
+{
+    return rules_processor.getModel();
+}
 
 void Controller::updateBoundingBoxRulesProcessor()
 {

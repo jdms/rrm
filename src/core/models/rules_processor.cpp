@@ -40,6 +40,11 @@ RulesProcessor::RulesProcessor()
     /* setMediumResolution(); */
 }
 
+SModeller& RulesProcessor::getModel()
+{
+    return static_cast<SModeller&>(modeller_);
+}
+
 std::vector<size_t> RulesProcessor::filterActiveSurfaces( std::vector<std::size_t> &surface_ids )
 {
     std::vector<size_t> active_surfaces = {};

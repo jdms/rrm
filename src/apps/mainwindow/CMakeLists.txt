@@ -11,7 +11,7 @@ set( MAINWINDOW_HEADERS      mainwindow.h
                              view3dinterface.h
                              diagnosticsinterface.h
                              rrmapplication.h
-                             flow_window.h
+                             # flow_window.h
                              about/about_widget.hpp  )
 
 
@@ -74,9 +74,8 @@ include_directories (${PROJECT_BINARY_DIR})
 add_library( ${PROJECT_NAME} STATIC ${MAINWINDOW_SOURCES} ${MAINWINDOW_MOC_SRCS} ${MAINWINDOW_HEADERS} )
 
 #target_link_libraries( ${PROJECT_NAME} GLEW::GLEW )
-target_link_libraries( ${PROJECT_NAME} RRMBase RRMModel RRMWidgets 3dViewApp Sketching) # FlowDiagnosticsApp )
+target_link_libraries( ${PROJECT_NAME} RRMBase RRMModel RRMWidgets 3dViewApp Sketching FlowDiagnosticsApp )
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg ${OPENGL_LIBRARIES} ) #${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
-target_link_libraries( ${PROJECT_NAME} ${HYPRE} )
 if(WIN32)
     #target_link_libraries( ${PROJECT_NAME} stratmod TinyObjLoader )
     target_link_libraries( ${PROJECT_NAME} TinyObjLoader )
@@ -86,6 +85,8 @@ else()
     target_link_libraries( ${PROJECT_NAME} OpenMP::OpenMP_CXX TinyObjLoader )
     target_link_libraries( ${PROJECT_NAME} GLEW::GLEW )
 endif()
+
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 
 

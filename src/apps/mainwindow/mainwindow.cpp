@@ -233,7 +233,7 @@ void MainWindow::createActions()
 
 
     connect( ac_regions, &QAction::triggered, [=]( bool status_ )
-    { app->getRegions( status_ ); ac_diagnostics->setEnabled( status_ ); lockUndoRedo( status_ ); } );
+    { app->getRegions( status_ ); ac_diagnostics->setEnabled( status_ && diagapp->isImplemented() ); lockUndoRedo( status_ ); } );
 
     connect( ac_diagnostics, &QAction::triggered, [=]( bool status_ )
     {  emit runDiagnostics( status_ );
@@ -407,7 +407,7 @@ void MainWindow::createController()
     connect( app, &RRMApplication::addRegions, [=]()
     {
         ac_regions->setChecked( true );
-        ac_diagnostics->setEnabled( true );
+        ac_diagnostics->setEnabled( true && diagapp->isImplemented() );
     } );
 
 }
