@@ -32,6 +32,7 @@
 #include "controller.h"
 #include "./apps/mainwindow/rrmapplication.h"
 
+#include "rules_processor.hpp"
 #include "volume.h"
 #include "object.h"
 
@@ -1621,9 +1622,9 @@ void Controller::initRulesProcessor()
 
 }
 
-SModeller& Controller::getRulesProcessorModel()
+RulesProcessor& Controller::getRulesProcessor()
 {
-    return rules_processor.getModel();
+    return rules_processor;
 }
 
 void Controller::updateBoundingBoxRulesProcessor()

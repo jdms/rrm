@@ -37,11 +37,11 @@
 DiagnosticsInterface::DiagnosticsInterface( MainWindow* const& window_ )
 {
     window = window_;
-    flow_window = std::make_unique<FlowWindow>();
+    fd_window_interface = new FlowWindow(window);
 
     if ( isImplemented() && (window != nullptr))
     {
-        flow_window->setModel(window->controller->getRulesProcessorModel());
+        fd_window_interface->setModel(window->controller->getRulesProcessor().getSModeller());
     }
 }
 
@@ -54,13 +54,13 @@ void DiagnosticsInterface::createInterface()
         return;
     }
 
-    if (flow_window->preferDockedWindow())
+    if (fd_window_interface->preferDockedWindow())
     {
         createDockedDiagnosticsWindow();
     }
     else
     {
-        flow_window->createFlowDiagnosticsWindow();
+        fd_window_interface->createFlowDiagnosticsWindow();
     }
 
     createDiagnosticsActions();
@@ -68,12 +68,22 @@ void DiagnosticsInterface::createInterface()
 
 bool DiagnosticsInterface::isImplemented()
 {
-    if (flow_window == nullptr)
+    if (fd_window_interface == nullptr)
     {
         return false;
     }
 
-    return flow_window->isImplemented();
+    return fd_window_interface->isImplemented();
+}
+
+bool DiagnosticsInterface::preferDockedWindow()
+{
+    if (isImplemented())
+    {
+        return fd_window_interface->preferDockedWindow();
+    }
+
+    return false;
 }
 
 void DiagnosticsInterface::createDockedDiagnosticsWindow()
@@ -83,11 +93,11 @@ void DiagnosticsInterface::createDockedDiagnosticsWindow()
         return;
     }
 
-    dw_flow_window = std::make_unique<QDockWidget>( "Flow Diagnostics" );
+    dw_flow_window = new QDockWidget( "Flow Diagnostics" );
     dw_flow_window->setAllowedAreas( Qt::AllDockWidgetAreas );
-    dw_flow_window->setWidget( flow_window.get() );
+    dw_flow_window->setWidget( fd_window_interface );
     dw_flow_window->setVisible( false );
-    window->addDockWidget( Qt::BottomDockWidgetArea, dw_flow_window.get() );
+    window->addDockWidget( Qt::BottomDockWidgetArea, dw_flow_window );
 }
 
 
@@ -99,14 +109,14 @@ void DiagnosticsInterface::createDiagnosticsActions()
     }
 
     // init/update flow diagnostics
-    connect( window, &MainWindow::runDiagnostics, this, &DiagnosticsInterface::update );
+    connect( window, &MainWindow::runDiagnostics, this, &DiagnosticsInterface::updateWindow );
 
     /* *********************************************************************************************************** */
     /* Obsolete: flow window now gets information directly from model */
     /* *********************************************************************************************************** */
 
 /*     // send the mesh and the curves of the boundary of each surface to flow diagnostics */
-/*     connect( flow_window, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes, */
+/*     connect( fd_window_interface, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes, */
 /*              std::vector< FlowWindow::CurveMesh>& left_curves, */
 /*              std::vector< FlowWindow::CurveMesh >& right_curves, */
 /*              std::vector< FlowWindow::CurveMesh > & front_curves, */
@@ -114,43 +124,47 @@ void DiagnosticsInterface::createDiagnosticsActions()
 /*         window->app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } ); */
 
 /*     // send the mesh and the color of the regions to flow diagnostics */
-/*     connect( flow_window, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& faces ) */
+/*     connect( fd_window_interface, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& faces ) */
 /*     { */
 /*         std::vector< int > regions_; */
 /*         std::map< int, std::vector< float > > colors_; */
 /*         window->app->getTetrahedronsRegions( vertices, faces, regions_, colors_ ); */
-/*         flow_window->setTetrahedronRegions( regions_, colors_ ); } ); */
+/*         fd_window_interface->setTetrahedronRegions( regions_, colors_ ); } ); */
 
     /* *********************************************************************************************************** */
 
     // restart flow diagnostics
     connect( window->app, &RRMApplication::resetApplication, [=]()
     {
-        flow_window->clear(); 
-        flow_window->setModel(window->controller->getRulesProcessorModel());
-        this->update( false );
+        fd_window_interface->clear(); 
+        fd_window_interface->setModel(window->controller->getRulesProcessor().getSModeller());
+        if (!fd_window_interface->preferDockedWindow())
+        {
+            fd_window_interface->createFlowDiagnosticsWindow();
+        }
+        this->updateWindow( false );
     } );
 }
 
 
-void DiagnosticsInterface::update( bool status_ )
+void DiagnosticsInterface::updateWindow( bool window_is_active )
 {
     if (!isImplemented() || (window == nullptr))
     {
         return;
     }
-    /* flow_window->setModel(window->controller->getRulesProcessorModel()); */
+        /* fd_window_interface->setModel(window->controller->getRulesProcessor().getSModeller()); */
 
-    if (flow_window->preferDockedWindow() && (dw_flow_window != nullptr))
+    if (fd_window_interface->preferDockedWindow() && (dw_flow_window != nullptr))
     {
-        dw_flow_window->setVisible( status_ );
+        dw_flow_window->setVisible( window_is_active );
     }
 
-    if (status_ == false)
+    if (window_is_active == false)
     {
         return;
     }
 
-    /* Call methods to update `flow_window` */
-    flow_window->update();
+    /* Call methods to update `fd_window_interface` */
+    fd_window_interface->update();
 }

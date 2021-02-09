@@ -40,7 +40,7 @@ RulesProcessor::RulesProcessor()
     /* setMediumResolution(); */
 }
 
-SModeller& RulesProcessor::getModel()
+SModeller& RulesProcessor::getSModeller()
 {
     return static_cast<SModeller&>(modeller_);
 }

@@ -24,38 +24,43 @@
 #include "stratmod/smodeller.hpp"
 
 struct FlowWindow::FlowWindowImpl {
+    QWidget window;
 };
 
 FlowWindow::FlowWindow(QWidget *parent) : QMainWindow(parent)
 {
     pimpl_ = std::make_unique<FlowWindowImpl>();
+    pparent_ = parent;
 }
 
 FlowWindow::~FlowWindow() = default;
 
 bool FlowWindow::isImplemented() const
 {
-    return false;
+    return true;
 }
 
 void FlowWindow::setModel(SModeller& model)
 {
-    model_ = &model;
+    pmodel_ = &model;
 }
 
 bool FlowWindow::createFlowDiagnosticsWindow()
 {
+    pimpl_->window.resize(320, 240);
     return false;
 }
 
 void FlowWindow::update()
 {
+    pimpl_->window.setVisible(true);
+    pimpl_->window.show();
 }
 
 void FlowWindow::clear()
 {
     pimpl_ = std::make_unique<FlowWindowImpl>();
-    model_ = nullptr;
+    pmodel_ = nullptr;
 }
 
 bool FlowWindow::preferDockedWindow() const
