@@ -89,8 +89,8 @@ void MainWindow::createActions()
     ac_clear ->setToolTip( "New" );
     ac_clear->setIcon(QIcon(":/images/icons/new.png"));
 
-    ac_export = new QAction( "Export", this );
-    ac_export->setToolTip( "Export to" );
+    ac_export = new QAction( "Export to IRAP", this );
+    ac_export->setToolTip( "Export surfaces to IRAP grid format" );
 
     ac_exit = new QAction( tr ( "E&xit" ) , this );
     ac_exit->setToolTip("Exit");
@@ -167,12 +167,12 @@ void MainWindow::createActions()
     ac_structural->setCheckable( true );
 
     ac_regions = new QAction( "Regions", this );
-    ac_regions->setToolTip( "Show Regions" );
+    ac_regions->setToolTip( "Compute and Show Regions" );
     ac_regions->setCheckable( true );
     ac_regions->setChecked( false );
 
-    ac_diagnostics = new QAction( "Diagnostics", this );
-    ac_diagnostics->setToolTip( "Run Diagnostics" );
+    ac_diagnostics = new QAction( "Flow Diagnostics", this );
+    ac_diagnostics->setToolTip( "Run Flow Diagnostics" );
     ac_diagnostics->setCheckable( true );
     ac_diagnostics->setChecked( false );
     ac_diagnostics->setEnabled( false );
@@ -233,10 +233,30 @@ void MainWindow::createActions()
 
 
     connect( ac_regions, &QAction::triggered, [=]( bool status_ )
-    { app->getRegions( status_ ); ac_diagnostics->setEnabled( status_ && diagapp->isImplemented() ); lockUndoRedo( status_ ); } );
+    {
+        bool model_contains_a_region = controller->getRulesProcessor().getActiveSurfaces().size() >= 2;
+        status_ &= model_contains_a_region;
+        app->getRegions( status_ );
+        bool activate_diagnostics = status_ && diagapp->isImplemented();
+        ac_diagnostics->setEnabled( activate_diagnostics );
+        lockUndoRedo( status_ );
+
+        if (status_ == false)
+        {
+            emit runDiagnostics(false);
+            ac_regions->setChecked(false);
+            ac_diagnostics->setChecked(false);
+        }
+    } );
 
     connect( ac_diagnostics, &QAction::triggered, [=]( bool status_ )
-    {  emit runDiagnostics( status_ );
+    {
+        emit runDiagnostics( status_ );
+        if (status_ && !diagapp->preferDockedWindow())
+        {
+            emit runDiagnostics(false);
+            ac_diagnostics->setChecked(false);
+        }
     } );
 
     connect( ac_screenshot, &QAction::triggered, [=](){ emit takeScreenshot();  } );
@@ -244,7 +264,6 @@ void MainWindow::createActions()
     connect( ac_about, &QAction::triggered, about_rrm, &AboutWidget::show );
 
     connect( ac_manual, &QAction::triggered, this, &MainWindow::showHelp );
-
 }
 
 

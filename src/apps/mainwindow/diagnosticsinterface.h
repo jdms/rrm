@@ -92,16 +92,21 @@ class DiagnosticsInterface: public QObject
         */
         bool isImplemented();
 
+        /**
+        * Method to tell main application if Flow Diagnostics window should be docked in main GUI
+        * @return true if FlowWindow should be docked, false otherwise.
+        */
+        bool preferDockedWindow();
 
     public slots:
 
 
         /**
-        * Method to update the Flow Diagnostics app.
-        * @param status boolean to indicate if Flow Diagnostics is active or not.
+        * Method to update the Flow Diagnostics app window.
+        * @param window_is_active boolean to indicate if Flow Diagnostics window is active or not.
         * @return void.
         */
-        void update( bool status_ );
+        void updateWindow( bool window_is_active );
 
     protected:
 
@@ -125,9 +130,9 @@ class DiagnosticsInterface: public QObject
 
         MainWindow* window = nullptr;                                       /**< Main Window */
 
-        std::unique_ptr<FlowWindow> flow_window = nullptr;                  /**< Flow Diagnostics window */
+        QDockWidget* dw_flow_window = nullptr;                              /**< DockWidget to hold the Flow Diagnostics window */
 
-        std::unique_ptr<QDockWidget> dw_flow_window = nullptr;              /**< DockWidget to hold the Flow Diagnostics window */
+        FlowWindow* fd_window_interface = nullptr;                           /**< Flow Diagnostics window */
 
 
 };

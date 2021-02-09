@@ -121,7 +121,8 @@ class FlowWindow : public QMainWindow
         };
 
     protected:
-        SModeller* model_ = nullptr;                              /**< Pointer to model */
+        SModeller* pmodel_ = nullptr;                              /**< Pointer to model */
+        QWidget* pparent_ = nullptr;                              /**< Pointer to parent Widget */
 
     private:
         struct FlowWindowImpl;

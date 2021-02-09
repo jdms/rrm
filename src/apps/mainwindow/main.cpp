@@ -38,10 +38,9 @@
 int main( int argc, char *argv[] )
 {
 
-	QApplication app(argc, argv);
-    app.setAttribute( Qt::AA_UseDesktopOpenGL );
-    app.setAttribute( Qt::AA_ShareOpenGLContexts );
-    app.setAttribute( Qt::AA_EnableHighDpiScaling );
+    QApplication::setAttribute( Qt::AA_UseDesktopOpenGL );
+    QApplication::setAttribute( Qt::AA_ShareOpenGLContexts );
+    QApplication::setAttribute( Qt::AA_EnableHighDpiScaling );
 
     QSurfaceFormat format; 
     format.setProfile( QSurfaceFormat::CoreProfile );
@@ -52,6 +51,7 @@ int main( int argc, char *argv[] )
 
     QSurfaceFormat::setDefaultFormat( format );
 
+    QApplication app(argc, argv);
     bool testingNativeDriver = app.testAttribute( Qt::AA_UseDesktopOpenGL );
     if ( !testingNativeDriver )
     {
