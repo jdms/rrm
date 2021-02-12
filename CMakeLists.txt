@@ -1,6 +1,6 @@
-cmake_minimum_required ( VERSION 3.3 FATAL_ERROR )
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
-project( RRM )
+project(RRM)
 
 
 ###############################################
@@ -48,38 +48,38 @@ endif()
 #      creating havoc in windows.  Moreover, such flags are redundant since
 #      we are setting the build type directly in cmake.
 
-IF( WIN32 )
+# IF( WIN32 )
 
-    if( MSVC )
+    # if( MSVC )
         #        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp /EHsc")
-    endif()
+        # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp /EHsc")
+    # endif()
 
-ELSEIF( UNIX )
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2"  )
+# ELSEIF( UNIX )
+    # set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2"  )
     #            -fopenmp")
 
-ELSE()
-    message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
-ENDIF()
+# ELSE()
+    # message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
+# ENDIF()
 
 
 ################################################
 ## External libraries
 ################################################
 
-include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets )
-include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator)
-include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator/FlowDiagnosticsApp_autogen/include)
-include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator/FlowDiagnosticsApp_autogen/include_Debug)
-include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator/FlowDiagnosticsApp_autogen/include_Release)
+# include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets )
+# include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator)
+# include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator/FlowDiagnosticsApp_autogen/include)
+# include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator/FlowDiagnosticsApp_autogen/include_Debug)
+# include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator/FlowDiagnosticsApp_autogen/include_Release)
 include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include )
-include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include_Debug )
-include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include_Release )
+# include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include_Debug )
+# include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include_Release )
 
 include_directories( ${CMAKE_SOURCE_DIR}/libs )
-include_directories( "./" )
+include_directories( ${CMAKE_SOURCE_DIR} )
 
 # The following code prints all directories currently included in the project
 # get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
@@ -87,27 +87,27 @@ include_directories( "./" )
 #  message(STATUS "dir='${dir}'")
 # endforeach()
 
-OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
+# OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
 
-if( RRM_DIRECTORY_LIBRARIES )
-    if(WIN32)
-        set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
+# if( RRM_DIRECTORY_LIBRARIES )
+    # if(WIN32)
+        # set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
         # if(WIN64)
-        if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
-            set( Qt5_DIR "C:/Qt/5.9.7/msvc2017_64/lib/cmake/Qt5" )
+        # if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
+            # set( Qt5_DIR "C:/Qt/5.9.7/msvc2017_64/lib/cmake/Qt5" )
             # set( Qt5_DIR "C:/Qt/5.10.1/msvc2017_64/lib/cmake/Qt5" )
-        else()
-            set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
-        endif()
-    elseif(UNIX AND NOT APPLE)
-        set( Qt5_DIR "/opt/Qt/5.8/gcc_64/lib/cmake/Qt5" )
-    elseif(APPLE)
-        set(Qt5_DIR "/usr/local/Cellar/qt/5.14.1/lib/cmake/Qt5")
-        set(LAPACKE_DIR "/usr/local/opt/lapack")
+        # else()
+            # set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
+        # endif()
+    # elseif(UNIX AND NOT APPLE)
+        # set( Qt5_DIR "/opt/Qt/5.8/gcc_64/lib/cmake/Qt5" )
+    # elseif(APPLE)
+        # set(Qt5_DIR "/usr/local/Cellar/qt/5.14.1/lib/cmake/Qt5")
+        # set(LAPACKE_DIR "/usr/local/opt/lapack")
 
-    endif()
+    # endif()
 
-endif()
+# endif()
 
 
 find_package( OpenGL REQUIRED )
@@ -146,37 +146,38 @@ include_directories( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
 # add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
 
 
-if(WIN32)
+# if(WIN32)
     # if(WIN64)
-    if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
-        set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
-    else()
-        set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre )
-    endif()
-    include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
-    find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
+    # if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
+        # set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
+    # else()
+        # set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre )
+    # endif()
+    # include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
+    # find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
 
-else()
-    find_package(OpenMP)
+# else()
+    # find_package(OpenMP)
 
-    set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
-    include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
-    find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
+    # set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
+    # include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
+    # find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
 
     # execute_process(COMMAND git submodule update --init -- libs/hypre-src
                     # WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
     # add_subdirectory(${CMAKE_SOURCE_DIR}/libs/hypre-src/src)
-endif()
+# endif()
 
 add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/tinyobjloader EXCLUDE_FROM_ALL )
 
-if(WIN32)
-    set(COLORWRAP_BUILD_SHARED OFF) 
-else()
-    set(COLORWRAP_BUILD_SHARED ON) 
-endif()
-set(COLORWRAP_EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3)
+# if(WIN32)
+    # set(COLORWRAP_BUILD_SHARED OFF) 
+# else()
+    # set(COLORWRAP_BUILD_SHARED ON) 
+# endif()
+# set(COLORWRAP_EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3)
+set(COLORWRAP_EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
 add_subdirectory(${CMAKE_SOURCE_DIR}/libs/colorwrap)
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs/colorwrap/include)
 
