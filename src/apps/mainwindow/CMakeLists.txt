@@ -82,7 +82,7 @@ if(WIN32)
     target_link_libraries( ${PROJECT_NAME} GLEW )
 else()
     #target_link_libraries( ${PROJECT_NAME} stratmod OpenMP::OpenMP_CXX TinyObjLoader )
-    target_link_libraries( ${PROJECT_NAME} OpenMP::OpenMP_CXX TinyObjLoader )
+    target_link_libraries( ${PROJECT_NAME} TinyObjLoader )
     target_link_libraries( ${PROJECT_NAME} GLEW::GLEW )
 endif()
 

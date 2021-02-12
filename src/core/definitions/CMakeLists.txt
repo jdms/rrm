@@ -16,4 +16,4 @@ set( BASE_HEADERS constants.hpp )
 set( BASE_SOURCES constants.cpp )
 
 add_library( ${PROJECT_NAME} STATIC ${BASE_HEADERS} ${BASE_SOURCES} )
-
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)

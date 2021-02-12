@@ -55,6 +55,6 @@ include_directories (${PROJECT_BINARY_DIR})
 ###############################################
 
 add_library( ${PROJECT_NAME} STATIC ${MODELS_HEADERS} ${MODELS_SOURCES} )
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_link_libraries( ${PROJECT_NAME} stratmod colorwrap )
 target_link_libraries( ${PROJECT_NAME} Qt5::Widgets  )
