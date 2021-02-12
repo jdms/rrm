@@ -5,7 +5,7 @@ project( Sketching VERSION 3.1 LANGUAGES CXX )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
                      ${CMAKE_CURRENT_BINARY_DIR} )
 
-find_package( Qt5Widgets REQUIRED )
+find_package( Qt5 COMPONENTS Widgets REQUIRED )
 
 set( SKETCHING_HEADERS      sketchwindow.h
                             sketchscene.h
@@ -71,6 +71,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_library( ${PROJECT_NAME} STATIC ${SKETCHING_SOURCES} ${SKETCHING_MOC_SRCS} ${SKETCHING_HEADERS} )
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
 
 
 

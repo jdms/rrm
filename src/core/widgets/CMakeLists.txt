@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 3.1 FATAL_ERROR )
 
 project( RRMWidgets VERSION 3.1 LANGUAGES CXX )
 
-find_package( Qt5Widgets REQUIRED )
+find_package( Qt5 COMPONENTS Widgets REQUIRED )
 
 
 set( WIDGETS_HEADERS        realfeaturedslider.h
@@ -46,7 +46,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_library( ${PROJECT_NAME} STATIC ${WIDGETS_HEADERS} ${WIDGETS_UI_SOURCES} ${WIDGETS_SOURCES} )
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
-#target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
 
 #qt5_wrap_cpp( WIDGETS_MOC_SRCS ${WIDGETS_MOC_HEADERS} )
 #qt5_wrap_ui ( WIDGETS_UI_HDRS ${WIDGETS_UI_SOURCES} )
