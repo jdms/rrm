@@ -6,7 +6,7 @@ project( 3dViewApp VERSION 3.1 LANGUAGES CXX )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR} )
 
-find_package( Qt5Widgets REQUIRED )
+find_package( Qt5 COMPONENTS Widgets REQUIRED )
 
 
 set( 3DVIEW_HEADERS         canvas3d.h
@@ -49,6 +49,8 @@ include_directories (${PROJECT_BINARY_DIR})
 
 add_library( ${PROJECT_NAME} STATIC ${3DVIEW_MOC_SRCS} ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} )
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
 
 if(WIN32)
     target_link_libraries( ${PROJECT_NAME} GLEW )

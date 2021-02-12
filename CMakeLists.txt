@@ -1,20 +1,25 @@
 cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
-project(RRM)
+project(RRM CXX)
 
+set(VERSION_MAJOR 1 CACHE STRING "Project major version number.")
+set(VERSION_MINOR 0 CACHE STRING "Project minor version number.")
+set(VERSION_PATCH 0 CACHE STRING "Project patch version number.")
+mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 
-###############################################
-# CMake Options
-###############################################
-
-set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
-#set( CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build )
+set(RRM_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+mark_as_advanced(RRM_VERSION)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 
 ###############################################
 # Options
 ###############################################
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
+# FIXME: update options
 
 # Leave empty to use the (platform dependent) default build type
 set(RRM_BUILD_TYPE "RelWithDebInfo" CACHE STRING
@@ -24,223 +29,107 @@ if(RRM_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 endif()
 
-OPTION( BUILD_FULL_SUITE "Build RapidReservoir Suite" ON )
+OPTION(RRM_BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod"  ON)
 
-OPTION( BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod" ON )
+OPTION(RRM_BUILD_IN_PREFIXED_BINARY_DIR "To simplify sharing in Windows"    ON)
 
-OPTION( BUILD_IN_PREFIXED_BINARY_DIR "To simplify cleaning in Windows" ON)
+option(RRM_BUILD_DEPLOY_QT
+    "Automatically copy Qt resources to build dir (Windows only)"          OFF)
 
-option( RRM_BUILD_DEPLOY_QT
-    "Automatically copy Qt resources to build dir (Windows only)" OFF)
+OPTION(RRM_BUILD_FLOW_DIAGNOSTICS "Build flow diagnostics"                 OFF)
 
-if(BUILD_IN_PREFIXED_BINARY_DIR)
-	set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ CACHE STRING "" )
-	set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ CACHE STRING "" )
-	file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+if(RRM_BUILD_SHARED_STRATMODLIB)
+    set(STRATMOD_BUILD_SHARED_LIBRARY ON)
+else()
+    set(STRATMOD_BUILD_SHARED_LIBRARY OFF)
 endif()
 
-###############################################
-# Compiler flags (we support Clang (3.7+),
-# Gcc (4.8+) and VS2013 (revision 5+)).
-###############################################
-
-# BUG: the following was commented out because the compiler flags were 
-#      creating havoc in windows.  Moreover, such flags are redundant since
-#      we are setting the build type directly in cmake.
-
-# IF( WIN32 )
-
-    # if( MSVC )
-        #        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Od /openmp /EHsc")
-        # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp /EHsc")
-    # endif()
-
-# ELSEIF( UNIX )
-    # set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O2"  )
-    #            -fopenmp")
-
-# ELSE()
-    # message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
-# ENDIF()
-
+if(RRM_BUILD_IN_PREFIXED_BINARY_DIR)
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ CACHE STRING "" )
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/ CACHE STRING "" )
+    file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endif()
 
 ################################################
-## External libraries
+## Configure libraries
 ################################################
 
-# include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets )
-# include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator)
-# include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator/FlowDiagnosticsApp_autogen/include)
-# include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator/FlowDiagnosticsApp_autogen/include_Debug)
-# include_directories( ${CMAKE_BINARY_DIR}/src/apps/simulator/FlowDiagnosticsApp_autogen/include_Release)
-include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include )
-# include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include_Debug )
-# include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include_Release )
-
-include_directories( ${CMAKE_SOURCE_DIR}/libs )
-include_directories( ${CMAKE_SOURCE_DIR} )
-
-# The following code prints all directories currently included in the project
-# get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-# foreach(dir ${dirs})
-#  message(STATUS "dir='${dir}'")
-# endforeach()
-
-# OPTION( RRM_DIRECTORY_LIBRARIES "Setup automatically libraries" ON )
-
-# if( RRM_DIRECTORY_LIBRARIES )
-    # if(WIN32)
-        # set( EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3 )
-        # if(WIN64)
-        # if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
-            # set( Qt5_DIR "C:/Qt/5.9.7/msvc2017_64/lib/cmake/Qt5" )
-            # set( Qt5_DIR "C:/Qt/5.10.1/msvc2017_64/lib/cmake/Qt5" )
-        # else()
-            # set( Qt5_DIR "C:/Qt/5.8/msvc2013/lib/cmake/Qt5" )
-        # endif()
-    # elseif(UNIX AND NOT APPLE)
-        # set( Qt5_DIR "/opt/Qt/5.8/gcc_64/lib/cmake/Qt5" )
-    # elseif(APPLE)
-        # set(Qt5_DIR "/usr/local/Cellar/qt/5.14.1/lib/cmake/Qt5")
-        # set(LAPACKE_DIR "/usr/local/opt/lapack")
-
-    # endif()
-
-# endif()
-
-
+### OpenGL settings
 find_package( OpenGL REQUIRED )
 if( OpenGL_FOUND )
     include_directories( SYSTEM ${OPENGL_INCLUDE_DIR} )
 endif( OpenGL_FOUND )
 
+### GLEW settings
+# FIXME: use GLEW from vcpkg in Windows
 if(WIN32)
     add_subdirectory(${CMAKE_SOURCE_DIR}/libs)
-    # set( GLEW_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/GLEW/include )
-    # set( GLEW_LIBRARIES ${GLEW_LIBRARY} )
-    # if(WIN64)
-        # set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x64/glew32.lib )
-    # else()
-        # set( GLEW_LIBRARY ${CMAKE_SOURCE_DIR}/libs/GLEW/libs/x32/glew32.lib )
-    # endif()
 else()
     find_package( GLEW REQUIRED )
 endif()
 include_directories( SYSTEM ${GLEW_INCLUDE_DIRS} )
 
+### Eigen3 settings
 find_package( Eigen3 REQUIRED )
 include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
-add_definitions( -DEIGEN_DONT_ALIGN )
+add_definitions( -DEIGEN_DONT_ALIGN ) # Why is this necessary?
 
-find_package( Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL REQUIRED )
-include_directories( SYSTEM ${Qt5_DIR} )
-include_directories( SYSTEM ${Qt5Core_INCLUDE_DIRS} )
-include_directories( SYSTEM ${Qt5Widgets_INCLUDE_DIRS} )
-include_directories( SYSTEM ${Qt5Gui_INCLUDE_DIRS} )
-include_directories( SYSTEM ${Qt5OpenGL_INCLUDE_DIRS} )
+### Qt settings
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(QT_USE_QTMAIN TRUE)
 
+# Setup the cmake prefix path so Qt can be found. Use the QTDIR variable if defined
+if((NOT DEFINED QTDIR) AND (NOT DEFINED ENV{QTDIR}))
+    MESSAGE(STATUS "QTDIR (environment) variable not set. Set QTDIR, either as
+    an environment or cmake cache variable, to the Qt root install location")
+endif()
+
+if(NOT DEFINED QTDIR)
+    set(QTDIR $ENV{QTDIR} CACHE STRING "Qt install path")
+endif()
+
+if(QTDIR)
+    list(APPEND CMAKE_PREFIX_PATH ${QTDIR})
+endif()
+
+find_package(Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL REQUIRED)
+
+### Tucano settings
 set( TUCANO_DIR ${CMAKE_SOURCE_DIR}/libs/Tucano )
-include_directories( SYSTEM ${TUCANO_DIR} TUCANO_DIR)
+include_directories( SYSTEM ${TUCANO_DIR} )
 
-# add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/PlanInLib EXCLUDE_FROM_ALL )
-
-
-# if(WIN32)
-    # if(WIN64)
-    # if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
-        # set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
-    # else()
-        # set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre )
-    # endif()
-    # include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
-    # find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
-
-# else()
-    # find_package(OpenMP)
-
-    # set( HYPRE_DIR ${CMAKE_SOURCE_DIR}/libs/hypre64 )
-    # include_directories( HYPRE_INCLUDE_DIR ${HYPRE_DIR}/include )
-    # find_library( HYPRE HYPRE ${HYPRE_DIR}/lib )
-
-    # execute_process(COMMAND git submodule update --init -- libs/hypre-src
-                    # WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-
-    # add_subdirectory(${CMAKE_SOURCE_DIR}/libs/hypre-src/src)
-# endif()
-
+### tinyobjloader settings
 add_subdirectory( ${CMAKE_SOURCE_DIR}/libs/tinyobjloader EXCLUDE_FROM_ALL )
 
-# if(WIN32)
-    # set(COLORWRAP_BUILD_SHARED OFF) 
-# else()
-    # set(COLORWRAP_BUILD_SHARED ON) 
-# endif()
-# set(COLORWRAP_EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libs/Eigen3)
+### colorwrap settings
 set(COLORWRAP_EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
 add_subdirectory(${CMAKE_SOURCE_DIR}/libs/colorwrap)
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs/colorwrap/include)
 
-###############################################
-# Preliminary support for stratmod library
-###############################################
-
-# include(ExternalProject)  ## needed
-
-# set(BUILD_USING_OPENMP ON)
-
-# set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
-
-# set(STRATMOD_CMAKE_ARGS 
-#     -DSTRATMOD_EIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
-#     -DSTRATMOD_BUILD_USING_OPENMP=${BUILD_USING_OPENMP}
-#     -DSTRATMOD_BUILD_SHARED_LIBRARY=ON
-#     -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
-#     )
-
-# if(BUILD_USING_OPENMP AND APPLE)
-#     set(STRATMOD_CMAKE_ARGS 
-#         -DSTRATMOD_EIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
-#         -DSTRATMOD_BUILD_USING_OPENMP=ON 
-#         -DSTRATMOD_BUILD_SHARED_LIBRARY=${BUILD_SHARED_STRATMODLIB}
-#         -DSTRATMOD_BUILD_TYPE=${RRM_BUILD_TYPE}
-#         -DCMAKE_TOOLCHAIN_FILE=${CMAKE_MODULE_PATH}/Darwin_Clang-OpenMP_Toolchain.cmake
-#         )
-# endif()
-
-# ExternalProject_Add(
-#     StratModLibBuild
-#     DOWNLOAD_COMMAND git submodule update --init
-#     UPDATE_COMMAND git submodule update -f
-#     SOURCE_DIR ${STRATMOD_SOURCE}
-#     CMAKE_ARGS ${STRATMOD_CMAKE_ARGS} 
-#     )
-
-# if(MSVC)
-#     set(STRATMODLIB ${STRATMOD_SOURCE}/stratmod/lib/stratmod.lib)
-# else()
-#     set(STRATMODLIB "${STRATMOD_SOURCE}/stratmod/lib/${CMAKE_SHARED_LIBRARY_PREFIX}stratmod${CMAKE_SHARED_LIBRARY_SUFFIX}")
-#     #set(STRATMODLIB ${STRATMOD_SOURCE}/lib/libstr  atmod.a)
-# endif()
-
+### stratmod settings
 set(STRATMOD_EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
 add_subdirectory(${CMAKE_SOURCE_DIR}/libs/stratmod)
 set(STRATMOD_SOURCE ${CMAKE_SOURCE_DIR}/libs/stratmod)
 include_directories(${STRATMOD_SOURCE}/include)
 
-#message(WARNING stratmod)
-
-################################################
-## Trimesh2
-################################################
-## For Libraies without find*.cmake
-#set (  TRIMESH2_INCLUDE_DIR  "${CMAKE_CURRENT_SOURCE_DIR}/libs/trimesh2/install/include/")
-#set (  TRIMESH2_LIB "${CMAKE_CURRENT_SOURCE_DIR}/libs/trimesh2/install/lib/trimesh2.lib")
 
 ###############################################
 # Main source
 ###############################################
 
+# FIXME: legacy includes
+include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include )
+include_directories( ${CMAKE_SOURCE_DIR}/libs )
+include_directories( ${CMAKE_SOURCE_DIR} )
 
 add_subdirectory( src )
 
+# # Useful for debugging: the following code prints all directories currently
+# # included in the project
+# get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+# message(STATUS "List of directories manually included in the project this far:")
+# foreach(dir ${dirs})
+#     message(STATUS ":: '${dir}'")
+# endforeach()
