@@ -108,9 +108,13 @@ macro(GetGLEW2)
     # Copy dll to build dir
     ###############################################
 
-    execute_process(
-	    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLEW_RUNTIME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    )
+    set(GLEW_RUNTIME_FINAL_OUTPUT_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${CMAKE_CFG_INTDIR}/")
 
+    add_custom_command(
+        OUTPUT "${GLEW_RUNTIME_FINAL_OUTPUT_DIR}/${GLEW_RUNTIME}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${GLEW_RUNTIME} "${GLEW_RUNTIME_FINAL_OUTPUT_DIR}/${GLEW_RUNTIME}"
+        COMMENT "Copying ${GLEW_RUNTIME} to ${GLEW_RUNTIME_FINAL_OUTPUT_DIR}"
+        DEPENDS ${GLEW_RUNTIME}
+        )
 
 endmacro(GetGLEW2)
