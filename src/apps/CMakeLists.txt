@@ -42,12 +42,14 @@ include_directories (${PROJECT_BINARY_DIR})
 
 
 add_executable(${PROJECT_NAME} ${RCC_SOURCES} )
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+
 if(WIN32)
     # target_link_libraries( ${PROJECT_NAME} MainApp stratmod colorwrap )
     target_link_libraries( ${PROJECT_NAME} MainApp colorwrap )
 else()
     # target_link_libraries( ${PROJECT_NAME} MainApp stratmod OpenMP::OpenMP_CXX colorwrap )
-    target_link_libraries( ${PROJECT_NAME} MainApp OpenMP::OpenMP_CXX colorwrap )
+    target_link_libraries( ${PROJECT_NAME} MainApp colorwrap )
 endif()
 # target_link_libraries( ${PROJECT_NAME} ${STRATMODLIB} colorwrap )
 # target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg )
