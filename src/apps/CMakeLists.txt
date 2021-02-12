@@ -42,7 +42,7 @@ include_directories (${PROJECT_BINARY_DIR})
 
 
 add_executable(${PROJECT_NAME} ${RCC_SOURCES} )
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_14)
 
 if(WIN32)
     # target_link_libraries( ${PROJECT_NAME} MainApp stratmod colorwrap )

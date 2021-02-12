@@ -79,7 +79,7 @@ target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Co
 if(WIN32)
     #target_link_libraries( ${PROJECT_NAME} stratmod TinyObjLoader )
     target_link_libraries( ${PROJECT_NAME} TinyObjLoader )
-    target_link_libraries( ${PROJECT_NAME} GLEW )
+    target_link_libraries( ${PROJECT_NAME} GLEW::GLEW )
 else()
     #target_link_libraries( ${PROJECT_NAME} stratmod OpenMP::OpenMP_CXX TinyObjLoader )
     target_link_libraries( ${PROJECT_NAME} TinyObjLoader )

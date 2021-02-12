@@ -10,6 +10,8 @@ mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 set(RRM_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 mark_as_advanced(RRM_VERSION)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
@@ -17,26 +19,23 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Options
 ###############################################
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-
-# FIXME: update options
-
 # Leave empty to use the (platform dependent) default build type
-set(RRM_BUILD_TYPE "RelWithDebInfo" CACHE STRING
+set(RRM_BUILD_TYPE "" CACHE STRING
     "Leave empty ot set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
-
-if(RRM_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
-endif()
 
 OPTION(RRM_BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod"  ON)
 
 OPTION(RRM_BUILD_IN_PREFIXED_BINARY_DIR "To simplify sharing in Windows"    ON)
 
-option(RRM_BUILD_DEPLOY_QT
+OPTION(RRM_BUILD_DEPLOY_QT
     "Automatically copy Qt resources to build dir (Windows only)"          OFF)
 
 OPTION(RRM_BUILD_FLOW_DIAGNOSTICS "Build flow diagnostics"                 OFF)
+
+### Execute options
+if(RRM_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "${RRM_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
+endif()
 
 if(RRM_BUILD_SHARED_STRATMODLIB)
     set(STRATMOD_BUILD_SHARED_LIBRARY ON)
@@ -50,6 +49,7 @@ if(RRM_BUILD_IN_PREFIXED_BINARY_DIR)
     file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
+
 ################################################
 ## Configure libraries
 ################################################
@@ -61,11 +61,16 @@ if( OpenGL_FOUND )
 endif( OpenGL_FOUND )
 
 ### GLEW settings
-# FIXME: use GLEW from vcpkg in Windows
-if(WIN32)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/libs)
-else()
-    find_package( GLEW REQUIRED )
+find_package(GLEW)
+if(NOT GLEW_FOUND)
+    if(WIN32)
+        # DEPRECATED: use vcpkg's glew instead
+        # A script in `libs/` will download an old copy of GLEW and
+        # set it up for use by cmake.
+        add_subdirectory(${CMAKE_SOURCE_DIR}/libs)
+    else()
+        message(FATAL "Could not find GLEW")
+    endif()
 endif()
 include_directories( SYSTEM ${GLEW_INCLUDE_DIRS} )
 
@@ -81,16 +86,19 @@ set(CMAKE_AUTOUIC ON)
 set(QT_USE_QTMAIN TRUE)
 
 # Setup the cmake prefix path so Qt can be found. Use the QTDIR variable if defined
-if((NOT DEFINED QTDIR) AND (NOT DEFINED ENV{QTDIR}))
-    MESSAGE(STATUS "QTDIR (environment) variable not set. Set QTDIR, either as
-    an environment or cmake cache variable, to the Qt root install location")
+if((NOT DEFINED Qt5_DIR) AND (NOT DEFINED QTDIR) AND (NOT DEFINED ENV{QTDIR}))
+    MESSAGE(STATUS
+   "Info: QTDIR (environment) variable not set.  If cmake can't find Qt5,
+   set QTDIR (either as an environment or cmake cache variable) to the Qt
+   root install location."
+    )
 endif()
 
-if(NOT DEFINED QTDIR)
+if(ENV{QTDIR} AND (NOT DEFINED QTDIR))
     set(QTDIR $ENV{QTDIR} CACHE STRING "Qt install path")
 endif()
 
-if(QTDIR)
+if(QTDIR AND (NOT DEFINED Qt5_DIR))
     list(APPEND CMAKE_PREFIX_PATH ${QTDIR})
 endif()
 
@@ -121,6 +129,7 @@ include_directories(${STRATMOD_SOURCE}/include)
 
 # FIXME: legacy includes
 include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include )
+include_directories( ${CMAKE_BINARY_DIR}/src/core/widgets/RRMWidgets_autogen/include_${CMAKE_CFG_INTDIR} )
 include_directories( ${CMAKE_SOURCE_DIR}/libs )
 include_directories( ${CMAKE_SOURCE_DIR} )
 

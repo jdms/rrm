@@ -69,6 +69,7 @@ add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_MOC_HEADERS
 target_link_libraries( ${PROJECT_NAME} RRMModel )
 if(WIN32)
     target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
+    target_link_libraries( ${PROJECT_NAME} OpenGL::GL GLEW::GLEW )
 else()
     target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
     target_link_libraries( ${PROJECT_NAME} OpenGL::GL GLEW::GLEW )
