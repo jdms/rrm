@@ -1337,9 +1337,10 @@ class Controller
 
         /**
         * Method to export the surfaces meshes to the file format Irap Grid
+        * @param project_name the path of dir surfaces will be exported to
         * @return void.
         */
-        void exportToIrapGrid();
+        void exportToIrapGrid(const std::string& project_name);
 
 
 
