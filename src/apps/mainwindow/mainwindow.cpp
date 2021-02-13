@@ -171,8 +171,8 @@ void MainWindow::createActions()
     ac_regions->setCheckable( true );
     ac_regions->setChecked( false );
 
-    ac_diagnostics = new QAction( "Flow Diagnostics", this );
-    ac_diagnostics->setToolTip( "Run Flow Diagnostics" );
+    ac_diagnostics = new QAction( "Diagnostics", this );
+    ac_diagnostics->setToolTip( "Run Diagnostics" );
     ac_diagnostics->setCheckable( true );
     ac_diagnostics->setChecked( false );
     ac_diagnostics->setEnabled( false );
