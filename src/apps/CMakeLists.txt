@@ -41,7 +41,7 @@ include_directories (${PROJECT_SOURCE_DIR})
 include_directories (${PROJECT_BINARY_DIR})
 
 
-add_executable(${PROJECT_NAME} ${RCC_SOURCES} )
+add_executable(${PROJECT_NAME} WIN32 ${RCC_SOURCES} )
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_14)
 
 if(WIN32)
