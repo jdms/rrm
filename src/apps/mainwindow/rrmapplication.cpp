@@ -961,11 +961,11 @@ void RRMApplication::getLegacyMeshes( std::vector<double> &points, std::vector<s
 }
 
 
-void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
-                                        std::vector< FlowWindow::CurveMesh>& left_curves,
-                                        std::vector< FlowWindow::CurveMesh >& right_curves,
-                                        std::vector< FlowWindow::CurveMesh > & front_curves,
-                                        std::vector< FlowWindow::CurveMesh >& back_curves )
+void RRMApplication::getSurfacesMeshes( std::vector< DiagnosticsWindowInterface::TriangleMesh >& triangles_meshes,
+                                        std::vector< DiagnosticsWindowInterface::CurveMesh>& left_curves,
+                                        std::vector< DiagnosticsWindowInterface::CurveMesh >& right_curves,
+                                        std::vector< DiagnosticsWindowInterface::CurveMesh > & front_curves,
+                                        std::vector< DiagnosticsWindowInterface::CurveMesh >& back_curves )
 {
     std::vector< Controller::TriangleMesh > meshes;
     std::vector< Controller::CurveMesh > lcurves;
@@ -977,7 +977,7 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
 
     for( std::size_t i = 0; i < meshes.size(); ++i )
     {
-        FlowWindow::TriangleMesh t;
+        DiagnosticsWindowInterface::TriangleMesh t;
         t.vertex_list = meshes[i].vertex_list;
         t.face_list = meshes[i].face_list;
         triangles_meshes.push_back( t );
@@ -985,7 +985,7 @@ void RRMApplication::getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >&
 
     for ( std::size_t i = 0; i < lcurves.size(); ++i )
     {
-        FlowWindow::CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
+        DiagnosticsWindowInterface::CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
 
         std::copy( lcurves[i].vertex_list.begin(), lcurves[i].vertex_list.end(), std::back_inserter(cm_lb.vertex_list) );
         std::copy( lcurves[i].edge_list.begin(), lcurves[i].edge_list.end(), std::back_inserter(cm_lb.edge_list) );

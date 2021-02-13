@@ -20,8 +20,8 @@
  */
 
 
-#ifndef RRM_APPS_SIMULATOR_FLOWWINDOW_H
-#define RRM_APPS_SIMULATOR_FLOWWINDOW_H
+#ifndef RRM_APPS_SIMULATOR_DIAGNOSTICS_WINDOW_INTERFACE_H
+#define RRM_APPS_SIMULATOR_DIAGNOSTICS_WINDOW_INTERFACE_H
 
 // Forward declaration of modeller class
 /* namespace stratmod */ 
@@ -36,7 +36,7 @@
 #include <QMainWindow>
 
 
-class FlowWindow : public QMainWindow
+class DiagnosticsWindowInterface : public QMainWindow
 {
     Q_OBJECT
 
@@ -45,32 +45,32 @@ class FlowWindow : public QMainWindow
         * Constructor.
         * @param Optional pointer to parent widget
         */
-        FlowWindow(QWidget* parent = nullptr);
+        DiagnosticsWindowInterface(QWidget* parent = nullptr);
 
         /**
         * Default Destructor.
         */
-        virtual ~FlowWindow();
+        virtual ~DiagnosticsWindowInterface();
 
         /**
         * Deleted copy constructor.
         */
-        FlowWindow(const FlowWindow&) = delete;
+        DiagnosticsWindowInterface(const DiagnosticsWindowInterface&) = delete;
 
         /**
         * Deleted copy assigment operator.
         */
-        FlowWindow& operator=(const FlowWindow&) = delete;
+        DiagnosticsWindowInterface& operator=(const DiagnosticsWindowInterface&) = delete;
 
         /**
         * Deleted move constructor.
         */
-        FlowWindow(FlowWindow&&) = delete;
+        DiagnosticsWindowInterface(DiagnosticsWindowInterface&&) = delete;
 
         /**
         * Deleted move assigment operators
         */
-        FlowWindow& operator=(FlowWindow&&) = delete;
+        DiagnosticsWindowInterface& operator=(DiagnosticsWindowInterface&&) = delete;
 
         /**
         * Method to check if the flow diagnostics application is implemented
@@ -102,7 +102,7 @@ class FlowWindow : public QMainWindow
 
         /**
         * Method to tell main application if Flow Diagnostics window should be docked in main GUI
-        * @return true if FlowWindow should be docked, false otherwise (returned value must not change during execution).
+        * @return true if DiagnosticsWindowInterface should be docked, false otherwise (returned value must not change during execution).
         */
         bool preferDockedWindow() const;
 
@@ -125,8 +125,8 @@ class FlowWindow : public QMainWindow
         QWidget* pparent_ = nullptr;                              /**< Pointer to parent Widget */
 
     private:
-        struct FlowWindowImpl;
-        std::unique_ptr<FlowWindowImpl> pimpl_;
+        struct DiagnosticsWindowInterfaceImpl;
+        std::unique_ptr<DiagnosticsWindowInterfaceImpl> pimpl_;
 };
 
 #endif
