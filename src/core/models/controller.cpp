@@ -26,6 +26,7 @@
  */
 
 #include <algorithm>
+#include <filesystem>
 #include <random>
 
 
@@ -2540,7 +2541,7 @@ void Controller::setMeshResolution( const Controller::MeshResolution& resolution
 }
 
 
-void Controller::exportToIrapGrid()
+void Controller::exportToIrapGrid(const std::string& project_name)
 {
 
     IrapGridExporter exporter;
@@ -2606,11 +2607,25 @@ void Controller::exportToIrapGrid()
         exporter.setSpacing( dx, dy );
 
 
+        std::filesystem::path project_path{project_name};
+        if (!project_path.empty())
+        {
+            std::filesystem::create_directory(project_path);
+        }
+
+        std::filesystem::path file_path{project_path};
         std::string name_ = getObjectName( id_ ).append( ".IRAPG" );
         if( name_.empty() == true )
-            exporter.writeGridData( surface_filename.toStdString() );
+        {
+            /* exporter.writeGridData( surface_filename.toStdString() ); */
+            file_path /= std::filesystem::path(surface_filename.toStdString());
+        }
         else
-            exporter.writeGridData( prefix_.toStdString().append(name_) );
+        {
+            /* exporter.writeGridData( prefix_.toStdString().append(name_) ); */
+            file_path /= std::filesystem::path(prefix_.toStdString().append(name_));
+        }
+        exporter.writeGridData(file_path.string());
 
         exporter.clearData();
 

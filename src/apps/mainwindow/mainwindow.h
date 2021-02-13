@@ -101,6 +101,13 @@ class MainWindow: public QMainWindow
 
 
         /**
+        * Method (slots) to export model's surfaces as IRAP surfaces
+        * @return Void.
+        */
+        void exportToIRAP();
+
+
+        /**
         * Method (slots) to disable the cross-section directions differents from dir_
         * This method was created because a surface only can be made in one direction per time
         * @param dir current cross-section diretion
@@ -330,6 +337,8 @@ class MainWindow: public QMainWindow
         QDockWidget* dw_object_properties = nullptr;
 
         AboutWidget* about_rrm = nullptr;
+
+        QDir current_path = QDir::homePath();
 
 
 };

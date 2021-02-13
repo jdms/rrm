@@ -937,9 +937,9 @@ void RRMApplication::setPointGuidedExtrusion( float px_, float py_, double depth
 }
 
 
-void RRMApplication::exportToIRAP()
+void RRMApplication::exportToIRAP(const std::string& folder_name)
 {
-    controller->exportToIrapGrid();
+    controller->exportToIrapGrid(folder_name);
 }
 
 

@@ -180,7 +180,7 @@ void MainWindow::createActions()
 
     connect( ac_clear, &QAction::triggered, [=](){ app->reset(); } );
 
-    connect( ac_export, &QAction::triggered, [=](){ app->exportToIRAP(); } );
+    connect( ac_export, &QAction::triggered, [=](){ exportToIRAP(); } );
 
 
     connect( ac_undo, &QAction::triggered, [=](){ app->undo(); } );
@@ -574,12 +574,13 @@ void MainWindow::run()
 void MainWindow::save()
 {
     QString selected_format = "";
-    QString filename_ = QFileDialog::getSaveFileName( this, tr( "Save File" ), "./saved/",
+    QString filename_ = QFileDialog::getSaveFileName( this, tr( "Save File" ), current_path.canonicalPath(),
                                                              "rrm files (*.rrm)", &selected_format );
 
 
     if( filename_.isEmpty() == true ) return;
     app->save( filename_.toStdString() );
+    current_path = QDir(filename_).canonicalPath();
 }
 
 
@@ -587,14 +588,27 @@ void MainWindow::load()
 {
 
     QString selected_format = "";
-    QString filename_ = QFileDialog::getOpenFileName( this, tr( "Open File" ), "./saved/",
+    QString filename_ = QFileDialog::getOpenFileName( this, tr( "Open File" ), current_path.canonicalPath(),
                                                              "rrm files (*.rrm)", &selected_format );
 
     if( filename_.isEmpty() == true ) return;
     app->load( filename_.toStdString() );
+    current_path = QDir(filename_).canonicalPath();
 
 }
 
+void MainWindow::exportToIRAP()
+{
+
+    QString selected_format = "";
+    QString filename_ = QFileDialog::getExistingDirectory( this, tr( "Export IRAP surfaces in folder" ), 
+            current_path.canonicalPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+    if( filename_.isEmpty() == true ) return;
+    app->exportToIRAP( filename_.toStdString() );
+    current_path = QDir(filename_).canonicalPath();
+
+}
 
 void MainWindow::lockDirection( const Settings::CrossSection::CrossSectionDirections& dir_ )
 {

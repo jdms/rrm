@@ -675,9 +675,10 @@ public:
 
         /**
         * Method (slot) to export the surfaces in Irap Grid format
+        * @param folder_name Directory to which surfaces will be exported
         * @return void.
         */
-        void exportToIRAP();
+        void exportToIRAP(const std::string& folder_name);
 
 
         /**
