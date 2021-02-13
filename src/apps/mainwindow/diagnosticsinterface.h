@@ -34,7 +34,7 @@
 #include <QDockWidget>
 
 class MainWindow;
-class FlowWindow;
+class DiagnosticsWindowInterface;
 
 
 /**
@@ -94,7 +94,7 @@ class DiagnosticsInterface: public QObject
 
         /**
         * Method to tell main application if Flow Diagnostics window should be docked in main GUI
-        * @return true if FlowWindow should be docked, false otherwise.
+        * @return true if DiagnosticsWindowInterface should be docked, false otherwise.
         */
         bool preferDockedWindow();
 
@@ -132,7 +132,7 @@ class DiagnosticsInterface: public QObject
 
         QDockWidget* dw_flow_window = nullptr;                              /**< DockWidget to hold the Flow Diagnostics window */
 
-        FlowWindow* fd_window_interface = nullptr;                           /**< Flow Diagnostics window */
+        DiagnosticsWindowInterface* fd_window_interface = nullptr;                           /**< Flow Diagnostics window */
 
 
 };

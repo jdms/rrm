@@ -44,7 +44,7 @@
 
 #include "./apps/3dview/canvas3d.h"
 #include "./apps/sketching/sketchwindow.h"
-#include "./apps/simulator/flow_window.h"
+#include "./apps/simulator/diagnostics_window_interface.h"
 
 #include "./core/definitions/constants.hpp"
 #include "./core/widgets/realfeaturedslider.h"
@@ -728,15 +728,15 @@ public:
         * @param right_curves vector of the right curve of each surface boundary
         * @param front_curves vector of the front curve of each surface boundary
         * @param back_curves vector of the back curve of each surface boundary
-        * @see FlowWindow::TriangleMesh
-        * @see FlowWindow::CurveMesh
+        * @see DiagnosticsWindowInterface::TriangleMesh
+        * @see DiagnosticsWindowInterface::CurveMesh
         * @return void.
         */
-        void getSurfacesMeshes( std::vector< FlowWindow::TriangleMesh >& triangles_meshes,
-                                                std::vector< FlowWindow::CurveMesh>& left_curves,
-                                                std::vector< FlowWindow::CurveMesh >& right_curves,
-                                                std::vector< FlowWindow::CurveMesh > & front_curves,
-                                                std::vector< FlowWindow::CurveMesh >& back_curves );
+        void getSurfacesMeshes( std::vector< DiagnosticsWindowInterface::TriangleMesh >& triangles_meshes,
+                                                std::vector< DiagnosticsWindowInterface::CurveMesh>& left_curves,
+                                                std::vector< DiagnosticsWindowInterface::CurveMesh >& right_curves,
+                                                std::vector< DiagnosticsWindowInterface::CurveMesh > & front_curves,
+                                                std::vector< DiagnosticsWindowInterface::CurveMesh >& back_curves );
 
 
          /**

@@ -29,7 +29,7 @@
 
 #include <memory>
 
-#include "apps/simulator/flow_window.h"
+#include "apps/simulator/diagnostics_window_interface.h"
 #include "mainwindow.h"
 
 #include "stratmod/smodeller.hpp"
@@ -37,7 +37,7 @@
 DiagnosticsInterface::DiagnosticsInterface( MainWindow* const& window_ )
 {
     window = window_;
-    fd_window_interface = new FlowWindow(window);
+    fd_window_interface = new DiagnosticsWindowInterface(window);
 
     if ( isImplemented() && (window != nullptr))
     {
@@ -116,15 +116,15 @@ void DiagnosticsInterface::createDiagnosticsActions()
     /* *********************************************************************************************************** */
 
 /*     // send the mesh and the curves of the boundary of each surface to flow diagnostics */
-/*     connect( fd_window_interface, &FlowWindow::getSurfacesMeshes, this, [=]( std::vector< FlowWindow::TriangleMesh >& triangles_meshes, */
-/*              std::vector< FlowWindow::CurveMesh>& left_curves, */
-/*              std::vector< FlowWindow::CurveMesh >& right_curves, */
-/*              std::vector< FlowWindow::CurveMesh > & front_curves, */
-/*              std::vector< FlowWindow::CurveMesh >& back_curves ) { */
+/*     connect( fd_window_interface, &DiagnosticsWindowInterface::getSurfacesMeshes, this, [=]( std::vector< DiagnosticsWindowInterface::TriangleMesh >& triangles_meshes, */
+/*              std::vector< DiagnosticsWindowInterface::CurveMesh>& left_curves, */
+/*              std::vector< DiagnosticsWindowInterface::CurveMesh >& right_curves, */
+/*              std::vector< DiagnosticsWindowInterface::CurveMesh > & front_curves, */
+/*              std::vector< DiagnosticsWindowInterface::CurveMesh >& back_curves ) { */
 /*         window->app->getSurfacesMeshes( triangles_meshes, left_curves, right_curves, front_curves, back_curves ); } ); */
 
 /*     // send the mesh and the color of the regions to flow diagnostics */
-/*     connect( fd_window_interface, &FlowWindow::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& faces ) */
+/*     connect( fd_window_interface, &DiagnosticsWindowInterface::sendSimplifiedMesh, [=]( const std::vector< float >& vertices, const std::vector< unsigned int >& faces ) */
 /*     { */
 /*         std::vector< int > regions_; */
 /*         std::map< int, std::vector< float > > colors_; */

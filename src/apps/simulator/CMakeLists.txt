@@ -41,16 +41,31 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/build/src/core/widgets/RRMWidge
 
 
 set( SIMULATOR_HEADERS
-                flow_window.h)
+                diagnostics_window_interface.h)
 
 set ( SIMULATOR_MOC_HEADERS
-                flow_window.h)
+                diagnostics_window_interface.h)
 
 set ( SIMULATOR_UI_SOURCES
                 )
 
-set( SIMULATOR_SOURCES
-               flow_window.cpp)
+# Flag: RRM_BUILD_FLOW_DIAGNOSTICS is defined in the root CMakeLists.txt file
+if(RRM_BUILD_FLOW_DIAGNOSTICS)
+    set(SIMULATOR_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/diagnostics_window_interface.cpp
+        )
+else()
+    set(SIMULATOR_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/diagnostics_window_interface_stub.cpp
+        )
+endif()
+
+if(RRM_BUILD_FLOW_DIAGNOSTICS)
+    set(DIAGNOSTICS_LIBRARY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/diagnostics)
+    add_subdirectory(${DIAGNOSTICS_LIBRARY_PATH})
+    # The diagnostics library is supposed to export cmake target `diagnostics`;
+    # update this accordingly.
+endif()
 
 
 set(CMAKE_AUTOMOC ON)
@@ -76,3 +91,8 @@ else()
 endif()
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+
+if(RRM_BUILD_FLOW_DIAGNOSTICS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE -DRRM_BUILD_FLOW_DIAGNOSTICS)
+    target_link_libraries(${PROJECT_NAME} diagnostics)
+endif()
