@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.1)
-project(predicates)
+project(shewchuk_predicates)
 
 if(NOT CMAKE_VERSION VERSION_LESS "3.3")
-	# https://cmake.org/cmake/help/latest/policy/CMP0063.html
-	cmake_policy(SET CMP0063 NEW)
+    # https://cmake.org/cmake/help/latest/policy/CMP0063.html
+    cmake_policy(SET CMP0063 NEW)
 else()
-	message(WARNING "CMake version is < 3.3, visibility properties for static libraries will be ignored.")
+    message(WARNING "CMake version is < 3.3, visibility properties for static libraries will be ignored.")
 endif()
 
 add_library(${PROJECT_NAME} predicates.c predicates.h)

@@ -42,7 +42,7 @@ if(COLORWRAP_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "${COLORWRAP_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 endif()
 
-option(COLORWRAP_BUILD_SHARED         "Build a shared library instead of a static library"          ON)
+option(COLORWRAP_BUILD_SHARED         "Build a shared library instead of a static library"          OFF)
 option(COLORWRAP_INTERPOLATE_COLORS   "Allow interpolating colours in RGB space -- requires Eigen3" ON)
 option(COLORWRAP_BUILD_DOCS           "Build documentation with Doxygen"                            OFF)
 option(COLORWRAP_BUILD_TESTS          "Build a test binary"                                         OFF)
@@ -174,7 +174,7 @@ target_include_directories(colorwrap
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_compile_features(colorwrap PUBLIC cxx_std_11)
+target_compile_features(colorwrap PRIVATE cxx_std_14)
 
 # MSVC (as recently as version 19.15.26729) throws hundreds of warnings from
 # it's own implementation of the STL -- CMake's SYSTEM directive seems
