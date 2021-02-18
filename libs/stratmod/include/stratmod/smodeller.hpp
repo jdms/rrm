@@ -31,6 +31,8 @@
 
 #include "stratmod/smodeller_primitives.hpp"
 
+namespace stratmod {
+
 /** 
  * @brief Creates consistent surface based models.
  *
@@ -45,8 +47,12 @@ class STRATMODLIB_DLL_HANDLER SModeller
         //
         ///////////////////////////////////////////////////////////////////////
 
+        /** @brief Get reference to unique SModeller instance.
+         **/
+        static SModeller& Instance();
+
         /** 
-         * @brief Default constructor.  
+         * @brief [[deprecated]] Public default constructor.  
          *
          * Be aware that the SModeller class is essentially a Singleton, 
          * explicit creation of SModeller objects will be deprecated in the
@@ -57,7 +63,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
         /**
          * @brief Default destructor.
          **/
-        ~SModeller(); 
+        virtual ~SModeller(); 
 
         /** 
          * @brief Copy constructor is deleted.  
@@ -67,7 +73,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
         /** 
          * @brief Default move constructor.  
          **/
-        SModeller( SModeller &&m ); 
+        SModeller( SModeller &&m ) = delete; 
 
         /** 
          * @brief Copy assignment constructor is deleted.  
@@ -77,7 +83,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
         /** 
          * @brief Default move assignment constructor.  
          **/
-        SModeller& operator=( SModeller &&m ); 
+        SModeller& operator=( SModeller &&m ) = delete; 
 
         /**
          * @brief Clear model.
@@ -720,6 +726,10 @@ class STRATMODLIB_DLL_HANDLER SModeller
 
         friend class SUtilities;
 };
+
+} // namespace stratmod
+
+using SModeller = stratmod::SModeller;
 
 #endif
 

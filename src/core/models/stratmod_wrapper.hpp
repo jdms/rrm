@@ -35,19 +35,19 @@
 //namespace RRM
 //{}
 
-class SModellerWrapper : public SModeller {
+class SModellerWrapper : public stratmod::SModeller {
 
     public:
         bool changeDiscretization( size_t width_discretization = 64, size_t lenght_discretization = 64 ) 
         {
-            return SModeller::changeDiscretization(width_discretization, lenght_discretization);
+            return stratmod::SModeller::changeDiscretization(width_discretization, lenght_discretization);
         }
 
 };
 
 class SUtilitiesWrapper : public SUtilities {
     public:
-        SUtilitiesWrapper( SModellerWrapper &modeller ) : SUtilities( modeller ) {};
+        SUtilitiesWrapper( SModellerWrapper &modeller ) : stratmod::SUtilities( modeller ) {};
 };
 
 //}; //namespace RRM

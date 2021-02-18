@@ -21,10 +21,8 @@
 /********************************************************************************/
 
 
-
 #ifndef STRATMOD_SMODELLER_IMPLEMENTATION_HPP
 #define STRATMOD_SMODELLER_IMPLEMENTATION_HPP
-
 
 
 #include <iostream>
@@ -41,10 +39,9 @@
 #include "planin/planin.hpp"
 #include "planin/mesh/linear_complexes.hpp"
 
+namespace stratmod {
 
 #define TODO_UNUSED(x) (void)(x)
-
-
 
 /************************************************/
 /* Auxiliar Data Types                          */
@@ -130,8 +127,6 @@ struct StateDescriptor
     }
 
 };
-
-CEREAL_CLASS_VERSION(StateDescriptor, 2);
 
 
 /************************************************/
@@ -731,8 +726,10 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantLength( size_t sur
     return has_curve;
 }
 
+} // namespace stratmod
 
-CEREAL_CLASS_VERSION(SModellerImplementation, 1);
+CEREAL_CLASS_VERSION(stratmod::StateDescriptor, 2);
+CEREAL_CLASS_VERSION(stratmod::SModellerImplementation, 1);
 
 #endif
 

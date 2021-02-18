@@ -40,7 +40,7 @@ bool DiagnosticsWindowInterface::isImplemented() const
     return true;
 }
 
-void DiagnosticsWindowInterface::setModel(SModeller& model)
+void DiagnosticsWindowInterface::setModel(stratmod::SModeller& model)
 {
     pmodel_ = &model;
 }

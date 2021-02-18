@@ -31,6 +31,8 @@
 
 #include "stratmod/smodeller.hpp"
 
+namespace stratmod {
+
 /** 
  * @brief Utility methods used in RRM.
  *
@@ -113,5 +115,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
 
 };
 
-#endif
+} // namespace stratmod
 
+using SUtilities = stratmod::SUtilities;
+
+#endif

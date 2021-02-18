@@ -24,10 +24,10 @@
 #define RRM_APPS_SIMULATOR_DIAGNOSTICS_WINDOW_INTERFACE_H
 
 // Forward declaration of modeller class
-/* namespace stratmod */ 
-/* { */
+namespace stratmod 
+{
     class SModeller;
-/* } */
+}
 
 #include <functional>
 #include <memory>
@@ -82,7 +82,7 @@ class DiagnosticsWindowInterface : public QMainWindow
         * Set model for flow diagnostics application
         * param model Reference to modeller class object
         */
-        void setModel(SModeller& model);
+        void setModel(stratmod::SModeller& model);
 
         /**
         * Method to clear the flow diagnostics application window
@@ -121,7 +121,7 @@ class DiagnosticsWindowInterface : public QMainWindow
         };
 
     protected:
-        SModeller* pmodel_ = nullptr;                              /**< Pointer to model */
+        stratmod::SModeller* pmodel_ = nullptr;                              /**< Pointer to model */
         QWidget* pparent_ = nullptr;                              /**< Pointer to parent Widget */
 
     private:

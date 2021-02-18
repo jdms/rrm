@@ -29,6 +29,7 @@
 #include "planin/interpolated_graph.hpp"
 
 
+namespace stratmod {
 
 SUtilities::SUtilities( SModeller &m ) : model_(m) {}
 
@@ -855,4 +856,4 @@ bool SUtilities::getQuadMesh( std::size_t surface_id, std::vector<double> &point
     return true;
 }
 
-
+} // namespace stratmod

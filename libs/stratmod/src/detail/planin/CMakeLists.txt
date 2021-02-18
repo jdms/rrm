@@ -90,6 +90,14 @@ endif()
 
 
 ###############################################
+# Build tests.  
+###############################################
+if(NOT DEFINED PLANIN_BUILD_TESTS)
+    option(PLANIN_BUILD_TESTS "" OFF) 
+endif()
+
+
+###############################################
 # Build a test program.  
 ###############################################
 option(PLANIN_BUILD_MAIN "" OFF)
@@ -438,27 +446,29 @@ endif()
 #
 # Use Catch2 for testing
 #
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/catch2)
-add_library(Catch2::Catch2 IMPORTED INTERFACE)
-set_property(TARGET Catch2::Catch2 
-    PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/catch2
-    )
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/catch2/contrib)
+if (PLANIN_BUILD_TESTS)
+    # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/catch2)
+    add_library(Catch2::Catch2 IMPORTED INTERFACE)
+    set_property(TARGET Catch2::Catch2 
+        PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/catch2
+        )
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/catch2/contrib)
 
-add_executable(tests_planin 
-    tests/test_main.cpp
-    tests/test_structured_triangle_mesh_2d.cpp 
-    )
-target_compile_features(tests_planin PUBLIC cxx_std_17)
-target_link_libraries(tests_planin planin Catch2::Catch2)
-target_include_directories(tests_planin
-    PRIVATE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
-    )
+    add_executable(tests_planin 
+        tests/test_main.cpp
+        tests/test_structured_triangle_mesh_2d.cpp 
+        )
+    target_compile_features(tests_planin PUBLIC cxx_std_17)
+    target_link_libraries(tests_planin planin Catch2::Catch2)
+    target_include_directories(tests_planin
+        PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+        )
 
-include(CTest)
-include(Catch)
-catch_discover_tests(tests_planin)
+    include(CTest)
+    include(Catch)
+    catch_discover_tests(tests_planin)
+endif()
 
 ###############################################
 # Utilities 
