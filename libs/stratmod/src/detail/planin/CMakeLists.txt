@@ -24,7 +24,7 @@
 # Preliminaries  
 #####################################################################
 
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 project(PlanInLib CXX)
 
@@ -34,6 +34,12 @@ set(VERSION_PATCH 0 CACHE STRING "Project patch version number.")
 mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Force option() honors normal variables
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.13")
+    set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+    # cmake_policy(SET CMP0077 NEW)
+endif()
 
 #####################################################################
 # Objects and options 
@@ -54,14 +60,14 @@ endif()
 ###############################################
 # Build forcing position independent code
 ###############################################
-option(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE "" OFF) 
+option(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE "" ON) 
 
 
 ###############################################
 # Use OpenMP
 ###############################################
 if(NOT DEFINED PLANIN_BUILD_USING_OPENMP)
-    option(PLANIN_BUILD_USING_OPENMP "" OFF) 
+    option(PLANIN_BUILD_USING_OPENMP "" ON) 
 endif()
 
 
@@ -69,7 +75,7 @@ endif()
 # Use OpenMP
 ###############################################
 if(NOT DEFINED PLANIN_BUILD_USE_LAPACK)
-    option(PLANIN_BUILD_USE_LAPACK "" OFF) 
+    option(PLANIN_BUILD_USE_LAPACK "" ON) 
 endif()
 
 
@@ -77,7 +83,7 @@ endif()
 # Use Cereal for serialization
 ###############################################
 if(NOT DEFINED PLANIN_BUILD_USING_CEREAL)
-    option(PLANIN_BUILD_USING_CEREAL "" OFF) 
+    option(PLANIN_BUILD_USING_CEREAL "" ON) 
 endif()
 
 
@@ -325,6 +331,16 @@ endif()
 #
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/predicates)
 
+##
+## Use glog for logging
+##
+#find_package(glog CONFIG REQUIRED)
+
+##
+## Use pprint to inspect std data structures
+##
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pprint)
+
 ###############################################
 # Main library
 ###############################################
@@ -373,6 +389,7 @@ target_include_directories(planin
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     # PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin/mesh>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/planin/vector_field>
@@ -384,7 +401,8 @@ target_include_directories(planin SYSTEM
         $<BUILD_INTERFACE:${CEREAL_INCLUDE_DIR}>
 )
 
-target_link_libraries(planin PUBLIC predicates)
+# target_link_libraries(planin PUBLIC Eigen3::Eigen shewchuk_predicates glog::glog igl::core igl::cgal igl::triangle)
+target_link_libraries(planin PUBLIC shewchuk_predicates)
 
 target_compile_features(planin PUBLIC cxx_std_17)
 
