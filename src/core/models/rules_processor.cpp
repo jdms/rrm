@@ -40,9 +40,9 @@ RulesProcessor::RulesProcessor()
     /* setMediumResolution(); */
 }
 
-SModeller& RulesProcessor::getSModeller()
+stratmod::SModeller& RulesProcessor::getSModeller()
 {
-    return static_cast<SModeller&>(modeller_);
+    return static_cast<stratmod::SModeller&>(modeller_);
 }
 
 std::vector<size_t> RulesProcessor::filterActiveSurfaces( std::vector<std::size_t> &surface_ids )
@@ -791,7 +791,7 @@ bool RulesProcessor::getRegionCurveBoxesAtLength( std::size_t region_id, std::si
         std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
         std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist )
 {
-    SUtilities u(modeller_);
+    stratmod::SUtilities u(modeller_);
 
     std::vector<size_t> lower_bound, upper_bound; 
 
@@ -824,7 +824,7 @@ bool RulesProcessor::getRegionCurveBoxesAtWidth( std::size_t region_id, std::siz
         std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
         std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist )
 {
-    SUtilities u(modeller_);
+    stratmod::SUtilities u(modeller_);
 
     std::vector<size_t> lower_bound, upper_bound; 
 
@@ -1829,7 +1829,7 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
 
 bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
 {
-    SUtilities u(modeller_);
+    stratmod::SUtilities u(modeller_);
     bool success = (u.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
 
     /* if ( success ) */

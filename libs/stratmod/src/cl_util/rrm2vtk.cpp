@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
         std::cout << std::flush;
     }
 
-    SModeller model;
+    stratmod::SModeller model;
     if (cmdl[1].empty())
     {
         std::cerr << "Error: input rrm file is missing.\n";
@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
         << std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1).count() << " (ms)\n";
     std::cout << std::flush;
 
-    SUtilities u(model);
+    stratmod::SUtilities u(model);
     std::cout << "Exporting tetrahedral mesh -- ";
     std::cout << std::flush;
     auto time3 = std::chrono::high_resolution_clock::now();

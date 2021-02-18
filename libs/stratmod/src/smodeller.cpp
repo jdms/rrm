@@ -42,8 +42,18 @@
 /*****************************/
 
 
+namespace stratmod {
+
 // Default methods 
 
+SModeller& SModeller::Instance()
+{
+    static SModeller instance;
+
+    return instance;
+}
+
+[[deprecated("The SModeller class is a singleton, use SModeller::Instance() instead.")]]
 SModeller::SModeller() : 
     pimpl_( new SModellerImplementation() ) 
 {
@@ -1285,3 +1295,5 @@ bool SModeller::loadBinary( std::string )
 }
 
 #endif //defined(BUILD_WITH_SERIALIZATION)
+
+} // namespace stratmod

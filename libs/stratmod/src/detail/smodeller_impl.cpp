@@ -10,7 +10,7 @@
 
 #include "planin/planin.hpp"
 
-
+namespace stratmod {
 
 bool SModellerImplementation::init()
 {
@@ -875,3 +875,5 @@ bool SModellerImplementation::buildTetrahedralMesh()
 
     return true;
 }
+
+} // namespace stratmod
