@@ -97,6 +97,7 @@ void MainWindow::createActions()
 
     ac_manual = new QAction( tr ( "RRM Manual" ), this );
     ac_manual->setToolTip( "Manual" );
+    ac_manual->setEnabled(false);
 
     ac_about = new QAction( tr ( "&About" ) , this );
     ac_about->setToolTip( "About" );
