@@ -182,17 +182,17 @@ void Regions::getPoint( double& x_, double& y_, double& z_ ) const
 }
 
 
-void Regions::setName( const std::string& name_ )
-{
-    name.clear();
-    name = name_;
-}
+/* void Regions::setName( const std::string& name_ ) */
+/* { */
+/*     name.clear(); */
+/*     name = name_; */
+/* } */
 
 
-std::string Regions::getName() const
-{
-    return name;
-}
+/* std::string Regions::getName() const */
+/* { */
+/*     return name; */
+/* } */
 
 
 
@@ -232,20 +232,20 @@ void Regions::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
 }
 
 
-void Regions::setColor( int r_, int g_, int b_ )
-{
-    color.r = r_;
-    color.g = g_;
-    color.b = b_;
-}
+/* void Regions::setColor( int r_, int g_, int b_ ) */
+/* { */
+/*     color.r = r_; */
+/*     color.g = g_; */
+/*     color.b = b_; */
+/* } */
 
 
-void Regions::getColor( int& r_, int& g_, int& b_ ) const
-{
-    r_ = color.r;
-    g_ = color.g;
-    b_ = color.b;
-}
+/* void Regions::getColor( int& r_, int& g_, int& b_ ) const */
+/* { */
+/*     r_ = color.r; */
+/*     g_ = color.g; */
+/*     b_ = color.b; */
+/* } */
 
 void Regions::setVolume( double volume_ )
 {
@@ -281,9 +281,9 @@ void Regions::initialize()
     is_visible = true;
     indomain = false;
 
-    color.r = 255;
-    color.g = 0;
-    color.b = 0;
+    color.red = 255;
+    color.green = 0;
+    color.blue = 0;
 
 
     max.x = 0;
