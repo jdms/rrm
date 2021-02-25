@@ -176,18 +176,17 @@ class Regions: public Object
         * @param name a new name to the region
         * @return void.
         */
-        void setName( const std::string& name_ );
+        /* void setName( const std::string& name_ ); */
 
 
         /**
         * Method to return the name of the region
         * @return std::string the name of the region
         */
-        std::string getName() const;
+        /* std::string getName() const; */
 
 
-        /**
-        * Method to set the lower boundary of the region
+        /** Method to set the lower boundary of the region
         * @param lower the lower curve which delimits the region
         * @see PolyCurve
         * @return void.
@@ -270,7 +269,7 @@ class Regions: public Object
         * @param b the blue component of the color (integer)
         * @return void.
         */
-        void setColor( int r_, int g_, int b_ );
+        /* void setColor( int r_, int g_, int b_ ); */
 
 
         /**
@@ -280,7 +279,7 @@ class Regions: public Object
         * @param b reference to the blue component of the color (integer)
         * @return void.
         */
-        void getColor( int& r_, int& g_, int& b_ ) const;
+        /* void getColor( int& r_, int& g_, int& b_ ) const; */
 
 
         /**
@@ -371,12 +370,12 @@ class Regions: public Object
         * @var green green component of a color
         * @var blue blue component of a color
         */
-        struct Color
-        {
-          int r = 255;
-          int g = 0;
-          int b = 0;
-        };
+        /* struct Color */
+        /* { */
+        /*   int r = 255; */
+        /*   int g = 0; */
+        /*   int b = 0; */
+        /* }; */
 
 
         std::size_t index;                                              /**< The index of the region */
@@ -389,7 +388,7 @@ class Regions: public Object
 
         bool is_visible;                                                /**< A boolean to define if the regions is visible or not */
 
-        std::string name;                                               /**< The name of the region */
+        /* std::string name;                                               /**< The name of the region *1/ */
 
         std::vector< std::size_t > index_cells;                         /**< A vector of the vertices indexes that defines a face to each face from the region mesh*/
 
@@ -405,7 +404,7 @@ class Regions: public Object
 
         double volume = 0;                                              /**< The volume of the region */
 
-        Color color;                                                    /**< The color of the region */
+        /* Color color;                                                    /**< The color of the region *1/ */
 };
 
 #endif // REGIONS_H

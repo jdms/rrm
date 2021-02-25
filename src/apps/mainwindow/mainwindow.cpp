@@ -607,7 +607,7 @@ void MainWindow::exportToIRAP()
 
     if( filename_.isEmpty() == true ) return;
     app->exportToIRAP( filename_.toStdString() );
-    current_path = QDir(filename_).canonicalPath();
+    /* current_path = QDir(filename_).canonicalPath(); */
 
 }
 

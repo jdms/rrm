@@ -715,9 +715,7 @@ class Object
         std::size_t index = 0;                                                  /**< The index of the object */
 
 
-    private:
-
-
+    protected:
         /**
         * @struct Color
         * @brief It is a data structure to represent color
@@ -731,7 +729,12 @@ class Object
             int blue = 0;
         };
 
+        Color color;                                                        /**< The color of the object*/
 
+        std::string name;                                                   /**< The name of the object */
+
+
+    private:
         /**
         * @struct Point
         * @brief It is a data structure to represent a point
@@ -747,13 +750,9 @@ class Object
         };
 
 
-        std::string name;                                                   /**< The name of the object */
-
         std::string log;
 
         Settings::Objects::ObjectType type;                                 /**< The type of the object */
-
-        Color color;                                                        /**< The color of the object*/
 
         Point min;                                                          /**< The minimum point of the bounding box */
 

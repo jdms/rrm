@@ -2243,6 +2243,7 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
             QJsonObject domain_;
             domain_[ "index" ] = static_cast< int >( it_.first );
             domain_[ "regions" ] = regions_set_array_;
+            domain_["name"] = QString::fromStdString(dom_.getName());
 
 
             domains_array_.append( domain_ );
@@ -2484,7 +2485,7 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             QJsonObject region_ = regions_array_[ i ].toObject();
             if( region_.contains( "index" ) == false ) return;
 
-            std::size_t id_ = static_cast< std::size_t>( json["index"].toInt() );
+            std::size_t id_ = static_cast< std::size_t>( region_["index"].toInt() );
             if( model.regions.find( id_ ) == model.regions.end() ) return;
 
             RegionsPtr reg_ = model.regions[ id_ ];
@@ -2514,6 +2515,10 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             for( auto it_: regions_set_array_ )
                 addRegionToDomain( static_cast< std::size_t >( it_.toInt() ), index_ );
 
+            model.domains[index_].setName(
+              domain_.contains("name")
+                ? domain_["name"].toString().toStdString()
+                : "");
         }
     }
 
