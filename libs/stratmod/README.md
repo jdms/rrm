@@ -1,14 +1,21 @@
-Stratmod: _correct_ geology for everyone
-----------------------------------------
+Stratmod
+========
 
-*v0.1*
+_Correct_ geology for everyone
+------------------------------
 
-Stratmod stands for the _stratigraphy modeller library_, which intends to
-provide a simple and stable interface to model planar stratigraphy.  
+Julio Daniel Machado Silva
+Department of Computer Science
+University of Calgary
 
-For now, I'm sure you would like to have a look at the 
-[issue tracker](https://bitbucket.org/jdms/stratmod/issues).  
+## Description
 
-Documentation will follow shortly.  
+Stratmod provides a simple and stable interface to create stratigraphic models.
+Compilation instructions and documentation on how to use this library as
+a standalone object will appear in the future.
 
+The stratmod library is released under the [LGPL3] license (or a later version
+of it).  It includes external (third party) libraries with different licenses
+that are understood to be compatible, please see individual files for details.
 
+[LGPL3]: https://www.gnu.org/licenses/lgpl-3.0.en.html 

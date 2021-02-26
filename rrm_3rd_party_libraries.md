@@ -1,17 +1,16 @@
 RRM 3^rd^ party libraries
 =========================
 
-July 17, 2020
+February 25, 2021
 
 
 ## Introduction 
 
-This document lists third party libraries that are either being currently used
-in RRM or that are being considered to be added to the project. It includes
-brief descriptions, the last known URL the code was made available at, the date
-it was retrieved, the license(s) in which the code was made available by their
-authors at the retrieving date, and URL links to publicly available copies of
-such licenses when possible.
+This document lists third party libraries that are used in the RRM project. It
+includes brief descriptions, the last known URL the code was made available at,
+the date it was retrieved, the license(s) in which the code was made available
+by their authors at the retrieving date, and URL links to publicly available
+copies of such licenses when possible.
 
 <!-- Note for developers: -->
 <!-- When adding or updating an entry, please provide all the aforementioned -->
@@ -112,34 +111,6 @@ such licenses when possible.
       in the Qt toolkit by Qt Development Frameworks, Nokia. As of August 15,
       2018 it is stated in their website that LibQtx is no longer maintained.  
 
-#. [Tetgen](http://wias-berlin.de/software/index.jsp?id=TetGen&lang=1)
-    + Retrieved: July 17, 2020
-    + Licence: [Affero GPL v3.0]
-    + Description: A Quality Tetrahedral Mesh Generator and a 3D Delaunay
-      Triangulator.
-
-#. [HYPRE](https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods)
-    + Retrieved: July 17, 2020
-    + License: [LGPL v2.1]
-    + Description: Livermore’s HYPRE library of linear solvers makes possible
-      larger, more detailed simulations by solving problems faster than
-      traditional methods at large scales. It offers a comprehensive suite of
-      scalable solvers for large-scale scientific simulation, featuring
-      parallel multigrid methods for both structured and unstructured grid
-      problems. The HYPRE library is highly portable and supports a number of
-      languages.
-
-#. [Triangle](https://www.cs.cmu.edu/~quake/triangle.html)
-    + Retrieved: July 17, 2020
-    + License: [Shewchuck's license] is freely available for private, research or
-      institutional use; commercial use requires direct arrangement with
-      the library's author: [Jonathan Richard Shewchuk](jrs@cs.berkeley.edu)
-    + Description: Triangle generates exact Delaunay triangulations,
-      constrained Delaunay triangulations, conforming Delaunay triangulations,
-      Voronoi diagrams, and high-quality triangular meshes. The latter can be
-      generated with no small or large angles, and are thus suitable for finite
-      element analysis. 
-
 #. [predicates.c](https://www.cs.cmu.edu/~quake/robust.html)
     + Retrieved: July 17, 2020
     + License: Public domain
@@ -186,128 +157,6 @@ such licenses when possible.
       (TR1) and continuing with every release of the ISO standard for C++ since
       2011, the C++ Standards Committee has continued to rely on Boost as
       a valuable source for additions to the Standard C++ Library.
-
-#. [VTK](https://vtk.org)
-    + Retrieved: July 17, 2020
-    + License: [BSD-3-Clause]
-    + Description: The Visualization Toolkit (VTK) is an open-source, freely
-      available software system for 3D computer graphics, modeling, image
-      processing, volume rendering, scientific visualization, and 2D plotting.
-      It supports a wide variety of visualization algorithms and advanced
-      modeling techniques, and it takes advantage of both threaded and
-      distributed memory parallel processing for speed and scalability,
-      respectively.
-
-
-## Libraries under evaluation to be included in the project
-
-#. [libigl](https://libigl.github.io)
-    + Retrieved: July 17, 2020
-    + License: [MPL 2.0], but depends on code under the [GPL v3.0] license.
-    + Description: A simple C++ geometry processing library. We have
-      a wide functionality including construction of sparse discrete
-      differential geometry operators and finite-elements matrices such as the
-      cotangent Laplacian and diagonalized mass matrix, simple facet and
-      edge-based topology data structures, mesh-viewing utilities for OpenGL
-      and GLSL, and many core functions for matrix manipulation which make
-      Eigen feel a lot more like MATLAB.
-
-#. [CoMISo](http://www.graphics.rwth-aachen.de/software/comiso/)
-    + Retrieved: July 17, 2020
-    + License: [GPL v3.0]
-    + Description: The Constrained Mixed-Integer Solver provides a convenient
-      tool for setting up and solving linear systems stemming from quadratic
-      energies subject to linear equality constraints as well as to integer
-      constraints. Basically only the system matrix, the constraints and the
-      variables to be rounded are provided to the solver which returns
-      a properly indexed solution vector. This drastically minimizes the
-      programmer's effort as a proper elimination of the constraints and the
-      necessary reindexing is taken care of internally. The difference to
-      popular constraining techniques such as Lagrangian Multipliers, which
-      require no reindexning (but unfortunately result in larger, non-positive
-      semidefinite systems), is that CoMISo efficiently eliminates the
-      constraints from the system matrix, yielding a smaller system while at
-      the same time preserving positive semidefiniteness.
-
-#. [GMP](https://gmplib.org)
-    + Retrieved: July 17, 2020
-    + License: [LGPL v3.0], [GPL v2.0]
-    + Description: GMP is a free library for arbitrary precision arithmetic,
-      operating on signed integers, rational numbers, and floating-point
-      numbers. There is no practical limit to the precision except the ones
-      implied by the available memory in the machine GMP runs on. GMP has
-      a rich set of functions, and the functions have a regular interface.
-
-
-#. [MPFR](https://www.mpfr.org)
-    + Retrieved: July 17, 2020
-    + License: [LGPL v3.0]
-    + Description: The MPFR library is a C library for multiple-precision
-      floating-point computations with correct rounding.
-
-#. [cgal](https://www.cgal.org)
-    + Retrieved: July 17, 2020
-    + License: [LGPL v3.0], [GPL v3.0], 
-    + Description: CGAL is a software project that provides easy access to
-      efficient and reliable geometric algorithms in the form of a C++ library.
-      CGAL is used in various areas needing geometric computation, such as
-      geographic information systems, computer aided design, molecular biology,
-      medical imaging, computer graphics, and robotics.
-
-#. [Embree](https://www.embree.org)
-    + Retrieved: July 17, 2020
-    + License: [Apache 2.0] 
-    + Description: Intel® Embree is a collection of high-performance ray
-      tracing kernels, developed at Intel. The target users of Intel® Embree
-      are graphics application engineers who want to improve the performance of
-      their photo-realistic rendering application by leveraging Embree's
-      performance-optimized ray tracing kernels. 
-
-#. [glad](https://github.com/Dav1dde/glad)
-    + Retrieved: July 17, 2020
-    + License: [MIT]
-    + Description: GL/GLES/EGL/GLX/WGL Loader-Generator based on the official
-      specs.
-
-#. [glfw](https://www.glfw.org)
-    + Retrieved: July 17, 2020
-    + License: [Zlib-Libpng]
-    + Description: GLFW is an Open Source, multi-platform library for OpenGL,
-      OpenGL ES and Vulkan development on the desktop. It provides a simple API
-      for creating windows, contexts and surfaces, receiving input and events.
-
-#. [Dear ImGui](https://github.com/ocornut/imgui)
-    + Retrieved: July 17, 2020
-    + License: [MIT]
-    + Description: Dear ImGui is a bloat-free graphical user interface library
-      for C++. It outputs optimized vertex buffers that you can render anytime
-      in your 3D-pipeline enabled application. It is fast, portable, renderer
-      agnostic and self-contained (no external dependencies).
-
-
-#. [TinyXML-2](http://www.grinninglizard.com/tinyxml2/index.html)
-    + Retrieved: July 17, 2020
-    + License: [Zlib-Libpng]
-    + Description: TinyXML-2 is a simple, small, efficient, C++ XML parser that
-      can be easily integrated into other programs.
-
-#. [GSL - GNU Scientific Library](https://www.gnu.org/software/gsl/)
-    + Retrieved: July 17, 2020
-    + License: [GPL v3.0]
-    + Description: The GNU Scientific Library (GSL) is a numerical library for
-      C and C++ programmers. It is free software under the GNU General Public
-      License.  The library provides a wide range of mathematical routines such
-      as random number generators, special functions and least-squares fitting.
-      There are over 1000 functions in total with an extensive test suite.
-
-#. [QuickVtk](https://github.com/qCring/QuickVtk)
-    + Retrieved: July 24, 2020
-    + License: [BSD-3-Clause]
-    + Description: QuickVtk is a live QML interpeter with built-in support for
-      the VTK-Framework. You can simply learn or test QML code and develop
-      prototypes in the domain of 2D/3D visualization by accessing VTK in
-      a declarative way. To put it in one sentence: QuickVtk's main purpose is
-      to enable reactive programming for VTK by utilizing the QML engine.
 
 
 <!-- ## Unused libraries still present in the source code -->
