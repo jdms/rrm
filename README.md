@@ -14,7 +14,7 @@ individual surfaces are performed in milliseconds on commodity, over the shelf
 hardware and computational time scales linearly with the number of surfaces.
 
 New versions of RRM, and these notes can be found at the [git
-repository](https://bitbucket.org:rapidreservoirmodelling/rrm-rc).
+repository](https://bitbucket.org/rapidreservoirmodelling/rrm-rc).
 
 
 ## Downloads
@@ -23,7 +23,7 @@ The latest stable release can be found at:
 
 | Platform                      | Files                                                                                   |
 |-------------------------------|-----------------------------------------------------------------------------------------|
-| Windows ZIP                   | [RRM.zip](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/downloads/rrm_latest.zip)|
+| Windows ZIP                   | [RRM.zip](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/downloads/RRM.zip)       |
 
 To run RRM, unpack a ZIP archive to your preferred folder and simply run the
 executable `RRM.exe` (installation is not required).  All Windows binaries have
@@ -39,11 +39,11 @@ required) build system, and it currently depends on the following external
 libraries that must be obtained and properly installed before RRM can be
 compiled.
 
-#. [Qt5](https://www.qt.io/download);
+- [Qt5](https://www.qt.io/download)
 
-#. [Eigen3](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+- [Eigen3](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 
-#. [Glew](http://glew.sourceforge.net/)
+- [Glew](http://glew.sourceforge.net/)
 
 Instructions on how to obtain these libraries are platform dependent and will
 be provided below.  [Git](https://git-scm.com/downloads) is also required.
@@ -66,14 +66,14 @@ using this tool) package manager to install Qt, Eigen3 and GLEW.  We'll assume
 that `vcpkg` is installed to `C:\dev\vcpkg`, as in the example:
 
 ```
-git clone https://github.com/microsoft/vcpkg C:\dev\vcpkg
+> git clone https://github.com/microsoft/vcpkg C:\dev\vcpkg
 ```
 
 And from the `C:\dev\vcpkg` directory issue:
 
 ```
-bootstrap-vcpkg.bat
-vcpkg.exe install qt5:x64-windows eigen3:x64-windows glew:x64-windows
+> bootstrap-vcpkg.bat
+> vcpkg.exe install qt5:x64-windows eigen3:x64-windows glew:x64-windows
 ```
 
 #### Running CMake
@@ -86,7 +86,7 @@ previous step, we create a `build` folder inside RRM's source tree (here
 denoted as `rrm_root`) and issue the command:
 
 ```
-rrm_root\build\cmake .. -DCMAKE_TOOLCHAIN_FILE=C:\dev\vcpkg\scripts\buildsystems\vcpkg.cmake
+> rrm_root\build\cmake .. -DCMAKE_TOOLCHAIN_FILE=C:\dev\vcpkg\scripts\buildsystems\vcpkg.cmake
 ```
 
 This command creates and configures a Visual Studio project in the `build`
@@ -96,11 +96,11 @@ versions of Qt5, Eigen3 and GLEW that were installed with `vcpkg`.
 To compile RRM in Release mode, use:
 
 ```
-rrm_root\build\cmake --build . --config Release
+> rrm_root\build\cmake --build . --config Release
 ```
 
 The binary, object files and resources will be build in folder
-`rrm_root\build\RRM\Release`.  Alternatively, one could also open the
+`rrm_root\build\bin\Release`.  Alternatively, one could also open the
 `rrm_root\build\RRM.sln` solution file, created in the first CMake run,
 directly from Visual Studio and continue from there.
 
@@ -109,32 +109,32 @@ directly from Visual Studio and continue from there.
 
 The [RRM project's](https://rapidreservoir.org) research results are a copyright of the respective current and past members:
 
-### Department of Computer Science, University of Calgary, Canada
-Clarissa Coda Marques
-Julio Daniel Silva
-Felipe Moura de Carvalho
-Emilio Vital Brazil
-Sicilia Judice
-Fazilatur Rahman
-Mario Costa Sousa
+### University of Calgary, Canada
+Clarissa Coda Marques  
+Julio Daniel Silva  
+Felipe Moura de Carvalho  
+Emilio Vital Brazil  
+Sicilia Judice  
+Fazilatur Rahman  
+Mario Costa Sousa  
 
 ### Heriot-Watt University, UK
-Dmytro Petrovskyy
-Zhao Zang
-Sebastian Geiger
+Dmytro Petrovskyy  
+Zhao Zang  
+Sebastian Geiger  
 
 ### Imperial College London, UK
-Carl Jacquemyn
-Margaret E.H. Pataki
-Gary J. Hampson
-Matthew D. Jackson
+Carl Jacquemyn  
+Margaret E.H. Pataki  
+Gary J. Hampson  
+Matthew D. Jackson  
 
 This software also includes [third party
-libraries](https://bitbucket.org:rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md)
+libraries](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md)
 developed outside of the RRM project. 
 An overview of these libraries including brief descriptions and the last known
 URL their code was made available at can be found
-[here](https://bitbucket.org:rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md).
+[here](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md).
 Please, check the source code for details.
 
 
@@ -142,13 +142,13 @@ Please, check the source code for details.
 
 RRM is Free Software released under the 
 [GPLv3](https://www.gnu.org/licenses/gpl.html) license.  It includes 
-[third party libraries](https://bitbucket.org:rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md)
+[third party libraries](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md)
 with other, compatible, licenses. An overview of these libraries including
 brief descriptions, the last known URL the code was made available at, the date
 it was retrieved, the license(s) in which the code was made available by their
 authors at the retrieving date, and URL links to publicly available copies of
 such licenses is available
-[here](https://bitbucket.org:rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md).
+[here](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md).
 Please, check the source code for details on the licenses that apply to each
 piece of software.
 
@@ -158,18 +158,18 @@ piece of software.
 This software was developed during the first phase of the [RRM
 project](https://rapidreservoir.org), which was sponsored by:
 
-#. Equinor
-#. ExxonMobil
-#. IBM Research Brazil/IBM Centre for Advanced Studies (CAS) Alberta
-#. Petrobras
-#. Shell 
+- Equinor
+- ExxonMobil
+- IBM Research Brazil/IBM Centre for Advanced Studies (CAS) Alberta
+- Petrobras
+- Shell 
 
 The current phase of the project is being sponsored by:
 
-#. Equinor
-#. ExxonMobil
-#. Petronas 
-#. Petrobras
-#. Shell 
+- Equinor
+- ExxonMobil
+- Petrobras
+- Petronas 
+- Shell 
 
 We thank our present and past sponsors for helping to make this research possible.
