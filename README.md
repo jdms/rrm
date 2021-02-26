@@ -5,9 +5,10 @@ Exploring uncertainty with interactive prototyping of reservoir geology
 -----------------------------------------------------------------------
 
 RRM provides a unified graphical user interface (GUI) containing all the
-necessary tools to create, visualize and test conceptual models built from
+necessary tools to create, visualize and test 3D geological models built from
 cross-section and contour sketches. At its core sits a new modelling framework,
-designed to create models with guarantees of geologic consistency.
+designed to create models with guarantees of geological consistency. Detailed
+description of geological operators and applications are available in [Jacquemyn et al (2021)](https://doi.org/10.1144/jgs2020-187) 
 
 RRM is built to allow interactive operation: modelling and visualization of
 individual surfaces are performed in milliseconds on commodity, over the shelf
