@@ -44,8 +44,8 @@ else()
 endif()
 
 if(RRM_BUILD_IN_PREFIXED_BINARY_DIR)
-    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/RRM.app/ CACHE STRING "" )
-    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/RRM.app/ CACHE STRING "" )
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/RRM/ CACHE STRING "" )
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/RRM/ CACHE STRING "" )
     file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
@@ -86,7 +86,7 @@ set(CMAKE_AUTOUIC ON)
 set(QT_USE_QTMAIN TRUE)
 
 # Setup the cmake prefix path so Qt can be found. Use the QTDIR variable if defined
-if((NOT DEFINED Qt5_DIR) AND (NOT DEFINED QTDIR) AND (NOT DEFINED ENV{QTDIR}))
+if((NOT Qt5_DIR) AND (NOT QTDIR) AND (NOT DEFINED ENV{QTDIR}))
     MESSAGE(STATUS
    "Info: QTDIR (environment) variable not set.  If cmake can't find Qt5,
    set QTDIR (either as an environment or cmake cache variable) to the Qt
@@ -94,7 +94,7 @@ if((NOT DEFINED Qt5_DIR) AND (NOT DEFINED QTDIR) AND (NOT DEFINED ENV{QTDIR}))
     )
 endif()
 
-if(ENV{QTDIR} AND (NOT DEFINED QTDIR))
+if((DEFINED ENV{QTDIR}) AND (NOT QTDIR))
     set(QTDIR $ENV{QTDIR} CACHE STRING "Qt install path")
 endif()
 

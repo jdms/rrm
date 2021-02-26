@@ -1,167 +1,175 @@
-RRM -- November 2018 release
-============================
+RRM
+===
 
-The Rapid Reservoir Modelling prototype is free software (mostly GPLv3,
-with a few components and libraries having different, yet compatible,
-licenses -- libraries' licenses are available in the libraries'
-directories).
+Exploring uncertainty with interactive prototyping of reservoir geology
+-----------------------------------------------------------------------
 
-It is composed of four main pieces:
+RRM provides a unified graphical user interface (GUI) containing all the
+necessary tools to create, visualize and test conceptual models built from
+cross-section and contour sketches. At its core sits a new modelling framework,
+designed to create models with guarantees of geologic consistency.
 
-1.  a graphical user interface (GUI) that processes sketches and user
-    inputs (such as pictures, etc.) to create geologic models, and
-    provides multiple features to visualize and interact with user
-    created geological model;
+RRM is built to allow interactive operation: modelling and visualization of
+individual surfaces are performed in milliseconds on commodity, over the shelf
+hardware and computational time scales linearly with the number of surfaces.
 
-2.  a modeller library that effectively transforms user inputs into a
-    correct geological model;
+New versions of RRM, and these notes can be found at the [git
+repository](https://bitbucket.org:rapidreservoirmodelling/rrm-rc).
 
-3.  a flow diagnostics GUI that allows setting petrophysical and fluid
-    properties for flow simulation, and provides functionality to
-    visualize the results of flow computations;
 
-4.  and a flow diagnostics library that tetrahedralizes the models and
-    computes flow diagnostics.
+## Downloads
 
-The RRM prototype is under active development, and improvements to both
-the prototype and the build process are frequent. New versions of the
-prototype, and these notes can be found at the [RRM git
-repository](https://bitbucket.org:rapidreservoirmodelling/rrm).
+The latest stable release can be found at:
 
-Compilling RRM
---------------
+| Platform                      | Files                                                                                   |
+|-------------------------------|-----------------------------------------------------------------------------------------|
+| Windows ZIP                   | [RRM.zip](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/downloads/rrm_latest.zip)|
 
-The RRM prototype currently depends on the following external software,
-that must be obtained and properly installed before RRM can be compiled.
+To run RRM, unpack a ZIP archive to your preferred folder and simply run the
+executable `RRM.exe` (installation is not required).  All Windows binaries have
+been tested in Windows 10.
 
-For 32bit builds:
 
--   The Microsoft Visual Studio 2013 (32bit) compiler, available from
-    Microsoft (this dependency is transitory, it was required for
-    compatibility with libraries that were recently removed from the
-    source code -- RRM is portable and can be compiled with newer
-    versions of the Microsoft compiler or GCC);
+## Building RRM form source
 
--   [Qt](https://www.qt.io/download), version 5.8 (ms2013 build) for the
-    GUI;
+### Requirements
 
-For 64bit builds:
+RRM uses the [CMake](https://cmake.org/download/) (version 3.10 or higher is
+required) build system, and it currently depends on the following external
+libraries that must be obtained and properly installed before RRM can be
+compiled.
 
--   The Microsoft Visual Studio 2017 compiler, available from Microsoft;
+#. [Qt5](https://www.qt.io/download);
 
--   [Qt](https://www.qt.io/download), version 5.8 (ms2017\_64 build) for
-    the GUI;
+#. [Eigen3](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 
-All versions depend on the cmake build system:
+#. [Glew](http://glew.sourceforge.net/)
 
--   [CMake](https://cmake.org/download/), version 3.10 or higher, a
-    modern, multi platform, build system.
+Instructions on how to obtain these libraries are platform dependent and will
+be provided below.  [Git](https://git-scm.com/downloads) is also required.
 
-### Using CMake
 
-To create the config files that are necessary to compile the prototype,
-we recommend creating a `build` directory inside the project's main
-source directory. In what follows, we will describe how to run cmake
-from Visual Studio's "Native Tools Command Prompt".
+### Building on Windows x64
 
-We note that the cmake utility is accompanied by a GUI interface
-(cmake-gui) that allows tweaking building options from the GUI, and may
-be used instead of the command line approach we adopt in this guide.
+RRM supports 64bit builds with the [Microsoft Visual Studio
+2019](https://visualstudio.microsoft.com/vs/) compiler in Windows.  In what
+follows we will require that both `git` and `cmake` be available in the user's
+`PATH`.  For the sake of these steps, the versions of `git` and `cmake` that
+are bundled with Visual Studio 2019 are sufficient.
 
-We assume that a "build" folder was created inside RRM's source tree.
-CMake uses the "CMakeLists.txt" file provided with RRM (which is found
-in RRM's root source directory) to properly configure the whole project,
-however, RRM default configurations may not be adequate for every build.
-We name two configurations that one may want to change. Both changes can
-be made in RRM's main CMakeLists.txt file or in the aforementioned
-cmake-gui utility.
+#### Installing Qt, Eigen3 and GLEW
 
-1.  To choose whether RRM will be compiled in release or debug mode,
-    change the `RRM_BUILD_TYPE` variable to `Release` or `Debug`,
-    accordingly. Alternativelly, one may prefer to use option
-    `RelWithDebInfo` to build an optimized binary with debugger
-    sysmbols.
+In Windows, RRM requires the use of the
+[vcpkg](https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=msvc-160) (see
+also [this link](https://vcpkg.readthedocs.io/en/latest/) for more details on
+using this tool) package manager to install Qt, Eigen3 and GLEW.  We'll assume
+that `vcpkg` is installed to `C:\dev\vcpkg`, as in the example:
 
-2.  RRM assumes by default that Qt was installed into its default folder
-    `C:\Qt`, and Qt's cmake files can be found at:
-    1.  `C:\Qt\5.8\msvc2013\lib\cmake\Qt5` (for 32bit builds); or
-    2.  `C:\Qt\5.10\msvc2017_x64\lib\cmake\Qt5` (for 64bit builds).
+```
+git clone https://github.com/microsoft/vcpkg C:\dev\vcpkg
+```
 
-    This choice is controlled by variable `Qt5_DIR`.
+And from the `C:\dev\vcpkg` directory issue:
 
-From inside this "build" directory, one of the following approaches
-should be followed:
+```
+bootstrap-vcpkg.bat
+vcpkg.exe install qt5:x64-windows eigen3:x64-windows glew:x64-windows
+```
 
-### Compiling RRM from the command line:
+#### Running CMake
 
-First, issue the command:
+We will describe how to run CMake from Visual Studio's "x64 Native Tools
+Command Prompt". It is also possible to configure the project directly from
+Visual Studio -- more information can be found from Visual Studio's and `vcpkg`
+help documents. Assuming that `vcpkg` was installed in `C:\dev\vcpkg` as in the
+previous step, we create a `build` folder inside RRM's source tree (here
+denoted as `rrm_root`) and issue the command:
 
-        > C:\path_to_rrm_source\build\cmake .. -G "NMake Makefiles" 
+```
+rrm_root\build\cmake .. -DCMAKE_TOOLCHAIN_FILE=C:\dev\vcpkg\scripts\buildsystems\vcpkg.cmake
+```
 
-from Visual Studio's command prompt, which creates a set of Makefiles
-that can be directly called by nmake as follows:
+This command creates and configures a Visual Studio project in the `build`
+directory.  The `-DCMAKE_TOOLCHAIN_FILE` option instructs CMake to use the
+versions of Qt5, Eigen3 and GLEW that were installed with `vcpkg`.
 
-        > C:\path_to_rrm_source\build\nmake
+To compile RRM in Release mode, use:
 
-This will compile RRM, and place its binary in dir
-`C:\path_to_rrm_source\build\bin`. Given its simplicity, this is the
-recommended approach.
+```
+rrm_root\build\cmake --build . --config Release
+```
 
-### Compiling RRM from Visual Studio:
+The binary, object files and resources will be build in folder
+`rrm_root\build\RRM\Release`.  Alternatively, one could also open the
+`rrm_root\build\RRM.sln` solution file, created in the first CMake run,
+directly from Visual Studio and continue from there.
 
-For 32bit builds, issue the command:
 
-        > C:\path_to_rrm_source\build\cmake .. -G "Visual Studio 2013"
+## Copyright
 
-For 64bit builds, issue the command:
+The [RRM project's](https://rapidreservoir.org) research results are a copyright of the respective current and past members:
 
-        > C:\path_to_rrm_source\build\cmake .. -G "Visual Studio 2017"
+### Department of Computer Science, University of Calgary, Canada
+Clarissa Coda Marques
+Julio Daniel Silva
+Felipe Moura de Carvalho
+Emilio Vital Brazil
+Sicilia Judice
+Fazilatur Rahman
+Mario Costa Sousa
 
-This creates a Visual Studio solution inside the "build directory",
-which can be immediately opened and inspected in Visual Studio as if it
-was created by Visual Studio itself. Details on how to use Visual Studio
-are out of the scope of this guide.
+### Heriot-Watt University, UK
+Dmytro Petrovskyy
+Zhao Zang
+Sebastian Geiger
 
-After compilation, Visual Studio will place RRM's binary into its
-predefined solution's path, which may differ from the "build" dir. An
-extra step is required (in comparison to the command line approach), in
-which the user has to manually copy file:
+### Imperial College London, UK
+Carl Jacquemyn
+Margaret E.H. Pataki
+Gary J. Hampson
+Matthew D. Jackson
 
-        > C:\path_to_rrm_source\libs\stratmod\stratmod\lib\stramod.dll
+This software also includes [third party
+libraries](https://bitbucket.org:rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md)
+developed outside of the RRM project. 
+An overview of these libraries including brief descriptions and the last known
+URL their code was made available at can be found
+[here](https://bitbucket.org:rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md).
+Please, check the source code for details.
 
-to RRM's binary dir (this step was automatically performed by cmake in
-the command line approach).
 
-Running RRM
------------
+## License
 
-After compilation, all support libraries should be copied to RRM's
-binary dir.
+RRM is Free Software released under the 
+[GPLv3](https://www.gnu.org/licenses/gpl.html) license.  It includes 
+[third party libraries](https://bitbucket.org:rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md)
+with other, compatible, licenses. An overview of these libraries including
+brief descriptions, the last known URL the code was made available at, the date
+it was retrieved, the license(s) in which the code was made available by their
+authors at the retrieving date, and URL links to publicly available copies of
+such licenses is available
+[here](https://bitbucket.org:rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md).
+Please, check the source code for details on the licenses that apply to each
+piece of software.
 
-First, the GLEW library (dll) must be copied into the bin folder. It can
-be found at:
 
-<http://glew.sourceforge.net>
+## Sponsors
 
-Second, Qt dlls must be copied into RRM's bin folder. Within a Visual
-Studio command prompt, and assuming that Qt was installed into its
-default dir, this can be accomplished with the following command.
+This software was developed during the first phase of the [RRM
+project](https://rapidreservoir.org), which was sponsored by:
 
-For 32bit builds:
+#. Equinor
+#. ExxonMobil
+#. IBM Research Brazil/IBM Centre for Advanced Studies (CAS) Alberta
+#. Petrobras
+#. Shell 
 
-        > C:\Qt\5.8\msvc2013\bin\windeployqt.exe --release RRM.exe
+The current phase of the project is being sponsored by:
 
-For 64bit builds:
+#. Equinor
+#. ExxonMobil
+#. Petronas 
+#. Petrobras
+#. Shell 
 
-        > C:\Qt\5.8\msvc2017_64\bin\windeployqt.exe --release RRM.exe
-
-To use Qt libraries with debugger symbols, substitute `release` by
-`debug` in the command above.
-
-After release, these libraries will be copied into RRM's source tree,
-inside directory "dlls", for both "Release" and "Debug" binaries. For
-example, assuming RRM was compiled in release mode following the command
-line approach of the previous section, the following command will be
-sufficient:
-
-        > C:\path_to_rrm_source> copy dlls\release\*.* build\bin
+We thank our present and past sponsors for helping to make this research possible.

@@ -76,20 +76,18 @@ if(NOT DEFINED STRATMOD_BUILD_VTK_EXPORTER_UTILITY)
     option(STRATMOD_BUILD_VTK_EXPORTER_UTILITY   "Build utility to export models to vtk"    ON)
 endif()
 
-# # Detects whether this is a top-level project
-# get_directory_property(STRATMOD_PARENT_DIR PARENT_DIRECTORY)
-# if(NOT STRATMOD_PARENT_DIR)
-#     set(STRATMOD_TOP_LEVEL_PROJECT ON)
-# else()
-#     set(STRATMOD_TOP_LEVEL_PROJECT OFF)
-# endif()
+# Detects whether this is a top-level project
+get_directory_property(STRATMOD_PARENT_DIR PARENT_DIRECTORY)
+if(NOT STRATMOD_PARENT_DIR)
+    set(STRATMOD_TOP_LEVEL_PROJECT ON)
+else()
+    set(STRATMOD_TOP_LEVEL_PROJECT OFF)
+endif()
 
-set(STRATMOD_TOP_LEVEL_PROJECT OFF)
-
-option(STRATMOD_BUILD_DOCS           "Build documentation with Doxygen"                 ${STRATMOD_TOP_LEVEL_PROJECT})
-option(STRATMOD_BUILD_TESTS          "Build with support for testing using Catch"       ${STRATMOD_TOP_LEVEL_PROJECT})
-option(STRATMOD_BUILD_EXAMPLE        "Build examples"                                   ${STRATMOD_TOP_LEVEL_PROJECT}) 
-option(STRATMOD_BUILD_UTILITIES      "Build command line utilities"                     ${STRATMOD_TOP_LEVEL_PROJECT}) 
+option(STRATMOD_BUILD_DOCS           "Build documentation with Doxygen"                 OFF)
+option(STRATMOD_BUILD_TESTS          "Build with support for testing using Catch"       OFF)
+option(STRATMOD_BUILD_EXAMPLE        "Build examples"                                   OFF) 
+option(STRATMOD_BUILD_UTILITIES      "Build command line utilities"                     OFF) 
 
 # regarding testing, see also: https://cmake.org/Wiki/CMake/Testing_With_CTest
 
@@ -346,7 +344,11 @@ if(STRATMOD_BUILD_SHARED_LIBRARY)
     target_compile_options(stratmod PUBLIC -DSTRATMOD_BUILD_SHARED_LIBRARY)
 endif()
 
-target_link_libraries(stratmod PRIVATE planin)
+if(STRATMOD_TOP_LEVEL_PROJECT)
+    target_link_libraries(stratmod PRIVATE planin)
+else()
+    target_link_libraries(stratmod PUBLIC planin)
+endif()
 
 if( ${STRATMOD_BUILD_USING_OPENMP} )
     target_link_libraries(stratmod PUBLIC OpenMP::OpenMP_CXX)
@@ -368,48 +370,50 @@ add_dependencies(stratmod planin)
 
 
 # Prepare exports
-if(STRATMOD_BUILD_SHARED_LIBRARY)
-    include(CMakePackageConfigHelpers)
-    write_basic_package_version_file(
-        stratmodConfigVersion.cmake
-        VERSION ${STRATMOD_VERSION}
-        COMPATIBILITY AnyNewerVersion
-        )
+if(STRATMOD_TOP_LEVEL_PROJECT)
+    if(STRATMOD_BUILD_SHARED_LIBRARY)
+        include(CMakePackageConfigHelpers)
+        write_basic_package_version_file(
+            stratmodConfigVersion.cmake
+            VERSION ${STRATMOD_VERSION}
+            COMPATIBILITY AnyNewerVersion
+            )
 
-    # set(INSTALL_DESTINATION ${CMAKE_BINARY_DIR}/stratmod)
+        # set(INSTALL_DESTINATION ${CMAKE_BINARY_DIR}/stratmod)
 
-    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-        set(CMAKE_INSTALL_PREFIX "libs/stratmod" CACHE PATH "..." FORCE)
-    endif()
+        if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+            set(CMAKE_INSTALL_PREFIX "libs/stratmod" CACHE PATH "..." FORCE)
+        endif()
 
-    install(TARGETS stratmod
-        EXPORT stratmodTargets
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION ${INSTALL_DESTINATION}/include
-        # COMPONENT library
-        )
+        install(TARGETS stratmod
+            EXPORT stratmodTargets
+            ARCHIVE DESTINATION lib
+            LIBRARY DESTINATION lib
+            RUNTIME DESTINATION bin
+            INCLUDES DESTINATION ${INSTALL_DESTINATION}/include
+            # COMPONENT library
+            )
 
-    install(EXPORT stratmodTargets
-        FILE stratmodTargets.cmake
-        NAMESPACE stratmod::
-        DESTINATION ${INSTALL_DESTINATION}/cmake
-        )
+        install(EXPORT stratmodTargets
+            FILE stratmodTargets.cmake
+            NAMESPACE stratmod::
+            DESTINATION ${INSTALL_DESTINATION}/cmake
+            )
 
-    # install(DIRECTORY ${STRATMOD_INCLUDE_DIR}
-    #     DESTINATION ${INSTALL_DESTINATION}/include
-    #     )
+        # install(DIRECTORY ${STRATMOD_INCLUDE_DIR}
+        #     DESTINATION ${INSTALL_DESTINATION}/include
+        #     )
 
-    configure_file(stratmodConfig.cmake.in stratmodConfig.cmake @ONLY)
-    install(
-        FILES 
-        "${CMAKE_CURRENT_BINARY_DIR}/stratmodConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/stratmodConfigVersion.cmake"
-        DESTINATION 
-        cmake
-        )
-endif() #if(STRATMOD_BUILD_SHARED_LIBRARY)
+        configure_file(stratmodConfig.cmake.in stratmodConfig.cmake @ONLY)
+        install(
+            FILES 
+            "${CMAKE_CURRENT_BINARY_DIR}/stratmodConfig.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/stratmodConfigVersion.cmake"
+            DESTINATION 
+            cmake
+            )
+    endif() #if(STRATMOD_BUILD_SHARED_LIBRARY)
+endif() #if(STRATMOD_TOP_LEVEL_PROJECT)
 
 ###############################################
 # Executables and utilities 
