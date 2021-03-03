@@ -15,16 +15,16 @@ individual surfaces are performed in milliseconds on commodity, over the shelf
 hardware and computational time scales linearly with the number of surfaces.
 
 New versions of RRM, and these notes can be found at the [git
-repository](https://bitbucket.org/rapidreservoirmodelling/rrm-rc).
+repository](https://bitbucket.org/rapidreservoirmodelling/rrm).
 
 
 ## Downloads
 
 The latest stable release can be found at:
 
-| Platform                      | Files                                                                                   |
-|-------------------------------|-----------------------------------------------------------------------------------------|
-| Windows ZIP                   | [RRM.zip](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/downloads/RRM.zip)       |
+| Platform                | Files                                                                                                                          |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| Windows ZIP (portable)  | [rrm-1.0.0-rc-windows-x86_64.zip](https://bitbucket.org/rapidreservoirmodelling/rrm/downloads/rrm-1.0.0-rc-windows-x86_64.zip) |
 
 To run RRM, unpack a ZIP archive to your preferred folder and simply run the
 executable `RRM.exe` (installation is not required).  All Windows binaries have
@@ -131,11 +131,11 @@ Gary J. Hampson
 Matthew D. Jackson  
 
 This software also includes [third party
-libraries](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md)
+libraries](https://bitbucket.org/rapidreservoirmodelling/rrm/src/main/rrm_3rd_party_libraries.md)
 developed outside of the RRM project. 
 An overview of these libraries including brief descriptions and the last known
 URL their code was made available at can be found
-[here](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md).
+[here](https://bitbucket.org/rapidreservoirmodelling/rrm/src/main/rrm_3rd_party_libraries.md).
 Please, check the source code for details.
 
 
@@ -143,13 +143,13 @@ Please, check the source code for details.
 
 RRM is Free Software released under the 
 [GPLv3](https://www.gnu.org/licenses/gpl.html) license.  It includes 
-[third party libraries](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md)
-with other, compatible, licenses. An overview of these libraries including
+[third party libraries](https://bitbucket.org/rapidreservoirmodelling/rrm/src/main/rrm_3rd_party_libraries.md)
+with other licenses, which we understand to be compatible. An overview of these libraries including
 brief descriptions, the last known URL the code was made available at, the date
 it was retrieved, the license(s) in which the code was made available by their
 authors at the retrieving date, and URL links to publicly available copies of
 such licenses is available
-[here](https://bitbucket.org/rapidreservoirmodelling/rrm-rc/src/main/rrm_3rd_party_libraries.md).
+[here](https://bitbucket.org/rapidreservoirmodelling/rrm/src/main/rrm_3rd_party_libraries.md).
 Please, check the source code for details on the licenses that apply to each
 piece of software.
 
