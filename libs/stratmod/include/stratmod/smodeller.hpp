@@ -63,7 +63,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
         /**
          * @brief Default destructor.
          **/
-        virtual ~SModeller(); 
+        ~SModeller(); 
 
         /** 
          * @brief Copy constructor is deleted.  

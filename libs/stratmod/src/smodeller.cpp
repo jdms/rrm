@@ -53,7 +53,7 @@ SModeller& SModeller::Instance()
     return instance;
 }
 
-[[deprecated("The SModeller class is a singleton, use SModeller::Instance() instead.")]]
+/* [[deprecated("The SModeller class is a singleton, use SModeller::Instance() instead.")]] */
 SModeller::SModeller() : 
     pimpl_( new SModellerImplementation() ) 
 {
