@@ -1,0 +1,49 @@
+#ifndef RRM_VERSION_H
+#define RRM_VERSION_H
+
+/**
+ * \file version.h
+ *
+ * \brief Version information for RRM.
+ */
+
+/// The major version.
+#define RRM_VERSION_MAJOR  @rrm_version_major@
+/// The minor version.
+#define RRM_VERSION_MINOR  @rrm_version_minor@
+/// The patch version.
+#define RRM_VERSION_PATCH  @rrm_version_patch@
+/// The full version as a string.
+#define RRM_VERSION        "@rrm_version@"
+
+#cmakedefine RRM_BUILT_FROM_GIT
+#cmakedefine RRM_VERSION_FROM_GIT_TAG
+
+/// The full git hash of the build.
+#define RRM_GIT_HASH       "@rrm_git_hash@"
+/// A short, unique (at the time of creation) hash prefix.
+#define RRM_GIT_HASH_SHORT "@rrm_git_hash_short@"
+/// A string describing the 'dirty' state of the build tree.
+#define RRM_GIT_DIRTY      "@rrm_git_dirty@"
+/// The git version information.
+#define RRM_GIT_VERSION    RRM_GIT_HASH RRM_GIT_DIRTY
+/* #define RRM_GIT_VERSION    RRM_GIT_HASH_SHORT RRM_GIT_DIRTY */
+
+#define RRM_GIT_TAG        "@rrm_git_tag@"
+
+/**
+ * \def RRM_VERSION_FULL
+ *
+ * \brief The full version string.
+ */
+#ifdef RRM_BUILT_FROM_GIT
+    #ifdef RRM_VERSION_FROM_GIT_TAG
+            #define RRM_VERSION_FULL   RRM_VERSION " (git tag: " RRM_GIT_TAG ")"
+        #else
+            #define RRM_VERSION_FULL   RRM_VERSION " (git hash: " RRM_GIT_VERSION ")"
+    #endif // RRM_VERSION_FROM_GIT_TAG
+#else
+    #define RRM_VERSION_FULL   RRM_VERSION " (built from unversioned source)"
+#endif // RRM_BUILT_FROM_GIT
+
+#endif // RRM_VERSION_H

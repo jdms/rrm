@@ -20,12 +20,15 @@
  */
 
 #include "about_widget.hpp"
+#include "version.h"
 
 AboutWidget::AboutWidget ( QWidget *parent ) : QDialog ( parent )
 {
 	// TODO Auto-generated constructor stub
 	ui = new Ui::AboutDialog;
 	ui->setupUi ( this );
+	auto about_text = ui->about_label->text();
+	ui->about_label->setText(about_text.arg(RRM_VERSION_FULL));
 	setWindowFlags(Qt::Dialog);
 }
 
