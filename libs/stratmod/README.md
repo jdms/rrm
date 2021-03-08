@@ -4,9 +4,9 @@ Stratmod
 _Correct_ geology for everyone
 ------------------------------
 
-Julio Daniel Machado Silva
-Department of Computer Science
-University of Calgary
+Julio Daniel Machado Silva  
+Department of Computer Science  
+University of Calgary  
 
 ## Description
 
