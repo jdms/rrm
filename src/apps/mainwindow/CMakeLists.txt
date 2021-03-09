@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.1 FATAL_ERROR )
 
-project( MainApp VERSION 3.1 LANGUAGES CXX )
+project( MainApp LANGUAGES CXX )
 
 find_package( Qt5Widgets REQUIRED )
 
@@ -37,6 +37,10 @@ set( MAINWINDOW_SOURCES      main.cpp
 
 #qt5_wrap_cpp( MAINWINDOW_MOC_SRCS ${MAINWINDOW_MOC_HEADERS} )
 
+# Use cmake to automatically update RRM version and git
+# repository info in the about window.
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/about)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/about)
 
 add_subdirectory( ../3dview ${CMAKE_BINARY_DIR}/3dview )
 include_directories( ${3DVIEW_HEADERS} )

@@ -1,14 +1,14 @@
-cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.14 FATAL_ERROR)
 
-project(RRM CXX)
+project(RRM_Suite CXX)
 
-set(VERSION_MAJOR 1 CACHE STRING "Project major version number.")
-set(VERSION_MINOR 0 CACHE STRING "Project minor version number.")
-set(VERSION_PATCH 0 CACHE STRING "Project patch version number.")
-mark_as_advanced(VERSION_MAJOR VERSION_MINOR VERSION_PATCH)
+set(rrm_version_major 1)
+set(rrm_version_minor 0)
+set(rrm_version_patch 1)
+mark_as_advanced(rrm_version_major rrm_version_minor rrm_version_patch)
 
-set(RRM_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-mark_as_advanced(RRM_VERSION)
+set(rrm_version "${rrm_version_major}.${rrm_version_minor}.${rrm_version_patch}")
+mark_as_advanced(rrm_version)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
