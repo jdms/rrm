@@ -1,7 +1,7 @@
 RRM
 ===
 
-Exploring uncertainty with interactive prototyping of reservoir geology
+Sketch-based geological 3D modelling: Exploring uncertainty with interactive prototyping
 -----------------------------------------------------------------------
 
 RRM provides a unified graphical user interface (GUI) containing all the
@@ -17,6 +17,9 @@ hardware and computational time scales linearly with the number of surfaces.
 New versions of RRM, and these notes can be found at the [git
 repository](https://bitbucket.org/rapidreservoirmodelling/rrm).
 
+Video tutorials:
+ [How to sketch in 3D?](https://youtu.be/aRD9ENV4BGU)
+and [How to use geological operators?](https://youtu.be/Sy_OubDrvX8)
 
 ## Downloads
 
