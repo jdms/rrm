@@ -25,9 +25,9 @@ and [How to use geological operators?](https://youtu.be/Sy_OubDrvX8)
 
 The latest stable release can be found at:
 
-| Platform                | Files                                                                                                                          |
-|-------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| Windows ZIP (portable)  | [rrm-1.0.0-rc-windows-x86_64.zip](https://bitbucket.org/rapidreservoirmodelling/rrm/downloads/rrm-1.0.0-rc-windows-x86_64.zip) |
+| Platform                | Files                                                                                                                     |
+|-------------------------|------------------------------------------------------------------------------------------------------------- -------------|
+| Windows ZIP (portable)  | [rrm-1.0.1-windows-x86_64.zip](https://bitbucket.org/rapidreservoirmodelling/rrm/downloads/rrm-1.0.1-windows-x86_64.zip)  |
 
 To run RRM, unpack a ZIP archive to your preferred folder and simply run the
 executable `RRM.exe` (installation is not required).  All Windows binaries have
