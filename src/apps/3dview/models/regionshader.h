@@ -192,6 +192,8 @@ class RegionShader: public Shader
 
         std::shared_ptr< Regions > raw;                                 /**< Shared point to the data structure, from where the geometry, visibility and others relevants information to the rendering should be retrieved. */
 
+        bool must_load_data = true;
+        size_t num_vertices{};
 };
 
 

@@ -31,6 +31,7 @@
 #define REGIONS_H
 
 #include <iostream>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -176,14 +177,14 @@ class Regions: public Object
         * @param name a new name to the region
         * @return void.
         */
-        /* void setName( const std::string& name_ ); */
+        void setName( const std::string& name_ );
 
 
         /**
         * Method to return the name of the region
         * @return std::string the name of the region
         */
-        /* std::string getName() const; */
+        std::string getName() const;
 
 
         /** Method to set the lower boundary of the region
@@ -269,7 +270,7 @@ class Regions: public Object
         * @param b the blue component of the color (integer)
         * @return void.
         */
-        /* void setColor( int r_, int g_, int b_ ); */
+        void setColor( int r_, int g_, int b_ );
 
 
         /**
@@ -279,7 +280,7 @@ class Regions: public Object
         * @param b reference to the blue component of the color (integer)
         * @return void.
         */
-        /* void getColor( int& r_, int& g_, int& b_ ) const; */
+        void getColor( int& r_, int& g_, int& b_ ) const;
 
 
         /**
@@ -344,6 +345,20 @@ class Regions: public Object
             Object::read( json_ );
         }
 
+        /**
+        * This method returns true if the region geometry was updated
+        * since the last time any of getVertices(), getTetrahedralCells() or 
+        * getTriangleCells() was called.
+        * @return bool.
+        */
+        bool geometryWasUpdatedSinceLastRead() const;
+
+        /**
+        * This method returns true if the region color was updated
+        * since the last time getColor() was called.
+        * @return bool.
+        */
+        bool colorWasUpdatedSinceLastRead() const;
 
 
     private:
@@ -405,6 +420,13 @@ class Regions: public Object
         double volume = 0;                                              /**< The volume of the region */
 
         /* Color color;                                                    /**< The color of the region *1/ */
+
+        mutable std::mutex geometry_mutex;
+        mutable bool vertices_list_is_fresh = false;
+        mutable bool tetrahedral_mesh_is_fresh = false;
+
+        mutable std::mutex color_mutex;
+        mutable bool color_is_fresh = false;
 };
 
 #endif // REGIONS_H

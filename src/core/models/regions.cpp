@@ -71,22 +71,24 @@ std::size_t Regions::getIndex() const
 
 void Regions::setTetrahedralCells( const std::vector< std::size_t >& faces_ )
 {
+    std::lock_guard<std::mutex> g(geometry_mutex);
 
     index_cells.clear();
     index_cells.assign( faces_.begin(), faces_.end() );
+    tetrahedral_mesh_is_fresh = true;
 
 }
 
 
 void Regions::getTriangleCells( std::vector< std::size_t >& cells_ ) const
 {
-    cells_.clear();
+    std::lock_guard<std::mutex> g(geometry_mutex);
 
+    cells_.clear();
 
     std::size_t number_of_tetrahedrals = index_cells.size()/4;
     std::cout << "Number of tetrahedrals: " << number_of_tetrahedrals << std::endl
               << std::flush;
-
 
     for( std::size_t i = 0; i < number_of_tetrahedrals; ++i )
     {
@@ -113,13 +115,17 @@ void Regions::getTriangleCells( std::vector< std::size_t >& cells_ ) const
 
     }
 
+    tetrahedral_mesh_is_fresh = false;
 }
 
 
 void Regions::getTetrahedralCells( std::vector< std::size_t >& cells_ ) const
 {
+    std::lock_guard<std::mutex> g(geometry_mutex);
+
     cells_.clear();
     cells_.assign( index_cells.begin(), index_cells.end() );
+    tetrahedral_mesh_is_fresh = false;
 }
 
 
@@ -131,15 +137,21 @@ void Regions::clearCells()
 
 void Regions::setVertices( const std::vector< double >& vertices_  )
 {
+    std::lock_guard<std::mutex> g(geometry_mutex);
+
     vertices.clear();
     vertices.assign( vertices_.begin(), vertices_.end() );
+    vertices_list_is_fresh = true;
 }
 
 
 void Regions::getVertices( std::vector< double >& vertices_  ) const
 {
+    std::lock_guard<std::mutex> g(geometry_mutex);
+
     vertices_.clear();
     vertices_.assign( vertices.begin(), vertices.end() );
+    vertices_list_is_fresh = false;
 }
 
 
@@ -182,17 +194,19 @@ void Regions::getPoint( double& x_, double& y_, double& z_ ) const
 }
 
 
-/* void Regions::setName( const std::string& name_ ) */
-/* { */
+void Regions::setName( const std::string& name_ )
+{
+    Object::setName(name_);
 /*     name.clear(); */
 /*     name = name_; */
-/* } */
+}
 
 
-/* std::string Regions::getName() const */
-/* { */
+std::string Regions::getName() const
+{
+    return Object::getName();
 /*     return name; */
-/* } */
+}
 
 
 
@@ -232,20 +246,22 @@ void Regions::getMaxMin( double& maxx_, double& maxy_, double& maxz_,
 }
 
 
-/* void Regions::setColor( int r_, int g_, int b_ ) */
-/* { */
-/*     color.r = r_; */
-/*     color.g = g_; */
-/*     color.b = b_; */
-/* } */
+void Regions::setColor( int r_, int g_, int b_ )
+{
+    std::lock_guard<std::mutex> g(color_mutex);
+
+    Object::setColor(r_, g_, b_);
+    color_is_fresh = true;
+}
 
 
-/* void Regions::getColor( int& r_, int& g_, int& b_ ) const */
-/* { */
-/*     r_ = color.r; */
-/*     g_ = color.g; */
-/*     b_ = color.b; */
-/* } */
+void Regions::getColor( int& r_, int& g_, int& b_ ) const
+{
+    std::lock_guard<std::mutex> g(color_mutex);
+
+    Object::getColor(r_, g_, b_);
+    color_is_fresh = false;
+}
 
 void Regions::setVolume( double volume_ )
 {
@@ -296,3 +312,18 @@ void Regions::initialize()
 
     volume = 0;
 }
+
+bool Regions::geometryWasUpdatedSinceLastRead() const
+{
+    std::lock_guard<std::mutex> g(geometry_mutex);
+
+    return vertices_list_is_fresh || tetrahedral_mesh_is_fresh;
+}
+
+bool Regions::colorWasUpdatedSinceLastRead() const
+{
+    std::lock_guard<std::mutex> g(color_mutex);
+
+    return color_is_fresh;
+}
+
