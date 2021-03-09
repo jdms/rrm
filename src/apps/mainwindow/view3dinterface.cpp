@@ -93,7 +93,7 @@ void View3dInterface::createView3dActions()
     connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]( double depth_ )
     { window->app->moveMainCrossSection( depth_ ); } );
 
-    connect( sl_depth_csection, &RealFeaturedSlider::sliderReleased, [=]()
+    connect( sl_depth_csection, &RealFeaturedSlider::sliderMoved, [=]()
     { window->app->updateRegionBoundary(); } );
 
     connect( sl_depth_csection, &RealFeaturedSlider::markValue, [=]( const double& depth_, QColor color_ )

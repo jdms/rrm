@@ -45,6 +45,7 @@ RegionShader::RegionShader( const std::shared_ptr< Regions >& raw_ )
 void RegionShader::setRegion( const std::shared_ptr< Regions >& raw_ )
 {
     raw = raw_;
+    must_load_data = true;
     loadBuffers();
 }
 
@@ -52,36 +53,47 @@ void RegionShader::setRegion( const std::shared_ptr< Regions >& raw_ )
 void RegionShader::loadBuffers()
 {
 
-    std::vector< double > vertices_double_;
-    raw->getVertices( vertices_double_ );
+    if (must_load_data || raw->geometryWasUpdatedSinceLastRead())
+    {
+        std::vector< double > vertices_double_;
+        raw->getVertices( vertices_double_ );
 
-    std::vector< float > vertices_ = Shader::convertToFloat( vertices_double_ );
-    if( vertices_.empty() == true ) return;
+        std::vector< float > vertices_ = Shader::convertToFloat( vertices_double_ );
+        if( vertices_.empty() == true ) return;
 
-    // getting the max and min points to normalize the vertices
-    double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
-    raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
+        // getting the max and min points to normalize the vertices
+        double maxx_ = 0, maxy_ = 0, maxz_ = 0, minx_ = 0, miny_ = 0, minz_ = 0;
+        raw->getMaxMin( maxx_, maxy_, maxz_, minx_, miny_, minz_ );
 
-    Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
-    Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );
-    vertices_ = Shader::normalize( vertices_, max, min, 3 );
+        Eigen::Vector3f min( static_cast< float >( minx_ ), static_cast< float >( miny_ ), static_cast< float >( minz_ ) );
+        Eigen::Vector3f max( static_cast< float >( maxx_ ), static_cast< float >( maxy_ ), static_cast< float >( maxz_ ) );
+        vertices_ = Shader::normalize( vertices_, max, min, 3 );
 
 
-    //getting the triangles that make the tetrahedrals cells
-    std::vector< std::size_t > faces_size_t_;
-    raw->getTriangleCells( faces_size_t_ );
+        //getting the triangles that make the tetrahedrals cells
+        std::vector< std::size_t > faces_size_t_;
+        raw->getTriangleCells( faces_size_t_ );
 
-    std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( faces_size_t_ );
-    std::vector< GLfloat > normals_;
+        std::vector< GLuint > faces_ = Shader::convertToUnsignedInt( faces_size_t_ );
+        std::vector< GLfloat > normals_;
 
-    int r, g, b;
-    raw->getColor( r, g, b );
+        std::size_t nvertices = vertices_.size()/3;
+        num_vertices = nvertices;
 
-    std::size_t nvertices = vertices_.size()/3;
+        //update opengl buffers
+        updateGeometryBuffers( vertices_, normals_, faces_ );
+    }
 
-    //uploading the vertices and colors buffer
-    updateGeometryBuffers( vertices_, normals_, faces_ );
-    updateColorBuffers( nvertices, r, g, b );
+    if(must_load_data || raw->colorWasUpdatedSinceLastRead())
+    {
+        int r, g, b;
+        raw->getColor( r, g, b );
+
+        //update opengl buffers
+        updateColorBuffers( num_vertices, r, g, b );
+    }
+
+    must_load_data = false;
 }
 
 
