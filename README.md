@@ -43,11 +43,15 @@ required) build system, and it currently depends on the following external
 libraries that must be obtained and properly installed before RRM can be
 compiled.
 
-- [Qt5](https://www.qt.io/download)
+- [Qt5] (components: Core, Gui, Widgets, OpenGL, Svg)
 
-- [Eigen3](http://eigen.tuxfamily.org/index.php?title=Main_Page)
+- [Eigen3]
 
-- [Glew](http://glew.sourceforge.net/)
+- [Glew]
+
+[Qt5]: https://www.qt.io/download
+[Eigen3]: http://eigen.tuxfamily.org/index.php?title=Main_Page
+[Glew]: http://glew.sourceforge.net/
 
 Instructions on how to obtain these libraries are platform dependent and will
 be provided below.  [Git](https://git-scm.com/downloads) is also required.

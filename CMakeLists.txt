@@ -20,7 +20,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ###############################################
 
 # Leave empty to use the (platform dependent) default build type
-set(RRM_BUILD_TYPE "" CACHE STRING
+set(RRM_BUILD_TYPE "RelWithDebInfo" CACHE STRING
     "Leave empty ot set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
 
 OPTION(RRM_BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod"  ON)
@@ -102,7 +102,7 @@ if(QTDIR AND (NOT DEFINED Qt5_DIR))
     list(APPEND CMAKE_PREFIX_PATH ${QTDIR})
 endif()
 
-find_package(Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Svg Widgets OpenGL REQUIRED)
 
 ### Tucano settings
 set( TUCANO_DIR ${CMAKE_SOURCE_DIR}/libs/Tucano )
