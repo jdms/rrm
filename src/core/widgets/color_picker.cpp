@@ -98,7 +98,7 @@ void ColorPicker::colorChanged( const QColor& color_ )
 
     // this create a small icon with the color on the toolbutton
     QPixmap px( 15, 15 );
-    px.fill( QColor( color_.red(), color_.green(), color_.blue() ) );
+    px.fill( QColor( color_.red(), color_.green(), color_.blue(), color_.alpha() ) );
     setIcon( px );
 }
 

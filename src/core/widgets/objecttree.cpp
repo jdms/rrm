@@ -398,7 +398,10 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
 
                     double volume1_ = volume_regions[ obj1_->getIndex() ];
                     double perc1_ = 100*( volume1_/total_ );
-                    obj1_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                    if (perc1_ >= 0.1)
+                        obj1_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                    else
+                        obj1_->setText( COLUMN_DETAILS, QString( "<0.1%" ) );
                 }
 
                 if( label_domains->childCount() > 0 )
@@ -410,7 +413,10 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
                         if( domain_ == nullptr ) continue;
                         double volume1_ = volume_domains[ domain_->getIndex() ];
                         double perc1_ = 100*( volume1_/total_ );
-                        domain_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                        if (perc1_ >= 0.1)
+                            domain_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                        else
+                            domain_->setText( COLUMN_DETAILS, QString( "<0.1%" ) );
                     }
                 }
             }
@@ -856,6 +862,12 @@ bool ObjectTree::createDomain( std::size_t index_ )
     domain_->setCheckState( COLUMN_STATUS, Qt::Checked );
 
     label_domains->addChild( domain_ );
+
+    /* ColorPicker* colorpicker_ = new ColorPicker( this ); */
+    /* colorpicker_->setColor( QColor(0, 0, 0, 0) ); */
+    /* connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setDomainColor( index_, color_ ); } ); */
+
+    /* setItemWidget( domain_, COLUMN_COLOR, colorpicker_ ); */
     domains.addElement( index_, domain_ );
 
     // for each domain created it will exist an associated action

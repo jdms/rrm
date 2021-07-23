@@ -489,6 +489,11 @@ void MainWindow::createObjectTree()
         app->setDomainName( index_, name_ );
     } );
 
+    connect( object_tree, &ObjectTree::setDomainColor, [=]( std::size_t index_, const QColor& c_ )
+    {
+        app->setDomainColor( index_, c_.red(), c_.green(), c_.blue() );
+    } );
+
     connect( object_tree, &ObjectTree::createDomainOfRegions, [=]()
     {
         app->createDomain();

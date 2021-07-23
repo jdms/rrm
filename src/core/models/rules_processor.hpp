@@ -421,7 +421,7 @@
             bool getFrontBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges );
             bool getBackBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges );
 
-            bool getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list );
+            bool getTetrahedralMesh( std::vector< std::vector<double> > &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list );
 
             void getRegionVolumeList( std::vector<double>& volumes );
 

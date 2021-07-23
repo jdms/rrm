@@ -1827,11 +1827,51 @@ bool RulesProcessor::getBackBoundaryCrossSectionCurve(  std::vector< std::vector
 
 #include <fstream>
 
-bool RulesProcessor::getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list )
+bool RulesProcessor::getTetrahedralMesh( std::vector< std::vector<double> > &vertex_list, std::vector< std::vector<std::size_t> > &element_list )
 {
     stratmod::SUtilities u(modeller_);
+    std::vector<double> vertex_coordinates;
     bool success = (u.getTetrahedralMesh(vertex_coordinates, element_list) > 0);
 
+    auto vertex_map = [](const std::vector<std::size_t>& elements) -> std::map<std::size_t, std::size_t> {
+        std::map<std::size_t, std::size_t> dict;
+        std::size_t j = 0;
+        for (auto e : elements)
+        {
+            if (auto iter = dict.find(e); iter == dict.end())
+            {
+                dict[e] = j;
+                ++j;
+            }
+        }
+        
+        return dict;
+    };
+    
+    if (success)
+    {
+        vertex_list.resize(element_list.size());
+        for (std::size_t i = 0; i < element_list.size(); ++i)
+        {
+            auto& region_faces = element_list[i];
+            auto dict = vertex_map(region_faces);
+            std::vector<double> vertices(dict.size()*3);
+            
+            for (auto [vid, new_vid] : dict)
+            {
+                vertices[3*new_vid + 0] = vertex_coordinates[3*vid + 0];
+                vertices[3*new_vid + 1] = vertex_coordinates[3*vid + 1];
+                vertices[3*new_vid + 2] = vertex_coordinates[3*vid + 2];
+                
+            }
+            for (auto& vid : region_faces)
+            {
+                vid = dict[vid];
+            }
+            vertex_list[i] = std::move(vertices);
+        }
+    }
+    
     /* if ( success ) */
     /* { */
         /* std::vector<double> volumes; */

@@ -1209,7 +1209,7 @@ std::vector<std::size_t > Controller::defineRegions()
 
     // get tetrahedral mesh of the regions
 
-    std::vector< double > vertices_;
+    std::vector< std::vector<double> > vertices_;
     std::vector< std::vector< std::size_t > > regions_;
     bool status_ = rules_processor.getTetrahedralMesh( vertices_, regions_ );
 
@@ -1236,6 +1236,11 @@ std::vector<std::size_t > Controller::defineRegions()
     double volume_sum_ = 0.0;
     for ( unsigned int i = 0; i < number_of_regions_; ++i)
     {
+        if (volumes_[i] == 0.)
+        {
+            continue;
+        }
+        
         Color color_;
         color_.red = colors_[ 3*i ];
         color_.green = colors_[ 3*i + 1 ];
@@ -1243,7 +1248,7 @@ std::vector<std::size_t > Controller::defineRegions()
 
         RegionsPtr region_ = std::make_shared< Regions >();
         region_->setIndex( i );
-        region_->setVertices( vertices_ );
+        region_->setVertices( vertices_[i] );
         region_->setTetrahedralCells( regions_[ i ] );
         region_->setColor( color_.red, color_.green, color_.blue );
         region_->setVolume( volumes_[ i ] );
@@ -1255,6 +1260,21 @@ std::vector<std::size_t > Controller::defineRegions()
 
         // determining the boundary of the region intersected with the current cross-section
         getRegionCrossSectionBoundary( i );
+    }
+    
+    if (number_of_regions_ != model.regions.size())
+    {
+        colors_ = rules_processor.getRegionsColor( model.regions.size() );
+        std::size_t i = 0;
+        Color color_;
+        for (auto& [_, region] : model.regions)
+        {
+            color_.red = colors_[ 3*i ];
+            color_.green = colors_[ 3*i + 1 ];
+            color_.blue = colors_[ 3*i + 2 ];
+            region->setColor( color_.red, color_.green, color_.blue );
+            ++i;
+        }
     }
 
      model.volume->setVolume( volume_sum_ );
