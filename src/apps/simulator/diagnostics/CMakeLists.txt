@@ -8,5 +8,6 @@ project(diagnostics LANGUAGES CXX)
 ###############################################
 
 if (NOT TARGET diagnostics) 
-    add_library(diagnostics INTERFACE)
+    # add_library(diagnostics INTERFACE)
+    add_library(diagnostics ALIAS rrm_flow_diagnostics_lib)
 endif()

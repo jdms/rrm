@@ -30,7 +30,7 @@ OPTION(RRM_BUILD_IN_PREFIXED_BINARY_DIR "To simplify sharing in Windows"    ON)
 OPTION(RRM_BUILD_DEPLOY_QT
     "Automatically copy Qt resources to build dir (Windows only)"          OFF)
 
-OPTION(RRM_BUILD_FLOW_DIAGNOSTICS "Build flow diagnostics"                 OFF)
+OPTION(RRM_BUILD_FLOW_DIAGNOSTICS "Build flow diagnostics"                 ON)
 
 ### Execute options
 if(RRM_BUILD_TYPE)
