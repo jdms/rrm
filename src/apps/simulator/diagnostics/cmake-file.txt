@@ -1,0 +1,86 @@
+###############################################
+# Preliminaries  
+###############################################
+
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+
+project(RRMQmlVtk_FlowDiagnostics)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
+###############################################
+# Subproject options
+###############################################
+
+option(RRMQMLVTK_BUILD_FLOW_DIAG "Build with Flow Diagnostics" OFF)
+
+
+###############################################
+# Include Dima's library
+###############################################
+
+if(RRMQMLVTK_BUILD_FLOW_DIAG)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/flow-diagnostics-prototype/src/rrm/fd EXCLUDE_FROM_ALL)
+endif()
+
+
+###############################################
+# Include colorwrap library
+###############################################
+
+if(RRMQMLVTK_BUILD_FLOW_DIAG)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/colorwrap EXCLUDE_FROM_ALL)
+endif()
+
+
+###############################################
+# Create target
+###############################################
+
+set(RRMQMLVTK_FD_INTERFACE_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/fd_interface.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fd_definitions.h
+    )
+
+if(RRMQMLVTK_BUILD_FLOW_DIAG)
+    set(RRMQMLVTK_FD_INTERFACE_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/fd_interface.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/fd_definitions.cpp
+        )
+else()
+    set(RRMQMLVTK_FD_INTERFACE_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/fd_interface_stub.cpp
+        )
+endif()
+
+add_library(fd ${RRMQMLVTK_FD_INTERFACE_SOURCES} ${RRMQMLVTK_FD_INTERFACE_HEADERS})
+target_link_libraries(fd PRIVATE rrm::model) # transitively links to `stratmod` and `planin`
+
+if(RRMQMLVTK_BUILD_FLOW_DIAG)
+    target_link_libraries(fd PRIVATE rrm_flow_diagnostics_lib colorwrap)
+    target_compile_definitions(fd PRIVATE -DRRMQMLVTK_BUILD_FLOW_DIAG)
+endif()
+
+target_include_directories(fd
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
+
+add_library(rrm::fd ALIAS fd)
+
+
+###############################################
+# Copy resources into binary dir
+###############################################
+
+if(RRMQMLVTK_BUILD_FLOW_DIAG)
+    add_custom_command(TARGET fd POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/_config
+        ${CMAKE_BINARY_DIR}/build/${CMAKE_CFG_INTDIR}/_config
+        )
+endif()
