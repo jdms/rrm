@@ -30,16 +30,20 @@
  */
 
 #include "fd_interface.hpp"
+/* #include "fd_interface_impl.hpp" */
 
 #include <mutex>
 
-#include <QGUIApplication>
+#include <QGuiApplication>
 #include <QScreen>
+#include <QSurfaceFormat>
 
-#include "rrm/fd/FDWidget.h"
+#include "rrm/fd/FDWidgetImpl.h"
+#include "rrm/fd/FDQVTKWidget.h"
 #include "fd_definitions.h"
 #include "model/metadata_access.h"
 #include "stratmod/smodeller.hpp"
+#include "stratmod/sutilities.hpp"
 #include "colorwrap.hpp"
 
 /// Quick and dirty class to create colors on the fly using the Colorwrap class
@@ -77,11 +81,15 @@ class Colors {
         bool invert_colors = false;
 };
 
-//////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
 //
-// struct FlowDiagnosticsInterface::Impl
+// FlowDiagnosticsInterface : FD initialization and setup methods.
 //
-// Add changes to flow diagnostics here.
+// With the possible exception of constructors and the destructor, the
+// following methods are supposed to be maintained by whoever is responsible
+// for the FD implementation, as they depend on details of the FD gui
+// implementation.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -94,14 +102,14 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
     // FlowDiagnosticsInterface::Impl (thus there is no need for data
     // encapsulation here)
     public:
-        using FDWidget = rrm::fd::FDWidget;
+        // using FDWidget = rrm::fd::FDWidget;
         using StartupSettings = rrm::fd::StartupSettings;
         using PetrophysicalSettings = rrm::fd::PetrophysicalSettings;
         using MMA = model::MetadataAccess;
         using FDD = /*rrm::fd::*/FlowDiagnosticsDefinitions;
 
         // using unique_ptr + mutex to prevent leaks and race conditions
-        std::unique_ptr<FDWidget> fd_window_ = nullptr;
+        std::unique_ptr<rrm::fd::FDWidgetImpl> fd_window_ = nullptr;
         std::mutex m_{};
 
         //
@@ -173,6 +181,15 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
         /// compute max number of regions in model
         static int numRegions() { return (numSurfaces() > 0) ? (numSurfaces() -1) : 0; }
 
+        /// [WARNING]: this method depends on the model saving its "file name" in its data structure
+        /// A proper long term solution should be considered
+        static std::optional<std::string> getSavedModelFilename()
+        {
+            stratmod::SUtilities u(model());
+            /* return u.getSavedFileName(); */
+            return std::optional<std::string>();
+        }
+
         /// initialize rendering settings
         static StartupSettings processStartupSettings();
 
@@ -191,8 +208,8 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
     //
     // Return if FD window is already active or if there is no region to show
     //
-    if (numRegions() < 1)
-        return false;
+     if (numRegions() < 1)
+         return false;
     if (fd_window_) {
         fd_window_->activateWindow();
         return true;
@@ -201,35 +218,72 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
     //
     // Prepare rendering settings
     //
-    StartupSettings rendering_settings = processStartupSettings(); 
+    StartupSettings rendering_settings = processStartupSettings();
 
+
+    if (getSavedModelFilename()) {
+      try {
+        // TODO: Deprecated
+        LoadSettings(rendering_settings.domains,
+          nlohmann::json::parse(
+            std::ifstream(std::filesystem::path(*getSavedModelFilename()).replace_extension("fdsettings.json"))));
+      }
+      catch (...) {}
+
+      rendering_settings.TryParseConfig(
+        std::filesystem::path(*getSavedModelFilename()).replace_extension("startup.json").string());
+    }
+  
+  
     //
     // Prepare petrophysical properties
     //
     /* FDD::InterpretationHandle = MMA::InterpretationHandle; // make sure both handles point to the same interpretation */
     PetrophysicalSettings petrophysics = processPetrophysicalSettings(rendering_settings);
 
+   
     /* TODO [WARNING]: This code does nothing */
-    /* Qt OpenGL profile set after main app is created is ignored */
-    // {
-    //   auto format = MyQVTKWidget::defaultFormat();
-    //
-    //   #ifdef _WIN32
-    //      format.setProfile(QSurfaceFormat::CompatibilityProfile);
-    //   #else
-    //      format.setProfile(QSurfaceFormat::CoreProfile);
-    //   #endif
-    //
-    //   QSurfaceFormat::setDefaultFormat(format);
-    // }
+    // TODO [Dima] - I and the runtime disagree :)
+    /* Qt OpenGL profile set after main app is created is ignored */ 
+    {
+      auto format = rrm::fd::FDQVTKWidget::defaultFormat();
+    
+      #ifdef _WIN32
+         format.setProfile(QSurfaceFormat::CompatibilityProfile);
+      #else
+         format.setProfile(QSurfaceFormat::CoreProfile);
+      #endif
+    
+      QSurfaceFormat::setDefaultFormat(format);
+    }
 
+    {
+      dpl::vector3d stratmod_size;
+      model().getSize(stratmod_size.x(), stratmod_size.y(), stratmod_size.z());
+      
+      if (rendering_settings.stratmod.override_size)
+        rendering_settings.stratmod.scale = (*rendering_settings.stratmod.override_size)/stratmod_size;
+
+      // rendering_settings.visual.well_radius =
+      //   sqrt(
+      //     (stratmod_size.x()*rendering_settings.stratmod.scale.x())*
+      //     (stratmod_size.y()*rendering_settings.stratmod.scale.y()))/250.;
+    }
+
+    if (!rendering_settings.visual.font_size)
+      rendering_settings.visual.font_size =
+        // /*1.5**/rendering_settings.visual.nominal_size*QApplication::primaryScreen()->logicalDotsPerInch()/96;
+        rendering_settings.visual.nominal_size +
+          (QApplication::primaryScreen()->logicalDotsPerInch()/**1.75*//96. - 1.)*10.;
+
+  
     //
     // Create FDWidget window
     //
     auto NewFDWidget = [&]() /* -> std::unique_ptr<FDWidget> */ {
         if (fd_window_ == nullptr)
         {
-            fd_window_ = std::make_unique<FDWidget>();
+            fd_window_ = std::make_unique<rrm::fd::FDWidgetImpl>();
             // not necessary as we're using a unique pointer now
             /* fd_window_->setAttribute(Qt::WA_DeleteOnClose); */
             fd_window_->close_event_ = [this]() { this->fd_window_ = nullptr; };
@@ -255,16 +309,31 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
     //
     // Set FD window properties
     //
-    fd_window_->SetStratModel(model());
-    fd_window_->SetRenderingSettings(rendering_settings);
+
+    fd_window_->BeginInit();
+    fd_window_->SetScale(
+      dpl::vector3d{rendering_settings.stratmod.scale.max()}/rendering_settings.stratmod.scale);
+
+
+    if (getSavedModelFilename())
+      fd_window_->rrm_project_path = *getSavedModelFilename();
+
+  
+  
+    fd_window_->SetStratigraphyModel(model());
+    fd_window_->SetRenderingSettings(rendering_settings); 
     fd_window_->SetPetrophysics(petrophysics);
     fd_window_->SetDomainRange(0, petrophysics.domains.size() - 2);
 
     double min_z, max_z;
     auto* surfaces = createSurfacesActor(min_z, max_z);
-    fd_window_->SetSurfacesActor(surfaces, min_z, max_z);
+    fd_window_->SetSurfacesActor(surfaces);
     fd_window_->EndInit();
-    fd_window_->show();
+    
+    if (rendering_settings.visual.maximised)
+      fd_window_->showMaximized();
+    else
+      fd_window_->showNormal();        
 
     return true;
 }
@@ -292,16 +361,16 @@ FlowDiagnosticsInterface::Impl::StartupSettings FlowDiagnosticsInterface::Impl::
     rendering_settings.TryParseConfig();
 
     // [JD] I think I prefer the 'nominal_size' for the text
-    rendering_settings.font_size = 1.5 * StartupSettings::nominal_size
-        * QGuiApplication::primaryScreen()->logicalDotsPerInch() / 96; 
+    // rendering_settings.visual.font_size = 1.5 * rendering_settings.visual.nominal_size
+    //     * QGuiApplication::primaryScreen()->logicalDotsPerInch() / 96; 
 
     rendering_settings.font_path = rrm::fd::GetWindowsUnicodeArialFontPath();
 
-    {
-        double x, y, z;
-        model().getSize(x, y, z);
-        rendering_settings.well_radius = sqrt(x*y)/250.;
-    }
+    // {
+    //     double x, y, z;
+    //     model().getSize(x, y, z);
+    //     rendering_settings.visual.well_radius = sqrt(x*y)/250.;
+    // }
 
     return rendering_settings;
 }
@@ -315,8 +384,7 @@ FlowDiagnosticsInterface::Impl::PetrophysicalSettings FlowDiagnosticsInterface::
     // Make sure that domains set by sketghing gui can be used for flow diagnostics
     MMA::enforceDomainsConsistency();
 
-    // Using a colormap to provide default colors to domains before the sketching
-    // gui is able to provide them
+    // Using a colormap to provide default colors to domains if gui has not assigned any
     Colors domains_colormap(Colorwrap::Pastel1());
 
     for (auto& [domain_idx, domain] : MMA::domains())
@@ -331,79 +399,55 @@ FlowDiagnosticsInterface::Impl::PetrophysicalSettings FlowDiagnosticsInterface::
         // `getORset*` methods are defined on interface FlowDiagnosticsDefinitions
         domain_settings.name = FDD::getORsetName(domain, "Domain" + std::to_string(domain_idx));
         domain_settings.color = FDD::getORsetColor(domain, domains_colormap.color(domain_idx));
-        domain_settings.k_xy = units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99));
-        domain_settings.k_z = units::MilliDarcy(FDD::getORsetPermZ(domain, 999.99));
+        domain_settings.perm = {
+          units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99)),
+          units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99)),
+          units::MilliDarcy(FDD::getORsetPermZ(domain, 999.99))
+        };
+        // domain_settings.k_xy = units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99));
+        // domain_settings.k_z = units::MilliDarcy(FDD::getORsetPermZ(domain, 999.99));
         domain_settings.poro = FDD::getORsetPoro(domain, 0.2999);
         domain_settings.color.setAlpha(0);
-    } // TODO: compare this with commented code below and see if everything is in place
+    }
 
-    // auto domains = controller->getDomains();
-    // for (auto domain_idx : domains) {                
-    //   for (auto region_idx : controller->getRegionsFromDomain(domain_idx))
-    //     petrophysics.region_to_domain[region_idx] = domain_idx;
-    //
-    //   auto& domain_settings = petrophysics.domains[domain_idx];
-    //
-    //   domain_settings.name = controller->model.domains[domain_idx].getName();
-    //   // settings.name = object_tree->getDomains().getElement(domain_idx)->data(1, Qt::DisplayRole).toString().toStdString();
-    //   domain_settings.k_xy = units::MilliDarcy(999.99);
-    //   domain_settings.k_z = units::MilliDarcy(999.99);
-    //   domain_settings.poro = 0.2999;
-    //   domain_settings.color.setAlpha(0);
-    // }
-
-    // Using a colormap to provide default colors to regions before the sketching
-    // gui is able to provide them
-    /* Colors regions_colormap(Colorwrap::Spectral(numRegions() + 1)); */
+    // Using same default colormap as gui to assign colors to regions if user
+    // has not assigned colors to them
     Colors regions_colormap(Colorwrap::Paired(12));
 
+    // Make sure that regions set by sketghing gui can be used for flow diagnostics
+    MMA::enforceRegionsConsistency();
+
     // TODO: check if everything is ok
-    for (int reg_idx = 0, reg_max = numRegions(); reg_idx < reg_max; ++reg_idx)
+    for (auto& [region_idx, region] : MMA::regions())
     {
-        auto& region = petrophysics.regions[reg_idx];
-        region.name = "Region" + std::to_string(reg_idx);
-        region.color = regions_colormap.color(reg_idx + 1); // +1 to match colour in sketching gui
+        auto& region_settings = petrophysics.regions[region_idx];
+        region_settings.name = FDD::getORsetName(region, "Region" + std::to_string(region_idx));
+        region_settings.color = FDD::getORsetColor(region, regions_colormap.color(region_idx + 1)); // +1 to match colour in sketching gui
 
         // Won't save metadata for regions ignored by the user
-        if (petrophysics.region_to_domain.find(reg_idx) == petrophysics.region_to_domain.end())
+        if (petrophysics.region_to_domain.find(region_idx) == petrophysics.region_to_domain.end())
         {
             auto domain_idx = petrophysics.domains.size();
-            petrophysics.region_to_domain[reg_idx] = domain_idx;
+            petrophysics.region_to_domain[region_idx] = domain_idx;
 
             auto& domain_settings = petrophysics.domains[domain_idx];
 
-            domain_settings.name = region.name;
-            domain_settings.k_xy = units::MilliDarcy(999.99);
-            domain_settings.k_z = units::MilliDarcy(999.99);
+            domain_settings.name = region_settings.name;
+            domain_settings.perm = units::MilliDarcy(999.99);
+            // domain_settings.k_xy = units::MilliDarcy(999.99);
+            // domain_settings.k_z = units::MilliDarcy(999.99);
             domain_settings.poro = 0.2999;
-            domain_settings.color = region.color;
+            domain_settings.color = region_settings.color;
         }
-        // TODO: we're now getting metadata directly from domains
-        /* else { */
-            /* auto& domain = petrophysics.domains[petrophysics.region_to_domain[reg_idx]]; */
-            /* if (domain.color.alpha() == 0) */
-                /* domain.color = region.color; */
-        /* } */
     } 
 
     using std::filesystem::path;
     auto load_json = [](path p) {
         return nlohmann::json::parse(std::ifstream(p));
     };        
-    // TODO: uncoment this snipet?
-    // if (!last_opened_rrm_.empty()) {
-    //   try { // TODO: Deprecated
-    //     LoadSettings(rendering_settings.domains,
-    //       load_json(path(last_opened_rrm_).replace_extension("fdsettings.json")));
-    //   }
-    //   catch (...) {}
-    //
-    //   rendering_settings.TryParseConfig(
-    //     path(last_opened_rrm_).replace_extension("startup.json").string());
-    // }
 
-    if (rendering_settings.stratmod_discretisation)
-        model().changeDiscretization(rendering_settings.stratmod_discretisation->x(), rendering_settings.stratmod_discretisation->y());
+    if (rendering_settings.stratmod.discretisation)
+        model().changeDiscretization(rendering_settings.stratmod.discretisation->x(), rendering_settings.stratmod.discretisation->y());
 
     // TODO: [JD]
     // I'm not saving this now because it would create problems for the sketching gui.
@@ -412,8 +456,9 @@ FlowDiagnosticsInterface::Impl::PetrophysicalSettings FlowDiagnosticsInterface::
     auto& outer_settings = petrophysics.domains[outer_domain_idx];
     outer_settings.poro = 0.3;
     outer_settings.name = "<Outer>";
-    outer_settings.k_xy = units::MilliDarcy(0.01);
-    outer_settings.k_z = units::MilliDarcy(0.01);
+    outer_settings.perm = units::MilliDarcy(0.01);
+    // outer_settings.k_xy = units::MilliDarcy(0.01);
+    // outer_settings.k_z = units::MilliDarcy(0.01);
     outer_settings.color = QColor::fromRgbF(0.4, 0.4, 0.4);
 
     petrophysics.region_to_domain[petrophysics.region_to_domain.size()] = outer_domain_idx;
@@ -531,11 +576,11 @@ vtkPropAssembly* FlowDiagnosticsInterface::Impl::createSurfacesActor(double& min
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// Maintanence of constructors and destructor is shared by SBIM gui and FD gui,
+// update them as required for any new data structured added to class
+// FlowDiagnosticsInterface.
 //
-// FlowDiagnosticsInterface methods
-//
-// These are not supposed to change.  Add changes to the
-// FlowDiagnosticsInterface::Impl section.
+// Also, see @FlowDiagnosticsInterface::Impl section.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -571,3 +616,14 @@ void FlowDiagnosticsInterface::closeWindow()
     pimpl_->CloseWindow();
     stratmod::SModeller::Instance().useDefaultCoordinateSystem();
 }
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// FlowDiagnosticsInterface methods : shared methods
+//
+// These are meant to share state between main SBIM gui and FD gui and should
+// be maintained by both parties.
+//
+//////////////////////////////////////////////////////////////////////////////
+

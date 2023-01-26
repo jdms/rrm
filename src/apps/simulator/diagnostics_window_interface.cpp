@@ -21,10 +21,11 @@
 
 #include "diagnostics_window_interface.h"
 
+#include "diagnostics/fd_interface.hpp"
 #include "stratmod/smodeller.hpp"
 
 struct DiagnosticsWindowInterface::DiagnosticsWindowInterfaceImpl {
-    QWidget window;
+    FlowDiagnosticsInterface window;
 };
 
 DiagnosticsWindowInterface::DiagnosticsWindowInterface(QWidget *parent) : QMainWindow(parent)
@@ -47,14 +48,13 @@ void DiagnosticsWindowInterface::setModel(stratmod::SModeller& model)
 
 bool DiagnosticsWindowInterface::createFlowDiagnosticsWindow()
 {
-    pimpl_->window.resize(320, 240);
-    return false;
+    return true;
 }
 
 void DiagnosticsWindowInterface::update()
 {
-    pimpl_->window.setVisible(true);
-    pimpl_->window.show();
+    pimpl_->window.closeWindow();
+    pimpl_->window.createWindow();
 }
 
 void DiagnosticsWindowInterface::clear()

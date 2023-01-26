@@ -34,30 +34,56 @@
 
 class FlowDiagnosticsInterface {
     public:
+        /// Constructor
         FlowDiagnosticsInterface();
+
+        /// Default destructor
         virtual ~FlowDiagnosticsInterface();
+
+        /// Copy constructor is deleted
         FlowDiagnosticsInterface(const FlowDiagnosticsInterface&) = delete;
+
+        /// Copy assigment is deleted
         FlowDiagnosticsInterface& operator=(const FlowDiagnosticsInterface&) = delete;
+
+        /// Default move constructor
         FlowDiagnosticsInterface(FlowDiagnosticsInterface&&);
+
+        /// Default move assigment
         FlowDiagnosticsInterface& operator=(FlowDiagnosticsInterface&&);
 
+        /// Return true if FD is available -- thread compatible
+        //
+        // This method queries the current number of regions in the model to
+        // determine if FD should run (it returns true if there is at least 1
+        // region in the model).
+        //
+        // Concurrent changes to the model might produce incorrect results.
+        //
         bool isAvailable();
 
+        /// Return true if FD gui is running -- thread safe
         bool isActive();
 
+        /// Create new FD window -- thread safe
         bool createWindow();
 
+        /// Close FD window -- thread safe
         void closeWindow();
 
-        [[deprecated("Use createWindow()")]]
+        /// DEPRECATED: Create new FD window
+        [[deprecated("Use FlowDiagnosticsInterface::createWindow()")]]
         bool createFlowDiagnosticsWindow() { return createWindow(); }
 
-        [[deprecated("Use closeWindow()")]]
+        /// DEPRECATED: Close FD window
+        [[deprecated("Use FlowDiagnosticsInterface::closeWindow()")]]
         void closeFlowDiagnosticsWindow() { closeWindow(); }
 
+        void setModel(stratmod::SModeller& model);
+
     private:
-        struct Impl;
-        std::unique_ptr<Impl> pimpl_;
+        struct Impl;                    /// FD gui implementation
+        std::unique_ptr<Impl> pimpl_;   /// Pointer to FD gui implementation
 };
 
 #endif
