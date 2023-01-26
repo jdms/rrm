@@ -29,6 +29,7 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <optional>
 
 #include "stratmod/misc/stratmod_primitives.hpp"
 #include "stratmod/metadata.hpp"

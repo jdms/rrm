@@ -31,7 +31,12 @@
 
 
 
-using namespace std;
+/* using namespace std; */
+using string = std::string;
+using ifstream = std::ifstream;
+/* using cout = std::cout; */
+/* using cerr = std::cerr; */
+/* using endl = std::endl; */
 
 namespace Tucano
 {
@@ -66,7 +71,7 @@ private:
     string fragmentShaderPath;
 
     /// Stores the paths to the compute shaders files.
-    vector<string> computeShaderPaths;
+    std::vector<string> computeShaderPaths;
 
     /// The Projection Matrix uniform location.
     GLuint projectionMatrixUniformLocation;
@@ -81,7 +86,7 @@ private:
     GLuint colorUniformLocation;
 
     /// Array that contains all the compute shaders identifications.
-    vector<GLuint> computeShaders;
+    std::vector<GLuint> computeShaders;
 
     /// Vertex Shader identification.
     GLuint vertexShader;
@@ -115,7 +120,7 @@ public:
     Shader (string name = "")
     {
         shaderName = name;
-        vertexShader = 0; fragmentShader = 0; geometryShader = 0; tessellationControlShader = 0; tessellationEvaluationShader = 0; shaderProgram = 0; computeShaders = vector<GLuint>();
+        vertexShader = 0; fragmentShader = 0; geometryShader = 0; tessellationControlShader = 0; tessellationEvaluationShader = 0; shaderProgram = 0; computeShaders = std::vector<GLuint>();
     }
 
     /**
@@ -123,12 +128,12 @@ public:
      * @param name The string to be set as shader identification. User manteined.
      * @param compute_shader_paths Vector of strings giving the paths to the external files containing the compute shaders.
      */
-    Shader (string name, vector<string> compute_shader_paths)
+    Shader (string name, std::vector<string> compute_shader_paths)
     {
         shaderName = name;
         computeShaderPaths = compute_shader_paths;
 
-        vertexShader = 0; fragmentShader = 0; geometryShader = 0; tessellationControlShader = 0; tessellationEvaluationShader = 0; shaderProgram = 0; computeShaders = vector<GLuint>();
+        vertexShader = 0; fragmentShader = 0; geometryShader = 0; tessellationControlShader = 0; tessellationEvaluationShader = 0; shaderProgram = 0; computeShaders = std::vector<GLuint>();
     }
 
     /**
@@ -219,7 +224,7 @@ public:
     /**
    * @return Return the vector of Compute Shaders identification handles.
    **/
-    vector<GLuint> getComputeShaders() {
+    std::vector<GLuint> getComputeShaders() {
         return computeShaders;
     }
 
@@ -252,7 +257,7 @@ public:
         tessellationControlShader = 0;
         tessellationEvaluationShader = 0;
         shaderProgram = 0;
-        computeShaders = vector<GLuint>();
+        computeShaders = std::vector<GLuint>();
     }
 
 	/**
@@ -326,7 +331,7 @@ public:
         // if no shader was found, emit an warning
         if (!found)
         {
-            cerr << "Warning: no shader " << name.c_str() << " file found in directory : " << shader_dir.c_str() << endl;
+            std::cerr << "Warning: no shader " << name.c_str() << " file found in directory : " << shader_dir.c_str() << std::endl;
         }
 
         vertexShader = 0;
@@ -335,7 +340,7 @@ public:
         tessellationControlShader = 0;
         tessellationEvaluationShader = 0;
         shaderProgram = 0;
-        computeShaders = vector<GLuint>();
+        computeShaders = std::vector<GLuint>();
 
 	}
 
@@ -364,16 +369,16 @@ public:
         glGetProgramiv(shaderProgram, GL_LINK_STATUS, &result);
         if (result != GL_TRUE)
         {
-            cerr << "Error linking program : " << shaderName << endl;
+            std::cerr << "Error linking program : " << shaderName << std::endl;
             GLchar errorLog[1024] = {0};
             glGetProgramInfoLog(shaderProgram, 1024, NULL, errorLog);
             fprintf(stdout, "%s", &errorLog[0]);
-            cerr << endl;
+            std::cerr << std::endl;
         }
         #ifdef TUCANODEBUG
         else
         {
-            cout << " Successfully linked : " << shaderName << endl << endl;
+            std::cout << " Successfully linked : " << shaderName << std::endl << std::endl;
         }
         #endif
     }
@@ -444,7 +449,7 @@ public:
 
         if (vertex_code.empty())
         {
-            cerr << "warning: " << shaderName.c_str() << " : empty vertex string code!" << endl;
+            std::cerr << "warning: " << shaderName.c_str() << " : empty vertex string code!" << std::endl;
         }
         else
         {
@@ -471,7 +476,7 @@ public:
         }
         if (fragment_code.empty())
         {
-            cerr << "warning: " << shaderName.c_str() << " : empty fragment string code!" << endl;
+            std::cerr << "warning: " << shaderName.c_str() << " : empty fragment string code!" << std::endl;
         }
         else
         {
@@ -598,7 +603,7 @@ public:
         if (result != GL_TRUE)
         {
             // if an error is found, print the log (even if not in debug mode)
-            cerr << "Erro compiling vertex shader: " << vertexShaderPath << endl;
+            std::cerr << "Erro compiling vertex shader: " << vertexShaderPath << std::endl;
             glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &infoLogLength);
             char * vertexShaderErrorMessage = new char[infoLogLength];
             glGetShaderInfoLog(vertexShader, infoLogLength, NULL, &vertexShaderErrorMessage[0]);
@@ -610,11 +615,11 @@ public:
         {
             if (vertexShaderPath.empty())
             {
-                cout << "Compiled vertex shader from string without errors : " << shaderName.c_str() << endl;
+                std::cout << "Compiled vertex shader from string without errors : " << shaderName.c_str() << std::endl;
             }
             else
             {
-                cout << "Compiled vertex shader without errors : " << vertexShaderPath << endl;
+                std::cout << "Compiled vertex shader without errors : " << vertexShaderPath << std::endl;
             }
         }
         #endif
@@ -648,7 +653,7 @@ public:
         }
         else
         {
-            cout << "warning: no vertex shader file found : " << vertexShaderPath << endl;
+            std::cout << "warning: no vertex shader file found : " << vertexShaderPath << std::endl;
         }
 
         setVertexShader(vertexShaderCode);
@@ -672,7 +677,7 @@ public:
         if (result != GL_TRUE)
         {
             // if an error is found, print the log (even if not in debug mode)
-            cerr << "Erro compiling tessellation evaluation shader: " << tessellationControlShaderPath << endl;
+            std::cerr << "Erro compiling tessellation evaluation shader: " << tessellationControlShaderPath << std::endl;
             glGetShaderiv(tessellationControlShader, GL_INFO_LOG_LENGTH, &infoLogLength);
             char * tessellationControlShaderErrorMessage = new char[infoLogLength];
             glGetShaderInfoLog(tessellationControlShader, infoLogLength, NULL, &tessellationControlShaderErrorMessage[0]);
@@ -684,11 +689,11 @@ public:
         {
             if (tessellationControlShaderPath.empty())
             {
-                cout << "Compiled tessellation control shader from string without errors : " << shaderName.c_str() << endl;
+                std::cout << "Compiled tessellation control shader from string without errors : " << shaderName.c_str() << std::endl;
             }
             else
             {
-                cout << "Compiled tessellation control shader without errors : " << tessellationControlShaderPath << endl;
+                std::cout << "Compiled tessellation control shader without errors : " << tessellationControlShaderPath << std::endl;
             }
         }
         #endif
@@ -720,7 +725,7 @@ public:
         }
         else
         {
-            cout << "warning: no tessellation control shader file found : " << tessellationControlShaderPath << endl;
+            std::cout << "warning: no tessellation control shader file found : " << tessellationControlShaderPath << std::endl;
         }
 
         setTessellationControlShader(tessellationControlShaderCode);
@@ -744,7 +749,7 @@ public:
         if (result != GL_TRUE)
         {
             // if an error is found, print the log (even if not in debug mode)
-            cerr << "Erro compiling tessellation evaluation shader: " << tessellationEvaluationShaderPath << endl;
+            std::cerr << "Erro compiling tessellation evaluation shader: " << tessellationEvaluationShaderPath << std::endl;
             glGetShaderiv(tessellationEvaluationShader, GL_INFO_LOG_LENGTH, &infoLogLength);
             char * tessellationEvaluationShaderErrorMessage = new char[infoLogLength];
             glGetShaderInfoLog(tessellationEvaluationShader, infoLogLength, NULL, &tessellationEvaluationShaderErrorMessage[0]);
@@ -756,11 +761,11 @@ public:
         {
             if (tessellationEvaluationShaderPath.empty())
             {
-                cout << "Compiled tessellation evaluation shader from string without errors : " << shaderName.c_str() << endl;
+                std::cout << "Compiled tessellation evaluation shader from string without errors : " << shaderName.c_str() << std::endl;
             }
             else
             {
-                cout << "Compiled tessellation evaluation shader without errors : " << tessellationEvaluationShaderPath << endl;
+                std::cout << "Compiled tessellation evaluation shader without errors : " << tessellationEvaluationShaderPath << std::endl;
             }
         }
         #endif
@@ -793,7 +798,7 @@ public:
         }
         else
         {
-            cout << "warning: no tessellation evaluation shader file found : " << tessellationEvaluationShaderPath << endl;
+            std::cout << "warning: no tessellation evaluation shader file found : " << tessellationEvaluationShaderPath << std::endl;
         }
 
         setTessellationEvaluationShader(tessellationEvaluationShaderCode);
@@ -817,7 +822,7 @@ public:
         if (result != GL_TRUE)
         {
             // if an error is found, print the log (even if not in debug mode)
-            cerr << "Erro compiling geometry shader: " << geometryShaderPath << endl;
+            std::cerr << "Erro compiling geometry shader: " << geometryShaderPath << std::endl;
             glGetShaderiv(geometryShader, GL_INFO_LOG_LENGTH, &infoLogLength);
             char * geometryShaderErrorMessage = new char[infoLogLength];
             glGetShaderInfoLog(geometryShader, infoLogLength, NULL, &geometryShaderErrorMessage[0]);
@@ -829,11 +834,11 @@ public:
         {
             if (geometryShaderPath.empty())
             {
-                cout << "Compiled geometry shader from string without errors : " << shaderName.c_str() << endl;
+                std::cout << "Compiled geometry shader from string without errors : " << shaderName.c_str() << std::endl;
             }
             else
             {
-                cout << "Compiled geometry shader without errors : " << geometryShaderPath << endl;
+                std::cout << "Compiled geometry shader without errors : " << geometryShaderPath << std::endl;
             }
         }
         #endif
@@ -867,7 +872,7 @@ public:
         }
         else
         {
-            cerr << "warning: no geom shader found : " << geometryShaderPath << endl;
+            std::cerr << "warning: no geom shader found : " << geometryShaderPath << std::endl;
         }
 
         setGeometryShader(geometryShaderCode);
@@ -890,7 +895,7 @@ public:
         glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &result);
         if (result != GL_TRUE)
         {
-            cerr << "Erro compiling fragment shader: " << fragmentShaderPath << endl;
+            std::cerr << "Erro compiling fragment shader: " << fragmentShaderPath << std::endl;
             glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &infoLogLength);
             char * fragmentShaderErrorMessage = new char[infoLogLength];
             glGetShaderInfoLog(fragmentShader, infoLogLength, NULL, &fragmentShaderErrorMessage[0]);
@@ -902,11 +907,11 @@ public:
         {
             if (fragmentShaderPath.empty())
             {
-                cout << "Compiled fragment shader from string without errors : " << shaderName.c_str() << endl;
+                std::cout << "Compiled fragment shader from string without errors : " << shaderName.c_str() << std::endl;
             }
             else
             {
-                cout << "Compiled fragment shader without errors : " << fragmentShaderPath << endl;
+                std::cout << "Compiled fragment shader without errors : " << fragmentShaderPath << std::endl;
             }
         }
         #endif
@@ -938,7 +943,7 @@ public:
         }
         else
         {
-            cerr << "warning: no fragment shader found : " << fragmentShaderPath << endl;
+            std::cerr << "warning: no fragment shader found : " << fragmentShaderPath << std::endl;
         }
 
         setFragmentShader(fragmentShaderCode);
@@ -952,7 +957,7 @@ public:
         int position = 0; //Position of the shader in computeShaders vector.
 
 
-        for(vector<string>::iterator it = computeShaderPaths.begin(); it != computeShaderPaths.end(); it++)
+        for(std::vector<string>::iterator it = computeShaderPaths.begin(); it != computeShaderPaths.end(); it++)
         {
             // Read the compute shader code from the file
             string computeShaderCode;
@@ -972,8 +977,8 @@ public:
 
             // Compile Compute Shader
             if (debug_level > 0)
-                //cout << "Compiling compute shader: " << *it << endl;
-                cout << "Compiling compute shader: " << *it;
+                //std::cout << "Compiling compute shader: " << *it << std::endl;
+                std::cout << "Compiling compute shader: " << *it;
             char const * computeSourcePointer = computeShaderCode.c_str();
             glShaderSource(computeShaders[position], 1, &computeSourcePointer , NULL);
             glCompileShader(computeShaders[position]);
@@ -982,7 +987,7 @@ public:
             glGetShaderiv(computeShaders[position], GL_COMPILE_STATUS, &result);
             if (result != GL_TRUE)
             {
-                cerr << "Erro compiling compute shader: " << computeShaderPaths[position] << endl;
+                std::cerr << "Erro compiling compute shader: " << computeShaderPaths[position] << std::endl;
                 glGetShaderiv(computeShaders[position], GL_INFO_LOG_LENGTH, &infoLogLength);
                 char * computeShaderErrorMessage = new char[infoLogLength];
                 glGetShaderInfoLog(computeShaders[position], infoLogLength, NULL, &computeShaderErrorMessage[0]);
@@ -994,11 +999,11 @@ public:
             {
                 if (computeShaderPaths[position].empty())
                 {
-                    cout << "Compiled compute shader from string without errors : " << shaderName.c_str() << endl;
+                    std::cout << "Compiled compute shader from string without errors : " << shaderName.c_str() << std::endl;
                 }
                 else
                 {
-                    cout << "Compiled compute shader without errors : " << computeShaderPaths[position] << endl;
+                    std::cout << "Compiled compute shader without errors : " << computeShaderPaths[position] << std::endl;
                 }
             }
             #endif
@@ -1024,7 +1029,7 @@ public:
     {
 
         #ifdef TUCANODEBUG
-        cout << "reloading shaders" << endl;
+        std::cout << "reloading shaders" << std::endl;
         #endif
 
         if(vertexShader != 0)
@@ -1102,7 +1107,7 @@ public:
 	* @brief Generates a list with all active attributes
 	* @param attribs Vector of strings to hold attributes names
 	*/
-	void getActiveAttributes( vector< string > &attribs )
+	void getActiveAttributes( std::vector< string > &attribs )
 	{
 		int maxlength = 0;
 		int numattribs = 0;

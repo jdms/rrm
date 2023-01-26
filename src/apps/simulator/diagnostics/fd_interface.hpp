@@ -79,8 +79,6 @@ class FlowDiagnosticsInterface {
         [[deprecated("Use FlowDiagnosticsInterface::closeWindow()")]]
         void closeFlowDiagnosticsWindow() { closeWindow(); }
 
-        void setModel(stratmod::SModeller& model);
-
     private:
         struct Impl;                    /// FD gui implementation
         std::unique_ptr<Impl> pimpl_;   /// Pointer to FD gui implementation

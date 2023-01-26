@@ -38,8 +38,8 @@
 #include <QScreen>
 #include <QSurfaceFormat>
 
-#include "rrm/fd/FDWidgetImpl.h"
 #include "rrm/fd/FDQVTKWidget.h"
+#include "rrm/fd/FDWidgetImpl.h"
 #include "fd_definitions.h"
 #include "model/metadata_access.h"
 #include "stratmod/smodeller.hpp"
@@ -137,6 +137,9 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
         /// IMPORTANT: upon instatiation of new FDWidget object, its
         /// `close_event_` member MUST be updated to set @fd_window_ to
         /// nullptr.
+        #ifdef CreateWindow
+        #undef CreateWindow
+        #endif
         bool CreateWindow();
 
         /// close FDWidget window
@@ -208,8 +211,8 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
     //
     // Return if FD window is already active or if there is no region to show
     //
-     if (numRegions() < 1)
-         return false;
+    if (numRegions() < 1)
+        return false;
     if (fd_window_) {
         fd_window_->activateWindow();
         return true;
@@ -327,6 +330,7 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
 
     double min_z, max_z;
     auto* surfaces = createSurfacesActor(min_z, max_z);
+    /* fd_window_->SetSurfacesActor(surfaces, min_z, max_z); */
     fd_window_->SetSurfacesActor(surfaces);
     fd_window_->EndInit();
     

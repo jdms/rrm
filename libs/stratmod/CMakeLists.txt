@@ -361,7 +361,7 @@ set(STRATMOD_LIB_SOURCES
 add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${STRATMOD_LIB_HEADERS})  
 add_library(stratmod::stratmod ALIAS stratmod)
 
-target_compile_features(stratmod PUBLIC cxx_std_11)
+target_compile_features(stratmod PUBLIC cxx_std_17)
 target_compile_options(stratmod PRIVATE -DSTRATMOD_LIB_BUILT)
 
 if(MSVC)

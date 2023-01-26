@@ -123,6 +123,7 @@ class MetadataAccess
             auto& data = model().interpretations();
             ModelInterpretation& current = data[RegionsHandle];
             current = model().getRegions();
+            return current;
         }
 
         static ModelInterpretation& regionsInterpretation()
