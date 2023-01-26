@@ -6,8 +6,6 @@
 #include "stratmod/smodeller.hpp"
 #include "stratmod/sutilities.hpp"
 
-
-
 /*
  * Helper functions, implemented below main().
  */

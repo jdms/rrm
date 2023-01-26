@@ -31,5 +31,5 @@
 
 #include "planin/srules.hpp"
 
-#include "planin/mesh/polyhedra.hpp"
-#include "planin/mesh/tetrahedral_mesh_builder.hpp"
+#include "planin/mesh/legacy_polyhedra.hpp"
+#include "planin/mesh/legacy_tetrahedral_mesh_builder.hpp"

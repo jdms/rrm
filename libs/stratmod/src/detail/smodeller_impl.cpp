@@ -72,6 +72,10 @@ void SModellerImplementation::clear()
 
     mesh_ = nullptr;
 
+    interpretations_.clear();
+
+    model_id_ = RandomId::Get();
+
     init();
 }
 
@@ -180,7 +184,7 @@ std::vector<std::size_t> SModellerImplementation::getOrderedSurfacesIndices()
 
 bool SModellerImplementation::getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound_surfaces, std::vector<size_t> &upper_bound_surfaces)
 {
-    /* TetrahedralMeshBuilder mb(container_); */
+    /* LegacyTetrahedralMeshBuilder mb(container_); */
     if ( buildTetrahedralMesh() == false )
     {
         return 0;
@@ -870,7 +874,7 @@ bool SModellerImplementation::buildTetrahedralMesh()
 {
     if ( mesh_ == nullptr )
     {
-        mesh_ = std::make_shared<TetrahedralMeshBuilder>(container_);
+        mesh_ = std::make_shared<LegacyTetrahedralMeshBuilder>(container_);
     }
 
     return true;

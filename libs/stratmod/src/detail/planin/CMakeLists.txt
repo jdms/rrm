@@ -67,7 +67,7 @@ option(PLANIN_BUILD_FORCE_POSITION_INDEPENDENT_CODE "" ON)
 # Use OpenMP
 ###############################################
 if(NOT DEFINED PLANIN_BUILD_USING_OPENMP)
-    option(PLANIN_BUILD_USING_OPENMP "" ON) 
+    option(PLANIN_BUILD_USING_OPENMP "" OFF) 
 endif()
 
 
@@ -75,7 +75,7 @@ endif()
 # Use OpenMP
 ###############################################
 if(NOT DEFINED PLANIN_BUILD_USE_LAPACK)
-    option(PLANIN_BUILD_USE_LAPACK "" ON) 
+    option(PLANIN_BUILD_USE_LAPACK "" OFF) 
 endif()
 
 
@@ -360,8 +360,8 @@ set(HEADERS
   include/planin/basis_function_2d.hpp
   include/planin/srules.hpp
   include/planin/vector_field/div_free_vector_field_2d.hpp
-  include/planin/mesh/polyhedra.hpp
-  include/planin/mesh/tetrahedral_mesh_builder.hpp
+  include/planin/mesh/legacy_polyhedra.hpp
+  include/planin/mesh/legacy_tetrahedral_mesh_builder.hpp
   include/planin/mesh/linear_complexes.hpp
   include/planin/structured_triangle_mesh_2d.hpp
   include/planin/piecewise_linear_graph.hpp
@@ -378,7 +378,7 @@ set(PLANIN_LIB_SOURCES
     piecewise_linear_graph.cpp
     predicates.cpp
     vector_field/div_free_vector_field_2d.cpp
-    mesh/tetrahedral_mesh_builder.cpp
+    mesh/legacy_tetrahedral_mesh_builder.cpp
     mesh/linear_complexes.cpp
     ) 
 
@@ -418,11 +418,11 @@ if(BLAS_FOUND)
     message(STATUS "Found blas libraries: " ${BLAS_LIBRARIES})
 endif()
 
-if(LAPACK_FOUND)
-    target_compile_options(planin PUBLIC -DEIGEN_USE_LAPACKE_STRICT)
+if(LAPACK_FOUND AND LAPACKE_WORKS)
     target_link_libraries(planin PUBLIC ${LAPACK_LIBRARIES})
-    target_link_libraries(planin PUBLIC ${LAPACKE_LIBRARIES})
     message(STATUS "Found lapack libraries: " ${LAPACK_LIBRARIES})
+    target_compile_options(planin PUBLIC -DEIGEN_USE_LAPACKE_STRICT)
+    target_link_libraries(planin PUBLIC ${LAPACKE_LIBRARIES})
     message(STATUS "Found lapacke libraries: " ${LAPACKE_LIBRARIES})
 endif()
 

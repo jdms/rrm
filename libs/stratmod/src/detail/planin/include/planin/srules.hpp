@@ -49,6 +49,8 @@ class SRules
         /** \brief Type of the dictionary that translates PlanarSurface's SurfaceIds to this->container indices. */ 
         using MapType = std::unordered_map<PlanarSurface::SurfaceId, size_t>; 
 
+        using TriangleHeights = legacy::TriangleHeights;
+
         /** \brief Change surfaces' discretization. 
          *
          * \param numX: number of intervals to discretize the width of the model

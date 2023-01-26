@@ -3,11 +3,11 @@
 #include <fstream>
 #include <iostream>
 
-#include "tetrahedral_mesh_builder.hpp"
+#include "legacy_tetrahedral_mesh_builder.hpp"
 
 
 
-bool TetrahedralMeshBuilder::exportToTetgen( std::string filename )
+bool LegacyTetrahedralMeshBuilder::exportToTetgen( std::string filename )
 {
     /* std::vector<Prism> prism_list; */
     /* std::vector<size_t> attribute_list; */
@@ -73,7 +73,7 @@ bool TetrahedralMeshBuilder::exportToTetgen( std::string filename )
     return true;
 }
 
-bool TetrahedralMeshBuilder::exportToVTK( std::string filename )
+bool LegacyTetrahedralMeshBuilder::exportToVTK( std::string filename )
 {
     /* Create vtk file */
     std::ofstream vtkfs(filename + ".vtk");
@@ -149,7 +149,7 @@ bool TetrahedralMeshBuilder::exportToVTK( std::string filename )
     return true;
 }
 
-bool TetrahedralMeshBuilder::exportToVTK( std::string filename, const std::vector<int>& region_to_domain_map )
+bool LegacyTetrahedralMeshBuilder::exportToVTK( std::string filename, const std::vector<int>& region_to_domain_map )
 {
     /* Create vtk file */
     std::ofstream vtkfs(filename + ".vtk");
@@ -235,7 +235,7 @@ bool TetrahedralMeshBuilder::exportToVTK( std::string filename, const std::vecto
 
 #include <algorithm>
 
-bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> &ordered_surface_indices )
+bool LegacyTetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> &ordered_surface_indices )
 {
     /* std::vector<size_t> ordered_surface_indices = {}; */
 
@@ -401,7 +401,7 @@ bool TetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<size_t> 
     return true;
 }
 
-size_t TetrahedralMeshBuilder::tetrahedralize( std::vector<Tetrahedron> &tetrahedron_list )
+size_t LegacyTetrahedralMeshBuilder::tetrahedralize( std::vector<Tetrahedron> &tetrahedron_list )
 {
     /* std::vector<Prism> prism_list; */
     /* bool status = buildPrismMesh(prism_list); */
@@ -429,7 +429,7 @@ size_t TetrahedralMeshBuilder::tetrahedralize( std::vector<Tetrahedron> &tetrahe
     return tetrahedron_list.size();
 }
 
-bool TetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_list )
+bool LegacyTetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_list )
 {
     getDiscretization();
 
@@ -524,7 +524,7 @@ bool TetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_list )
     return true;
 }
 
-bool TetrahedralMeshBuilder::buildTriangleMesh( const std::vector<std::vector<double>> &curves_vertices, const std::vector<std::vector<bool>> &curves_vertices_status, 
+bool LegacyTetrahedralMeshBuilder::buildTriangleMesh( const std::vector<std::vector<double>> &curves_vertices, const std::vector<std::vector<bool>> &curves_vertices_status, 
         std::vector<size_t> &triangle_list, std::vector<size_t> &triangle_attributes, bool positively_oriented )
 {
     if ( numSurfaces <= 1 )
@@ -712,7 +712,7 @@ bool TetrahedralMeshBuilder::buildTriangleMesh( const std::vector<std::vector<do
 }
 
 
-void TetrahedralMeshBuilder::getDiscretization()
+void LegacyTetrahedralMeshBuilder::getDiscretization()
 {
     numBlocksX = PlanarSurface::getDiscretizationX();
     numBlocksY = PlanarSurface::getDiscretizationY();
@@ -725,7 +725,7 @@ void TetrahedralMeshBuilder::getDiscretization()
     numSurfaces = container_.size();
 }
 
-TriangleHeights TetrahedralMeshBuilder::getTriangleHeights( size_t triangle_pos, size_t bindex, size_t surface_id ) const
+LegacyTetrahedralMeshBuilder::TriangleHeights LegacyTetrahedralMeshBuilder::getTriangleHeights( size_t triangle_pos, size_t bindex, size_t surface_id ) const
 {
     TriangleHeights theights;
 
@@ -849,7 +849,7 @@ TriangleHeights TetrahedralMeshBuilder::getTriangleHeights( size_t triangle_pos,
     return theights;
 }
 
-TetrahedralMeshBuilder::Prism TetrahedralMeshBuilder::getPrism( size_t prism_pos, size_t bindex, size_t lower_surface, size_t upper_surface ) const
+LegacyTetrahedralMeshBuilder::Prism LegacyTetrahedralMeshBuilder::getPrism( size_t prism_pos, size_t bindex, size_t lower_surface, size_t upper_surface ) const
 {
     Prism prism;
 
@@ -1060,17 +1060,17 @@ TetrahedralMeshBuilder::Prism TetrahedralMeshBuilder::getPrism( size_t prism_pos
     return prism;
 }
 
-size_t TetrahedralMeshBuilder::getVertexIndex( size_t i, size_t j ) const
+size_t LegacyTetrahedralMeshBuilder::getVertexIndex( size_t i, size_t j ) const
 {
     return i + j*numVerticesX;
 }
 
-size_t TetrahedralMeshBuilder::getVertexIndexInVList( size_t vindex, size_t surface_id ) const
+size_t LegacyTetrahedralMeshBuilder::getVertexIndexInVList( size_t vindex, size_t surface_id ) const
 {
     return vindex + surface_id*numVertices;
 }
 
-TetrahedralMeshBuilder::IndicesType TetrahedralMeshBuilder::getVertexIndices( size_t v ) const
+LegacyTetrahedralMeshBuilder::IndicesType LegacyTetrahedralMeshBuilder::getVertexIndices( size_t v ) const
 {
     IndicesType indices{};
 
@@ -1083,12 +1083,12 @@ TetrahedralMeshBuilder::IndicesType TetrahedralMeshBuilder::getVertexIndices( si
     return indices;
 }
 
-size_t TetrahedralMeshBuilder::getBlockIndex( size_t i, size_t j ) const
+size_t LegacyTetrahedralMeshBuilder::getBlockIndex( size_t i, size_t j ) const
 {
     return i + j*numBlocksX;
 }
 
-TetrahedralMeshBuilder::IndicesType TetrahedralMeshBuilder::getBlockIndices( size_t b ) const
+LegacyTetrahedralMeshBuilder::IndicesType LegacyTetrahedralMeshBuilder::getBlockIndices( size_t b ) const
 {
     IndicesType indices;
 
@@ -1098,7 +1098,7 @@ TetrahedralMeshBuilder::IndicesType TetrahedralMeshBuilder::getBlockIndices( siz
     return indices;
 };
 
-size_t TetrahedralMeshBuilder::getVertexIndexFromPositionInBlock( size_t vpos,  size_t bindex ) const
+size_t LegacyTetrahedralMeshBuilder::getVertexIndexFromPositionInBlock( size_t vpos,  size_t bindex ) const
 {
     IndicesType indices = getBlockIndices(bindex);;
 
@@ -1111,7 +1111,7 @@ size_t TetrahedralMeshBuilder::getVertexIndexFromPositionInBlock( size_t vpos,  
     return getVertexIndex(iv, jv);
 }
 
-std::map<TetrahedralMeshBuilder::AttributeType, std::size_t> TetrahedralMeshBuilder::computeAttributeMap( const std::vector<Prism> &prism_list )
+std::map<LegacyTetrahedralMeshBuilder::AttributeType, std::size_t> LegacyTetrahedralMeshBuilder::computeAttributeMap( const std::vector<Prism> &prism_list )
 {
     std::map< AttributeType, size_t > __attributes_map;
 
@@ -1139,7 +1139,7 @@ std::map<TetrahedralMeshBuilder::AttributeType, std::size_t> TetrahedralMeshBuil
     return __attributes_map;
 }
 
-bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list )
+bool LegacyTetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list )
 {
     if ( points.empty() )
     {
@@ -1160,7 +1160,7 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
 
     /* auto attributes_map = computeAttributeMap(prism_list); */
 
-    size_t size_att = TetrahedralMeshBuilder::numSurfaces;
+    size_t size_att = LegacyTetrahedralMeshBuilder::numSurfaces;
 
     auto getAttribute = [size_att]( std::vector<size_t> &&a )-> std::vector<bool> {
         std::vector<bool> attrib;
@@ -1219,7 +1219,7 @@ bool TetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &p
     return true;
 }
 
-bool TetrahedralMeshBuilder::mapAttributeToBoundingSurfaces( size_t attribute, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound )
+bool LegacyTetrahedralMeshBuilder::mapAttributeToBoundingSurfaces( size_t attribute, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound )
 {
     /* std::vector<Prism> prism_list; */
     bool status = true;

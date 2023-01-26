@@ -8,6 +8,7 @@ Julio Daniel Machado Silva
 Department of Computer Science  
 University of Calgary  
 
+
 ## Description
 
 Stratmod provides a simple and stable interface to create stratigraphic models.

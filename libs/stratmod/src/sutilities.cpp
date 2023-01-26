@@ -22,12 +22,11 @@
 
 #include <numeric>
 
-#include "stratmod/sutilities.hpp"
-
 #include "detail/smodeller_impl.hpp"
 
 #include "planin/interpolated_graph.hpp"
 
+#include "stratmod/sutilities.hpp"
 
 namespace stratmod {
 
@@ -769,7 +768,7 @@ bool SUtilities::getTetrahedralMeshRegions( const std::vector<double> &vcoords, 
             throw;
         }
 
-        Tetrahedron<> t(v0, index0, v1, index1, v2, index2, v3, index3);
+        legacy::Tetrahedron<> t(v0, index0, v1, index1, v2, index2, v3, index3);
         centroids[i] = t.getCentroid();
         /* std::cout << "Centroid " << i << ": x = " << centroids[i].x << ", y = " << centroids[i].y << ", z = " << centroids[i].z << "\n"; */
     }

@@ -21,26 +21,27 @@
 /********************************************************************************/
 
 
-
 #include <iostream>
 #include <vector>
 #include <map>
 #include <memory>
 #include <fstream>
 
-#include "stratmod/smodeller.hpp"
-#include "detail/smodeller_impl.hpp"
 #include "detail/serialization_definitions.hpp"
-
 #include "detail/testing_definitions.hpp"
+#include "detail/smodeller_impl.hpp"
+#include "detail/metadata_cereal.hpp"
+#include "detail/model_interpretation_cereal.hpp"
+
 
 #include "planin/planin.hpp"
 
+#include "stratmod/model_interpretation.hpp"
+#include "stratmod/smodeller.hpp"
 
 /*****************************/
 /* Actual Implementation */ 
 /*****************************/
-
 
 namespace stratmod {
 
@@ -53,7 +54,7 @@ SModeller& SModeller::Instance()
     return instance;
 }
 
-/* [[deprecated("The SModeller class is a singleton, use SModeller::Instance() instead.")]] */
+[[deprecated("The SModeller class is a singleton, use SModeller::Instance() instead.")]]
 SModeller::SModeller() : 
     pimpl_( new SModellerImplementation() ) 
 {
@@ -1064,7 +1065,7 @@ bool SModeller::computeTetrahedralMeshVolumes( std::vector<double> &vlist )
     return pimpl_->mesh_->getRegionVolumeList(vlist);
 }
 
-bool SModeller::getVolumeAttributesFromPointList( const std::vector<double> &vcoords, std::vector<int> &attribute_list)
+bool SModeller::getRegionsFromPointList( const std::vector<double> &vcoords, std::vector<int> &attribute_list)
 {
     if ( vcoords.size() % 3 != 0 )
     {
@@ -1092,6 +1093,11 @@ bool SModeller::getVolumeAttributesFromPointList( const std::vector<double> &vco
     return status;
 }
 
+bool SModeller::getVolumeAttributesFromPointList( const std::vector<double> &vcoords, std::vector<int> &attribute_list)
+{
+    return getRegionsFromPointList(vcoords, attribute_list);
+}
+
 bool SModeller::getBoundingSurfacesFromVolumeAttribute( std::size_t attribute_id, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound)
 {
     return pimpl_->getBoundingSurfacesFromRegionID(attribute_id, lower_bound, upper_bound);
@@ -1107,6 +1113,57 @@ std::vector<size_t> SModeller::getSurfacesIndicesAbovePoint( double x, double y,
     return pimpl_->getSurfacesIndicesAbovePoint(x, y, z);
 }
 
+bool SModeller::setSurfaceMetadata( std::size_t surface_id, const SurfaceMetadata& metadata )
+{
+    size_t index; 
+    if ( pimpl_->getSurfaceIndex(surface_id, index) == false )
+    {
+        return false; 
+    }
+
+    pimpl_->container_[index]->metadata() = metadata;
+
+    return true;
+}
+
+bool SModeller::getSurfaceMetadata( std::size_t surface_id, SurfaceMetadata& metadata )
+{
+    size_t index; 
+    if ( pimpl_->getSurfaceIndex(surface_id, index) == false )
+    {
+        return false; 
+    }
+
+    metadata = pimpl_->container_[index]->metadata();
+
+    return true;
+}
+
+ModelInterpretation SModeller::getRegions()
+{
+    ModelInterpretation regions_as_domains;
+    int max_num_regions = pimpl_->maxNumRegions();
+
+    if (max_num_regions < 1)
+    {
+        return regions_as_domains;
+    }
+
+    for (int i = 0; i < max_num_regions; ++i)
+    {
+        Region r_i = Region::Get(i).value();
+        Domain d_i;
+        d_i.regions.insert(r_i);
+        regions_as_domains.setDomain(i, d_i);
+    }
+
+    return regions_as_domains;
+}
+
+std::unordered_map<std::string, ModelInterpretation>& SModeller::interpretations()
+{
+    return pimpl_->interpretations_;
+}
 
 #if defined(BUILD_WITH_SERIALIZATION)
 bool SModeller::saveBinary( std::string filename )

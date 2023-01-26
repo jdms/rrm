@@ -22,10 +22,10 @@
 
 
 
-#ifndef STRATMOD_SMODELLER_PRIMITIVES_HPP
-#define STRATMOD_SMODELLER_PRIMITIVES_HPP
+#ifndef STRATMOD_PRIMITIVES_HPP
+#define STRATMOD_PRIMITIVES_HPP
 
-#include "stratmod/stratmod_win_dll_export_handler.hpp"
+#include "stratmod/misc/stratmod_win_dll_export_handler.hpp"
 
 namespace stratmod {
 
@@ -35,7 +35,30 @@ namespace stratmod {
 STRATMOD_SILENCE_MSVC_WIN_DLL_EXPORT_WARNING
 struct SModellerImplementation; 
 
+namespace detail {
+    STRATMOD_SILENCE_MSVC_WIN_DLL_EXPORT_WARNING
+    class SModellerAccess;
+} // namespace detail
 } // namespace stratmod
+
+// To allow cereal to access private members of a class:
+//
+// friend class cereal::access;
+//
+namespace cereal {
+    class access;
+}
+
+// To allow cereal to assign version numbers to structs defined in the private
+// scope of a class (useful when using the PIMPL idiom):
+//
+// template<typename T, typename B> friend struct cereal::detail::Version;
+//
+namespace cereal {
+    namespace detail {
+        template<typename T, typename B> struct Version;
+    }
+}
 
 #endif
 

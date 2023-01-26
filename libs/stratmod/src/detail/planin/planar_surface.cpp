@@ -2237,9 +2237,7 @@ size_t PlanarSurface::getVertexIndexFromPositionInBlock( size_t vpos,  size_t bi
     return getVertexIndex(iv, jv);
 }
 
-#include "mesh/polyhedra.hpp"
-
-TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpos, size_t bindex ) 
+PlanarSurface::TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpos, size_t bindex ) 
 {
     // Range check?
 

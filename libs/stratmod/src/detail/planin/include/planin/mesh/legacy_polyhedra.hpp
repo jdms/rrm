@@ -29,7 +29,10 @@
 #include <array>
 #include <algorithm>
 #include <numeric>
+#include <cmath>
 
+
+namespace legacy {
 
 struct EdgeHeights
 {
@@ -539,7 +542,7 @@ class Tetrahedron
 template<typename __AttributeType__ = int>
 class Prism 
 {
-    using Tetrahedron = ::Tetrahedron<__AttributeType__>;
+    using Tetrahedron = legacy::Tetrahedron<__AttributeType__>;
 
     public:
         using AttributeType = __AttributeType__;
@@ -667,5 +670,7 @@ class Prism
         // BUG: VS2013 does not support empty initializer lists
         AttributeType region_attribute_; //= {};
 };
+
+} // namespace legacy
 
 #endif

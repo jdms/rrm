@@ -26,10 +26,15 @@
 #define STRATMOD_SMODELLER_HPP
 
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 #include <memory>
 
-#include "stratmod/smodeller_primitives.hpp"
+#include "stratmod/misc/stratmod_primitives.hpp"
+#include "stratmod/metadata.hpp"
+#include "stratmod/curve3d.hpp"
+#include "stratmod/region.hpp"
+#include "stratmod/model_interpretation.hpp"
 
 namespace stratmod {
 
@@ -63,7 +68,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
         /**
          * @brief Default destructor.
          **/
-        ~SModeller(); 
+        virtual ~SModeller(); 
 
         /** 
          * @brief Copy constructor is deleted.  
@@ -686,6 +691,16 @@ class STRATMODLIB_DLL_HANDLER SModeller
         bool getVolumeAttributesFromPointList( const std::vector<double> &vcoords, std::vector<int> &regions);
 
         /**
+         * @brief Compute region ids from list of points.
+         *
+         * @param vcoords[in] Points' coordinates list (vector of triplets {width, length, height})
+         * @param regions[out] Regions' ids corresponding to list of points.
+         *
+         * @return True if model has non-empty regions.
+         **/
+        bool getRegionsFromPointList( const std::vector<double> &vcoords, std::vector<int> &regions);
+
+        /**
          * @brief Compute list of bounding surfaces given a region id.
          *
          * @param attribute_id Region id.
@@ -718,6 +733,64 @@ class STRATMODLIB_DLL_HANDLER SModeller
          **/
         std::vector<size_t> getSurfacesIndicesAbovePoint( double x, double y, double z );
 
+        ///////////////////////////////////////////////////////////////////////
+        //
+        // Manipulate surface metadata.
+        //
+        ///////////////////////////////////////////////////////////////////////
+
+        /**
+         * @brief Add metatada to a model surface.
+         *
+         * @param surface_id Index of surface.
+         * @param metadata Surface metadata
+         *
+         * @return True If surface metadata is set, false if 'surface_id' does
+         * not correspond to a model surface.
+         *
+         **/
+        bool setSurfaceMetadata( std::size_t surface_id, const SurfaceMetadata& metadata );
+
+        /**
+         * @brief Get metatada from a model surface.
+         *
+         * @param surface_id Index of surface.
+         * @param metadata Surface metadata
+         *
+         * @return True If surface metadata is got, false if 'surface_id' does
+         * not correspond to a model surface.
+         *
+         **/
+        bool getSurfaceMetadata( std::size_t surface_id, SurfaceMetadata& metadata );
+
+        ///////////////////////////////////////////////////////////////////////
+        //
+        // Manipulate volumetric model(s).
+        //
+        ///////////////////////////////////////////////////////////////////////
+
+        /**
+         * @brief Compute regions and return then as domains to be used in a
+         * new ModelInterpretation (i.e., computed regions, assigned domains
+         * and curves, and their associated metadata).
+         *
+         * @return ModelInterpretation with regions set as domains.
+         *
+         **/
+        ModelInterpretation getRegions();
+
+        /**
+         * @brief Store model interpretations, i.e., computed regions, assigned
+         * domains and curves, and their associated metadata.
+         * 
+         * This method is useful to save model interpratations alongside the
+         * surface based model.
+         *
+         * @return Reference to a dictionary of ModelInterpretation(s).
+         *
+         **/
+        std::unordered_map<std::string, ModelInterpretation>& interpretations();
+
     private:
         std::unique_ptr<SModellerImplementation> pimpl_;
 
@@ -725,6 +798,7 @@ class STRATMODLIB_DLL_HANDLER SModeller
         const SModellerImplementation& Impl() const;
 
         friend class SUtilities;
+        friend class stratmod::detail::SModellerAccess;
 };
 
 } // namespace stratmod

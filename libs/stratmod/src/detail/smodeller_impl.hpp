@@ -25,19 +25,23 @@
 #define STRATMOD_SMODELLER_IMPLEMENTATION_HPP
 
 
+#include <chrono>
 #include <iostream>
+#include <limits>
+#include <random>
 #include <vector>
 #include <map>
 #include <memory>
 #include <cstdint>
 
-#include "stratmod/smodeller.hpp"
-
-#include "serialization_definitions.hpp"
-#include "testing_definitions.hpp"
+#include "detail/serialization_definitions.hpp"
+#include "detail/testing_definitions.hpp"
 
 #include "planin/planin.hpp"
 #include "planin/mesh/linear_complexes.hpp"
+
+#include "stratmod/model_interpretation.hpp"
+#include "stratmod/smodeller.hpp"
 
 namespace stratmod {
 
@@ -69,8 +73,8 @@ enum class InternalState : int {
 };
 
 // New type names for clarity
-using ControllerSurfaceIndex = size_t; 
-using ContainerSurfaceIndex = size_t; 
+using ControllerSurfaceIndex = std::size_t; 
+using ContainerSurfaceIndex = std::size_t; 
 
 struct StateDescriptor
 {
@@ -168,32 +172,95 @@ struct SModellerImplementation
     std::vector<StateDescriptor> past_states_;
 
     // Volumetric information
-    std::shared_ptr<TetrahedralMeshBuilder> mesh_;
+    std::shared_ptr<LegacyTetrahedralMeshBuilder> mesh_;
 
+
+    // Metadata and interpretation
+    std::unordered_map<std::string, ModelInterpretation> interpretations_{};
+
+    struct RandomId {
+        std::default_random_engine re{};
+        std::uniform_int_distribution<unsigned int> dist;
+
+        RandomId()
+        {
+            unsigned int min = std::numeric_limits<unsigned int>::min();
+            unsigned int max = std::numeric_limits<unsigned int>::max();
+            dist = std::uniform_int_distribution<unsigned int>(min, max);
+
+            auto now = std::chrono::system_clock::now();
+            unsigned long int time = std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count();
+            re.seed(time);
+        }
+
+        ~RandomId() = default;
+
+        static unsigned int Get()
+        { 
+            static RandomId instance;
+            return instance.dist(instance.re); 
+        };
+
+        unsigned int get()
+        {
+            return dist(re);
+        }
+    };
+
+    unsigned int model_id_ = RandomId::Get();
+
+
+    /* template<typename Archive> */
+    /* void save( Archive &ar, const std::uint32_t /1* version *1/ ) const */
+    /* { */
+    /*     ar( container_, */
+    /*             dictionary_, */
+    /*             inserted_surfaces_indices_, */
+    /*             origin_, lenght_, */
+    /*             discWidth_, discLenght_, */
+    /*             numI_, numJ_, */
+    /*             max_discretization_level_, */
+    /*             level_I_, level_J_, */
+    /*             default_coordinate_system_, */
+    /*             initialized_, */
+    /*             got_origin_, got_lenght_, */
+    /*             current_, */
+    /*             undoed_surfaces_stack_, */
+    /*             undoed_surfaces_indices_, */
+    /*             undoed_states_, */
+    /*             past_states_, */
+    /*             interpretations_ */
+    /*       ); */
+    /* } */
 
     template<typename Archive>
-        void serialize( Archive &ar, const std::uint32_t version )
-        {
-            (void)(version);
+    void serialize( Archive &ar, const std::uint32_t version )
+    {
+        ar(
+                container_,
+                dictionary_,
+                inserted_surfaces_indices_,
+                origin_, lenght_,
+                discWidth_, discLenght_,
+                numI_, numJ_,
+                max_discretization_level_,
+                level_I_, level_J_,
+                default_coordinate_system_,
+                initialized_,
+                got_origin_, got_lenght_,
+                current_,
+                undoed_surfaces_stack_,
+                undoed_surfaces_indices_,
+                undoed_states_,
+                past_states_
+          );
 
-            ar( container_,
-                    dictionary_,
-                    inserted_surfaces_indices_,
-                    origin_, lenght_,
-                    discWidth_, discLenght_,
-                    numI_, numJ_,
-                    max_discretization_level_,
-                    level_I_, level_J_,
-                    default_coordinate_system_,
-                    initialized_,
-                    got_origin_, got_lenght_,
-                    current_,
-                    undoed_surfaces_stack_,
-                    undoed_surfaces_indices_,
-                    undoed_states_,
-                    past_states_
-              );
+        if (version == 2)
+        {
+            ar(interpretations_);
+            ar(model_id_);
         }
+    }
 
     /************************************************/
     /* Methods                                      */
@@ -217,6 +284,8 @@ struct SModellerImplementation
     std::vector<size_t> getSurfacesIndicesBelowPoint( double x, double y, double z );
 
     std::vector<size_t> getSurfacesIndicesAbovePoint( double x, double y, double z );
+
+    std::vector<std::size_t> getSurfacesIndices() const { return inserted_surfaces_indices_; }
 
     std::vector<std::size_t> getOrderedSurfacesIndices();
 
@@ -285,6 +354,10 @@ struct SModellerImplementation
     bool enforceDefineRegion();
 
     bool buildTetrahedralMesh();
+
+    std::size_t numSurfaces() { return inserted_surfaces_indices_.size(); }
+
+    int maxNumRegions() { return static_cast<int>(numSurfaces()) - 1; }
 
     template<typename VertexList>
         bool getVertexList( size_t surface_id, VertexList &vlist);
@@ -729,7 +802,7 @@ bool SModellerImplementation::getAdaptedCrossSectionAtConstantLength( size_t sur
 } // namespace stratmod
 
 CEREAL_CLASS_VERSION(stratmod::StateDescriptor, 2);
-CEREAL_CLASS_VERSION(stratmod::SModellerImplementation, 1);
+CEREAL_CLASS_VERSION(stratmod::SModellerImplementation, 2);
 
 #endif
 
