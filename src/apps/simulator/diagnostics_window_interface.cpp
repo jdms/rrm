@@ -44,6 +44,7 @@ bool DiagnosticsWindowInterface::isImplemented() const
 void DiagnosticsWindowInterface::setModel(stratmod::SModeller& model)
 {
     pmodel_ = &model;
+    pimpl_->window.setModel(pmodel_);
 }
 
 bool DiagnosticsWindowInterface::createFlowDiagnosticsWindow()

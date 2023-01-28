@@ -27,10 +27,13 @@
  * @brief Interface between sketching and flow diagnostics gui
  */
 
-#ifndef RRMQMLVTK_SRC_FD_INTERFACE_HPP
-#define RRMQMLVTK_SRC_FD_INTERFACE_HPP
+#pragma once
 
 #include <memory>
+
+namespace stratmod {
+    class SModeller;
+}
 
 class FlowDiagnosticsInterface {
     public:
@@ -71,6 +74,9 @@ class FlowDiagnosticsInterface {
         /// Close FD window -- thread safe
         void closeWindow();
 
+        /// Set current model in FD window
+        void setModel(stratmod::SModeller* pmodel);
+
         /// DEPRECATED: Create new FD window
         [[deprecated("Use FlowDiagnosticsInterface::createWindow()")]]
         bool createFlowDiagnosticsWindow() { return createWindow(); }
@@ -83,5 +89,3 @@ class FlowDiagnosticsInterface {
         struct Impl;                    /// FD gui implementation
         std::unique_ptr<Impl> pimpl_;   /// Pointer to FD gui implementation
 };
-
-#endif

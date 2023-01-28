@@ -1142,6 +1142,7 @@ bool SModeller::getSurfaceMetadata( std::size_t surface_id, SurfaceMetadata& met
 ModelInterpretation SModeller::getRegions()
 {
     ModelInterpretation regions_as_domains;
+    /* ModelInterpretation regions_as_domains = ModelInterpretation::Get(*this); */
     int max_num_regions = pimpl_->maxNumRegions();
 
     if (max_num_regions < 1)
@@ -1152,12 +1153,19 @@ ModelInterpretation SModeller::getRegions()
     for (int i = 0; i < max_num_regions; ++i)
     {
         Region r_i = Region::Get(i).value();
+        /* Region r_i = Region::Get(*this, i).value(); */
         Domain d_i;
         d_i.regions.insert(r_i);
         regions_as_domains.setDomain(i, d_i);
     }
 
     return regions_as_domains;
+}
+
+ModelInterpretation SModeller::newInterpretation()
+{
+    return ModelInterpretation();
+    /* return ModelInterpretation::Get(*this); */
 }
 
 std::unordered_map<std::string, ModelInterpretation>& SModeller::interpretations()

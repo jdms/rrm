@@ -61,8 +61,9 @@ class STRATMODLIB_DLL_HANDLER SModeller
          * @brief [[deprecated]] Public default constructor.  
          *
          * Be aware that the SModeller class is essentially a Singleton, 
-         * explicit creation of SModeller objects will be deprecated in the
-         * near future.
+         * explicit creation of distinct SModeller objects is deprecated.
+         *
+         * This method is public for compatibility with legacy clients.
          **/
         SModeller(); 
 
@@ -779,6 +780,14 @@ class STRATMODLIB_DLL_HANDLER SModeller
          *
          **/
         ModelInterpretation getRegions();
+
+        /** @brief Create a new ModelInterpretation (i.e., computed regions,
+         * assigned domains and curves, and their associated metadata).
+         *
+         * @return Empty ModelInterpretation
+         *
+         **/
+        ModelInterpretation newInterpretation();
 
         /**
          * @brief Store model interpretations, i.e., computed regions, assigned

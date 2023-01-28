@@ -52,7 +52,7 @@ class MetadataAccess
         inline static std::string InterpretationHandle = "MainInterpretation";
         inline static std::string RegionsHandle = "CurrentRegions";
 
-        static stratmod::SModeller& model() { return stratmod::SModeller::Instance(); }
+        /* static stratmod::SModeller& model() { return stratmod::SModeller::Instance(); } */
 
         //////////////////////////////////////////////////////////////////////
         // Access volumetric metadata in stratmod
@@ -61,7 +61,7 @@ class MetadataAccess
         static ModelInterpretation& clearIntrepetation()
         {
             auto& data = model().interpretations();
-            data[InterpretationHandle] = ModelInterpretation();
+            data[InterpretationHandle] = model().newInterpretation();
             ModelInterpretation& current = data[InterpretationHandle];
             return current;
         }
@@ -306,6 +306,29 @@ class MetadataAccess
             int r, g, b;
             color.getRgb(&r, &g, &b);
             return Eigen::Vector3i({r, g, b});
+        }
+
+        static stratmod::SModeller* pModel()
+        {
+            return pmodel_;
+        }
+
+        static void pModel(stratmod::SModeller* p)
+        {
+            pmodel_ = p;
+        }
+
+    private:
+        inline static stratmod::SModeller* pmodel_ = nullptr;
+
+        static stratmod::SModeller& model()
+        {
+            if (pmodel_)
+            {
+                return *pmodel_;
+            }
+
+            return stratmod::SModeller::Instance();
         }
 };
 

@@ -716,7 +716,7 @@ typename StructuredTriangleMesh2D<Point2D>::Natural StructuredTriangleMesh2D<Poi
 template<typename Point2D>
 bool StructuredTriangleMesh2D<Point2D>::vertex(const Natural vindex, Point2D& v) const
 {
-    if ((vindex < 0) || (vindex > numVertices())) { 
+    if (/*(vindex < 0) ||*/ (vindex > numVertices())) { 
         return false; 
     }
 
@@ -872,7 +872,7 @@ typename StructuredTriangleMesh2D<Point2D>::Natural StructuredTriangleMesh2D<Poi
 template<typename Point2D>
 bool StructuredTriangleMesh2D<Point2D>::getVertexIndices(Natural v, NaturalPair& indices) const
 {
-    if ((v < 0) || (v >= numVertices())) { 
+    if (/*(v < 0) ||*/ (v >= numVertices())) { 
         return false; 
     }
 

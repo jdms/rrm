@@ -111,6 +111,7 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
         // using unique_ptr + mutex to prevent leaks and race conditions
         std::unique_ptr<rrm::fd::FDWidgetImpl> fd_window_ = nullptr;
         std::mutex m_{};
+        inline static stratmod::SModeller* pmodel_ = nullptr;
 
         //
         // FlowDiagnosticsInterface::Impl specific methods
@@ -175,6 +176,11 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
         /// get reference to model (make sure default coordinate system is in use?)
         static stratmod::SModeller& model() { 
             /* stratmod::SModeller::Instance().useDefaultCoordinateSystem(); */
+            if (pmodel_)
+            {
+                return *pmodel_;
+            }
+
             return stratmod::SModeller::Instance();
         }
 
@@ -621,6 +627,12 @@ void FlowDiagnosticsInterface::closeWindow()
     stratmod::SModeller::Instance().useDefaultCoordinateSystem();
 }
 
+void FlowDiagnosticsInterface::setModel(stratmod::SModeller* pmodel)
+{
+    pimpl_->pmodel_ = pmodel;
+    model::MetadataAccess::pModel(pmodel);
+    FlowDiagnosticsDefinitions::pModel(pmodel);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 //

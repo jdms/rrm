@@ -441,7 +441,7 @@
             bool getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length );
 
         private:
-            SModellerWrapper modeller_;
+            SModellerWrapper& modeller_;
             struct { double x, y, z; } origin_, length_;
 
             enum ModelResolution { LOW, MEDIUM, HIGH };

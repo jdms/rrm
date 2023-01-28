@@ -46,6 +46,8 @@ class FlowDiagnosticsDefinitions
         // Handles of properties to save/load FD metadata in stratmod::SModeller
         inline static std::string poro = "poro";
         inline static std::string k_xy = "k_xy";
+        inline static std::string k_x = "k_x";
+        inline static std::string k_y = "k_y";
         inline static std::string k_z = "k_z";
 
        //////////////////////////////////////////////////////////////////////
@@ -59,7 +61,8 @@ class FlowDiagnosticsDefinitions
         static Domain* accessDomain(int domain_id)
         {
             Domain* dptr = nullptr;
-            auto& domains = stratmod::SModeller::Instance().interpretations()[InterpretationHandle].domains;
+            /* auto& domains = stratmod::SModeller::Instance().interpretations()[InterpretationHandle].domains; */
+            auto& domains = model().interpretations()[InterpretationHandle].domains;
 
             auto iter = domains.find(domain_id);
             if (iter == domains.end())
@@ -382,6 +385,11 @@ class FlowDiagnosticsDefinitions
         // Misc utilities
         //////////////////////////////////////////////////////////////////////
 
+        static QColor color(int r, int g, int b)
+        {
+            return QColor(r, g, b);
+        }
+
         static QColor color(const Eigen::Vector3i& color_rgb)
         {
             int r = color_rgb[0];
@@ -421,6 +429,29 @@ class FlowDiagnosticsDefinitions
         static void setColor(Domain& d, const QColor& c)
         {
             d.metadata.color_rgb = std::make_optional(color(c));
+        }
+
+        static stratmod::SModeller* pModel()
+        {
+            return pmodel_;
+        }
+
+        static void pModel(stratmod::SModeller* p)
+        {
+            pmodel_ = p;
+        }
+
+    private:
+        inline static stratmod::SModeller* pmodel_ = nullptr;
+
+        static stratmod::SModeller& model()
+        {
+            if (pmodel_)
+            {
+                return *pmodel_;
+            }
+
+            return stratmod::SModeller::Instance();
         }
 };
 

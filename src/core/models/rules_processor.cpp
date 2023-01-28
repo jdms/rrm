@@ -34,7 +34,7 @@ void displayNotice( std::string, std::string ) {}
 //namespace RRM
 //{}
 
-RulesProcessor::RulesProcessor()
+RulesProcessor::RulesProcessor(): modeller_(stratmod::SModeller::Instance())
 {
     modeller_.useOpenGLCoordinateSystem();
     /* setMediumResolution(); */
