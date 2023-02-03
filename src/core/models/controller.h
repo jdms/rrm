@@ -887,6 +887,15 @@ class Controller
 
 
         /**
+        * Method to load a domain from the model. 
+        * @param id Domain id
+        * @return True if domain exists.
+        */
+        bool loadDomain( std::size_t id );
+
+
+
+        /**
         * Method to create a domain. Also, it is possible to create a domain from a given set of regions.
         * @param indexes an optional parameter to define the regions which define the domain
         * @return void.
@@ -926,7 +935,7 @@ class Controller
         * @param domain_id the index of the domain
         * @return void.
         */
-        void removeDomain(std::size_t domain_id_);
+        bool removeDomain(std::size_t domain_id_);
 
 
         /**

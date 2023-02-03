@@ -368,6 +368,14 @@ public:
         */
         void getRegions(bool status_);
 
+        /**
+        * Method (slot) to show or hide the domains.
+        * This method will compute or remove all the doamins from the model.
+        * @param status the domains will be visible if the status value is true, and invisible otherwise.
+        * @return void.
+        */
+        void getDomains(bool status_);
+
 
         /**
         * Method (slot) to show or hide the regions.

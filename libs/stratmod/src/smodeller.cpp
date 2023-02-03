@@ -1139,6 +1139,11 @@ bool SModeller::getSurfaceMetadata( std::size_t surface_id, SurfaceMetadata& met
     return true;
 }
 
+std::optional<Region> SModeller::getRegion(int region_id)
+{
+    return Region::Get(region_id);
+}
+
 ModelInterpretation SModeller::getRegions()
 {
     ModelInterpretation regions_as_domains;

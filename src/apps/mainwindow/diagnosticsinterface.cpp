@@ -60,7 +60,7 @@ void DiagnosticsInterface::createInterface()
     }
     else
     {
-        fd_window_interface->createFlowDiagnosticsWindow();
+        fd_window_interface->init();
     }
 
     createDiagnosticsActions();
@@ -74,6 +74,16 @@ bool DiagnosticsInterface::isImplemented()
     }
 
     return fd_window_interface->isImplemented();
+}
+
+bool DiagnosticsInterface::isActive()
+{
+    if (fd_window_interface == nullptr)
+    {
+        return false;
+    }
+
+    return fd_window_interface->isActive();
 }
 
 bool DiagnosticsInterface::preferDockedWindow()
@@ -137,11 +147,12 @@ void DiagnosticsInterface::createDiagnosticsActions()
     connect( window->app, &RRMApplication::resetApplication, [=]()
     {
         fd_window_interface->clear(); 
+        fd_window_interface->init(); 
         fd_window_interface->setModel(window->controller->getRulesProcessor().getSModeller());
-        if (!fd_window_interface->preferDockedWindow())
-        {
-            fd_window_interface->createFlowDiagnosticsWindow();
-        }
+        /* if (!fd_window_interface->preferDockedWindow()) */
+        /* { */
+        /*     fd_window_interface->create(); */
+        /* } */
         this->updateWindow( false );
     } );
 }
@@ -162,6 +173,7 @@ void DiagnosticsInterface::updateWindow( bool window_is_active )
 
     if (window_is_active == false)
     {
+        fd_window_interface->close();
         return;
     }
 

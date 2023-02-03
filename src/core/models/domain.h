@@ -93,7 +93,7 @@ class Domain: public Object
         * @param index the index of the region
         * @return void.
         */
-        void removeRegion( const std::size_t& index_ );
+        bool removeRegion( const std::size_t& index_ );
 
 
         /**

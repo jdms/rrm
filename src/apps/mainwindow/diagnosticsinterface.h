@@ -38,7 +38,7 @@ class DiagnosticsWindowInterface;
 
 
 /**
- *   Class responsible for initializing the diagnostics application
+ *   Class responsible for initializing the exernal flow diagnostics
  */
 
 class DiagnosticsInterface: public QObject
@@ -91,6 +91,12 @@ class DiagnosticsInterface: public QObject
         * @return true is flow diagnostics works, false otherwise.
         */
         bool isImplemented();
+
+        /**
+        * Method to check if the flow diagnostics application window is active
+        * @return true is flow diagnostics is active, false otherwise.
+        */
+        bool isActive();
 
         /**
         * Method to tell main application if Flow Diagnostics window should be docked in main GUI

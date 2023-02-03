@@ -41,26 +41,51 @@ bool DiagnosticsWindowInterface::isImplemented() const
     return true;
 }
 
+bool DiagnosticsWindowInterface::isActive() const
+{
+    return pimpl_->window.isActive();
+}
+
 void DiagnosticsWindowInterface::setModel(stratmod::SModeller& model)
 {
     pmodel_ = &model;
     pimpl_->window.setModel(pmodel_);
 }
 
-bool DiagnosticsWindowInterface::createFlowDiagnosticsWindow()
+bool DiagnosticsWindowInterface::init()
 {
     return true;
 }
 
-void DiagnosticsWindowInterface::update()
+bool DiagnosticsWindowInterface::create()
+{
+    return pimpl_->window.createWindow();
+}
+
+void DiagnosticsWindowInterface::close()
 {
     pimpl_->window.closeWindow();
-    pimpl_->window.createWindow();
+    if(pmodel_)
+    {
+        pmodel_->useOpenGLCoordinateSystem();
+    }
+}
+
+bool DiagnosticsWindowInterface::update()
+{
+    pimpl_->window.closeWindow();
+    bool status = pimpl_->window.createWindow();
+
+    return status;
 }
 
 void DiagnosticsWindowInterface::clear()
 {
     pimpl_ = std::make_unique<DiagnosticsWindowInterfaceImpl>();
+    if(pmodel_)
+    {
+        pmodel_->useOpenGLCoordinateSystem();
+    }
     pmodel_ = nullptr;
 }
 

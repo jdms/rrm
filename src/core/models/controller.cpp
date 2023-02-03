@@ -34,8 +34,252 @@
 #include "./apps/mainwindow/rrmapplication.h"
 
 #include "rules_processor.hpp"
+#include "colorwrap.hpp"
 #include "volume.h"
 #include "object.h"
+#include "model_metadata_access.hpp"
+
+#include <nlohmann/json.hpp>
+
+using MMA = ModelMetadataAccess;
+
+using ObjectType = Settings::Objects::ObjectType;
+
+constexpr std::array<Settings::Objects::ObjectType, 8> ObjectTypeMap = {{
+    ObjectType::NONE,
+    ObjectType::VOLUME,
+    ObjectType::CROSS_SECTION,
+    ObjectType::STRATIGRAPHY,
+    ObjectType::STRUCTURAL,
+    ObjectType::REGION,
+    ObjectType::DOMAINS,
+    ObjectType::WELL
+}};
+
+constexpr ObjectType cast_ot(std::size_t i)
+{
+    if (i > ObjectTypeMap.size())
+    {
+        return ObjectType::NONE;
+    }
+
+    return ObjectTypeMap[i];
+}
+
+constexpr std::size_t cast_ot(ObjectType o)
+{
+    return static_cast< std::underlying_type_t<ObjectType> >(o); 
+}
+    
+/* using nlohmann::json; */
+struct ObjectDescriptor;
+
+void to_json(nlohmann::json& j, const ObjectDescriptor& d);
+
+void from_json(const nlohmann::json& j, ObjectDescriptor& d);
+
+struct ObjectDescriptor
+{
+    Settings::Objects::ObjectType type;
+    std::string info;
+
+    static bool setSurfaceName(const ObjectPtr& obj)
+    {
+        auto type = obj->getType();
+        if (!ObjectDescriptor::isSurface(type))
+        {
+            return false;
+        }
+
+        auto id = obj->getIndex();
+        std::string name = obj->getName();
+        return MMA::setSurfaceName(id, name);
+    }
+
+    static bool setSurfaceDescription(const ObjectPtr& obj)
+    {
+        auto type = obj->getType();
+        if (!ObjectDescriptor::isSurface(type))
+        {
+            return false;
+        }
+
+        auto id = obj->getIndex();
+        std::string info = obj->getInformation();
+        return MMA::setSurfaceDescription(id,
+                ObjectDescriptor::encode(type, info));
+    }
+
+    static bool setSurfaceColor(const ObjectPtr& obj)
+    {
+        auto type = obj->getType();
+        if (!ObjectDescriptor::isSurface(type))
+        {
+            return false;
+        }
+
+        auto id = obj->getIndex();
+        int r, g, b;
+        obj->getColor(r, g, b);
+        
+        return MMA::setSurfaceColor(id, MMA::color(r, g, b));
+    }
+
+    static bool setSurfaceMetadata(const ObjectPtr& obj)
+    {
+        auto type = obj->getType();
+        if (!ObjectDescriptor::isSurface(type))
+        {
+            return false;
+        }
+
+        auto id = obj->getIndex();
+        std::string name = obj->getName();
+        std::string info = obj->getInformation();
+        std::string description = ObjectDescriptor::encode(type, info);
+        int r, g, b;
+        obj->getColor(r, g, b);
+        
+        return MMA::setSurfaceMetadata(id, name, description, MMA::color(r, g, b));
+    }
+
+    static bool getSurfaceMetadata(ObjectPtr& obj)
+    {
+        auto type = obj->getType();
+        if (!ObjectDescriptor::isSurface(type))
+        {
+            return false;
+        }
+
+        auto id = obj->getIndex();
+        std::string name, description;
+        std::optional<QColor> color;
+        bool success = MMA::getSurfaceMetadata(id, name, description, color);
+
+        if (success)
+        {
+            if (!name.empty())
+            {
+                obj->setName(name);
+            }
+
+            if (!description.empty())
+            {
+                auto t = ObjectDescriptor::getType(description);
+                if ((t == ObjectType::STRATIGRAPHY) || (t == ObjectType::STRUCTURAL))
+                {
+                    obj->setType(t);
+                }
+                auto info = ObjectDescriptor::getInformation(description);
+                if (!info.empty())
+                {
+                    obj->saveInformation(info);
+                }
+            }
+
+            if (color)
+            {
+                obj->setColor((*color).red(), (*color).green(), (*color).blue());
+            }
+        }
+        
+        return success;
+    }
+
+    static bool isSurface(const ObjectType& type)
+    {
+        if ((type == ObjectType::STRATIGRAPHY) || (type == ObjectType::STRUCTURAL))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    static std::string encode(const ObjectType& type, const std::string& info)
+    {
+        nlohmann::json j = ObjectDescriptor{type, info};
+        return j.dump();
+    }
+
+    static ObjectType getType( const std::string& msg )
+    {
+        nlohmann::json j;
+        try {
+            j = nlohmann::json::parse(msg);
+        }
+        catch (...)
+        {
+            return ObjectType::NONE;
+        }
+
+        return j["type"];
+    }
+
+    static std::string getInformation( const std::string& msg )
+    {
+        nlohmann::json j;
+        try {
+            j = nlohmann::json::parse(msg);
+        }
+        catch (...)
+        {
+            return std::string();
+        }
+
+        return j["info"];
+    }
+};
+
+void to_json(nlohmann::json& j, const ObjectDescriptor& d)
+{
+    j = nlohmann::json{{"type", cast_ot(d.type)}, {"info", d.info}};
+}
+
+void from_json(const nlohmann::json& j, ObjectDescriptor& d)
+{
+    std::size_t otype;
+    j.at("type").get_to(otype);
+    d.type = cast_ot(otype);
+    j.at("info").get_to(d.info);
+}
+
+/// Quick and dirty class to create colors on the fly using the Colorwrap class
+/// (Colorwrap is a wraper for colorbrewer: https://colorbrewer2.org/)
+class Colors {
+    public:
+        Colors(std::vector<int> colormap = Colorwrap::Spectral())
+        {
+            this->num_colors = colormap.size()/3;
+            this->colormap = colormap;
+        }
+
+        QColor color(int i)
+        {
+            int r = 255, g = 0, b = 0;
+
+            i = i % num_colors;
+            if (invert_colors)
+            {
+                i = (num_colors -1) - i;
+            }
+
+            r = colormap[3*i + 0];
+            g = colormap[3*i + 1];
+            b = colormap[3*i + 2];
+
+            return QColor(r, g, b);
+        }
+
+        void invert() { invert_colors = !invert_colors; }
+
+    private:
+        int num_colors{};
+        std::vector<int> colormap{};
+        bool invert_colors = false;
+};
+
+Colors DomainsColors(Colorwrap::Pastel2());
 
 
 Controller::Controller()
@@ -613,6 +857,7 @@ void Controller::setObjectName( std::size_t index_, const std::string& name_ )
 {
     if ( model.objects.find( index_ ) == model.objects.end() ) return;
     model.objects[ index_ ]->setName( name_ );
+    ObjectDescriptor::setSurfaceName(model.objects[ index_ ]);
 }
 
 
@@ -644,6 +889,7 @@ void Controller::setObjectColor( std::size_t index_, int r_, int g_, int b_)
 
     if ( model.objects.find( index_ ) == model.objects.end() ) return;
     model.objects[ index_ ]->setColor( r_, g_, b_ );
+    ObjectDescriptor::setSurfaceColor(model.objects[ index_ ]);
 }
 
 
@@ -702,6 +948,7 @@ void Controller::setObjectLog( std::size_t index_, const QString& log_ )
 {
     if (model.objects.find(index_) == model.objects.end()) return;
     model.objects.at(index_)->saveInformation( log_.toStdString() );
+    ObjectDescriptor::setSurfaceDescription( model.objects.at(index_) );
 }
 
 
@@ -838,6 +1085,7 @@ bool Controller::commitObjectSurface()
 
     // the surface was created, so it is not more possible to add any curve/trajectory
     obj_->setDone( true );
+    ObjectDescriptor::setSurfaceMetadata(obj_);
 
     updateModel();
 
@@ -1213,6 +1461,9 @@ std::vector<std::size_t > Controller::defineRegions()
     std::vector< std::vector< std::size_t > > regions_;
     bool status_ = rules_processor.getTetrahedralMesh( vertices_, regions_ );
 
+    MMA::resetRegions();
+    // MMA::enforceRegionsConsistency();
+
     // there is no region mesh
     if( status_ == false ) return std::vector<std::size_t >();
 
@@ -1274,6 +1525,24 @@ std::vector<std::size_t > Controller::defineRegions()
             color_.blue = colors_[ 3*i + 2 ];
             region->setColor( color_.red, color_.green, color_.blue );
             ++i;
+        }
+    }
+
+    for (auto& [r_id, r] : MMA::regions())
+    {
+        auto region = model.regions.find(r_id);
+        if (region != model.regions.end())
+        {
+            Color c;
+            region->second->getColor(c.red, c.green, c.blue);
+
+            /* MMA::name(r) = "Region" + std::to_string(r_id); */
+            MMA::setColor(r, MMA::color(c.red, c.green, c.blue));
+        }
+        else
+        {
+            /* MMA::name(r) = "Invalid Region" + std::to_string(r_id); */
+            MMA::setColor(r, QColorConstants::Gray);
         }
     }
 
@@ -1371,6 +1640,12 @@ void Controller::setRegionColor(std::size_t index_, int r_, int g_, int b_ )
     if (model.regions.find(index_) == model.regions.end()) return;
     model.regions[index_]->setColor( r_, g_, b_ );
 
+    auto iter = MMA::regions().find(index_);
+    if (iter != MMA::regions().end())
+    {
+        auto& region = iter->second;
+        MMA::setColor(region, MMA::color(r_, g_, b_));
+    }
 }
 
 
@@ -1450,6 +1725,9 @@ void Controller::removeRegions()
         (it.second).clear();
     model.domains.clear();
     regions_in_domains.clear();
+
+    MMA::resetRegions();
+    /* MMA::clearInterpretation(); */
 }
 
 
@@ -1458,6 +1736,37 @@ void Controller::removeRegions()
 /// Domains Methods
 ///
 
+bool Controller::loadDomain( std::size_t id )
+{
+    auto iter = MMA::domains().find(id);
+    if (iter == MMA::domains().end())
+    {
+        return false;
+    }
+
+    auto& domain = MMA::domains()[id];
+
+    std::string dname = MMA::name(domain);
+    if (dname.empty())
+    {
+        dname = "Domain" + std::to_string(id);
+    }
+
+    QColor dcolor;
+    if (!MMA::getColor(domain, dcolor))
+    {
+        dcolor = DomainsColors.color(id);
+    }
+
+    model.domains[ id ] = Domain();
+    model.domains[ id ].setName(dname);
+    model.domains[ id ].setColor(dcolor.red(), dcolor.green(), dcolor.blue());
+
+    for( auto& r: domain.regions )
+        addRegionToDomain( r.id(), id );
+
+    return true;
+}
 
 std::size_t Controller::createDomain( std::set< std::size_t > indexes_ )
 {
@@ -1474,14 +1783,27 @@ std::size_t Controller::createDomain( std::set< std::size_t > indexes_ )
         ++id_;
     }
 
+    std::string dname = "Domain" + std::to_string(id_);
+    auto dcolor = DomainsColors.color(id_);
+
     model.domains[ id_ ] = Domain();
+    model.domains[ id_ ].setName(dname);
+    model.domains[ id_ ].setColor(dcolor.red(), dcolor.green(), dcolor.blue());
 
     // if indexes_ is not empty, add each region inside the created domain
     for( auto it_: indexes_ )
         addRegionToDomain( it_, id_ );
 
-    return id_;
+    MMA::Domain domain;
+    for (auto i : indexes_)
+    {
+        domain.regions.insert(i);
+    }
+    MMA::name(domain) = dname;
+    MMA::setColor(domain, dcolor);
+    MMA::interpretation().setDomain(id_, domain);
 
+    return id_;
 }
 
 
@@ -1489,19 +1811,42 @@ void Controller::setDomainName( std::size_t index_, const std::string& name_ )
 {
     if (model.domains.find(index_) == model.domains.end()) return;
     model.domains[ index_ ].setName( name_ );
+
+    if (MMA::domains().find(index_) != MMA::domains().end())
+    {
+        MMA::name(MMA::domains()[index_]) = name_;
+    }
 }
 
 void Controller::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
 {
     if (model.domains.find(index_) == model.domains.end()) return;
     model.domains[ index_ ].setColor( red_, green_, blue_ );
+
+    for (auto r_id : model.domains[ index_ ].getRegions())
+    {
+        if (model.regions.find(r_id) != model.regions.end())
+        {
+            int r, g, b;
+            model.regions[ r_id ]->setDomainColor(red_, green_, blue_);
+            model.regions[ r_id ]->getBlendedColor(r, g, b);
+
+            if (MMA::regions().find(r_id) != MMA::domains().end())
+            {
+                MMA::setColor(MMA::regions()[r_id], MMA::color(r, g, b));
+            }
+        }
+    }
+
+    if (MMA::domains().find(index_) != MMA::domains().end())
+    {
+        MMA::setColor(MMA::domains()[index_], MMA::color(red_, green_, blue_));
+    }
 }
 
 
 bool Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_id_ )
 {
-
-
     if (model.regions.find(region_id_) == model.regions.end()) return false;
     if (model.domains.find(domain_id_) == model.domains.end()) return false;
     if( regions_in_domains.find( region_id_ ) != regions_in_domains.end() ) return false;
@@ -1516,10 +1861,23 @@ bool Controller::addRegionToDomain( std::size_t region_id_, std::size_t domain_i
     RegionsPtr reg_ = model.regions[region_id_];
     reg_->setDomain(domain_id_);
 
+    int r, g, b;
+    model.domains[ domain_id_ ].getColor(r, g, b);
+    reg_->setDomainColor(r, g, b);
+    reg_->getBlendedColor(r, g, b);
+
+
     double volume_ = model.domains[ domain_id_ ].getDomainVolume();
     volume_ += model.regions[region_id_]->getVolume();
 
     model.domains[ domain_id_ ].setDomainVolume( volume_ );
+
+    if (MMA::domains().find(domain_id_) != MMA::domains().end())
+    {
+        /* MMA::addRegionsToDomain({region_id_}, MMA::domains()[domain_id_]); */
+        MMA::domains()[domain_id_].regions.insert(region_id_);
+        MMA::setColor(MMA::regions()[region_id_], MMA::color(r, g, b));
+    }
     return true;
 }
 
@@ -1534,17 +1892,26 @@ bool Controller::removeRegionFromDomain(std::size_t region_id_, std::size_t doma
     // if domain_id_ is a domain index valid
     // if the regions belongs to the domain, remove the region from the domain
 
-    model.domains[domain_id_].removeRegion( region_id_ );
+    if (model.domains[domain_id_].removeRegion( region_id_ ) == false) return false;
     regions_in_domains.erase( region_id_ );
 
     RegionsPtr reg_ = model.regions[region_id_];
     reg_->removeFromDomain();
+
+    int r, g, b;
+    model.regions[ domain_id_ ]->getColor(r, g, b);
 
     // update the volume of the domain
     double volume_ = model.domains[ domain_id_ ].getDomainVolume();
     volume_ -= model.regions[region_id_]->getVolume();
 
     model.domains[ domain_id_ ].setDomainVolume( volume_ );
+
+    if (MMA::domains().find(domain_id_) != MMA::domains().end())
+    {
+        MMA::domains()[domain_id_].regions.erase(region_id_);
+        MMA::setColor(MMA::regions()[region_id_], MMA::color(r, g, b));
+    }
 
     return true;
 }
@@ -1560,20 +1927,46 @@ std::set< std::size_t> Controller::getRegionsFromDomain(std::size_t domain_id_) 
 }
 
 
-void Controller::removeDomain(std::size_t domain_id_)
+bool Controller::removeDomain(std::size_t domain_id_)
 {
 
-    if (model.domains.find(domain_id_) == model.domains.end()) return;
+    if (model.domains.find(domain_id_) == model.domains.end())
+        return false;
 
     Domain& domain_ = model.domains[ domain_id_ ];
     domain_.clear();
 
     model.domains.erase( domain_id_ );
+
+    MMA::interpretation().eraseDomain(domain_id_);
+    return true;
 }
 
 
 std::vector< std::size_t > Controller::getDomains()
 {
+    MMA::enforceDomainsConsistency();
+    auto& domains = MMA::domains();
+
+    for (auto& [id, domain] : domains)
+    {
+        std::string dname = MMA::name(domain);
+        if (dname.empty())
+            dname = "Domain" + std::to_string(id);
+
+        QColor dcolor;
+        if (MMA::getColor(domain, dcolor))
+        {
+            model.domains[ id ].setColor(dcolor.red(), dcolor.green(), dcolor.blue());
+        }
+
+        model.domains[ id ] = Domain();
+        model.domains[ id ].setName(dname);
+
+        for( auto r: domain.regions )
+            addRegionToDomain( r.id(), id );
+
+    }
 
     std::vector< std::size_t > indexes_;
 
@@ -1583,8 +1976,6 @@ std::vector< std::size_t > Controller::getDomains()
     }
 
     return indexes_;
-
-
 }
 
 
@@ -2196,7 +2587,7 @@ void Controller::saveFile( const std::string& filename )
         return;
     }
 
-    saveObjectsMetaData( filename );
+    /* saveObjectsMetaData( filename ); */
 }
 
 
@@ -2217,7 +2608,7 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 
     // saving the objects ( stratigraphies/structurals)
     QJsonArray objects_array_;
-    for( auto it: model.objects )
+    for( auto& it: model.objects )
     {
         if( it.first == current_object ) continue;
 
@@ -2229,11 +2620,14 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
     metadatas["objects"] = objects_array_;
 
 
+    // Notice: regions and domains are now directly saved in the model
+
     // saving regions
+    /* if ( false ) */
     if( model.regions.empty() == false )
     {
         QJsonArray regions_array_;
-        for( auto it: model.regions )
+        for( auto& it: model.regions )
         {
             const RegionsPtr& reg_ = it.second;
             QJsonObject region_;
@@ -2247,11 +2641,12 @@ bool Controller::saveObjectsMetaData( const std::string& filename )
 
 
     // saving domains
+    /* if ( false ) */
     if( model.domains.empty() == false )
     {
 
         QJsonArray domains_array_;
-        for( auto it_: model.domains )
+        for( auto& it_: model.domains )
         {
             const Domain& dom_ = it_.second;
 
@@ -2373,12 +2768,13 @@ void Controller::loadObjectNoMetaDatas()
     
     for( auto id: surfaces )
     {
+        addObject( id );
         int r_ = static_cast< int >( distr( eng ) );
         int g_ = static_cast< int >( distr( eng ) );
         int b_ = static_cast< int >( distr( eng ) );
+        model.objects[ id ]->setColor(r_, g_, b_ );
 
-        addObject( id );
-        setObjectColor( id, r_, g_, b_ );
+        ObjectDescriptor::getSurfaceMetadata(model.objects[ id ]);
 
         model.objects[ id ]->setDone( true );
         
@@ -2461,6 +2857,8 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
                 obj_->read( object_ );
                 // obj_->getColor( r_, g_, b_ );
 
+                ObjectDescriptor::setSurfaceMetadata(obj_);
+
                 obj_id_++;
             }
             else
@@ -2535,10 +2933,13 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             for( auto it_: regions_set_array_ )
                 addRegionToDomain( static_cast< std::size_t >( it_.toInt() ), index_ );
 
-            model.domains[index_].setName(
-              domain_.contains("name")
-                ? domain_["name"].toString().toStdString()
-                : "");
+            /* model.domains[index_].setName( */
+            /*   domain_.contains("name") */
+            /*     ? domain_["name"].toString().toStdString() */
+            /*     : ""); */
+            setDomainName(index_, domain_.contains("name")
+                    ? domain_["name"].toString().toStdString()
+                    : "Domain" + std::to_string(index_));
         }
     }
 

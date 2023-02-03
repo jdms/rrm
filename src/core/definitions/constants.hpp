@@ -233,7 +233,16 @@ namespace Settings {
         public:
             enum class BoundaryRegion { NONE, ABOVE, BELOW, REGION };
 
-            enum class ObjectType { NONE, VOLUME, CROSS_SECTION, STRATIGRAPHY, STRUCTURAL, REGION, DOMAINS, WELL };
+            enum class ObjectType {
+                NONE = 0,
+                VOLUME = 1,
+                CROSS_SECTION = 2,
+                STRATIGRAPHY = 3,
+                STRUCTURAL = 4,
+                REGION = 5,
+                DOMAINS = 6,
+                WELL = 7
+            };
 
             enum class ObjectProperties{ NAME, COLOR, INDEX, CURRENT, VISIBLE, SELECTABLE, SELECTED, ACTIVE };
 

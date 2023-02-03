@@ -771,6 +771,16 @@ class STRATMODLIB_DLL_HANDLER SModeller
         //
         ///////////////////////////////////////////////////////////////////////
 
+        /** @brief Compute new region object associated to the region id
+         * and return it if it exists
+         *
+         * @param region_id Integer representing the region id
+         *
+         * @return Optional with intended Region if id is valid, empty optional otherwise.
+         *
+         **/
+        std::optional<Region> getRegion(int region_id);
+
         /**
          * @brief Compute regions and return then as domains to be used in a
          * new ModelInterpretation (i.e., computed regions, assigned domains

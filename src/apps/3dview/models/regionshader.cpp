@@ -87,7 +87,7 @@ void RegionShader::loadBuffers()
     if(must_load_data || raw->colorWasUpdatedSinceLastRead())
     {
         int r, g, b;
-        raw->getColor( r, g, b );
+        raw->getColorFor3DView( r, g, b );
 
         //update opengl buffers
         updateColorBuffers( num_vertices, r, g, b );

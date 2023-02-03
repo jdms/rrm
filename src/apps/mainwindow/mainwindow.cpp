@@ -238,6 +238,7 @@ void MainWindow::createActions()
         bool model_contains_a_region = controller->getRulesProcessor().getActiveSurfaces().size() >= 2;
         status_ &= model_contains_a_region;
         app->getRegions( status_ );
+        app->getDomains( status_ );
         bool activate_diagnostics = status_ && diagapp->isImplemented();
         ac_diagnostics->setEnabled( activate_diagnostics );
         lockUndoRedo( status_ );
@@ -253,7 +254,14 @@ void MainWindow::createActions()
     connect( ac_diagnostics, &QAction::triggered, [=]( bool status_ )
     {
         emit runDiagnostics( status_ );
-        if (status_ && !diagapp->preferDockedWindow())
+
+        if (status_ && !diagapp->isActive())
+        {
+            emit runDiagnostics(false);
+            ac_diagnostics->setChecked(false);
+        }
+
+        if (status_ == false)
         {
             emit runDiagnostics(false);
             ac_diagnostics->setChecked(false);

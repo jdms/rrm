@@ -444,11 +444,45 @@ void RRMApplication::getRegions( bool status_ )
     emit addRegions();
 }
 
+void RRMApplication::getDomains( bool status_ )
+{
+    if (status_ == false)
+    {
+        return;
+    }
+
+    auto domain_ids = controller->getDomains();
+
+    for (auto id : domain_ids)
+    {
+        /* controller->loadDomain( id ); */
+        window->object_tree->loadDomain( id );
+        double volume_ = controller->getDomainVolume( id );
+        window->object_tree->updateVolumeDomain( id, volume_ );
+    }
+
+    // Update regions
+    const std::map< std::size_t, RegionsPtr >& regions_ = controller->getRegions();
+    for( auto it: regions_ )
+    {
+        RegionsPtr & reg_ = (it.second);
+
+        int r_, g_, b_;
+        double volume_;
+        double perc_;
+
+        reg_->getColor( r_, g_, b_ );
+        volume_  = reg_->getVolume();
+
+        window->object_tree->updateRegionColor( reg_->getIndex(), r_, g_, b_ );
+    }
+    emit updateRegions();
+}
 
 void RRMApplication::setRegionsVisible( bool status_ )
 {
     controller->setRegionsVisible( status_ );
-    updateRegions();
+    emit updateRegions();
 }
 
 
@@ -480,6 +514,7 @@ void RRMApplication::createDomain()
     window->object_tree->createDomain( id_ );
     double volume_ = controller->getDomainVolume( id_ );
     window->object_tree->updateVolumeDomain( id_, volume_ );
+    emit updateRegions();
 }
 
 
@@ -492,6 +527,23 @@ void RRMApplication::setDomainName( std::size_t index_, const std::string& name_
 void RRMApplication::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
 {
     controller->setDomainColor( index_, red_, green_, blue_ );
+
+    // Update regions
+    const std::map< std::size_t, RegionsPtr >& regions_ = controller->getRegions();
+    for( auto it: regions_ )
+    {
+        RegionsPtr & reg_ = (it.second);
+
+        int r_, g_, b_;
+        double volume_;
+        double perc_;
+
+        reg_->getColor( r_, g_, b_ );
+        volume_  = reg_->getVolume();
+
+        window->object_tree->updateRegionColor( reg_->getIndex(), r_, g_, b_ );
+    }
+    emit updateRegions();
 }
 
 
@@ -500,6 +552,10 @@ void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_
     controller->addRegionToDomain( reg_id_, domain_id_ );
     double volume_ = controller->getDomainVolume( domain_id_ );
     window->object_tree->updateVolumeDomain( domain_id_, volume_ );
+    int r, g, b;
+    controller->getRegionColor(reg_id_, r, g, b);
+    window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    emit updateRegions();
 }
 
 
@@ -507,16 +563,36 @@ void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_
 
 void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
-    controller->removeRegionFromDomain( reg_id_, domain_id_ );
-    double volume_ = controller->getDomainVolume( domain_id_ );
-    window->object_tree->updateVolumeDomain( domain_id_, volume_ );
+    if (controller->removeRegionFromDomain( reg_id_, domain_id_ ))
+    {
+        double volume_ = controller->getDomainVolume( domain_id_ );
+        window->object_tree->updateVolumeDomain( domain_id_, volume_ );
+
+    }
+
+    int r, g, b;
+    controller->getRegionColor(reg_id_, r, g, b);
+    window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    emit updateRegions();
 }
 
 
 void RRMApplication::removeDomain( std::size_t index_ )
 {
-    controller->removeDomain( index_ );
+    auto regions_removed_ = controller->getRegionsFromDomain(index_);
+    bool success = controller->removeDomain( index_ );
+    if (!success)
+        return;
+
     window->object_tree->deleteDomain( index_ );
+
+    for ( auto reg_id_ : regions_removed_ )
+    {
+        int r, g, b;
+        controller->getRegionColor(reg_id_, r, g, b);
+        window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    }
+    emit updateRegions();
 }
 
 
@@ -535,6 +611,14 @@ void RRMApplication::addRegionsToDomain( std::size_t domain_id_, std::vector< st
     window->object_tree->addRegionsInDomain( domain_id_, regions_added_ );
     double volume_ = controller->getDomainVolume( domain_id_ );
     window->object_tree->updateVolumeDomain( domain_id_, volume_ );
+
+    for ( auto reg_id_ : regions_added_ )
+    {
+        int r, g, b;
+        controller->getRegionColor(reg_id_, r, g, b);
+        window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    }
+    emit updateRegions();
 }
 
 
@@ -552,10 +636,9 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
         {
             regions_removed_.push_back( regions_[ i ] );
             domains_removed_.push_back( domains_[ i ] );
+            double volume_ = controller->getDomainVolume( domains_[ i ] );
+            window->object_tree->updateVolumeDomain( domains_[ i ], volume_ );
         }
-
-        double volume_ = controller->getDomainVolume( domains_[ i ] );
-        window->object_tree->updateVolumeDomain( domains_[ i ], volume_ );
     }
 
     if( delete_ == true )
@@ -563,7 +646,13 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
     else
         window->object_tree->removeRegionsOfTheirDomainsNoDelete( regions_removed_, domains_removed_ );
 
-
+    for ( auto reg_id_ : regions_removed_ )
+    {
+        int r, g, b;
+        controller->getRegionColor(reg_id_, r, g, b);
+        window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    }
+    emit updateRegions();
 }
 
 
@@ -615,10 +704,15 @@ void RRMApplication::updateRegionBoundary()
 // set domains for objecttree
 void RRMApplication::loadDomains()
 {
+    if ( controller->getRegions().empty() )
+    {
+        return;
+    }
+
     std::vector< std::size_t > domains_ = controller->getDomains();
     for( auto it_: domains_ )
     {
-        bool status_ = window->object_tree->createDomain( it_ );
+        bool status_ = window->object_tree->loadDomain( it_ );
         if( status_ == false ) continue;
 
         std::set< std::size_t > regions_ = controller->getRegionsFromDomain( it_ );
