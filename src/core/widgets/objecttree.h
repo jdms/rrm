@@ -251,6 +251,14 @@ class ObjectTree: public QTreeWidget
         void updateVolumeDomain( std::size_t index_, double volume_ );
 
 
+        /**
+         * Method to update a domain's actions
+         * @param index index of the domain
+         * @return Void.
+         */
+        bool updateDomainActions( std::size_t index_ );
+
+
 
     public slots:
 

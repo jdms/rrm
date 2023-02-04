@@ -1831,7 +1831,7 @@ void Controller::setDomainColor( std::size_t index_, int red_, int green_, int b
             model.regions[ r_id ]->setDomainColor(red_, green_, blue_);
             model.regions[ r_id ]->getBlendedColor(r, g, b);
 
-            if (MMA::regions().find(r_id) != MMA::domains().end())
+            if (MMA::regions().find(r_id) != MMA::regions().end())
             {
                 MMA::setColor(MMA::regions()[r_id], MMA::color(r, g, b));
             }

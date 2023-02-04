@@ -92,14 +92,32 @@ QColor ColorPicker::currentColor() const
     return cd_picker_color->currentColor();
 }
 
+QPixmap ColorPicker::currentIcon() const
+{
+    return ColorPicker::colorPickerIcon(currentColor());
+}
 
 void ColorPicker::colorChanged( const QColor& color_ )
 {
 
-    // this create a small icon with the color on the toolbutton
+    /* // this create a small icon with the color on the toolbutton */
+    /* QPixmap px( 15, 15 ); */
+    /* px.fill( QColor( color_.red(), color_.green(), color_.blue(), color_.alpha() ) ); */
+    /* setIcon( px ); */
+
+    QPixmap px = ColorPicker::colorPickerIcon(color_);
+    setIcon( px );
+}
+
+
+QPixmap ColorPicker::colorPickerIcon( const QColor& color_ )
+{
+
+    // this creates a small icon with the color on the toolbutton
     QPixmap px( 15, 15 );
     px.fill( QColor( color_.red(), color_.green(), color_.blue(), color_.alpha() ) );
-    setIcon( px );
+    /* setIcon( px ); */
+    return px;
 }
 
 

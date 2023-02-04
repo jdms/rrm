@@ -543,6 +543,7 @@ void RRMApplication::setDomainColor( std::size_t index_, int red_, int green_, i
 
         window->object_tree->updateRegionColor( reg_->getIndex(), r_, g_, b_ );
     }
+    window->object_tree->updateDomainActions( index_ );
     emit updateRegions();
 }
 
