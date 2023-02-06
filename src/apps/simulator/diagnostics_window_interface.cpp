@@ -20,9 +20,11 @@
  */
 
 #include "diagnostics_window_interface.h"
+#include "stratmod/smodeller.hpp"
 
 #include "diagnostics/fd_interface.hpp"
-#include "stratmod/smodeller.hpp"
+#include "diagnostics/fd_definitions.h"
+#include "diagnostics/model/metadata_access.h"
 
 struct DiagnosticsWindowInterface::DiagnosticsWindowInterfaceImpl {
     FlowDiagnosticsInterface window;
@@ -50,6 +52,8 @@ void DiagnosticsWindowInterface::setModel(stratmod::SModeller& model)
 {
     pmodel_ = &model;
     pimpl_->window.setModel(pmodel_);
+    model::MetadataAccess::pModel(pmodel_);
+    FlowDiagnosticsDefinitions::pModel(pmodel_);
 }
 
 bool DiagnosticsWindowInterface::init()
@@ -87,6 +91,8 @@ void DiagnosticsWindowInterface::clear()
         pmodel_->useOpenGLCoordinateSystem();
     }
     pmodel_ = nullptr;
+    model::MetadataAccess::pModel(pmodel_);
+    FlowDiagnosticsDefinitions::pModel(pmodel_);
 }
 
 bool DiagnosticsWindowInterface::preferDockedWindow() const

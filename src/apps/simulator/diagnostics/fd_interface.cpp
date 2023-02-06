@@ -111,7 +111,7 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
         // using unique_ptr + mutex to prevent leaks and race conditions
         std::unique_ptr<rrm::fd::FDWidgetImpl> fd_window_ = nullptr;
         std::mutex m_{};
-        std::string project_name{};
+        std::optional<std::string> project_name{};
         inline static stratmod::SModeller* pmodel_ = nullptr;
 
         //
@@ -174,12 +174,7 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
             project_name = u.getSavedFileName();
             #endif
 
-            if (project_name.empty())
-            {
-                return std::optional<std::string>();
-            }
-
-            return std::make_optional<std::string>(project_name);
+            return project_name;
         }
 
         //
@@ -640,14 +635,12 @@ void FlowDiagnosticsInterface::closeWindow()
 
 void FlowDiagnosticsInterface::setProjectName(std::string name)
 {
-    pimpl_->project_name = name;
+    pimpl_->project_name = std::make_optional<std::string>(name);
 }
 
 void FlowDiagnosticsInterface::setModel(stratmod::SModeller* pmodel)
 {
     pimpl_->pmodel_ = pmodel;
-    model::MetadataAccess::pModel(pmodel);
-    FlowDiagnosticsDefinitions::pModel(pmodel);
 }
 
 /////////////////////////////////////////////////////////////////////////////
