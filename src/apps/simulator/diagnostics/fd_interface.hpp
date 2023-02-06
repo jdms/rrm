@@ -30,6 +30,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 namespace stratmod {
     class SModeller;
@@ -67,6 +68,9 @@ class FlowDiagnosticsInterface {
 
         /// Return true if FD gui is running -- thread safe
         bool isActive();
+
+        /// Set project name and path
+        void setProjectName(std::string name);
 
         /// Create new FD window -- thread safe
         bool createWindow();

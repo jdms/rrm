@@ -111,6 +111,7 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
         // using unique_ptr + mutex to prevent leaks and race conditions
         std::unique_ptr<rrm::fd::FDWidgetImpl> fd_window_ = nullptr;
         std::mutex m_{};
+        std::string project_name{};
         inline static stratmod::SModeller* pmodel_ = nullptr;
 
         //
@@ -164,6 +165,23 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
             return false;
         }
 
+        /// [WARNING]: this method depends on the model saving its "file name" in its data structure
+        /// A proper long term solution should be considered
+        std::optional<std::string> getSavedModelFilename()
+        {
+            #if defined RRMQMLVTK_STILL_DOES_NOT_PROVIDE_PROJECT_NAME_TO_FD
+            stratmod::SUtilities u(model());
+            project_name = u.getSavedFileName();
+            #endif
+
+            if (project_name.empty())
+            {
+                return std::optional<std::string>();
+            }
+
+            return std::make_optional<std::string>(project_name);
+        }
+
         //
         // General helper functions
         //
@@ -189,15 +207,6 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
 
         /// compute max number of regions in model
         static int numRegions() { return (numSurfaces() > 0) ? (numSurfaces() -1) : 0; }
-
-        /// [WARNING]: this method depends on the model saving its "file name" in its data structure
-        /// A proper long term solution should be considered
-        static std::optional<std::string> getSavedModelFilename()
-        {
-            stratmod::SUtilities u(model());
-            /* return u.getSavedFileName(); */
-            return std::optional<std::string>();
-        }
 
         /// initialize rendering settings
         static StartupSettings processStartupSettings();
@@ -397,14 +406,15 @@ FlowDiagnosticsInterface::Impl::PetrophysicalSettings FlowDiagnosticsInterface::
     // Using a colormap to provide default colors to domains if gui has not assigned any
     Colors domains_colormap(Colorwrap::Pastel1());
 
+    int j = 0;
     for (auto& [domain_idx, domain] : MMA::domains())
     {
         for (auto& r : domain.regions)
         {
-            petrophysics.region_to_domain[r.id()] = domain_idx;
+            petrophysics.region_to_domain[r.id()] = j;
         }
 
-        auto& domain_settings = petrophysics.domains[domain_idx];
+        auto& domain_settings = petrophysics.domains[j];
 
         // `getORset*` methods are defined on interface FlowDiagnosticsDefinitions
         domain_settings.name = FDD::getORsetName(domain, "Domain" + std::to_string(domain_idx));
@@ -418,6 +428,7 @@ FlowDiagnosticsInterface::Impl::PetrophysicalSettings FlowDiagnosticsInterface::
         // domain_settings.k_z = units::MilliDarcy(FDD::getORsetPermZ(domain, 999.99));
         domain_settings.poro = FDD::getORsetPoro(domain, 0.2999);
         domain_settings.color.setAlpha(0);
+        ++j;
     }
 
     // Using same default colormap as gui to assign colors to regions if user
@@ -625,6 +636,11 @@ void FlowDiagnosticsInterface::closeWindow()
 {
     pimpl_->CloseWindow();
     stratmod::SModeller::Instance().useDefaultCoordinateSystem();
+}
+
+void FlowDiagnosticsInterface::setProjectName(std::string name)
+{
+    pimpl_->project_name = name;
 }
 
 void FlowDiagnosticsInterface::setModel(stratmod::SModeller* pmodel)
