@@ -41,7 +41,6 @@
 
 #include <nlohmann/json.hpp>
 
-using MMA = ModelMetadataAccess;
 
 using ObjectType = Settings::Objects::ObjectType;
 
@@ -243,43 +242,6 @@ void from_json(const nlohmann::json& j, ObjectDescriptor& d)
     d.type = cast_ot(otype);
     j.at("info").get_to(d.info);
 }
-
-/// Quick and dirty class to create colors on the fly using the Colorwrap class
-/// (Colorwrap is a wraper for colorbrewer: https://colorbrewer2.org/)
-class Colors {
-    public:
-        Colors(std::vector<int> colormap = Colorwrap::Spectral())
-        {
-            this->num_colors = colormap.size()/3;
-            this->colormap = colormap;
-        }
-
-        QColor color(int i)
-        {
-            int r = 255, g = 0, b = 0;
-
-            i = i % num_colors;
-            if (invert_colors)
-            {
-                i = (num_colors -1) - i;
-            }
-
-            r = colormap[3*i + 0];
-            g = colormap[3*i + 1];
-            b = colormap[3*i + 2];
-
-            return QColor(r, g, b);
-        }
-
-        void invert() { invert_colors = !invert_colors; }
-
-    private:
-        int num_colors{};
-        std::vector<int> colormap{};
-        bool invert_colors = false;
-};
-
-Colors DomainsColors(Colorwrap::Pastel2());
 
 
 Controller::Controller()

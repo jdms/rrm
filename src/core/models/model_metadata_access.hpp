@@ -429,4 +429,6 @@ class ModelMetadataAccess
         }
 };
 
+using MMA = ModelMetadataAccess;
+
 /* } // namespace rrm */

@@ -49,6 +49,7 @@
 #include "regions.h"
 #include "domain.h"
 #include "rules_processor.hpp"
+#include "colors.hpp"
 
 
 class Volume;

@@ -32,6 +32,7 @@ set( MODELS_HEADERS       controller.h
                           stratmod_wrapper.hpp
                           model_metadata_access.hpp
                           irap_grid_exporter.hpp
+                          colors.hpp
                           )
 
 set( MODELS_SOURCES       controller.cpp
