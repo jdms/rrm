@@ -914,7 +914,8 @@ bool ObjectTree::loadDomain( std::size_t index_ )
     std::vector< std::size_t > regions_;
     for (auto& r : domain.regions)
     {
-        regions_.push_back(r.id());
+        if ( r.id() > -1 )
+            regions_.push_back(r.id());
     }
 
     if( !regions_.empty() )
@@ -1041,6 +1042,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
 
     for( auto it: regions_ )
     {
+        if ( regions.findElement( it ) == false ) continue;
         ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( regions.getElement( it ) );
         if( obj_->getType() != Settings::Objects::ObjectType::REGION ) continue;
 

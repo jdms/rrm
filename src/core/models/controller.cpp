@@ -2863,10 +2863,10 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
         {
             // if it was not save the index, it is not valid
             QJsonObject region_ = regions_array_[ i ].toObject();
-            if( region_.contains( "index" ) == false ) return;
+            if( region_.contains( "index" ) == false ) continue;
 
             std::size_t id_ = static_cast< std::size_t>( region_["index"].toInt() );
-            if( model.regions.find( id_ ) == model.regions.end() ) return;
+            if( model.regions.find( id_ ) == model.regions.end() ) continue;
 
             RegionsPtr reg_ = model.regions[ id_ ];
             reg_->read( region_ );
@@ -2893,7 +2893,11 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
             QJsonArray regions_set_array_ = domain_["regions"].toArray();
             for( auto it_: regions_set_array_ )
+            {
+                if ( model.regions.find( it_.toInt() ) == model.regions.end() )
+                    continue;
                 addRegionToDomain( static_cast< std::size_t >( it_.toInt() ), index_ );
+            }
 
             /* model.domains[index_].setName( */
             /*   domain_.contains("name") */
@@ -2902,6 +2906,18 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             setDomainName(index_, domain_.contains("name")
                     ? domain_["name"].toString().toStdString()
                     : "Domain" + std::to_string(index_));
+
+            int r, g, b;
+            auto it = model.domains[ index_ ].getRegions().begin();
+            if ( it != model.domains[ index_ ].getRegions().end() )
+            {
+                auto reg_ = model.regions[ *it ];
+                if ( reg_->colorWasUpdatedSinceLastRead() )
+                {
+                    reg_->getColor(r, g, b);
+                    setDomainColor( index_, r, g, b );
+                }
+            }
         }
     }
 
