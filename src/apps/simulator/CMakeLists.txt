@@ -4,6 +4,11 @@ cmake_minimum_required( VERSION 3.1 FATAL_ERROR )
 project( FlowDiagnosticsApp VERSION 3.1 LANGUAGES CXX )
 
 
+OPTION(RRM_EXTERNAL_SIMULATOR_ACCESS_MAINWINDOW
+    "Allow external simulator to access MainWindow" ON)
+
+
+################################################################
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}
                      ${CMAKE_CURRENT_BINARY_DIR} )
 
@@ -81,7 +86,9 @@ include_directories (${PROJECT_SOURCE_DIR})
 include_directories (${PROJECT_BINARY_DIR})
 
 add_library( ${PROJECT_NAME} STATIC ${SIMULATOR_HEADERS} ${SIMULATOR_MOC_HEADERS} ${SIMULATOR_UI_SOURCES} ${SIMULATOR_SOURCES} )
-target_link_libraries( ${PROJECT_NAME} RRMModel )
+
+# target_link_libraries( ${PROJECT_NAME} RRMModel RRMAppsIncludes )
+
 if(WIN32)
     target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
     target_link_libraries( ${PROJECT_NAME} OpenGL::GL GLEW::GLEW )
@@ -93,6 +100,11 @@ endif()
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 if(RRM_BUILD_FLOW_DIAGNOSTICS)
+    if(RRM_EXTERNAL_SIMULATOR_ACCESS_MAINWINDOW)
+        target_link_libraries( ${PROJECT_NAME} MainApp )
+        target_compile_definitions(${PROJECT_NAME} PRIVATE -DRRM_EXTERNAL_SIMULATOR_ACCESS_MAINWINDOW)
+    endif()
+
     target_compile_definitions(${PROJECT_NAME} PRIVATE -DRRM_BUILD_FLOW_DIAGNOSTICS)
     target_link_libraries(${PROJECT_NAME} diagnostics)
 endif()

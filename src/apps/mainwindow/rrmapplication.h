@@ -728,23 +728,23 @@ public:
         void getLegacyMeshes( std::vector<double> &points, std::vector<size_t> &nu, std::vector<size_t> &nv, size_t num_extrusion_steps );
 
 
-        /**
-        * Method (slot) to get the surfaces meshes and their boundaries curves
-        * This method is used by the Flow Diagnostics application
-        * @param triangles_meshes the triangles meshes
-        * @param left_curves vector of the left curve of each surface boundary
-        * @param right_curves vector of the right curve of each surface boundary
-        * @param front_curves vector of the front curve of each surface boundary
-        * @param back_curves vector of the back curve of each surface boundary
-        * @see DiagnosticsWindowInterface::TriangleMesh
-        * @see DiagnosticsWindowInterface::CurveMesh
-        * @return void.
-        */
-        void getSurfacesMeshes( std::vector< DiagnosticsWindowInterface::TriangleMesh >& triangles_meshes,
-                                                std::vector< DiagnosticsWindowInterface::CurveMesh>& left_curves,
-                                                std::vector< DiagnosticsWindowInterface::CurveMesh >& right_curves,
-                                                std::vector< DiagnosticsWindowInterface::CurveMesh > & front_curves,
-                                                std::vector< DiagnosticsWindowInterface::CurveMesh >& back_curves );
+        /*/1** */
+        /** Method (slot) to get the surfaces meshes and their boundaries curves */
+        /** This method is used by the Flow Diagnostics application */
+        /** @param triangles_meshes the triangles meshes */
+        /** @param left_curves vector of the left curve of each surface boundary */
+        /** @param right_curves vector of the right curve of each surface boundary */
+        /** @param front_curves vector of the front curve of each surface boundary */
+        /** @param back_curves vector of the back curve of each surface boundary */
+        /** @see DiagnosticsWindowInterface::TriangleMesh */
+        /** @see DiagnosticsWindowInterface::CurveMesh */
+        /** @return void. */
+        /**1/ */
+        /*void getSurfacesMeshes( std::vector< DiagnosticsWindowInterface::TriangleMesh >& triangles_meshes, */
+        /*                                        std::vector< DiagnosticsWindowInterface::CurveMesh>& left_curves, */
+        /*                                        std::vector< DiagnosticsWindowInterface::CurveMesh >& right_curves, */
+        /*                                        std::vector< DiagnosticsWindowInterface::CurveMesh > & front_curves, */
+        /*                                        std::vector< DiagnosticsWindowInterface::CurveMesh >& back_curves ); */
 
 
          /**

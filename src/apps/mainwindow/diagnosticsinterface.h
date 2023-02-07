@@ -138,7 +138,7 @@ class DiagnosticsInterface: public QObject
 
         QDockWidget* dw_flow_window = nullptr;                              /**< DockWidget to hold the Flow Diagnostics window */
 
-        DiagnosticsWindowInterface* fd_window_interface = nullptr;                           /**< Flow Diagnostics window */
+        DiagnosticsWindowInterface* fd_window_interface = nullptr;          /**< Flow Diagnostics window */
 
 
 };

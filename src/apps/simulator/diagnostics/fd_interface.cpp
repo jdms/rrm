@@ -635,7 +635,8 @@ void FlowDiagnosticsInterface::closeWindow()
 
 void FlowDiagnosticsInterface::setProjectName(std::string name)
 {
-    pimpl_->project_name = std::make_optional<std::string>(name);
+    if (!name.empty())
+        pimpl_->project_name = std::make_optional<std::string>(name);
 }
 
 void FlowDiagnosticsInterface::setModel(stratmod::SModeller* pmodel)

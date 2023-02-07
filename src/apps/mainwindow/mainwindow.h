@@ -34,8 +34,8 @@
 #include <QMainWindow>
 #include <QToolBar>
 #include <QFileDialog>
-#include <QDir>
 #include <QFileInfo>
+#include <QDir>
 
 #include "rrmapplication.h"
 #include "sketchinterface.h"
@@ -73,7 +73,7 @@ class MainWindow: public QMainWindow
         /**
         * Destructor.
         */
-        ~MainWindow();
+        virtual ~MainWindow();
 
 
         /**

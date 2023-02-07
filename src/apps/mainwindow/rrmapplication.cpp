@@ -796,6 +796,7 @@ void RRMApplication::reset()
     emit resetApplication();
     emit enableVolumeResizing();
     window->initializeInterface();
+    window->current_path.setPath( QDir::homePath() );
     controller->clear();
 
     init();
@@ -1056,53 +1057,53 @@ void RRMApplication::getLegacyMeshes( std::vector<double> &points, std::vector<s
 }
 
 
-void RRMApplication::getSurfacesMeshes( std::vector< DiagnosticsWindowInterface::TriangleMesh >& triangles_meshes,
-                                        std::vector< DiagnosticsWindowInterface::CurveMesh>& left_curves,
-                                        std::vector< DiagnosticsWindowInterface::CurveMesh >& right_curves,
-                                        std::vector< DiagnosticsWindowInterface::CurveMesh > & front_curves,
-                                        std::vector< DiagnosticsWindowInterface::CurveMesh >& back_curves )
-{
-    std::vector< Controller::TriangleMesh > meshes;
-    std::vector< Controller::CurveMesh > lcurves;
-    std::vector< Controller::CurveMesh > rcurves;
-    std::vector< Controller::CurveMesh > fcurves;
-    std::vector< Controller::CurveMesh > bcurves;
+/* void RRMApplication::getSurfacesMeshes( std::vector< DiagnosticsWindowInterface::TriangleMesh >& triangles_meshes, */
+/*                                         std::vector< DiagnosticsWindowInterface::CurveMesh>& left_curves, */
+/*                                         std::vector< DiagnosticsWindowInterface::CurveMesh >& right_curves, */
+/*                                         std::vector< DiagnosticsWindowInterface::CurveMesh > & front_curves, */
+/*                                         std::vector< DiagnosticsWindowInterface::CurveMesh >& back_curves ) */
+/* { */
+/*     std::vector< Controller::TriangleMesh > meshes; */
+/*     std::vector< Controller::CurveMesh > lcurves; */
+/*     std::vector< Controller::CurveMesh > rcurves; */
+/*     std::vector< Controller::CurveMesh > fcurves; */
+/*     std::vector< Controller::CurveMesh > bcurves; */
 
-    controller->setSurfacesMeshes( meshes, lcurves, rcurves, fcurves, bcurves );
+/*     controller->setSurfacesMeshes( meshes, lcurves, rcurves, fcurves, bcurves ); */
 
-    for( std::size_t i = 0; i < meshes.size(); ++i )
-    {
-        DiagnosticsWindowInterface::TriangleMesh t;
-        t.vertex_list = meshes[i].vertex_list;
-        t.face_list = meshes[i].face_list;
-        triangles_meshes.push_back( t );
-    }
+/*     for( std::size_t i = 0; i < meshes.size(); ++i ) */
+/*     { */
+/*         DiagnosticsWindowInterface::TriangleMesh t; */
+/*         t.vertex_list = meshes[i].vertex_list; */
+/*         t.face_list = meshes[i].face_list; */
+/*         triangles_meshes.push_back( t ); */
+/*     } */
 
-    for ( std::size_t i = 0; i < lcurves.size(); ++i )
-    {
-        DiagnosticsWindowInterface::CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
+/*     for ( std::size_t i = 0; i < lcurves.size(); ++i ) */
+/*     { */
+/*         DiagnosticsWindowInterface::CurveMesh cm_lb, cm_rb, cm_fb, cm_bb; */
 
-        std::copy( lcurves[i].vertex_list.begin(), lcurves[i].vertex_list.end(), std::back_inserter(cm_lb.vertex_list) );
-        std::copy( lcurves[i].edge_list.begin(), lcurves[i].edge_list.end(), std::back_inserter(cm_lb.edge_list) );
+/*         std::copy( lcurves[i].vertex_list.begin(), lcurves[i].vertex_list.end(), std::back_inserter(cm_lb.vertex_list) ); */
+/*         std::copy( lcurves[i].edge_list.begin(), lcurves[i].edge_list.end(), std::back_inserter(cm_lb.edge_list) ); */
 
-        std::copy( rcurves[i].vertex_list.begin(), rcurves[i].vertex_list.end(), std::back_inserter(cm_rb.vertex_list) );
-        std::copy( rcurves[i].edge_list.begin(), rcurves[i].edge_list.end(), std::back_inserter(cm_rb.edge_list) );
-
-
-        std::copy( fcurves[i].vertex_list.begin(), fcurves[i].vertex_list.end(), std::back_inserter(cm_fb.vertex_list) );
-        std::copy( fcurves[i].edge_list.begin(), fcurves[i].edge_list.end(), std::back_inserter(cm_fb.edge_list) );
+/*         std::copy( rcurves[i].vertex_list.begin(), rcurves[i].vertex_list.end(), std::back_inserter(cm_rb.vertex_list) ); */
+/*         std::copy( rcurves[i].edge_list.begin(), rcurves[i].edge_list.end(), std::back_inserter(cm_rb.edge_list) ); */
 
 
-        std::copy( bcurves[i].vertex_list.begin(), bcurves[i].vertex_list.end(), std::back_inserter(cm_bb.vertex_list) );
-        std::copy( bcurves[i].edge_list.begin(), bcurves[i].edge_list.end(), std::back_inserter(cm_bb.edge_list) );
+/*         std::copy( fcurves[i].vertex_list.begin(), fcurves[i].vertex_list.end(), std::back_inserter(cm_fb.vertex_list) ); */
+/*         std::copy( fcurves[i].edge_list.begin(), fcurves[i].edge_list.end(), std::back_inserter(cm_fb.edge_list) ); */
 
 
-        left_curves.push_back( cm_lb );
-        right_curves.push_back( cm_rb );
-        front_curves.push_back( cm_fb );
-        back_curves.push_back( cm_bb );
-    }
-}
+/*         std::copy( bcurves[i].vertex_list.begin(), bcurves[i].vertex_list.end(), std::back_inserter(cm_bb.vertex_list) ); */
+/*         std::copy( bcurves[i].edge_list.begin(), bcurves[i].edge_list.end(), std::back_inserter(cm_bb.edge_list) ); */
+
+
+/*         left_curves.push_back( cm_lb ); */
+/*         right_curves.push_back( cm_rb ); */
+/*         front_curves.push_back( cm_fb ); */
+/*         back_curves.push_back( cm_bb ); */
+/*     } */
+/* } */
 
 
 void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& faces,

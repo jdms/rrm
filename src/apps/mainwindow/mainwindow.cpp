@@ -173,7 +173,7 @@ void MainWindow::createActions()
     ac_regions->setChecked( false );
 
     ac_diagnostics = new QAction( "Diagnostics", this );
-    ac_diagnostics->setToolTip( "Run Diagnostics" );
+    ac_diagnostics->setToolTip( "Run Flow Diagnostics" );
     ac_diagnostics->setCheckable( true );
     ac_diagnostics->setChecked( false );
     ac_diagnostics->setEnabled( false );
@@ -258,14 +258,14 @@ void MainWindow::createActions()
         if (status_ && !diagapp->isActive())
         {
             emit runDiagnostics(false);
-            ac_diagnostics->setChecked(false);
         }
 
         if (status_ == false)
         {
             emit runDiagnostics(false);
-            ac_diagnostics->setChecked(false);
         }
+
+        ac_diagnostics->setChecked(false);
     } );
 
     connect( ac_screenshot, &QAction::triggered, [=](){ emit takeScreenshot();  } );
@@ -594,7 +594,7 @@ void MainWindow::save()
 
     if( filename_.isEmpty() == true ) return;
     app->save( filename_.toStdString() );
-    current_path = QDir(filename_).canonicalPath();
+    current_path.setPath( QDir(filename_).canonicalPath() );
 }
 
 
@@ -607,7 +607,7 @@ void MainWindow::load()
 
     if( filename_.isEmpty() == true ) return;
     app->load( filename_.toStdString() );
-    current_path = QDir(filename_).canonicalPath();
+    current_path.setPath( QDir(filename_).canonicalPath() );
 
 }
 

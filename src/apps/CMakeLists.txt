@@ -16,10 +16,16 @@ ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 # Main source -- Subprojects
 ###############################################
 
-add_subdirectory( simulator )
+add_library(RRMAppsIncludes INTERFACE)
+target_include_directories(RRMAppsIncludes
+    INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/simulator>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mainwindow>
+)
 add_subdirectory( mainwindow )
+add_subdirectory( simulator )
 
-
+target_link_libraries(MainApp FlowDiagnosticsApp)
 
 ###############################################
 # Wrapping Qt Elements

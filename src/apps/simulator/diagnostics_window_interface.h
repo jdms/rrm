@@ -45,7 +45,7 @@ class DiagnosticsWindowInterface : public QMainWindow
         * Constructor.
         * @param Optional pointer to parent widget
         */
-        DiagnosticsWindowInterface(QWidget* parent = nullptr);
+        DiagnosticsWindowInterface(QMainWindow* parent = nullptr);
 
         /**
         * Default Destructor.
@@ -145,8 +145,8 @@ class DiagnosticsWindowInterface : public QMainWindow
         };
 
     protected:
-        stratmod::SModeller* pmodel_ = nullptr;  /**< Pointer to model */
-        QWidget* pparent_ = nullptr;             /**< Pointer to parent Widget */
+        stratmod::SModeller* pmodel_ = nullptr;      /**< Pointer to model */
+        QMainWindow* pparent_ = nullptr;             /**< Pointer to parent Widget */
 
     private:
         struct DiagnosticsWindowInterfaceImpl;
