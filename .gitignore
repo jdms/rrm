@@ -1,3 +1,6 @@
+.vs
+.vscode
+
 # Project specific files
 ########################
 libs/stratmod/stratmod
