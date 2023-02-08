@@ -101,6 +101,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 if(RRM_BUILD_FLOW_DIAGNOSTICS)
     if(RRM_EXTERNAL_SIMULATOR_ACCESS_MAINWINDOW)
+        add_dependencies(FlowDiagnosticsApp MainApp)
         target_link_libraries( ${PROJECT_NAME} MainApp )
         target_compile_definitions(${PROJECT_NAME} PRIVATE -DRRM_EXTERNAL_SIMULATOR_ACCESS_MAINWINDOW)
     endif()

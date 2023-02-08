@@ -82,6 +82,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SIMULATOR_HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include_Debug)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include_Release)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include_RelWithDebInfo)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include_MinSizeRel)
 
 
 #target_link_libraries( ${PROJECT_NAME} GLEW::GLEW )
