@@ -12,7 +12,7 @@ rrm_models/
 
 # Git files       #
 ###################
-.git*
+# .git*
 
 # Compiled source #
 ###################
