@@ -29,12 +29,15 @@ namespace stratmod
     class SModeller;
 }
 
+/* Including QWidget before filesystem to workaround bug in Qt moc when
+ * compiling in linux: */
+/* https://bugreports.qt.io/browse/QTBUG-73263 */
+#include <QWidget>
+
 #include <filesystem>
 #include <functional>
 #include <memory>
 #include <vector>
-
-#include <QWidget>
 
 
 class DiagnosticsWindowInterface : public QWidget

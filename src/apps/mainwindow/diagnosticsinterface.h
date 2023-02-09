@@ -29,10 +29,13 @@
 #ifndef DIAGNOSTICSINTERFACE_H
 #define DIAGNOSTICSINTERFACE_H
 
+/* Including QDockWidget before filesystem to workaround bug in Qt moc when
+ * compiling in linux: */
+/* https://bugreports.qt.io/browse/QTBUG-73263 */
+#include <QDockWidget>
+
 #include <filesystem>
 #include <memory>
-
-#include <QDockWidget>
 
 class MainWindow;
 class DiagnosticsWindowInterface;
