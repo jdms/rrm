@@ -391,11 +391,11 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
   /* fd_window_ = std::make_unique<FDWidgetImpl>(); */
   fd_window_ = new FDWidgetImpl();
   fd_window_->setAttribute(Qt::WA_DeleteOnClose);
-  if (parent != nullptr)
-  {
-    fd_window_->setParent(parent);
-    fd_window_->setWindowFlags(Qt::Window);
-  }
+  // if (parent != nullptr)
+  // {
+  //   fd_window_->setParent(parent);
+  //   fd_window_->setWindowFlags(Qt::Window);
+  // }
   fd_window_->BeginInit();
 
   fd_window_->close_event_ = [this] { this->fd_window_ = nullptr; };
