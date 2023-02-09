@@ -38,7 +38,7 @@ DiagnosticsWindowInterface::DiagnosticsWindowInterface(QWidget *parent)
 {
     this->setParent(parent);
     pimpl_ = std::make_unique<DiagnosticsWindowInterfaceImpl>();
-    /* pimpl_->window.setParent(this); */
+    pimpl_->window.setParent(this);
     pparent_ = parent;
 }
 
@@ -64,7 +64,7 @@ void DiagnosticsWindowInterface::setModel(stratmod::SModeller& model)
 
 void DiagnosticsWindowInterface::setProjectPath(std::filesystem::path path)
 {
-    /* pimpl_->window.setProjectPath(path); */
+    pimpl_->window.setProjectPath(path);
 }
 
 bool DiagnosticsWindowInterface::init()

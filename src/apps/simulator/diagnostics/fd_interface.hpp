@@ -29,8 +29,11 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <string>
+
+#include <QWidget>
 
 namespace stratmod {
     class SModeller;
@@ -69,8 +72,8 @@ class FlowDiagnosticsInterface {
         /// Return true if FD gui is running -- thread safe
         bool isActive();
 
-        /// Set project name and path
-        void setProjectName(std::string name);
+        /// Set project path
+        void setProjectPath(std::filesystem::path path);
 
         /// Create new FD window -- thread safe
         bool createWindow();
@@ -80,6 +83,9 @@ class FlowDiagnosticsInterface {
 
         /// Set current model in FD window
         void setModel(stratmod::SModeller* pmodel);
+
+        /// Set parent window
+        void setParent(QWidget* parent);
 
         /// DEPRECATED: Create new FD window
         [[deprecated("Use FlowDiagnosticsInterface::createWindow()")]]
