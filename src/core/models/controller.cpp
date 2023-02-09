@@ -1504,7 +1504,7 @@ std::vector<std::size_t > Controller::defineRegions()
         else
         {
             /* MMA::name(r) = "Invalid Region" + std::to_string(r_id); */
-            MMA::setColor(r, QColorConstants::Gray);
+            MMA::setColor(r, QColor(255, 0, 0));
         }
     }
 
@@ -2908,14 +2908,14 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
                     : "Domain" + std::to_string(index_));
 
             int r, g, b;
-            auto it = model.domains[ index_ ].getRegions().begin();
-            if ( it != model.domains[ index_ ].getRegions().end() )
+            for ( auto& region_id : model.domains[ index_ ].getRegions() )
             {
-                auto reg_ = model.regions[ *it ];
+                auto reg_ = model.regions[ region_id ];
                 if ( reg_->colorWasUpdatedSinceLastRead() )
                 {
-                    reg_->getColor(r, g, b);
+                    std::dynamic_pointer_cast<Object>(reg_)->getColor(r, g, b);
                     setDomainColor( index_, r, g, b );
+                    break;
                 }
             }
         }
