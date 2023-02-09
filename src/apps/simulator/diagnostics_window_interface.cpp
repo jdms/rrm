@@ -37,9 +37,13 @@ struct DiagnosticsWindowInterface::DiagnosticsWindowInterfaceImpl {
 DiagnosticsWindowInterface::DiagnosticsWindowInterface(QWidget *parent)
 {
     this->setParent(parent);
+    pparent_ = parent;
+
     pimpl_ = std::make_unique<DiagnosticsWindowInterfaceImpl>();
     pimpl_->window.setParent(this);
-    pparent_ = parent;
+    pimpl_->window.setProjectPath({});
+
+    /* init(); */
 }
 
 DiagnosticsWindowInterface::~DiagnosticsWindowInterface() = default;
@@ -64,11 +68,40 @@ void DiagnosticsWindowInterface::setModel(stratmod::SModeller& model)
 
 void DiagnosticsWindowInterface::setProjectPath(std::filesystem::path path)
 {
-    pimpl_->window.setProjectPath(path);
+    if (pimpl_ == nullptr)
+    {
+        return;
+    }
+
+    try {
+        if (std::filesystem::exists(path) && std::filesystem::is_regular_file(path))
+        {
+            pimpl_->window.setProjectPath(path);
+        }
+        else {
+            pimpl_->window.setProjectPath(std::filesystem::path());
+        }
+    }
+    catch (std::filesystem::filesystem_error const& ex) {
+        pimpl_->window.setProjectPath(std::filesystem::path());
+    }
+
 }
 
 bool DiagnosticsWindowInterface::init()
 {
+    /* if (pimpl_ == nullptr) */
+    /* { */
+    /*     pimpl_ = std::make_unique<DiagnosticsWindowInterfaceImpl>(); */
+    /* } */
+    /* pimpl_->window.setParent(this); */
+    /* pimpl_->window.setProjectPath({}); */
+
+    /* if(pmodel_ != nullptr) */
+    /* { */
+    /*     setModel(*pmodel_); */
+    /* } */
+
     return true;
 }
 
@@ -98,11 +131,14 @@ bool DiagnosticsWindowInterface::update()
 void DiagnosticsWindowInterface::clear()
 {
     pimpl_ = std::make_unique<DiagnosticsWindowInterfaceImpl>();
+    pimpl_->window.setParent(this);
+    pimpl_->window.setProjectPath({});
     if(pmodel_)
     {
         pmodel_->useOpenGLCoordinateSystem();
     }
     pmodel_ = nullptr;
+
     model::MetadataAccess::pModel(pmodel_);
     FlowDiagnosticsDefinitions::pModel(pmodel_);
 }

@@ -682,8 +682,7 @@ void FlowDiagnosticsInterface::closeWindow()
 
 void FlowDiagnosticsInterface::setProjectPath(std::filesystem::path path)
 {
-    if (!path.empty())
-        pimpl_->project_path = path;
+    pimpl_->project_path = path;
 }
 
 void FlowDiagnosticsInterface::setModel(stratmod::SModeller* pmodel)

@@ -73,7 +73,10 @@ class FlowDiagnosticsInterface {
         bool isActive();
 
         /// Set project path
-        void setProjectPath(std::filesystem::path path);
+        ///
+        /// This code expects path to point to a regular file or be
+        /// empty otherwise.
+        void setProjectPath(std::filesystem::path path = {});
 
         /// Create new FD window -- thread safe
         bool createWindow();
