@@ -38,6 +38,7 @@ DiagnosticsInterface::DiagnosticsInterface( MainWindow* const& window_ )
 {
     window = window_;
     fd_window_interface = new DiagnosticsWindowInterface(window);
+    fd_window_interface->setAttribute(Qt::WA_DeleteOnClose);
 
     if ( isImplemented() && (window != nullptr))
     {
@@ -104,6 +105,7 @@ void DiagnosticsInterface::createDockedDiagnosticsWindow()
     }
 
     dw_flow_window = new QDockWidget( "Flow Diagnostics" );
+    dw_flow_window->setAttribute(Qt::WA_DeleteOnClose);
     dw_flow_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_flow_window->setWidget( fd_window_interface );
     dw_flow_window->setVisible( false );
@@ -155,6 +157,17 @@ void DiagnosticsInterface::createDiagnosticsActions()
         /* } */
         this->updateWindow( false );
     } );
+}
+
+
+void DiagnosticsInterface::setProjectPath(std::filesystem::path path)
+{
+    if (!isImplemented() || (window == nullptr))
+    {
+        return;
+    }
+
+    fd_window_interface->setProjectPath(path);
 }
 
 

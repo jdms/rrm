@@ -5,7 +5,7 @@ project( FlowDiagnosticsApp VERSION 3.1 LANGUAGES CXX )
 
 
 OPTION(RRM_EXTERNAL_SIMULATOR_ACCESS_MAINWINDOW
-    "Allow external simulator to access MainWindow" ON)
+    "Allow external simulator to access MainWindow" OFF)
 
 
 ################################################################

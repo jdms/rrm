@@ -29,44 +29,16 @@
 #include "diagnostics/fd_definitions.h"
 #include "diagnostics/model/metadata_access.h"
 
-#if defined RRM_EXTERNAL_SIMULATOR_ACCESS_MAINWINDOW
-#include "mainwindow.h"
-class MainWindowAccessor : public MainWindow
-{
-public:
-    static QDir getCurrentPath(QMainWindow *p)
-    {
-        std::string path;
-        QDir qpath;
-        if (p)
-        {
-            MainWindowAccessor* access = static_cast<MainWindowAccessor*>(p);
-            if (access)
-            {
-                qpath = access->current_path;
-                QFileInfo check_file(qpath.canonicalPath());
-                if (check_file.exists() && check_file.isFile())
-                {
-                    return qpath;
-                }
-            }
-        }
-
-        return qpath;
-    }
-
-private:
-    MainWindowAccessor* window;
-};
-#endif
 
 struct DiagnosticsWindowInterface::DiagnosticsWindowInterfaceImpl {
     FlowDiagnosticsInterface window;
 };
 
-DiagnosticsWindowInterface::DiagnosticsWindowInterface(QMainWindow *parent) : QMainWindow(parent)
+DiagnosticsWindowInterface::DiagnosticsWindowInterface(QWidget *parent)
 {
+    this->setParent(parent);
     pimpl_ = std::make_unique<DiagnosticsWindowInterfaceImpl>();
+    /* pimpl_->window.setParent(this); */
     pparent_ = parent;
 }
 
@@ -88,6 +60,11 @@ void DiagnosticsWindowInterface::setModel(stratmod::SModeller& model)
     pimpl_->window.setModel(pmodel_);
     model::MetadataAccess::pModel(pmodel_);
     FlowDiagnosticsDefinitions::pModel(pmodel_);
+}
+
+void DiagnosticsWindowInterface::setProjectPath(std::filesystem::path path)
+{
+    /* pimpl_->window.setProjectPath(path); */
 }
 
 bool DiagnosticsWindowInterface::init()
@@ -112,18 +89,6 @@ void DiagnosticsWindowInterface::close()
 bool DiagnosticsWindowInterface::update()
 {
     /* pimpl_->window.closeWindow(); */
-
-    std::string filename;
-    QDir qpath;
-#if defined RRM_EXTERNAL_SIMULATOR_ACCESS_MAINWINDOW
-    qpath = MainWindowAccessor::getCurrentPath(pparent_);
-#endif
-    QFileInfo check_file(qpath.canonicalPath());
-    if (check_file.exists() && check_file.isFile())
-    {
-        filename = qpath.canonicalPath().toStdString();
-    }
-    pimpl_->window.setProjectName(filename);
 
     bool status = pimpl_->window.createWindow();
 

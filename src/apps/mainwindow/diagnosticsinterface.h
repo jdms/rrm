@@ -29,6 +29,7 @@
 #ifndef DIAGNOSTICSINTERFACE_H
 #define DIAGNOSTICSINTERFACE_H
 
+#include <filesystem>
 #include <memory>
 
 #include <QDockWidget>
@@ -58,7 +59,6 @@ class DiagnosticsInterface: public QObject
         * Default Destructor.
         */
         ~DiagnosticsInterface();
-
 
         /**
         * Deleted copy constructor.
@@ -104,8 +104,15 @@ class DiagnosticsInterface: public QObject
         */
         bool preferDockedWindow();
 
+
     public slots:
 
+        /**
+        * Method to set current project path
+        * @param path Filesystem's path to model's files
+        * @return void.
+        */
+        void setProjectPath(std::filesystem::path path);
 
         /**
         * Method to update the Flow Diagnostics app window.
@@ -114,15 +121,14 @@ class DiagnosticsInterface: public QObject
         */
         void updateWindow( bool window_is_active );
 
-    protected:
 
+    protected:
 
         /**
         * Method to create a docked Flow Diagnostics interface
         * @return void.
         */
         void createDockedDiagnosticsWindow();
-
 
         /**
         * Method to initialize and create the connects related to the actions of the Flow Diagnostics application
@@ -132,7 +138,6 @@ class DiagnosticsInterface: public QObject
 
 
     protected:
-
 
         MainWindow* window = nullptr;                                       /**< Main Window */
 

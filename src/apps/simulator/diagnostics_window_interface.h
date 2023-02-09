@@ -29,14 +29,15 @@ namespace stratmod
     class SModeller;
 }
 
+#include <filesystem>
 #include <functional>
 #include <memory>
 #include <vector>
 
-#include <QMainWindow>
+#include <QWidget>
 
 
-class DiagnosticsWindowInterface : public QMainWindow
+class DiagnosticsWindowInterface : public QWidget
 {
     Q_OBJECT
 
@@ -45,7 +46,7 @@ class DiagnosticsWindowInterface : public QMainWindow
         * Constructor.
         * @param Optional pointer to parent widget
         */
-        DiagnosticsWindowInterface(QMainWindow* parent = nullptr);
+        DiagnosticsWindowInterface(QWidget* parent = nullptr);
 
         /**
         * Default Destructor.
@@ -91,6 +92,12 @@ class DiagnosticsWindowInterface : public QMainWindow
         * param model Reference to modeller class object
         */
         void setModel(stratmod::SModeller& model);
+
+        /**
+        * Set current project path
+        * param path Filesystem's path to model's files
+        */
+        void setProjectPath(std::filesystem::path path);
 
         /**
         * Method to initialize an independent flow diagnostics application
@@ -146,7 +153,7 @@ class DiagnosticsWindowInterface : public QMainWindow
 
     protected:
         stratmod::SModeller* pmodel_ = nullptr;      /**< Pointer to model */
-        QMainWindow* pparent_ = nullptr;             /**< Pointer to parent Widget */
+        QWidget* pparent_ = nullptr;             /**< Pointer to parent Widget */
 
     private:
         struct DiagnosticsWindowInterfaceImpl;

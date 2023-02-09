@@ -595,6 +595,11 @@ void MainWindow::save()
     if( filename_.isEmpty() == true ) return;
     app->save( filename_.toStdString() );
     current_path.setPath( QDir(filename_).canonicalPath() );
+
+    if (diagapp)
+    {
+        diagapp->setProjectPath( current_path.canonicalPath().toStdString() );
+    }
 }
 
 
@@ -609,6 +614,10 @@ void MainWindow::load()
     app->load( filename_.toStdString() );
     current_path.setPath( QDir(filename_).canonicalPath() );
 
+    if (diagapp)
+    {
+        diagapp->setProjectPath( current_path.canonicalPath().toStdString() );
+    }
 }
 
 void MainWindow::exportToIRAP()
