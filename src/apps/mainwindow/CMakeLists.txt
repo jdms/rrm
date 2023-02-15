@@ -90,7 +90,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_
 
 #target_link_libraries( ${PROJECT_NAME} GLEW::GLEW )
 # target_link_libraries( ${PROJECT_NAME} RRMBase RRMModel RRMWidgets 3dViewApp Sketching FlowDiagnosticsApp )
-target_link_libraries( ${PROJECT_NAME} RRMBase RRMModel RRMWidgets 3dViewApp Sketching RRMAppsIncludes )
+target_link_libraries( ${PROJECT_NAME} RRMBase RRMModel RRMWidgets 3dViewApp Sketching RRMVersionData RRMAppsIncludes )
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg ${OPENGL_LIBRARIES} ) #${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
 if(WIN32)
     #target_link_libraries( ${PROJECT_NAME} stratmod TinyObjLoader )

@@ -1,6 +1,6 @@
 # Modified from: https://github.com/Kitware/sprokit/blob/master/src/sprokit/CMakeLists.txt
 #
-cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/rrm_macro_configure.cmake)
 
@@ -62,7 +62,7 @@ elseif (GIT_FOUND)
     set(RRM_VERSION_FROM_GIT_TAG TRUE)
   endif()
   if (git_return)
-    set(rrm_git_dirty \"dirty\")
+    set(rrm_git_dirty \"-dirty\")
   endif ()
   message(STATUS \"version: \${rrm_version}\")
   message(STATUS \"git hash: \${rrm_git_hash}\")
@@ -90,5 +90,8 @@ rrm_configure_file_always(version.h
   rrm_git_hash_short
   rrm_git_dirty
   rrm_git_tag)
+
+add_library(RRMVersionData INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/version.h)
+target_include_directories(RRMVersionData INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
 
 set(configure_code)
