@@ -60,6 +60,8 @@
 
 /* Class PlanarSurface is not reentrant. */ 
 
+class LegacyTetrahedralMeshBuilder;
+
 /* template<typename CoordinatesListType = std::vector<float>, typename Natural = unsigned long int> */ 
 class PlanarSurface { 
     public: 
@@ -292,6 +294,8 @@ class PlanarSurface {
         SurfaceMetadata& metadata() { return metadata_; };
         SurfaceMetadata metadata() const { return metadata_; };
 
+        void markCacheUnfresh();
+
     private:
         /* Members 'discretization_X' and 'discretization_Y' are supposed to 
          * be specified. Everything else should be kept as is. 
@@ -378,6 +382,8 @@ class PlanarSurface {
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
 
         PlanarSurface::Ptr getBoundingSurface(SurfaceId id);
+
+        friend class LegacyTetrahedralMeshBuilder;
 
         friend class SRules;
 

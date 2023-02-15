@@ -161,6 +161,7 @@ PlanarSurface::PlanarSurface( const PlanarSurface &rhs ) : id_(num_instances_)
 
     heights = rhs.heights; 
     normals = rhs.normals;
+    linear_graph_ = rhs.linear_graph_;
     interpolant_is_set_ = rhs.interpolant_is_set_; 
     mesh_is_set_ = rhs.mesh_is_set_; 
 
@@ -204,6 +205,7 @@ PlanarSurface::PlanarSurface( PlanarSurface &&rhs ) : id_( rhs.id_ )
 
     heights = std::move(rhs.heights); 
     normals = std::move(rhs.normals);
+    linear_graph_ = std::move(rhs.linear_graph_);
     interpolant_is_set_ = rhs.interpolant_is_set_; 
     mesh_is_set_ = rhs.mesh_is_set_; 
 
@@ -1717,6 +1719,11 @@ bool PlanarSurface::updateRawCache()
 
 /* bool getMesh( BoundBox bbox, MeshType *mesh ); */ 
 /* bool getMesh( std::vector<BoundBox> &bboxes, MeshType *mesh ); */ 
+
+void PlanarSurface::markCacheUnfresh()
+{
+    cache_is_fresh_ = false;
+}
 
 bool PlanarSurface::updateCache() 
 {

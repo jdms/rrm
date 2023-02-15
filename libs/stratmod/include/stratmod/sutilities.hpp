@@ -1,7 +1,7 @@
 /********************************************************************************/
 /*                                                                              */
 /* This file is part of the "Stratigraphy Modeller Library" (StratModLib)       */
-/* Copyright (C) 2017, Julio Daniel Machado Silva.                              */
+/* Copyright (C) 2017-2022, Julio Daniel Machado Silva.                         */
 /*                                                                              */
 /* StratModLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                   */
