@@ -764,6 +764,7 @@ bool Controller::addObject( std::size_t index_ )
 
     current_object = obj_->getIndex();
     obj_->setType( current_object_type );
+    obj_->setName( "Surface " + std::to_string(obj_->getIndex()) );
     model.objects[ current_object ] = std::move( obj_ );
 
 
@@ -2817,6 +2818,7 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
                 const ObjectPtr& obj_ = model.objects[ id ];
                 obj_->read( object_ );
+                obj_->setName( "Surface " + std::to_string(id) );
                 // obj_->getColor( r_, g_, b_ );
 
                 ObjectDescriptor::setSurfaceMetadata(obj_);
@@ -2852,31 +2854,38 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
 
     }
 
+    auto [att2reg, reg2att] = rules_processor.getI2VRegionMaps();
+
+    if (!att2reg.empty() && !reg2att.empty())
     if( json.contains("regions") && json["regions"].isArray() )
     {
         // first, create the regions and after loading the metadata to each one
         defineRegions();
 
         QJsonArray regions_array_ = json["regions"].toArray();
-        int nregions_ = regions_array_.size();
+        int nregions_ = reg2att.size(); // regions_array_.size();
         for( int i = 0; i < nregions_; ++i )
         {
             // if it was not save the index, it is not valid
-            QJsonObject region_ = regions_array_[ i ].toObject();
+            if ( reg2att[i] >= regions_array_.size() )
+                continue;
+
+            QJsonObject region_ = regions_array_[ reg2att[i] ].toObject();
             if( region_.contains( "index" ) == false ) continue;
 
-            std::size_t id_ = static_cast< std::size_t>( region_["index"].toInt() );
+            // std::size_t id_ = static_cast<std::size_t>( region_["index"].toInt() );
+            std::size_t id_ = static_cast<std::size_t>( att2reg[ reg2att[i] ] ); // equal to 'i'
             if( model.regions.find( id_ ) == model.regions.end() ) continue;
 
             RegionsPtr reg_ = model.regions[ id_ ];
             reg_->read( region_ );
-
+            reg_->setName( "Region" + std::to_string(id_) );
         }
     }
 
+    if (!att2reg.empty() && !reg2att.empty())
     if( json.contains("domains") && json["domains"].isArray() )
     {
-
         QJsonArray domains_array_ = json["domains"].toArray();
         int ndomains_ = domains_array_.size();
         for( int i = 0; i < ndomains_; ++i )
@@ -2894,9 +2903,14 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             QJsonArray regions_set_array_ = domain_["regions"].toArray();
             for( auto it_: regions_set_array_ )
             {
-                if ( model.regions.find( it_.toInt() ) == model.regions.end() )
+                int rid = att2reg[ it_.toInt() ];
+                if ( rid == -1 )
                     continue;
-                addRegionToDomain( static_cast< std::size_t >( it_.toInt() ), index_ );
+
+                if ( model.regions.find( rid ) == model.regions.end() )
+                    continue;
+
+                addRegionToDomain( static_cast< std::size_t >( rid ), index_ );
             }
 
             /* model.domains[index_].setName( */
@@ -2920,8 +2934,6 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             }
         }
     }
-
-
 }
 
 

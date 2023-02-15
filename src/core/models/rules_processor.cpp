@@ -95,7 +95,7 @@ std::vector<std::size_t> RulesProcessor::getOrderedActiveSurfaces()
     /* } */
     /* std::cout << "\n\n\n" << std::flush; */
 
-    return ordered_surfaces_ids; 
+    return ordered_surfaces_ids;
 }
 
 std::size_t RulesProcessor::getWidthResolution() const
@@ -185,7 +185,7 @@ bool RulesProcessor::requestPreserveRegion( std::vector<double> &point )
     auto upper_model = u.getSurfacesIndicesAbovePoint(point[0], point[1], point[2]);
     auto lower_model = u.getSurfacesIndicesBelowPoint(point[0], point[1], point[2]);
 
-    bool success; 
+    bool success;
 
     /* stopPreserveBelow(); */
     /* stopPreserveAbove(); */
@@ -241,7 +241,7 @@ bool RulesProcessor::requestPreserveAbove( std::vector<double> &curve_points )
         lower_model_ = {};
     }
 
-    return success; 
+    return success;
 }
 
 bool RulesProcessor::requestPreserveBelow( std::vector<double> &curve_points )
@@ -262,7 +262,7 @@ bool RulesProcessor::requestPreserveBelow( std::vector<double> &curve_points )
     /* std::sort(upper_model_.begin(), upper_model_.end()); */
 
     /* std::set_intersection(surfaces_indices.begin(), surfaces_indices.end(), */
-    /*         upper_model_.begin(), upper_model_.end(), */ 
+    /*         upper_model_.begin(), upper_model_.end(), */
     /*         std::back_inserter(tmp)); */
 
     tmp = surfaces_indices;
@@ -355,7 +355,7 @@ bool RulesProcessor::getModelAboveSurface( std::vector<double> &curve_points, st
             std::sort(cur_ubounds.begin(), cur_ubounds.end());
 
             std::set_union(upper_boundary_.begin(), upper_boundary_.end(),
-                    cur_ubounds.begin(), cur_ubounds.end(), 
+                    cur_ubounds.begin(), cur_ubounds.end(),
                     std::back_inserter(upper_model));
 
             break;
@@ -416,7 +416,7 @@ bool RulesProcessor::getModelBelowSurface( std::vector<double> &curve_points, st
             std::sort(lower_boundary_.begin(), lower_boundary_.end());
 
             std::set_union(lower_boundary_.begin(), lower_boundary_.end(),
-                    cur_lbounds.begin(), cur_lbounds.end(), 
+                    cur_lbounds.begin(), cur_lbounds.end(),
                     std::back_inserter(lower_model));
 
             break;
@@ -436,7 +436,7 @@ bool RulesProcessor::getLowerBoundaryMesh( std::vector<float> &vlist, std::vecto
     return false;
 }
 
-bool RulesProcessor::getModelInfCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+bool RulesProcessor::getModelInfCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length,
         std::vector<double> &vlist, std::vector<std::size_t> &elist )
 {
     if ( surface_indices.empty() )
@@ -446,11 +446,20 @@ bool RulesProcessor::getModelInfCurveAtLength( std::vector<std::size_t> &surface
 
     bool success = false;
     size_t index = 0;
-    
+
     success = modeller_.getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist);
     if (!success)
     {
-        return false;
+        std::vector<double> vl{};
+        std::vector<std::size_t> el{};
+        for (std::size_t i = index + 1; i < surface_indices.size(); ++i)
+        {
+            success |= modeller_.getLengthCrossSectionCurve(surface_indices[i], length, vl, el);
+            if (success)
+                break;
+        }
+        if (!success)
+            return false;
     }
     /* for ( index = 0; index < surface_indices.size(); ++index ) */
     /* { */
@@ -495,7 +504,7 @@ bool RulesProcessor::getModelInfCurveAtLength( std::vector<std::size_t> &surface
 
 }
 
-bool RulesProcessor::getModelSupCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length, 
+bool RulesProcessor::getModelSupCurveAtLength( std::vector<std::size_t> &surface_indices, std::size_t length,
         std::vector<double> &vlist, std::vector<std::size_t> &elist )
 {
     if ( surface_indices.empty() )
@@ -509,7 +518,16 @@ bool RulesProcessor::getModelSupCurveAtLength( std::vector<std::size_t> &surface
     success = modeller_.getLengthCrossSectionCurve(surface_indices[0], length, vlist, elist);
     if (!success)
     {
-        return false;
+        std::vector<double> vl{};
+        std::vector<std::size_t> el{};
+        for (std::size_t i = index + 1; i < surface_indices.size(); ++i)
+        {
+            success |= modeller_.getLengthCrossSectionCurve(surface_indices[i], length, vl, el);
+            if (success)
+                break;
+        }
+        if (!success)
+            return false;
     }
     /* for ( index = 0; index < surface_indices.size(); ++index ) */
     /* { */
@@ -553,7 +571,7 @@ bool RulesProcessor::getModelSupCurveAtLength( std::vector<std::size_t> &surface
     return true;
 }
 
-bool RulesProcessor::getModelInfCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+bool RulesProcessor::getModelInfCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width,
         std::vector<double> &vlist, std::vector<std::size_t> &elist )
 {
     if ( surface_indices.empty() )
@@ -567,7 +585,16 @@ bool RulesProcessor::getModelInfCurveAtWidth( std::vector<std::size_t> &surface_
     success = modeller_.getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist);
     if (!success)
     {
-        return false;
+        std::vector<double> vl{};
+        std::vector<std::size_t> el{};
+        for (std::size_t i = index + 1; i < surface_indices.size(); ++i)
+        {
+            success |= modeller_.getWidthCrossSectionCurve(surface_indices[i], width, vlist, elist);
+            if (success)
+                break;
+        }
+        if (!success)
+            return false;
     }
     /* for ( index = 0; index < surface_indices.size(); ++index ) */
     /* { */
@@ -612,7 +639,7 @@ bool RulesProcessor::getModelInfCurveAtWidth( std::vector<std::size_t> &surface_
 
 }
 
-bool RulesProcessor::getModelSupCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width, 
+bool RulesProcessor::getModelSupCurveAtWidth( std::vector<std::size_t> &surface_indices, std::size_t width,
         std::vector<double> &vlist, std::vector<std::size_t> &elist )
 {
     if ( surface_indices.empty() )
@@ -626,7 +653,16 @@ bool RulesProcessor::getModelSupCurveAtWidth( std::vector<std::size_t> &surface_
     success = modeller_.getWidthCrossSectionCurve(surface_indices[0], width, vlist, elist);
     if (!success)
     {
-        return false;
+        std::vector<double> vl{};
+        std::vector<std::size_t> el{};
+        for (std::size_t i = index + 1; i < surface_indices.size(); ++i)
+        {
+            success |= modeller_.getWidthCrossSectionCurve(surface_indices[i], width, vlist, elist);
+            if (success)
+                break;
+        }
+        if (!success)
+            return false;
     }
     /* for ( index = 0; index < surface_indices.size(); ++index ) */
     /* { */
@@ -694,7 +730,7 @@ void convertEntireCurveToBox( std::vector<T> &vlist, std::vector<size_t> &flist,
     flist.push_back(0);
 
     // see what is going on
-    std::cout << "\n\nBox' extremal points: \n" 
+    std::cout << "\n\nBox' extremal points: \n"
         << "(" << vlist[0] << ", " << vlist[1] << ") -- "
         << "(" << vlist[ 2*last_vertex_id ] << ", " << vlist[ 2*last_vertex_id +1 ] << "); \n"
 
@@ -754,7 +790,7 @@ bool RulesProcessor::getPreserveAboveCurveBoxAtWidth( size_t width, std::vector<
         return false;
     }
 
-    
+
     bool success = getModelSupCurveAtWidth(surface_indices, width, vlist, flist);
 
     if ( !success )
@@ -787,13 +823,13 @@ bool RulesProcessor::getPreserveBelowCurveBoxAtWidth( size_t width, std::vector<
     return true;
 }
 
-bool RulesProcessor::getRegionCurveBoxesAtLength( std::size_t region_id, std::size_t length, 
+bool RulesProcessor::getRegionCurveBoxesAtLength( std::size_t region_id, std::size_t length,
         std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
         std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist )
 {
     stratmod::SUtilities u(modeller_);
 
-    std::vector<size_t> lower_bound, upper_bound; 
+    std::vector<size_t> lower_bound, upper_bound;
 
     bool success = u.getBoundingSurfacesFromRegionID(region_id, lower_bound, upper_bound);
     if ( !success )
@@ -820,13 +856,13 @@ bool RulesProcessor::getRegionCurveBoxesAtLength( std::size_t region_id, std::si
     return success;
 }
 
-bool RulesProcessor::getRegionCurveBoxesAtWidth( std::size_t region_id, std::size_t width, 
+bool RulesProcessor::getRegionCurveBoxesAtWidth( std::size_t region_id, std::size_t width,
         std::vector<double> &lower_bound_box_vlist, std::vector<std::size_t> &lower_bound_box_elist,
         std::vector<double> &upper_bound_box_vlist, std::vector<std::size_t> &upper_bound_box_elist )
 {
     stratmod::SUtilities u(modeller_);
 
-    std::vector<size_t> lower_bound, upper_bound; 
+    std::vector<size_t> lower_bound, upper_bound;
 
     bool success = u.getBoundingSurfacesFromRegionID(region_id, lower_bound, upper_bound);
     if ( !success )
@@ -882,7 +918,7 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
     /* std::vector<size_t> surface_indices; */
     /* if ( modeller_.preserveBelowIsActive(surface_indices) == false ) */
     /* { */
-    /*     std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; */ 
+    /*     std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; */
     /*     return false; */
     /* } */
 
@@ -892,7 +928,7 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
     /* { */
     /*     if ( modeller_.getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) ) */
     /*     { */
-    /*         std::cout << "Got a first bounding curve at index: " << index */ 
+    /*         std::cout << "Got a first bounding curve at index: " << index */
     /*             << " of " << surface_indices.size() << "\n" << std::flush; */
     /*         std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush; */
 
@@ -910,7 +946,7 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
     /* size_t sid; */
     /* for ( ++index; index < surface_indices.size(); ++index ) */
     /* { */
-    /*     std::cout << "Processing surface: " << index */ 
+    /*     std::cout << "Processing surface: " << index */
     /*         << " of " << surface_indices.size() -1 << "\n" << std::flush; */
     /*     sid = surface_indices[index]; */
     /*     std::cout << "sid == " << sid << "\n" << std::flush; */
@@ -939,7 +975,7 @@ bool RulesProcessor::getUpperBoundaryLengthwiseCrossSection( size_t cross_sec, s
 
     /* convertEntireCurveToBox(vlist, flist, origin_.y); */
 
-    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */ 
+    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */
     /* return true; */
 }
 
@@ -972,7 +1008,7 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
     /* std::vector<size_t> surface_indices; */
     /* if ( modeller_.preserveBelowIsActive(surface_indices) == false ) */
     /* { */
-    /*     std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; */ 
+    /*     std::cout << "preserveBelowIsActive() == false\n\n\n" << std::flush; */
     /*     return false; */
     /* } */
 
@@ -982,7 +1018,7 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
     /* { */
     /*     if ( modeller_.getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) ) */
     /*     { */
-    /*         std::cout << "Got a first bounding curve at index: " << index */ 
+    /*         std::cout << "Got a first bounding curve at index: " << index */
     /*             << " of " << surface_indices.size() << "\n" << std::flush; */
     /*         std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush; */
 
@@ -1000,7 +1036,7 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
     /* size_t sid; */
     /* for ( ++index; index < surface_indices.size(); ++index ) */
     /* { */
-    /*     std::cout << "Processing surface: " << index */ 
+    /*     std::cout << "Processing surface: " << index */
     /*         << " of " << surface_indices.size() -1 << "\n" << std::flush; */
     /*     sid = surface_indices[index]; */
     /*     std::cout << "sid == " << sid << "\n" << std::flush; */
@@ -1029,7 +1065,7 @@ bool RulesProcessor::getUpperBoundaryWidthwiseCrossSection( size_t cross_sec, st
 
     /* convertEntireCurveToBox(vlist, flist, origin_.y); */
 
-    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */ 
+    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */
     /* return true; */
 }
 
@@ -1062,7 +1098,7 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
     /* std::vector<size_t> surface_indices; */
     /* if ( modeller_.preserveAboveIsActive(surface_indices) == false ) */
     /* { */
-    /*     std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; */ 
+    /*     std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; */
     /*     return false; */
     /* } */
 
@@ -1072,7 +1108,7 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
     /* { */
     /*     if ( modeller_.getLengthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) ) */
     /*     { */
-    /*         std::cout << "Got a first bounding curve at index: " << index */ 
+    /*         std::cout << "Got a first bounding curve at index: " << index */
     /*             << " of " << surface_indices.size() << "\n" << std::flush; */
     /*         std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush; */
 
@@ -1090,7 +1126,7 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
     /* size_t sid; */
     /* for ( ++index; index < surface_indices.size(); ++index ) */
     /* { */
-    /*     std::cout << "Processing surface: " << index */ 
+    /*     std::cout << "Processing surface: " << index */
     /*         << " of " << surface_indices.size() -1 << "\n" << std::flush; */
     /*     sid = surface_indices[index]; */
     /*     std::cout << "sid == " << sid << "\n" << std::flush; */
@@ -1119,7 +1155,7 @@ bool RulesProcessor::getLowerBoundaryLengthwiseCrossSection( size_t cross_sec, s
 
     /* convertEntireCurveToBox(vlist, flist, origin_.y+length_.y); */
 
-    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */ 
+    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */
     /* return true; */
 }
 
@@ -1131,7 +1167,7 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
         return false;
     }
 
-    
+
     bool success = getModelSupCurveAtWidth(surface_indices, cross_sec, vlist, flist);
 
     if ( !success )
@@ -1153,7 +1189,7 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
     /* std::vector<size_t> surface_indices; */
     /* if ( modeller_.preserveAboveIsActive(surface_indices) == false ) */
     /* { */
-    /*     std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; */ 
+    /*     std::cout << "preserveAboveIsActive() == false\n\n\n" << std::flush; */
     /*     return false; */
     /* } */
 
@@ -1163,7 +1199,7 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
     /* { */
     /*     if ( modeller_.getWidthCrossSectionCurve(surface_indices[0], cross_sec, vlist, flist) ) */
     /*     { */
-    /*         std::cout << "Got a first bounding curve at index: " << index */ 
+    /*         std::cout << "Got a first bounding curve at index: " << index */
     /*             << " of " << surface_indices.size() << "\n" << std::flush; */
     /*         std::cout << "vlist.size() == " << vlist.size() << "\n" << std::flush; */
 
@@ -1181,7 +1217,7 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
     /* size_t sid; */
     /* for ( ++index; index < surface_indices.size(); ++index ) */
     /* { */
-    /*     std::cout << "Processing surface: " << index */ 
+    /*     std::cout << "Processing surface: " << index */
     /*         << " of " << surface_indices.size() -1 << "\n" << std::flush; */
     /*     sid = surface_indices[index]; */
     /*     std::cout << "sid == " << sid << "\n" << std::flush; */
@@ -1210,7 +1246,7 @@ bool RulesProcessor::getLowerBoundaryWidthwiseCrossSection( size_t cross_sec, st
 
     /* convertEntireCurveToBox(vlist, flist, origin_.y+length_.y); */
 
-    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */ 
+    /* std::cout << "Got boundary curve\n\n\n" << std::flush; */
     /* return true; */
 }
 
@@ -1451,7 +1487,7 @@ bool RulesProcessor::defineBelow( size_t surface_index )
     /* return modeller_.createBelow(surface_index); */
 }
 
-bool RulesProcessor::defineBelow( std::vector<size_t> surface_indices ) 
+bool RulesProcessor::defineBelow( std::vector<size_t> surface_indices )
 {
     displayNotice("Warning", "Inside defineBelow( vector<size_t> & )");
     return false;
@@ -1636,9 +1672,9 @@ bool RulesProcessor::getMesh( size_t surface_id, std::vector<float> &vlist, std:
     /* class Widget : public QWidget { */
     /*     public: */
     /*         Widget() { */
-    /*             QMessageBox::information( */ 
-    /*                     this, */ 
-    /*                     tr("Application Name"), */ 
+    /*             QMessageBox::information( */
+    /*                     this, */
+    /*                     tr("Application Name"), */
     /*                     tr("An information message.") ); */
     /*         } */
     /* } w; */
@@ -1680,14 +1716,14 @@ bool RulesProcessor::getCrossSection( size_t surface_id, size_t length, std::vec
     return u.getAdaptedLengthCrossSectionCurve(surface_id, length, vlist, elist);
 }
 
-bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist ) 
+bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<float> &vlist, std::vector<size_t> &elist )
 {
     return false;
 
     /* return modeller_.getWidthCrossSectionCurve(surface_id, width, vlist, elist); */
 }
 
-bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist ) 
+bool RulesProcessor::getWidthCrossSectionCurve( size_t surface_id, size_t width, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
 
     /* std::cout << "\n\nInside getWidthCrossSectionCurve() [double]\n\n" << std::flush; */
@@ -1712,7 +1748,7 @@ bool RulesProcessor::getLengthCrossSectionCurve( size_t surface_id, size_t lengt
     /* return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist); */
 }
 
-bool RulesProcessor::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist ) 
+bool RulesProcessor::getLengthCrossSectionCurve( size_t surface_id, size_t length, std::vector<double> &vlist, std::vector<size_t> &elist )
 {
     /* return modeller_.getLengthCrossSectionCurve(surface_id, length, vlist, elist); */
     SUtilitiesWrapper u(modeller_);
@@ -1752,7 +1788,7 @@ bool RulesProcessor::saveFile( std::string filename )
             /* std::cout << " -- ops, can't undo?"; */
         }
     }
-    else 
+    else
     {
         /* std::cout << "no."; */
     }
@@ -1778,8 +1814,8 @@ bool status = modeller_.loadJSON(filename);
     if ( status )
     {
         modeller_.useOpenGLCoordinateSystem();
-		pa_is_active_ = modeller_.preserveAboveIsActive(lower_model_);
-		pb_is_active_ = modeller_.preserveBelowIsActive(upper_model_);
+        pa_is_active_ = modeller_.preserveAboveIsActive(lower_model_);
+        pb_is_active_ = modeller_.preserveBelowIsActive(upper_model_);
         // enforcePreserveRegion();
     }
     /* if ( status == false ) */
@@ -1844,10 +1880,10 @@ bool RulesProcessor::getTetrahedralMesh( std::vector< std::vector<double> > &ver
                 ++j;
             }
         }
-        
+
         return dict;
     };
-    
+
     if (success)
     {
         vertex_list.resize(element_list.size());
@@ -1856,13 +1892,13 @@ bool RulesProcessor::getTetrahedralMesh( std::vector< std::vector<double> > &ver
             auto& region_faces = element_list[i];
             auto dict = vertex_map(region_faces);
             std::vector<double> vertices(dict.size()*3);
-            
+
             for (auto [vid, new_vid] : dict)
             {
                 vertices[3*new_vid + 0] = vertex_coordinates[3*vid + 0];
                 vertices[3*new_vid + 1] = vertex_coordinates[3*vid + 1];
                 vertices[3*new_vid + 2] = vertex_coordinates[3*vid + 2];
-                
+
             }
             for (auto& vid : region_faces)
             {
@@ -1871,13 +1907,13 @@ bool RulesProcessor::getTetrahedralMesh( std::vector< std::vector<double> > &ver
             vertex_list[i] = std::move(vertices);
         }
     }
-    
+
     /* if ( success ) */
     /* { */
         /* std::vector<double> volumes; */
         /* SUtilitiesWrapper u(modeller_); */
         /* u.getRegionVolumeList(volumes); */
-        
+
         /* double total = 0; */
         /* for ( size_t i = 0; i < volumes.size(); ++i ) */
         /* { */
@@ -1891,27 +1927,27 @@ bool RulesProcessor::getTetrahedralMesh( std::vector< std::vector<double> > &ver
 
         /* for ( int i = static_cast<int>(volumes.size()) -1; i >=0; --i ) */
         /* { */
-            /* /1* std::cout.unsetf(std::ios_base::floatfield); *1/ */ 
-            /* std::cout << "Volume(" << std::setw(3) << i << ") = " */ 
-            /*     << std::scientific << std::setprecision(2) << std::setw(9) */ 
-            /*     << volumes[i] << " m^3" */ 
-            /*     << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) */ 
+            /* /1* std::cout.unsetf(std::ios_base::floatfield); *1/ */
+            /* std::cout << "Volume(" << std::setw(3) << i << ") = " */
+            /*     << std::scientific << std::setprecision(2) << std::setw(9) */
+            /*     << volumes[i] << " m^3" */
+            /*     << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) */
             /*     << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n"; */
-            
-            /* /1* ofs.unsetf(std::ios_base::floatfield); *1/ */ 
-            /* ofs << "Volume(" << std::setw(3) << i << ") = " */ 
-            /*     << std::scientific << std::setprecision(2) << std::setw(9) */ 
-            /*     << volumes[i] << " m^3" */ 
-            /*     << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) */ 
+
+            /* /1* ofs.unsetf(std::ios_base::floatfield); *1/ */
+            /* ofs << "Volume(" << std::setw(3) << i << ") = " */
+            /*     << std::scientific << std::setprecision(2) << std::setw(9) */
+            /*     << volumes[i] << " m^3" */
+            /*     << " ~ " << std::fixed << std::setprecision(1) << std::setw(4) */
             /*     << (total > 1E-6 ? 100*volumes[i]/total : 0 ) << "% of reservoir \n"; */
 
             /* /1* ofs << "Volume(" << i << ") = " << volumes[i] << " m^3\n"; *1/ */
             /* /1* total += volumes[i]; *1/ */
         /* } */
-        /* std::cout.unsetf(std::ios_base::floatfield); */ 
+        /* std::cout.unsetf(std::ios_base::floatfield); */
         /* std::cout << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush; */
-        
-        /* ofs.unsetf(std::ios_base::floatfield); */ 
+
+        /* ofs.unsetf(std::ios_base::floatfield); */
         /* ofs << "\nTotal volume = " << std::setprecision(3) << total << " m^3\n\n\n" <<std::flush; */
     /* } */
 
@@ -1948,9 +1984,9 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
         std::vector< CurveMesh >& left_curves,
         std::vector< CurveMesh >& right_curves,
         std::vector< CurveMesh > & front_curves,
-        std::vector< CurveMesh >& back_curves, 
-        size_t length_discretization, 
-        size_t width_discretization 
+        std::vector< CurveMesh >& back_curves,
+        size_t length_discretization,
+        size_t width_discretization
         )
 {
     //
@@ -1966,12 +2002,12 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     // ("max_length_disc") to discretize the model's width (length) if the
     // model's width size is bigger than its length size (and vice-versa for
     // length).  The other dimension will be discretized with blocks as close
-    // to a square as possible.  
+    // to a square as possible.
     //
 
     //
-    // Example: 
-    // 
+    // Example:
+    //
     // o*******o*******o*******o*******o  -
     // *\v6    |v7    /*v8             *  |
     // * \  t5 | t7  / *               *  |
@@ -1994,20 +2030,20 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     // |-------------------------------|
     //    width_discretization = 2
     //
-    // Legend: 
+    // Legend:
     //      blocks' boundaries are market with: '*'
     //      triangles' boundaries are marked with: '|', '\', '/', '-'
     //      vertices are marked with: 'o'
-    // 
     //
-    
-    /* diagnostics_width_discretization_ = 16; */ 
-    /* diagnostics_length_discretization_ = 16; */ 
+    //
 
-    auto adaptDiscretization = [] ( 
-            double model_width, double model_length, 
-            size_t &output_width_disc, size_t &output_length_disc, 
-            size_t max_width_disc /*= 16*/, size_t max_length_disc /*= 16*/ ) -> bool 
+    /* diagnostics_width_discretization_ = 16; */
+    /* diagnostics_length_discretization_ = 16; */
+
+    auto adaptDiscretization = [] (
+            double model_width, double model_length,
+            size_t &output_width_disc, size_t &output_length_disc,
+            size_t max_width_disc /*= 16*/, size_t max_length_disc /*= 16*/ ) -> bool
     {
 
 
@@ -2015,7 +2051,7 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
         {
             // will have "max_width_disc" blocks in width
             output_width_disc = max_width_disc;
-            auto block_size = model_width/static_cast<double>(output_width_disc); 
+            auto block_size = model_width/static_cast<double>(output_width_disc);
 
             // how many blocks fit in the length dimension of the model
             auto num_blocks = model_length/block_size;
@@ -2059,13 +2095,13 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     size_t max_width_disc = 16, max_length_disc = 16;
 
     adaptDiscretization(model_width, model_length,
-            diagnostics_width_discretization_, diagnostics_length_discretization_, 
+            diagnostics_width_discretization_, diagnostics_length_discretization_,
             max_width_disc, max_length_disc);
 
     modeller_.changeDiscretization(diagnostics_width_discretization_, diagnostics_length_discretization_);
 
 
-    // 
+    //
     // Get the PLC
     //
 
@@ -2142,7 +2178,7 @@ bool RulesProcessor::setPLCForSimulation( std::vector< TriangleMesh >& triangle_
     }
 
 
-    // 
+    //
     // Return resolution to original state
     //
 
@@ -2258,7 +2294,7 @@ bool RulesProcessor::processSurfaceCreation( FunctionType &&surfaceCreator, size
         }
     }
 
-    return success; 
+    return success;
 }
 
 bool RulesProcessor::createSurface( size_t surface_index, std::vector<double> &points )
@@ -2278,7 +2314,7 @@ bool RulesProcessor::createSurface( size_t surface_index, std::vector<double> &p
 
     /* bool status = false; */
 
-    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool 
+    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool
     {
         double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
         return this->modeller_.createSurface(s_id, pts, fill_distance);
@@ -2304,11 +2340,11 @@ bool RulesProcessor::createSurface( size_t surface_index, std::vector<double> &p
     return success;
 }
 
-bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id, 
+bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data
         )
 {
-    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
+    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool
     {
         double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
         return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, fill_distance);
@@ -2319,26 +2355,26 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
     return success;
 }
 
-bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id, 
-        const std::vector<double> &cross_section_curve_point_data, double cross_section_length, 
-        const std::vector<double> &path_curve_point_data 
+bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
+        const std::vector<double> &cross_section_curve_point_data, double cross_section_length,
+        const std::vector<double> &path_curve_point_data
         )
 {
-    auto surfaceCreator = [this]( 
-            size_t s_id, const std::vector<double> &cross_sec_pts, 
-            double cross_sec, const std::vector<double> &path_pts ) -> bool 
+    auto surfaceCreator = [this](
+            size_t s_id, const std::vector<double> &cross_sec_pts,
+            double cross_sec, const std::vector<double> &path_pts ) -> bool
     {
         double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
         return this->modeller_.createLengthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance);
     };
 
-    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data,
             cross_section_length, path_curve_point_data);
 
     return success;
 }
 /* { */
-/*     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */ 
+/*     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */
 /*     { */
 /*         const double fill_distance_factor = 1.0/(10.0*std::sqrt(2)); */
 /*         auto sqr = [](double x) -> double { return x*x; }; */
@@ -2353,13 +2389,13 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 /*     double m = 0.2; */
 /*     surface.setOrigin(origin_.x - m*length_.x, origin_.z - m*length_.z); */
 /*     surface.setSize(length_.x*(1.0 + 2*m), length_.z*(1.0 + 2*m)); */
-    
+
 /*     // Input path */
 /*     size_t path_max_disc = 256; */
 /*     double path_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(path_max_disc); */
 /*     surface.addGuidingPathTangentVectors(path_curve_point_data, path_disc_per_unit_of_length, path_max_disc); */
 /*     surface.setGuidingPaths(); */
-    
+
 /*     // Compute orbits */
 /*     size_t orbit_max_disc = 72; */
 /*     double orbit_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(orbit_max_disc); */
@@ -2373,14 +2409,14 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 /*     } */
 
 /*     // Create final surface */
-/*     /1* std::cout << "---> Creating final surface\n"; *1/ */ 
+/*     /1* std::cout << "---> Creating final surface\n"; *1/ */
 /*     auto surface_points = surface.getSurfaceSamples(); */
 /*     bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points); */
 
 /*     return success; */
 /* } */
 /* { */
-/*     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */ 
+/*     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */
 /*     { */
 /*         const double fill_distance_factor = 1.0/(10.0*std::sqrt(2)); */
 /*         auto sqr = [](double x) -> double { return x*x; }; */
@@ -2389,8 +2425,8 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 /*         return this->modeller_.createSurface(s_id, pts, fill_distance); */
 /*     }; */
 
-/*     std::cout << "Trying to create path guided surface:\n"; */ 
-/*     std::cout << "---> Setting solver properties\n"; */ 
+/*     std::cout << "Trying to create path guided surface:\n"; */
+/*     std::cout << "---> Setting solver properties\n"; */
 /*     odeSolver2D S; */
 
 /*     double tol_x = 0.05 * length_.x; */
@@ -2401,7 +2437,7 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 /*     auto curve_size = path_curve_point_data.size()/2; */
 /*     std::vector<double> path_w(curve_size), path_l(curve_size); */
 
-/*     std::cout << "---> Setting solver input\n"; */ 
+/*     std::cout << "---> Setting solver input\n"; */
 /*     auto getCurve = [] (const std::vector<double>& curve) -> odeSolver2D::Curve { */
 /*         size_t num_points = curve.size()/2; */
 /*         std::vector<double> path_x(num_points); */
@@ -2420,13 +2456,13 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 /*     /1* std::tie(path_w, path_l) = odeSolver2D::sampleCurve(path_w, path_l, 32); *1/ */
 /*     S.inputCurveTangentVectors(path_w, path_l, 256); */
 
-/*     std::cout << "---> Interpolating vector field\n"; */ 
+/*     std::cout << "---> Interpolating vector field\n"; */
 /*     if ( !S.interpolateVectorField() ) */
 /*     { */
-/*         std::cout << "---> ---> Could not interpolate vector field\n"; */ 
+/*         std::cout << "---> ---> Could not interpolate vector field\n"; */
 /*         return false; */
 /*     } */
-    
+
 /*     auto get_curve_len = [](const odeSolver2D::XCoordinates &xcoords, const odeSolver2D::YCoordinates &ycoords) -> double { */
 /*         double len = 0.0; */
 /*         auto numel = xcoords.size(); */
@@ -2453,7 +2489,7 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 
 /*     std::vector<double> surface_points, cross_w, cross_h; */
 /*     double wi, li = cross_section_length, hi; */
-/*     std::cout << "---> Sampling final surface: " << std::flush; */ 
+/*     std::cout << "---> Sampling final surface: " << std::flush; */
 /*     auto t0 = std::chrono::high_resolution_clock::now(); */
 /*     odeSolver2D::XCoordinates orbit_w; */
 /*     odeSolver2D::YCoordinates orbit_l; */
@@ -2471,13 +2507,13 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 
 /*         /1* std::tie(orbit_w, orbit_l) = odeSolver2D::sampleCurve(S.getOrbit(wi, li), 128); *1/ */
 /*         std::tie(orbit_w, orbit_l) = S.getOrbit(wi, li); */
-/*         std::cout << "---> ---> iteration " << i << "; orbit points: " << orbit_l.size() << "; orbit height: " << hi << "\n"; */ 
+/*         std::cout << "---> ---> iteration " << i << "; orbit points: " << orbit_l.size() << "; orbit height: " << hi << "\n"; */
 /*         if (orbit_l.size() > 1) */
 /*         { */
 /*             orbit_len = get_curve_len(orbit_w, orbit_l); */
 /*             num_samples = std::ceil(orbit_len/disc); */
 /*             std::tie(orbit_w, orbit_l) = odeSolver2D::sampleCurve(orbit_w, orbit_l, num_samples); */
-/*             std::cout << "---> ---> iteration " << i << "; sampled points: " << orbit_l.size() << "; orbit height: " << hi << "\n"; */ 
+/*             std::cout << "---> ---> iteration " << i << "; sampled points: " << orbit_l.size() << "; orbit height: " << hi << "\n"; */
 /*             for (size_t j = 0; j < orbit_l.size(); ++j) */
 /*             { */
 /*                 surface_points.push_back(orbit_w[j]); */
@@ -2490,7 +2526,7 @@ bool RulesProcessor::createLengthwiseExtrudedSurface( size_t surface_id,
 /*     auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count(); */
 /*     std::cout << dt << " milliseconds, for " << surface_points.size()/3 << "points\n" << std::flush; */
 
-/*     std::cout << "---> Creating final surface\n"; */ 
+/*     std::cout << "---> Creating final surface\n"; */
 /*     bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points); */
 
 /*     return success; */
@@ -2502,7 +2538,7 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
         const std::vector<double> &cross_section_curve_point_data
         )
 {
-    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool 
+    auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &cross_sec_pts ) -> bool
     {
         double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
         return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, fill_distance);
@@ -2514,25 +2550,25 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
 }
 
 bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
-        const std::vector<double> &cross_section_curve_point_data, double cross_section_width, 
-        const std::vector<double> &path_curve_point_data 
+        const std::vector<double> &cross_section_curve_point_data, double cross_section_width,
+        const std::vector<double> &path_curve_point_data
         )
 {
-    auto surfaceCreator = [this]( 
-            size_t s_id, const std::vector<double> &cross_sec_pts, 
-            double cross_sec, const std::vector<double> &path_pts ) -> bool 
+    auto surfaceCreator = [this](
+            size_t s_id, const std::vector<double> &cross_sec_pts,
+            double cross_sec, const std::vector<double> &path_pts ) -> bool
     {
         double fill_distance = -1; // force modeller to pick a default smoothing factor based on discretization
         return this->modeller_.createWidthwiseExtrudedSurface(s_id, cross_sec_pts, cross_sec, path_pts, fill_distance);
     };
 
-    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data, 
+    bool success = processSurfaceCreation(surfaceCreator, surface_id, cross_section_curve_point_data,
             cross_section_width, path_curve_point_data);
 
     return success;
 }
 /* { */
-/*     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */ 
+/*     auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */
 /*     { */
 /*         const double fill_distance_factor = 1.0/(10.0*std::sqrt(2)); */
 /*         auto sqr = [](double x) -> double { return x*x; }; */
@@ -2547,7 +2583,7 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
 /*     double m = 0.2; */
 /*     surface.setOrigin(origin_.x - m*length_.x, origin_.z - m*length_.z); */
 /*     surface.setSize(length_.x*(1.0 + 2*m), length_.z*(1.0 + 2*m)); */
-    
+
 /*     // Input path */
 /*     size_t path_max_disc = 256; */
 /*     double path_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(path_max_disc); */
@@ -2559,7 +2595,7 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
 /*     } */
 /*     surface.addGuidingPathTangentVectors(path_curve, path_disc_per_unit_of_length, path_max_disc); */
 /*     surface.setGuidingPaths(); */
-    
+
 /*     // Compute orbits */
 /*     size_t orbit_max_disc = 72; */
 /*     double orbit_disc_per_unit_of_length = std::max(length_.x, length_.z)/static_cast<double>(orbit_max_disc); */
@@ -2573,21 +2609,21 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
 /*     } */
 
 /*     // Create final surface */
-/*     /1* std::cout << "---> Creating final surface\n"; *1/ */ 
+/*     /1* std::cout << "---> Creating final surface\n"; *1/ */
 /*     auto surface_points = surface.getSurfaceSamples(); */
 /*     bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points); */
 
 /*     return success; */
 /* } */
 /* { */
-    /* auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */ 
+    /* auto surfaceCreator = [this]( size_t s_id, const std::vector<double> &pts ) -> bool */
     /* { */
     /*     double fill_distance = 50.0; // force modeller to pick a default smoothing factor based on discretization */
     /*     return this->modeller_.createSurface(s_id, pts, fill_distance); */
     /* }; */
 
-    /* std::cout << "Trying to create path guided surface:\n"; */ 
-    /* std::cout << "---> Setting solver properties\n"; */ 
+    /* std::cout << "Trying to create path guided surface:\n"; */
+    /* std::cout << "---> Setting solver properties\n"; */
     /* odeSolver2D S; */
     /* S.setDomainOrigin(origin_.x, origin_.z); */
     /* S.setDomainSize(length_.x, length_.z); */
@@ -2595,7 +2631,7 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
     /* auto curve_size = path_curve_point_data.size()/2; */
     /* std::vector<double> path_w(curve_size), path_l(curve_size); */
 
-    /* std::cout << "---> Setting solver input\n"; */ 
+    /* std::cout << "---> Setting solver input\n"; */
     /* for (size_t i = 0; i < curve_size; ++i ) */
     /* { */
     /*     path_w[i] = path_curve_point_data[2*i + 0]; */
@@ -2604,19 +2640,19 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
     /* } */
     /* S.inputCurveTangentVectors(path_l, path_w, -1); */
 
-    /* std::cout << "---> Interpolating vector field\n"; */ 
+    /* std::cout << "---> Interpolating vector field\n"; */
     /* S.interpolateVectorField(); */
-    
+
     /* std::vector<double> surface_points; */
     /* double wi = cross_section_depth, li, hi; */
-    /* std::cout << "---> Sampling final surface\n"; */ 
+    /* std::cout << "---> Sampling final surface\n"; */
     /* for ( size_t i = 0; i < cross_section_curve_point_data.size()/2; ++i ) */
     /* { */
     /*     li = cross_section_curve_point_data[2*i + 0]; */
     /*     hi = cross_section_curve_point_data[2*i + 1]; */
 
     /*     auto [orbit_w, orbit_l] = odeSolver2D::sampleCurve(S.getOrbit(wi, li), 64); */
-    /*     std::cout << "---> ---> iteration " << i << "; sampled points: " << orbit_l.size() << "\n"; */ 
+    /*     std::cout << "---> ---> iteration " << i << "; sampled points: " << orbit_l.size() << "\n"; */
     /*     for (size_t j = 0; j < orbit_l.size(); ++j) */
     /*     { */
     /*         surface_points.push_back(orbit_w[j]); */
@@ -2625,7 +2661,7 @@ bool RulesProcessor::createWidthwiseExtrudedSurface( size_t surface_id,
     /*     } */
     /* } */
 
-    /* std::cout << "---> Creating final surface\n"; */ 
+    /* std::cout << "---> Creating final surface\n"; */
     /* bool success = processSurfaceCreation(surfaceCreator, surface_id, surface_points); */
 
     /* return success; */
@@ -2649,5 +2685,55 @@ void RulesProcessor::enforcePreserveRegion()
     std::cout << "\n\n" << std::flush;
 }
 
+std::pair<RulesProcessor::Att2RegMap, RulesProcessor::Reg2AttMap> RulesProcessor::getI2VRegionMaps()
+{
+    Att2RegMap att2reg;
+    Reg2AttMap reg2att;
+
+    SUtilities u(modeller_);
+    /* auto i2v_region_map = u.getI2VRegionMap(); */
+    std::map<std::size_t, std::map<int, int>> i2v_region_map;
+    std::size_t max_num_regions = 0;
+    auto sids = modeller_.getSurfacesIndices();
+    if (!sids.empty())
+    {
+        max_num_regions = sids.size() -1;
+    }
+
+    reg2att.resize(max_num_regions);
+    for (std::size_t i = 0; i < reg2att.size(); ++i)
+    {
+        reg2att[i] = static_cast<int>(i);
+
+        int votes = 0;
+        for (auto& [att, rmap] : i2v_region_map)
+        {
+            for (auto& [rid, counter] : rmap)
+            {
+                if ((rid == static_cast<int>(i)) && (counter > votes))
+                {
+                    reg2att[i] = att;
+                }
+            }
+        }
+    }
+
+    att2reg.resize(i2v_region_map.size(), -1);
+    for (auto& [att, rmap] : i2v_region_map)
+    {
+        int votes = 0;
+        for(auto iter = rmap.begin(); iter != rmap.end(); ++iter)
+        {
+            auto& [rid, counter] = *rmap.begin();
+            if (counter > votes)
+            {
+                att2reg[att] = rid;
+                votes = counter;
+            }
+        }
+    }
+
+    return std::make_pair(att2reg, reg2att);
+}
 
 //{} // namespace RRM

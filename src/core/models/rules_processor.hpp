@@ -440,6 +440,10 @@
 
             bool getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length );
 
+            using Att2RegMap = std::vector<int>;
+            using Reg2AttMap = std::vector<int>;
+            std::pair<Att2RegMap, Reg2AttMap> getI2VRegionMaps();
+
         private:
             SModellerWrapper& modeller_;
             struct { double x, y, z; } origin_, length_;
