@@ -1,13 +1,9 @@
-.vs
-.vscode
-
 # Project specific files
 ########################
 libs/stratmod/stratmod
+libs/stratmod-*
+libs/stratmod/.git*
 libs/glew-*
-src/core/models/nspline
-src/core/models/odeint_wrapper
-src/core/models/vector_field
 rrm_models/
 
 # Git files       #
@@ -30,6 +26,11 @@ rrm_models/
 [Rr]elease/
 [Rr]eleases/
 [Bb]uild/
+
+# Visual Studio settings
+########################
+.vs
+.vscode
 
 # Packages #
 ############
@@ -91,6 +92,7 @@ CMakeScripts
 Makefile
 cmake_install.cmake
 install_manifest.txt
+CMakeLists.txt.user
 # *.cmake
 
 
