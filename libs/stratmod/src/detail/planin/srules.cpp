@@ -215,10 +215,11 @@ std::size_t SRules::size()
 
 void SRules::clear()
 {
-    container.clear();
-    dictionary.clear(); 
-    define_above_ = false; 
-    define_below_ = false; 
+    *this = SRules();
+    /* container.clear(); */
+    /* dictionary.clear(); */ 
+    /* define_above_ = false; */ 
+    /* define_below_ = false; */ 
 }
 
 PlanarSurface::Ptr& SRules::operator[]( std::size_t surface_index ) 

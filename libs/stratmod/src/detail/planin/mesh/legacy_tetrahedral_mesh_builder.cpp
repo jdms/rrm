@@ -1215,60 +1215,63 @@ bool LegacyTetrahedralMeshBuilder::mapPointsToRegions( const std::vector<Point3>
 
     /* auto attributes_map = computeAttributeMap(prism_list); */
 
-    size_t size_att = LegacyTetrahedralMeshBuilder::numSurfaces;
+    /* size_t size_att = LegacyTetrahedralMeshBuilder::numSurfaces; */
 
-    auto getAttribute = [size_att]( std::vector<size_t> &&a )-> std::vector<bool> {
-        std::vector<bool> attrib;
+    /* auto getAttribute = [size_att]( std::vector<size_t> &&a )-> std::vector<bool> { */
+        /* std::vector<bool> attrib; */
 
-        attrib.resize( size_att, false );
+        /* attrib.resize( size_att, false ); */
 
-        /* std::cout << "Current attrb: "; */
-        /* for ( auto i : a ) */
-        /*     std::cout << i << ", "; */
-        /* std::cout << "\n"; */
+        /* /1* std::cout << "Current attrb: "; *1/ */
+        /* /1* for ( auto i : a ) *1/ */
+        /* /1*     std::cout << i << ", "; *1/ */
+        /* /1* std::cout << "\n"; *1/ */
 
-        if ( a.empty() )
-        {
-            return attrib;
-        }
+        /* if ( a.empty() ) */
+        /* { */
+        /*     return attrib; */
+        /* } */
 
-        for ( size_t i = 0; i < a.size(); ++i )
-        {
-            attrib[ a[i] ] = true;
-        }
+        /* for ( size_t i = 0; i < a.size(); ++i ) */
+        /* { */
+        /*     attrib[ a[i] ] = true; */
+        /* } */
 
-        /* std::cout << "Current bool attrb: "; */
-        /* for ( auto i : attrib ) */
-        /*     std::cout << i << ", "; */
-        /* std::cout << "\n"; */
+        /* /1* std::cout << "Current bool attrb: "; *1/ */
+        /* /1* for ( auto i : attrib ) *1/ */
+        /* /1*     std::cout << i << ", "; *1/ */
+        /* /1* std::cout << "\n"; *1/ */
 
-        return attrib;
-    };
+        /* return attrib; */
+    /* }; */
 
 
     regions_list.resize( points.size() );
 
-    std::vector<bool> attrib;
-    int num_attrib;
-    auto &attributes_map_omp = attributes_map;
+    /* std::vector<bool> attrib; */
+    /* int num_attrib; */
+    /* auto &attributes_map_omp = attributes_map; */
 
-    #pragma omp parallel for shared(regions_list, points, getAttribute, attributes_map_omp) private(attrib, num_attrib)
+    /* #pragma omp parallel for shared(regions_list, points,  getAttribute, attributes_map_omp ) private( attrib, num_attrib ) */
+    #pragma omp parallel for shared(regions_list, points)
     for ( long int i = 0; i < static_cast<long int>( points.size() ); ++i )
     {
-        attrib = getAttribute( container_.getSurfacesBelowPoint( points[i] ) );
+        /* attrib = getAttribute( container_.getSurfacesBelowPoint( points[i] ) ); */
 
-        auto iter = attributes_map_omp.find(attrib);
-        if ( iter != attributes_map_omp.end() )
-        {
-            num_attrib = iter->second;
-        }
-        else
-        {
-            num_attrib = -1;
-        }
+        /* auto iter = attributes_map_omp.find(attrib); */
+        /* if ( iter != attributes_map_omp.end() ) */
+        /* { */
+            /* num_attrib = iter->second; */
+        /* } */
+        /* else */
+        /* { */
+            /* num_attrib = -1; */
+        /* } */
 
-        regions_list[i] = num_attrib;
+        /* regions_list[i] = num_attrib; */
         /* std::cout << "Num_attrib: " << num_attrib << "\n"; */
+
+        regions_list[i] = static_cast<int>(container_.getSurfacesBelowPoint( points[i] ).size()) - 1;
     }
 
     return true;

@@ -1504,7 +1504,7 @@ std::vector<std::size_t > Controller::defineRegions()
         }
         else
         {
-            /* MMA::name(r) = "Invalid Region" + std::to_string(r_id); */
+            MMA::name(r) = "Empty Region (zero volume)" + std::to_string(r_id);
             MMA::setColor(r, QColor(255, 0, 0));
         }
     }
@@ -2866,7 +2866,7 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
         int nregions_ = reg2att.size(); // regions_array_.size();
         for( int i = 0; i < nregions_; ++i )
         {
-            // if it was not save the index, it is not valid
+            // if index was not saved it is not valid
             if ( reg2att[i] >= regions_array_.size() )
                 continue;
 
@@ -2874,7 +2874,8 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             if( region_.contains( "index" ) == false ) continue;
 
             // std::size_t id_ = static_cast<std::size_t>( region_["index"].toInt() );
-            std::size_t id_ = static_cast<std::size_t>( att2reg[ reg2att[i] ] ); // equal to 'i'
+            std::size_t id_ = i;
+
             if( model.regions.find( id_ ) == model.regions.end() ) continue;
 
             RegionsPtr reg_ = model.regions[ id_ ];
@@ -2901,16 +2902,22 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
             std::size_t index_ = createDomain();
 
             QJsonArray regions_set_array_ = domain_["regions"].toArray();
+            std::set<int> regions_set{};
             for( auto it_: regions_set_array_ )
             {
-                int rid = att2reg[ it_.toInt() ];
-                if ( rid == -1 )
-                    continue;
+                regions_set.insert( it_.toInt() );
+            }
 
+            int nregions_ = reg2att.size();
+            for (int rid = 0; rid < nregions_; ++rid )
+            {
                 if ( model.regions.find( rid ) == model.regions.end() )
                     continue;
 
-                addRegionToDomain( static_cast< std::size_t >( rid ), index_ );
+                if (regions_set.find(reg2att[rid]) != regions_set.end())
+                {
+                    addRegionToDomain( static_cast< std::size_t >( rid ), index_ );
+                }
             }
 
             /* model.domains[index_].setName( */

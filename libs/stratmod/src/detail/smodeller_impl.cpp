@@ -57,7 +57,7 @@ void SModellerImplementation::clear()
 
     /* bool default_coordinate_system_ = true; */
 
-    container_.clear(); 
+    container_ = SRules();
     dictionary_.clear(); 
     inserted_surfaces_indices_.clear();
 
