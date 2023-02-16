@@ -855,4 +855,9 @@ bool SUtilities::getQuadMesh( std::size_t surface_id, std::vector<double> &point
     return true;
 }
 
+std::map<std::size_t, std::map<int, int>> SUtilities::getI2VRegionMap()
+{
+    return model_.pimpl_->i2v_region_map_;
+}
+
 } // namespace stratmod

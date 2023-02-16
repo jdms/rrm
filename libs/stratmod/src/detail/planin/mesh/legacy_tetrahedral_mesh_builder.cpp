@@ -289,22 +289,23 @@ bool LegacyTetrahedralMeshBuilder::getOrderedSurfaceIndicesList ( std::vector<si
     };
 
     std::vector<size_t> lower_bound, upper_bound, current;
-    size_t attribute;
+    AttributeType region;
     bool success;
 
     ordered_surface_indices.clear();
 
-    for ( auto it = attributes_map.begin(); it != attributes_map.end(); ++it )
+    for ( auto iter = region_descriptors_map.begin(); iter != region_descriptors_map.end(); ++iter )
     {
-        attribute = it->second;
-        success = mapAttributeToBoundingSurfaces(attribute, lower_bound, upper_bound);
+        auto& [rid, rdesc] = *iter;
+        region = rdesc.getProeminentDescriptor();
+        success = mapRegionToBoundingSurfaces(region, lower_bound, upper_bound);
         if ( !success )
         {
             /* std::cout << "\nFailed to get lower and upper bounds\n" << std::flush; */
             return false;
         }
 
-        if ( it == attributes_map.begin() )
+        if ( iter == region_descriptors_map.begin() )
         {
             /* std::cout << "Initial step:\n    lower_bound --> "; */
             /* for ( auto &i : lower_bound ) */
@@ -411,19 +412,44 @@ size_t LegacyTetrahedralMeshBuilder::tetrahedralize( std::vector<Tetrahedron> &t
     {
         status = buildPrismMesh(prism_list);
     }
-
     if ( status == false )
     {
         return 0;
     }
+    prism_volumes.resize(prism_list.size(), 0.);
 
     tetrahedron_list.clear();
     std::vector<Tetrahedron> tetrahedra;
 
-    for ( auto &p : prism_list )
+    double vol = 0;
+    int rid = -1;
+    region_to_volume_map.clear();
+    /* region_to_volume_map[-1] = 0.; */
+    for ( std::size_t i = 0; i < prism_list.size(); ++i )
     {
+        auto& p = prism_list[i];
+        if (p.isEmpty())
+        {
+            continue;
+        }
+
         tetrahedra = p.tetrahedralize();
         std::copy( tetrahedra.begin(), tetrahedra.end(), std::back_inserter(tetrahedron_list) );
+
+        vol = 0;
+        for (auto& t : tetrahedra)
+        {
+            vol += t.getVolume();
+        }
+        prism_volumes[i] = vol;
+
+        rid = computeRegionId(p.getRegion());
+        auto iter = region_to_volume_map.find(rid);
+        if (iter == region_to_volume_map.end())
+        {
+            iter->second = 0;
+        }
+        iter->second += vol;
     }
 
     return tetrahedron_list.size();
@@ -440,6 +466,8 @@ bool LegacyTetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_lis
 
     // prism_list is shared along the for loop
     prism_list.clear();
+    prism_volumes.clear();
+    region_to_volume_map.clear();
 
     // ordered_surfaces if firstprivate along the for loop
     std::vector< std::pair<bool, size_t> > ordered_surfaces(numSurfaces);
@@ -448,8 +476,9 @@ bool LegacyTetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_lis
     std::multimap< TriangleHeights, size_t > list_of_triangle_heights;
     TriangleHeights triangle_heights;
     std::vector<size_t> valid_surfaces;
-    std::vector<bool> cur_attribute;
+    std::vector<bool> cur_attribute, cur_region;
     std::vector<std::vector<bool>> attribute_list;
+    std::vector<int> cur_regions = {};
 
     // Paralelize this loop?
     for ( size_t block = 0; block < numBlocks; ++block )
@@ -506,8 +535,25 @@ bool LegacyTetrahedralMeshBuilder::buildPrismMesh( std::vector<Prism> &prism_lis
             //     4. Build prisms from the valid surfaces with the attribute computed in (3).
             for ( size_t s = 0; s < valid_surfaces.size() - 1; ++s )
             {
+                cur_region = std::vector<bool>(numSurfaces, false);
+                cur_regions = {};
                 prism_list.emplace_back( getPrism(prism, block, valid_surfaces[s], valid_surfaces[s+1]) );
-                prism_list.back().setAttribute( attribute_list[s] );
+                auto& prism_ = prism_list.back();
+                prism_.setAttribute( attribute_list[s] );
+
+                if (!prism_.isEmpty())
+                {
+                    auto sids = container_.getSurfacesBelowPoint(prism_.getCentroid());
+                    for (size_t sid : sids)
+                    {
+                        cur_region[sid] = true;
+                    }
+                    prism_.setRegion(cur_region);
+                    if (prism_.allValid())
+                        region_descriptors_map[ computeRegionId(cur_region) ].insert(cur_region);
+
+                    /* region_descriptors_map[ computeRegionId(cur_region) ].insert(cur_region, prism_.allValid()); */
+                }
 
             }
         }
@@ -723,6 +769,15 @@ void LegacyTetrahedralMeshBuilder::getDiscretization()
     numVertices = numVerticesX*numVerticesY;
 
     numSurfaces = container_.size();
+
+    if (numSurfaces > 0)
+    {
+        auto origin = container_[0]->getOrigin();
+        triangle_mesh_.setDomainOrigin({origin[0], origin[1]});
+        auto length = container_[0]->getLenght();
+        triangle_mesh_.setDomainLength({length[0], length[1]});
+    }
+    triangle_mesh_.setDiscretization(numBlocksX, numBlocksY);
 }
 
 LegacyTetrahedralMeshBuilder::TriangleHeights LegacyTetrahedralMeshBuilder::getTriangleHeights( size_t triangle_pos, size_t bindex, size_t surface_id ) const
@@ -1139,6 +1194,87 @@ std::map<LegacyTetrahedralMeshBuilder::AttributeType, std::size_t> LegacyTetrahe
     return __attributes_map;
 }
 
+bool LegacyTetrahedralMeshBuilder::mapPointsToRegions( const std::vector<Point3> &points, std::vector<int> &regions_list )
+{
+    if ( points.empty() )
+    {
+        return false;
+    }
+
+    /* std::vector<Prism> prism_list; */
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    /* auto attributes_map = computeAttributeMap(prism_list); */
+
+    size_t size_att = LegacyTetrahedralMeshBuilder::numSurfaces;
+
+    auto getAttribute = [size_att]( std::vector<size_t> &&a )-> std::vector<bool> {
+        std::vector<bool> attrib;
+
+        attrib.resize( size_att, false );
+
+        /* std::cout << "Current attrb: "; */
+        /* for ( auto i : a ) */
+        /*     std::cout << i << ", "; */
+        /* std::cout << "\n"; */
+
+        if ( a.empty() )
+        {
+            return attrib;
+        }
+
+        for ( size_t i = 0; i < a.size(); ++i )
+        {
+            attrib[ a[i] ] = true;
+        }
+
+        /* std::cout << "Current bool attrb: "; */
+        /* for ( auto i : attrib ) */
+        /*     std::cout << i << ", "; */
+        /* std::cout << "\n"; */
+
+        return attrib;
+    };
+
+
+    regions_list.resize( points.size() );
+
+    std::vector<bool> attrib;
+    int num_attrib;
+    auto &attributes_map_omp = attributes_map;
+
+    #pragma omp parallel for shared(regions_list, points, getAttribute, attributes_map_omp) private(attrib, num_attrib)
+    for ( long int i = 0; i < static_cast<long int>( points.size() ); ++i )
+    {
+        attrib = getAttribute( container_.getSurfacesBelowPoint( points[i] ) );
+
+        auto iter = attributes_map_omp.find(attrib);
+        if ( iter != attributes_map_omp.end() )
+        {
+            num_attrib = iter->second;
+        }
+        else
+        {
+            num_attrib = -1;
+        }
+
+        regions_list[i] = num_attrib;
+        /* std::cout << "Num_attrib: " << num_attrib << "\n"; */
+    }
+
+    return true;
+}
+
+
 bool LegacyTetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list )
 {
     if ( points.empty() )
@@ -1219,6 +1355,75 @@ bool LegacyTetrahedralMeshBuilder::mapPointsToAttributes( const std::vector<Poin
     return true;
 }
 
+bool LegacyTetrahedralMeshBuilder::mapRegionToBoundingSurfaces( const AttributeType& region, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound )
+{
+    if (region.size() != container_.size())
+    {
+        return false;
+    }
+
+    lower_bound.clear();
+    upper_bound.clear();
+
+    for (std::size_t sid = 0; sid < container_.size(); ++sid)
+    {
+        if (region[sid] == true)
+        {
+            lower_bound.push_back(sid);
+        }
+        else
+        {
+            upper_bound.push_back(sid);
+        }
+    }
+
+    return true;
+}
+
+bool LegacyTetrahedralMeshBuilder::mapRegionToBoundingSurfaces( int region, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound )
+{
+    /* std::vector<Prism> prism_list; */
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
+
+    if ( status == false )
+    {
+        return false;
+    }
+
+    if ( (region < 0) || (region > static_cast<int>(container_.maxNumRegions())) )
+    {
+        return false;
+    }
+
+    std::vector<std::size_t> ordered_sids;
+    if (getOrderedSurfaceIndicesList(ordered_sids) == false)
+    {
+        return false;
+    }
+
+    if (region >= static_cast<int>(ordered_sids.size()))
+    {
+        return false;
+    }
+
+    lower_bound.clear();
+    upper_bound.clear();
+    for (int i = 0; i <= region; ++i)
+    {
+        lower_bound.push_back(ordered_sids[i]);
+    }
+    for (int i = region + 1; i < static_cast<int>(ordered_sids.size()); ++i)
+    {
+        upper_bound.push_back(ordered_sids[i]);
+    }
+
+    return true;
+}
+
 bool LegacyTetrahedralMeshBuilder::mapAttributeToBoundingSurfaces( size_t attribute, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound )
 {
     /* std::vector<Prism> prism_list; */
@@ -1270,4 +1475,37 @@ bool LegacyTetrahedralMeshBuilder::mapAttributeToBoundingSurfaces( size_t attrib
 
     return true;
 }
+std::map<std::size_t, std::vector<std::array<double, 3>>> LegacyTetrahedralMeshBuilder::computeI2VRegionMap()
+{
+    std::map<std::size_t, std::vector<std::array<double, 3>>> i2v_region_map{};
+    bool status = true;
+    if ( !mesh_is_built )
+    {
+        status = buildPrismMesh(prism_list);
+    }
 
+    if ( status == false )
+    {
+        return i2v_region_map;
+    }
+
+    std::size_t attribute{};
+    Point3 c;
+    for (auto& p : prism_list)
+    {
+        if (auto iter = attributes_map.find(p.getAttribute()); iter != attributes_map.end())
+        {
+            attribute = iter->second;
+            i2v_region_map[attribute];
+
+            if (p.allValid())
+            {
+                c = p.getCentroid();
+                i2v_region_map[attribute].push_back({c[0], c[1], c[2]});
+            }
+        }
+
+    }
+
+    return i2v_region_map;
+}

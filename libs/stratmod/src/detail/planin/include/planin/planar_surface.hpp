@@ -153,6 +153,8 @@ class PlanarSurface {
         bool surfaceIsSet();
         unsigned long int getID() const; 
         bool checkIfDependsOn( unsigned long int surface_id ); 
+        bool checkIfInLowerBound( unsigned long int surface_id ); 
+        bool checkIfInUpperBound( unsigned long int surface_id ); 
 
         bool rangeCheck( Natural vertex );
 

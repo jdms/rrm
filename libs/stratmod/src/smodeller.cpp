@@ -817,41 +817,43 @@ bool SModeller::canUndo()
 
 bool SModeller::undo()
 {
-    if ( canUndo() == false )
-    {
-        return false; 
-    }
+    return pimpl_->undo();
 
-    PlanarSurface::Ptr last_sptr; 
-    pimpl_->container_.popLastSurface(last_sptr);
+    /* if ( canUndo() == false ) */
+    /* { */
+    /*     return false; */ 
+    /* } */
 
-    size_t last_surface_index = pimpl_->inserted_surfaces_indices_.back(); 
-    pimpl_->inserted_surfaces_indices_.pop_back(); 
+    /* PlanarSurface::Ptr last_sptr; */ 
+    /* pimpl_->container_.popLastSurface(last_sptr); */
 
-    StateDescriptor last = pimpl_->past_states_.back();
-    pimpl_->past_states_.pop_back();
+    /* size_t last_surface_index = pimpl_->inserted_surfaces_indices_.back(); */ 
+    /* pimpl_->inserted_surfaces_indices_.pop_back(); */ 
 
-    pimpl_->current_.bounded_above_ = last.bounded_above_;
-    pimpl_->current_.upper_boundary_list_ = last.upper_boundary_list_;
-    pimpl_->current_.bounded_below_ = last.bounded_below_;
-    pimpl_->current_.lower_boundary_list_ = last.lower_boundary_list_;
-    // pimpl_->current_ = last; 
-    pimpl_->enforceDefineRegion();
+    /* StateDescriptor last = pimpl_->past_states_.back(); */
+    /* pimpl_->past_states_.pop_back(); */
 
-    pimpl_->undoed_surfaces_stack_.push_back(last_sptr); 
-    pimpl_->undoed_surfaces_indices_.push_back(last_surface_index); 
+    /* pimpl_->current_.bounded_above_ = last.bounded_above_; */
+    /* pimpl_->current_.upper_boundary_list_ = last.upper_boundary_list_; */
+    /* pimpl_->current_.bounded_below_ = last.bounded_below_; */
+    /* pimpl_->current_.lower_boundary_list_ = last.lower_boundary_list_; */
+    /* // pimpl_->current_ = last; */ 
+    /* pimpl_->enforceDefineRegion(); */
 
-    pimpl_->undoed_states_.push_back(last);
+    /* pimpl_->undoed_surfaces_stack_.push_back(last_sptr); */ 
+    /* pimpl_->undoed_surfaces_indices_.push_back(last_surface_index); */ 
 
-    auto iter = pimpl_->dictionary_.find(last_surface_index); 
-    pimpl_->dictionary_.erase(iter); 
+    /* pimpl_->undoed_states_.push_back(last); */
 
-    // Cache was updated in call to SRules::popLastSurface()
-    /* pimpl_->container_.updateCache(); */
+    /* auto iter = pimpl_->dictionary_.find(last_surface_index); */ 
+    /* pimpl_->dictionary_.erase(iter); */ 
 
-    pimpl_->mesh_ = nullptr;
+    /* // Cache was updated in call to SRules::popLastSurface() */
+    /* /1* pimpl_->container_.updateCache(); *1/ */
 
-    return true;
+    /* pimpl_->mesh_ = nullptr; */
+
+    /* return true; */
 }
 
 /* [[deprecated]] */
@@ -874,39 +876,41 @@ bool SModeller::canRedo()
 
 bool SModeller::redo()
 {
-    if ( canRedo() == false )
-    {
-        return false;
-    }
+    return pimpl_->redo();
 
-    PlanarSurface::Ptr undoed_sptr = pimpl_->undoed_surfaces_stack_.back(); 
-    pimpl_->undoed_surfaces_stack_.pop_back(); 
+    /* if ( canRedo() == false ) */
+    /* { */
+    /*     return false; */
+    /* } */
 
-    size_t surface_index = pimpl_->undoed_surfaces_indices_.back();
-    pimpl_->undoed_surfaces_indices_.pop_back();
+    /* PlanarSurface::Ptr undoed_sptr = pimpl_->undoed_surfaces_stack_.back(); */ 
+    /* pimpl_->undoed_surfaces_stack_.pop_back(); */ 
 
-    /* StateDescriptor state_before_redo_ = pimpl_->current_; */
-    pimpl_->current_ = pimpl_->undoed_states_.back();
-    pimpl_->undoed_states_.pop_back();
-    pimpl_->enforceDefineRegion();
+    /* size_t surface_index = pimpl_->undoed_surfaces_indices_.back(); */
+    /* pimpl_->undoed_surfaces_indices_.pop_back(); */
 
-    std::vector<size_t> lbounds, ubounds;
-    bool status = pimpl_->parseTruncateSurfaces(lbounds, ubounds); 
-
-    /* pimpl_->container_.updateCache(); */
-
-    if ( status == true )
-    {
-        status = pimpl_->commitSurface(undoed_sptr, surface_index, lbounds, ubounds); 
-    }
-
-
-    /* bool status = commitSurface(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>()); */
-
-    /* pimpl_->current_ = state_before_redo_; */
+    /* /1* StateDescriptor state_before_redo_ = pimpl_->current_; *1/ */
+    /* pimpl_->current_ = pimpl_->undoed_states_.back(); */
+    /* pimpl_->undoed_states_.pop_back(); */
     /* pimpl_->enforceDefineRegion(); */
 
-    return status;
+    /* std::vector<size_t> lbounds, ubounds; */
+    /* bool status = pimpl_->parseTruncateSurfaces(lbounds, ubounds); */ 
+
+    /* /1* pimpl_->container_.updateCache(); *1/ */
+
+    /* if ( status == true ) */
+    /* { */
+    /*     status = pimpl_->commitSurface(undoed_sptr, surface_index, lbounds, ubounds); */ 
+    /* } */
+
+
+    /* /1* bool status = commitSurface(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>()); *1/ */
+
+    /* /1* pimpl_->current_ = state_before_redo_; *1/ */
+    /* /1* pimpl_->enforceDefineRegion(); *1/ */
+
+    /* return status; */
 }
 
 bool SModeller::destroyLastSurface()
@@ -1065,7 +1069,7 @@ bool SModeller::computeTetrahedralMeshVolumes( std::vector<double> &vlist )
     return pimpl_->mesh_->getRegionVolumeList(vlist);
 }
 
-bool SModeller::getRegionsFromPointList( const std::vector<double> &vcoords, std::vector<int> &attribute_list)
+bool SModeller::getRegionsFromPointList( const std::vector<double> &vcoords, std::vector<int> &regions_list)
 {
     if ( vcoords.size() % 3 != 0 )
     {
@@ -1088,7 +1092,7 @@ bool SModeller::getRegionsFromPointList( const std::vector<double> &vcoords, std
         return false;
     }
 
-    bool status = pimpl_->mesh_->mapPointsToAttributes(point_list, attribute_list);
+    bool status = pimpl_->mesh_->mapPointsToRegions(point_list, regions_list);
 
     return status;
 }
@@ -1193,7 +1197,7 @@ bool SModeller::saveBinary( std::string filename )
         /* cereal::XMLOutputArchive oarchive(ofs); */
         /* cereal::JSONOutputArchive oarchive(ofs); */
 
-        unsigned int version = 1;
+        unsigned int version = 2;
 
         try 
         {
@@ -1231,7 +1235,7 @@ bool SModeller::saveJSON( std::string filename )
         /* cereal::XMLOutputArchive oarchive(ofs); */
         cereal::JSONOutputArchive oarchive(ofs);
 
-        unsigned int version = 1;
+        unsigned int version = 2;
 
         try 
         {
@@ -1296,6 +1300,10 @@ bool SModeller::loadBinary( std::string filename )
         }
         /* std::cout << "success\n" << std::flush; */
 
+        if (version == 1)
+        {
+            pimpl_->fixLegacyRegionLoadFile();
+        }
 
         return true;
 }
@@ -1338,6 +1346,11 @@ bool SModeller::loadJSON( std::string filename )
             return false;
         }
         /* std::cout << "success\n" << std::flush; */
+
+        if (version == 1)
+        {
+            pimpl_->fixLegacyRegionLoadFile();
+        }
 
 
         return true;

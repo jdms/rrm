@@ -510,6 +510,16 @@ class Tetrahedron
             return region_attribute_;
         }
 
+        void setRegion( AttributeType region )
+        {
+            region_ = std::move(region);
+        }
+
+        AttributeType getRegion() const
+        {
+            return region_;
+        }
+
     private:
         // BUG: VS2013 does not support constexpr
         // static constexpr size_t num_vertices_ = 4;
@@ -530,6 +540,7 @@ class Tetrahedron
 
         // BUG: VS2013 does not support empty initializer lists
         AttributeType region_attribute_; //= {};
+        AttributeType region_; //= {};
         
         bool verticesAreSet() const
         {
@@ -568,18 +579,21 @@ class Prism
                     {
                         tetrahedra.emplace_back( Tetrahedron( vertices_[0], vindices_[1-1], vertices_[1], vindices_[2-1], vertices_[2], vindices_[3-1], vertices_[5], vindices_[6-1] ) );
                         tetrahedra.back().setAttribute( getAttribute() );
+                        tetrahedra.back().setRegion( getRegion() );
                     }
 
                     if ( vstatus_[1] || vstatus_[4] )
                     {
                         tetrahedra.emplace_back( Tetrahedron( vertices_[0], vindices_[1-1], vertices_[1], vindices_[2-1], vertices_[5], vindices_[6-1], vertices_[4], vindices_[5-1] ) );
                         tetrahedra.back().setAttribute( getAttribute() );
+                        tetrahedra.back().setRegion( getRegion() );
                     }
 
                     if ( vstatus_[0] || vstatus_[3] )
                     {
                         tetrahedra.emplace_back( Tetrahedron( vertices_[0], vindices_[1-1], vertices_[4], vindices_[5-1], vertices_[5], vindices_[6-1], vertices_[3], vindices_[4-1] ) );
                         tetrahedra.back().setAttribute( getAttribute() );
+                        tetrahedra.back().setRegion( getRegion() );
                     }
                 }
 
@@ -589,18 +603,21 @@ class Prism
                     {
                         tetrahedra.emplace_back( Tetrahedron( vertices_[0], vindices_[1-1], vertices_[1], vindices_[2-1], vertices_[2], vindices_[3-1], vertices_[4], vindices_[5-1] ) );
                         tetrahedra.back().setAttribute( getAttribute() );
+                        tetrahedra.back().setRegion( getRegion() );
                     }
 
                     if ( vstatus_[2] || vstatus_[5] )
                     {
                         tetrahedra.emplace_back( Tetrahedron( vertices_[0], vindices_[1-1], vertices_[4], vindices_[5-1], vertices_[2], vindices_[3-1], vertices_[5], vindices_[6-1] ) );
                         tetrahedra.back().setAttribute( getAttribute() );
+                        tetrahedra.back().setRegion( getRegion() );
                     }
 
                     if ( vstatus_[0] || vstatus_[3] )
                     {
                         tetrahedra.emplace_back( Tetrahedron( vertices_[0], vindices_[1-1], vertices_[4], vindices_[5-1], vertices_[5], vindices_[6-1], vertices_[3], vindices_[4-1] ) );
                         tetrahedra.back().setAttribute( getAttribute() );
+                        tetrahedra.back().setRegion( getRegion() );
                     }
                 }
             }
@@ -615,9 +632,36 @@ class Prism
             return vertices_are_set_;
         }
 
+        bool isEmpty() const
+        {
+            bool empty = (verticesAreSet() != true);
+            if (!empty)
+            {
+                Point3 vu, vl;
+                const std::size_t num_points = vertices_.size()/2;
+                double tol = 1E-7;
+                for (std::size_t i = 0; i < num_points; ++i)
+                {
+                    vl = vertices_[i];
+                    vu = vertices_[i + num_points];
+
+                    empty &= std::abs(vl.z - vu.z) <= tol;
+                }
+
+            }
+
+            return empty;
+        }
+
         bool isValid() const
         {
             return verticesAreSet() && std::any_of( vstatus_.begin(), vstatus_.end(), []( bool b ) -> bool { return b; } );
+        }
+
+        bool allValid() const
+        {
+            bool status = verticesAreSet() && std::all_of( vstatus_.begin(), vstatus_.end(), []( bool b ) -> bool { return b; } );
+            return status;
         }
 
         Point3 getCentroid() const
@@ -649,6 +693,16 @@ class Prism
             return region_attribute_;
         }
 
+        void setRegion( AttributeType region )
+        {
+            region_ = std::move(region);
+        }
+
+        AttributeType getRegion() const
+        {
+            return region_;
+        }
+
     private:
         // BUG: VS2013 does not support constexpr
         // static constexpr size_t num_vertices_ = 6;
@@ -669,6 +723,7 @@ class Prism
         std::array<bool, 6> vertex_is_set_; //= {{false, false, false, false, false, false}};
         // BUG: VS2013 does not support empty initializer lists
         AttributeType region_attribute_; //= {};
+        AttributeType region_ = {};
 };
 
 } // namespace legacy

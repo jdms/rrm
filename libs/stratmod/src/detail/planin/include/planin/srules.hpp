@@ -242,6 +242,16 @@ class SRules
 
         std::vector<size_t> getUpperBound( std::vector<size_t> surface_ids );
 
+        std::size_t maxNumRegions() {
+            std::size_t num = 0; 
+            if (size() > 1)
+            {
+                num = size() - 1;
+            }
+
+            return num;
+        }
+
         template<typename VertexList, typename FaceList, typename NormalList>
         size_t getAdaptedMesh( size_t surface_id, VertexList &vlist, FaceList &flist, NormalList &nlist );
 
@@ -327,6 +337,35 @@ class SRules
 
         bool boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface );
         bool boundaryAwareRemoveBelow( const PlanarSurface::Ptr &base_surface, PlanarSurface::Ptr &to_remove_surface );
+
+        bool isInBoundList(PlanarSurface::SurfaceId psid, const std::vector<PlanarSurface::WeakPtr>& list)
+        {
+            for (auto wptr : list)
+            {
+                if (auto sptr = wptr.lock())
+                {
+                    if (psid == sptr->getID())
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        bool isInLowerBound(std::size_t sid)
+        {
+            if (sid >= size())
+                return false;
+
+            return isInBoundList(container[sid]->getID(), lower_bound_);
+        }
+        bool isInUpperBound(std::size_t sid)
+        {
+            if (sid >= size())
+                return false;
+
+            return isInBoundList(container[sid]->getID(), upper_bound_);
+        }
 
         // Cereal provides an easy way to serialize objects
         friend class cereal::access;

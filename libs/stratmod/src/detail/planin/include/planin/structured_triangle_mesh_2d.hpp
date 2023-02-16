@@ -72,6 +72,7 @@ class StructuredTriangleMesh2D {
 
         bool vertex(const Natural vertex_index, Point2D& vertex) const;
         bool triangle(const Natural triangle_index, Triangle& triangle) const;
+        bool point(const Natural triangle_index, const BaricentricCoordinates& coords, Point2D& p) const;
 
         Natural blockIndex(const Point2D& point) const;
         Natural triangleIndex(const Point2D& point) const;
@@ -609,7 +610,7 @@ bool StructuredTriangleMesh2D<Point2D>::triangleIndex(const Point2D& point, Natu
 template<typename Point2D>
 typename StructuredTriangleMesh2D<Point2D>::Natural StructuredTriangleMesh2D<Point2D>::triangleIndex(const Point2D& point) const
 {
-    Natural tindex;
+    Natural tindex{};
 
     auto p = projectOntoDomain(point);
     Natural bindex = blockIndex(p);
@@ -720,7 +721,7 @@ bool StructuredTriangleMesh2D<Point2D>::vertex(const Natural vindex, Point2D& v)
         return false; 
     }
 
-    NaturalPair indices; 
+    NaturalPair indices{}; 
     getVertexIndices(vindex, indices); 
 
     auto cast = []( Natural n ) -> double { return static_cast<double>(n); }; 
@@ -800,11 +801,47 @@ bool StructuredTriangleMesh2D<Point2D>::triangle(const Natural tindex, Triangle&
 }
 
 template<typename Point2D>
+bool StructuredTriangleMesh2D<Point2D>::point(const Natural triangle_index, const BaricentricCoordinates& coords_, Point2D& p) const
+{
+    bool status = true;
+    Triangle t;
+    status = triangle(triangle_index, t);
+
+    if (!status)
+    {
+        return false;
+    }
+
+    auto coords = coords_;
+    for (auto& c : coords)
+    {
+        if (c < 0.)
+        {
+            c = 0.;
+        }
+        else if (c > 1.)
+        {
+            c = 1.;
+        }
+    }
+
+    Point2D v0, v1, v2;
+    status &= vertex(t[0], v0);
+    status &= vertex(t[1], v1);
+    status &= vertex(t[2], v2);
+    
+    p[0] = coords[0]*v0[0] + coords[1]*v1[0] + coords[2]*v2[0];
+    p[1] = coords[0]*v0[1] + coords[1]*v1[1] + coords[2]*v2[1];
+
+    return status;
+}
+
+template<typename Point2D>
 std::tuple<typename StructuredTriangleMesh2D<Point2D>::Natural, typename StructuredTriangleMesh2D<Point2D>::BaricentricCoordinates> 
     StructuredTriangleMesh2D<Point2D>::baricentricCoordinates(const Point2D& point) const
 {
     Point2D p = projectOntoDomain(point);
-    Natural tindex;
+    Natural tindex{};
     triangleIndex(p, tindex);
     /* std::cout << "\n--- p = " << p[0] << ", " << p[1] << "; tindex = " << tindex; */
 
@@ -817,7 +854,7 @@ std::tuple<typename StructuredTriangleMesh2D<Point2D>::Natural, typename Structu
     /*     triangleIndex(projectOntoDomain(point), tindex); */
     /* } */
 
-    Triangle tindices;
+    Triangle tindices{};
     triangle(tindex, tindices);
 
     Point2D p0, p1, p2;

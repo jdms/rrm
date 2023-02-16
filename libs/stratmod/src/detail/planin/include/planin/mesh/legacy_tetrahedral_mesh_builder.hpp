@@ -74,6 +74,10 @@ class LegacyTetrahedralMeshBuilder
         template<typename ElementList, typename AttributeList>
         size_t getTetrahedronList( ElementList &, AttributeList & );
 
+        template<typename ElementList, typename RegionList>
+        size_t getTetrahedronList( ElementList &, RegionList &,
+                std::map<size_t, std::set<int>>& i2v_region_map );
+
         template<typename ElementList>
         size_t getTetrahedronList( std::vector<ElementList> & );
 
@@ -94,15 +98,26 @@ class LegacyTetrahedralMeshBuilder
 
         bool mapPointsToAttributes( const std::vector<Point3> &points, std::vector<int> &attrib_list );
 
+        bool mapPointsToRegions( const std::vector<Point3> &points, std::vector<int> &regions_list );
+
         bool mapAttributeToBoundingSurfaces( std::size_t attribute, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound );
 
+        bool mapRegionToBoundingSurfaces( int region, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound );
+
+        bool mapRegionToBoundingSurfaces( const AttributeType& region, std::vector<size_t> &lower_bound, std::vector<size_t> &upper_bound );
+
+        std::map<std::size_t, std::vector<std::array<double, 3>>> computeI2VRegionMap();
 
     private:
         SRules &container_;
 
         std::vector<Prism> prism_list;
+        std::vector<double> prism_volumes;
         std::map< AttributeType, size_t > attributes_map;
+        std::map< int, double > region_to_volume_map;
         bool mesh_is_built = false;
+
+        StructuredTriangleMesh2D<Point2> triangle_mesh_;
 
         // BUG: VS2013 does not support constexpr
         /* static constexpr size_t numPrismsPerBlock = 8; */
@@ -147,6 +162,10 @@ class LegacyTetrahedralMeshBuilder
         template<typename ElementList, typename AttributeList>
         size_t getElementList( const std::vector<Tetrahedron> &, ElementList &, AttributeList & );
 
+        template<typename ElementList, typename RegionList>
+        size_t getElementList( const std::vector<Tetrahedron> &, ElementList &, RegionList &,
+                std::map<std::size_t, std::set<int>>& i2v_region_map );
+
         template<typename ElementList, typename AttributeList>
         size_t getElementList( const std::vector<Prism> &, ElementList &, AttributeList & );
 
@@ -155,6 +174,78 @@ class LegacyTetrahedralMeshBuilder
 
         template<typename ElementList, typename AttributeList, typename VolumeList>
         size_t getElementList( const std::vector<Prism> &, std::vector<ElementList> &, VolumeList & );
+
+        int computeRegionId(const AttributeType& r) {
+            int id = -1;
+            for (auto b : r)
+            {
+                if (b)
+                    ++id;
+            }
+
+            return id;
+        };
+
+        struct RegionDescriptorSet {
+            std::map<AttributeType, std::size_t> descriptors{};
+            std::map<std::pair<AttributeType, bool>, std::size_t> bdescriptors{};
+            std::size_t counter = 0;
+            
+            void insert(const AttributeType& rd)
+            {
+                if (auto iter = descriptors.find(rd); iter != descriptors.end())
+                {
+                    ++iter->second;
+                }
+                else
+                {
+                    descriptors[rd] = 0;
+                }
+
+                ++counter;
+            }
+
+            void insert(const AttributeType& rd, bool allValid)
+            {
+                if (auto iter = bdescriptors.find(std::make_pair(rd, allValid)); iter != bdescriptors.end())
+                {
+                    ++iter->second;
+                }
+                else
+                {
+                    bdescriptors[std::make_pair(rd, allValid)] = 0;
+                }
+
+                ++counter;
+            }
+
+            AttributeType getProeminentDescriptor()
+            {
+                AttributeType desc{};
+                std::size_t votes = 0;
+                for (auto& [d, v] : descriptors)
+                {
+                    if (v > votes)
+                    {
+                        desc = d;
+                    }
+                }
+
+                return desc;
+            }
+
+            bool isProeminent(AttributeType& region)
+            {
+                AttributeType pd = getProeminentDescriptor();
+                if (pd == region)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        };
+        std::map< int, RegionDescriptorSet > region_descriptors_map;
 };
 
 template<typename VertexList>
@@ -261,8 +352,65 @@ size_t LegacyTetrahedralMeshBuilder::getElementList( const std::vector<Tetrahedr
     return num_tetrahedra; 
 }
 
+template<typename ElementList, typename RegionList>
+size_t LegacyTetrahedralMeshBuilder::getElementList( const std::vector<Tetrahedron> &tetrahedra, ElementList &elist, RegionList &rlist, std::map<std::size_t, std::set<int>>& i2v_region_map ) 
+{ 
+    size_t num_tetrahedra = tetrahedra.size();
+    RegionList alist = {};
+
+    using AttributeType = decltype( tetrahedra[0].getAttribute() );
+    std::map< AttributeType, size_t > attributes;
+
+    elist.resize( 4*num_tetrahedra );
+
+    std::vector<size_t> element;
+    for ( size_t t = 0; t < num_tetrahedra; ++t )
+    {
+        element = tetrahedra[t].getConnectivity();
+
+        elist[4*t + 0] = element[0];
+        elist[4*t + 1] = element[1];
+        elist[4*t + 2] = element[2];
+        elist[4*t + 3] = element[3];
+
+        attributes.insert( std::make_pair(tetrahedra[t].getAttribute(), 0) );
+    }
+
+
+    size_t i = 1;
+
+    for ( auto &att : attributes )
+    {
+        att.second = i;
+        ++i;
+    }
+
+
+    alist.resize( num_tetrahedra );
+    rlist.resize( num_tetrahedra );
+    auto it = attributes.begin();
+    for ( size_t t = 0; t < num_tetrahedra; ++t )
+    {
+        it = attributes.find( tetrahedra[t].getAttribute() );
+        alist[t] = it->second;
+        rlist[t] = computeRegionId(tetrahedra[t].getRegion());
+
+        i2v_region_map[alist[t]].insert(rlist[t]);
+    }
+
+
+    return num_tetrahedra; 
+}
+
+
 template<typename ElementList, typename AttributeList>
-size_t LegacyTetrahedralMeshBuilder::getTetrahedronList( ElementList &elist, AttributeList &alist )
+size_t LegacyTetrahedralMeshBuilder::getTetrahedronList( ElementList &/* elist */, AttributeList &/* alist */ )
+{
+    return 0;
+}
+
+template<typename ElementList, typename RegionList>
+size_t LegacyTetrahedralMeshBuilder::getTetrahedronList( ElementList &elist, RegionList &rlist, std::map<std::size_t, std::set<int>>& i2v_region_map )
 {
     /* std::vector<Prism> prism_list; */
     bool status = true;
@@ -276,7 +424,7 @@ size_t LegacyTetrahedralMeshBuilder::getTetrahedronList( ElementList &elist, Att
         return 0;
     }
 
-    size_t num_tetrahedra = getElementList(prism_list, elist, alist);
+    size_t num_tetrahedra = getElementList(prism_list, elist, rlist, i2v_region_map);
 
     return num_tetrahedra; 
 }
@@ -314,31 +462,78 @@ bool LegacyTetrahedralMeshBuilder::getRegionVolumeList( VolumeList &vlist )
     if ( status == false )
     {
         /* std::cout << "Failed to build prism mesh\n"; */
-        return 0;
+        return status;
     }
 
-    std::vector<Tetrahedron> tetrahedra;
-
-    auto it = attributes_map.begin();
-    size_t attribute;
-
-    vlist.clear();
-    vlist.resize( attributes_map.size(), 0 );
-
-    for ( size_t p = 0; p < prism_list.size(); ++p )
+    if (container_.maxNumRegions() < 1)
     {
-        tetrahedra = prism_list[p].tetrahedralize();
+        return false;
+    }
 
-        for ( size_t t = 0; t < tetrahedra.size(); ++t )
+    if (region_to_volume_map.empty())
+    {
+        std::vector<Tetrahedron> tetrahedra;
+        prism_volumes.resize(prism_list.size(), 0.);
+        double vol;
+        int rid;
+        for ( std::size_t i = 0; i < prism_list.size(); ++i )
         {
-            it = attributes_map.find( tetrahedra[t].getAttribute() );
-            attribute = it->second;
+            auto& p = prism_list[i];
+            if (p.isEmpty())
+            {
+                continue;
+            }
 
-            vlist[attribute] += tetrahedra[t].getVolume();
+            tetrahedra = p.tetrahedralize();
+            vol = 0;
+            for (auto& t : tetrahedra)
+            {
+                vol += t.getVolume();
+            }
+            prism_volumes[i] += vol;
+
+            rid = computeRegionId(p.getRegion());
+            if (auto iter = region_to_volume_map.find(rid); iter == region_to_volume_map.end())
+            {
+                region_to_volume_map[rid] = 0.;
+            }
+            region_to_volume_map[rid] += vol;
         }
     }
 
-    return true;
+    vlist.resize(container_.maxNumRegions(), 0.);
+    for (std::size_t r = 0; r < container_.maxNumRegions(); ++r)
+    {
+        if (auto iter = region_to_volume_map.find(r); iter != region_to_volume_map.end())
+        {
+            vlist[r] = iter->second;
+        }
+    }
+
+    return status;
+
+    /* std::vector<Tetrahedron> tetrahedra; */
+
+    /* auto it = attributes_map.begin(); */
+    /* size_t attribute; */
+
+    /* vlist.clear(); */
+    /* vlist.resize( attributes_map.size(), 0 ); */
+
+    /* for ( size_t p = 0; p < prism_list.size(); ++p ) */
+    /* { */
+    /*     tetrahedra = prism_list[p].tetrahedralize(); */
+
+    /*     for ( size_t t = 0; t < tetrahedra.size(); ++t ) */
+    /*     { */
+    /*         it = attributes_map.find( tetrahedra[t].getAttribute() ); */
+    /*         attribute = it->second; */
+
+    /*         vlist[attribute] += tetrahedra[t].getVolume(); */
+    /*     } */
+    /* } */
+
+    return status;
 }
 
 template<typename ElementList, typename AttributeList>
@@ -405,7 +600,7 @@ size_t LegacyTetrahedralMeshBuilder::getElementList( const std::vector<Prism> &p
 
 template<typename ElementList>
 size_t LegacyTetrahedralMeshBuilder::getElementList( const std::vector<Prism> &prism_list, std::vector<ElementList> &elist )
-{ 
+{
     /* using AttributeType = decltype( prism_list[0].getAttribute() ); */
     /* std::map< AttributeType, size_t > attributes_map; */
 
@@ -436,27 +631,48 @@ size_t LegacyTetrahedralMeshBuilder::getElementList( const std::vector<Prism> &p
     // Get tetrahedra
     //
 
-    elist.resize( attributes_map.size() );
+    if (container_.maxNumRegions() < 1)
+        return 0;
+
+    elist.resize( container_.maxNumRegions() );
 
     std::vector<size_t> element;
     std::vector<Tetrahedron> tetrahedra;
 
-    auto it = attributes_map.begin();
+    /* auto it = attributes_map.begin(); */
     size_t num_tetrahedra = 0;
-    size_t attribute;
+    /* size_t attribute; */
+    int region_id = -1;
+    auto numRegions = container_.maxNumRegions();
 
     /* int step = 0; */
     for ( size_t p = 0; p < prism_list.size(); ++p )
     {
-        tetrahedra = prism_list[p].tetrahedralize();
+        auto& prism = prism_list[p];
+
+        if (prism_list[p].isEmpty())
+        {
+            continue;
+        }
+
+        tetrahedra = prism.tetrahedralize();
+
+        /* it = attributes_map.find(prism.getAttribute()); */
+        /* attribute = it->second; */
+        region_id = computeRegionId(prism.getRegion());
+
+        if ((region_id < 0) || (region_id >= static_cast<int>(numRegions)))
+        {
+            continue;
+        }
 
         for ( size_t t = 0; t < tetrahedra.size(); ++t )
         {
-            it = attributes_map.find( tetrahedra[t].getAttribute() );
-            attribute = it->second;
+            /* it = attributes_map.find( tetrahedra[t].getAttribute() ); */
+            /* attribute = it->second; */
 
             element = tetrahedra[t].getConnectivity();
-            std::copy(element.begin(), element.end(), std::back_inserter( elist[attribute] ));
+            std::copy(element.begin(), element.end(), std::back_inserter( elist[region_id] ));
 
             ++num_tetrahedra;
         }

@@ -102,6 +102,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
 
         bool getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length );
 
+        std::map<std::size_t, std::map<int, int>> getI2VRegionMap();
+
     private:
         SModeller &model_;
 

@@ -2690,9 +2690,9 @@ std::pair<RulesProcessor::Att2RegMap, RulesProcessor::Reg2AttMap> RulesProcessor
     Att2RegMap att2reg;
     Reg2AttMap reg2att;
 
+    /* std::map<std::size_t, std::map<int, int>> i2v_region_map; */
     SUtilities u(modeller_);
-    /* auto i2v_region_map = u.getI2VRegionMap(); */
-    std::map<std::size_t, std::map<int, int>> i2v_region_map;
+    auto i2v_region_map = u.getI2VRegionMap();
     std::size_t max_num_regions = 0;
     auto sids = modeller_.getSurfacesIndices();
     if (!sids.empty())

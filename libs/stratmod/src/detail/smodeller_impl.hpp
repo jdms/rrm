@@ -173,6 +173,7 @@ struct SModellerImplementation
 
     // Volumetric information
     std::shared_ptr<LegacyTetrahedralMeshBuilder> mesh_;
+    std::map<std::size_t, std::map<int, int>> i2v_region_map_{};
 
 
     // Metadata and interpretation
@@ -321,10 +322,15 @@ struct SModellerImplementation
 
     bool popLastSurface();
 
+    bool popUndoStack();
+
     bool canUndo();
     bool canRedo();
 
-    bool popUndoStack();
+    bool undo();
+    bool redo();
+
+    void reloadModel();
 
     bool preserveAbove( std::vector<size_t> bounding_surfaces_list );
     bool preserveBelow( std::vector<size_t> bounding_surfaces_list );
@@ -354,6 +360,8 @@ struct SModellerImplementation
     bool enforceDefineRegion();
 
     bool buildTetrahedralMesh();
+
+    void fixLegacyRegionLoadFile();
 
     std::size_t numSurfaces() { return inserted_surfaces_indices_.size(); }
 
