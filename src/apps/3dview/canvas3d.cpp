@@ -174,7 +174,7 @@ void Canvas3d::shareOpenGLContext()
     QString shaders_path_( path_ );
     shaders_path_.append( arg_ ).append( "shaders" ).append( arg_ );
     QString models_path_( path_ );
-    models_path_.append( arg_ ).append( "models" ).append( arg_ );
+    models_path_.append( arg_ ).append( "objects" ).append( arg_ );
 
 
     QDir dir_;
@@ -193,11 +193,11 @@ void Canvas3d::shareOpenGLContext()
     // defining the directory where the axes model is placed
     status_ = dir_.cd( models_path_ );
     if( status_ == true )
-        std::cout << "Model Path exists " << std::endl << std::flush;
+        std::cout << "Objects Path exists " << std::endl << std::flush;
 
     else
     {
-        std::cout << "Model Path not exists " << std::endl << std::flush;
+        std::cout << "Objects Path doesn't exist " << std::endl << std::flush;
         return;
     }
 

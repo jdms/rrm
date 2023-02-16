@@ -78,7 +78,7 @@ add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -
 
 
 add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/files/models ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/models )
+    ${CMAKE_SOURCE_DIR}/files/objects ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/objects )
 
 if(WIN32)
     # add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} ARGS -E copy
@@ -98,7 +98,7 @@ if(WIN32)
 
 
     add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/files/models ${CMAKE_CURRENT_BINARY_DIR}/models )
+        ${CMAKE_SOURCE_DIR}/files/objects ${CMAKE_CURRENT_BINARY_DIR}/objects )
 
     if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 
