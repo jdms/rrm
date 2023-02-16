@@ -7,8 +7,13 @@ Sketch-based geological 3D modelling: Exploring uncertainty with interactive pro
 RRM provides a unified graphical user interface (GUI) containing all the
 necessary tools to create, visualize and test 3D geological models built from
 cross-section and contour sketches. At its core sits a new modelling framework,
-designed to create models with guarantees of geological consistency. Detailed
-description of geological operators and applications are available in [Jacquemyn et al (2021)](https://doi.org/10.1144/jgs2020-187) 
+designed to create models with guarantees of geological consistency.
+A description of geological operators and applications from a user's point of
+view is available in [Jacquemyn et al
+(2021)](https://doi.org/10.1144/jgs2020-187), while a description of RRM's flow
+diagnostics is available in [Petrovskyy et al.
+(2023)](https://dx.doi.org/10.2139/ssrn.4207850). See also
+[https://rapidreservoir.org](https://rapidreservoir.org).
 
 RRM is built to allow interactive operation: modelling and visualization of
 individual surfaces are performed in milliseconds on commodity, over the shelf
@@ -36,12 +41,12 @@ been tested in Windows 10.
 
 ## Building RRM form source
 
-### Requirements
+### Minimal Requirements
 
-RRM uses the [CMake](https://cmake.org/download/) (version 3.10 or higher is
-required) build system, and it currently depends on the following external
-libraries that must be obtained and properly installed before RRM can be
-compiled.
+RRM uses the [CMake](https://cmake.org/download/) (version 3.20 or higher is
+required) build system, and its main Sketching GUI currently depends on the
+following external libraries that must be obtained and properly installed
+before RRM can be compiled.
 
 - [Qt5] (components: Core, Gui, Widgets, OpenGL, Svg)
 
@@ -57,21 +62,97 @@ Instructions on how to obtain these libraries are platform dependent and will
 be provided below.  [Git](https://git-scm.com/downloads) is also required.
 
 
-### Building on Windows x64
+### Building the Sketching GUI and Flow Diagnostics
 
-RRM supports 64bit builds with the [Microsoft Visual Studio
-2019](https://visualstudio.microsoft.com/vs/) compiler in Windows.  In what
-follows we will require that both `git` and `cmake` be available in the user's
-`PATH`.  For the sake of these steps, the versions of `git` and `cmake` that
-are bundled with Visual Studio 2019 are sufficient.
+This version of RRM includes both a Sketching GUI and a Flow Diagnostics App,
+and both were built and tested in the following environments:
+
+- Windows 10, MSVC 14.34
+- Ubuntu 22.04, GCC 11.3
+
+The Flow Diagnostics App requires VTK 8.2 in addition to the dependencies
+required by the main Sketching GUI.  To compile both RRM's Sketching GUI and
+the Flow Diagnostics App, we suggest using the
+[vcpkg](https://vcpkg.io/en/index.html) C/C++ package manager to acquire and
+build its dependencies.  To simplify the building process, we currently use
+a [fork](https://github.com/dp-69/vcpkg) of `vcpkg`'s main repository, which
+incorporates changes required for a smooth compilation process. 
+
+#### Windows 10
+
+The following instructions assume that our fork of `vcpkg`'s repository will be
+cloned into the ```C:\``` folder, and that all commands are issued from a **x64
+Native Tools Command Prompt for VS 2022** command prompt (which is a part of
+Microsoft's Visual Studio toolset).
+
+- Step 1 - Installing RRM's dependencies in vcpkg:
+```cmd
+> git clone https://github.com/dp-69/vcpkg.git
+> cd vcpkg
+> bootstrap-vcpkg.bat
+> vcpkg.exe install rrmlibs-legacy:x64-windows --overlay-ports=ports-rrm/core
+```
+
+- Step 2 - RRM compilation:
+```cmd
+> git clone https://github.com/dp-69/rrm.git
+> cd rrm
+> cmake --preset=win-rel
+> cmake --build --preset=win-rel-rrm
+```
+
+- Step 3 - Executing RRM:
+```cmd
+> cd build\Release\bin
+> RRM.exe
+```
+
+
+#### Ubuntu 22.04
+
+The following instructions assume that `vcpkg`'s repository will be cloned into
+the user's home folder, and that all commands are issued from a terminal.
+
+- Step 1 - Installing RRM's dependencies in vcpkg:
+```cmd
+> git clone https://github.com/dp-69/vcpkg.git
+> cd vcpkg
+> ./bootstrap-vcpkg.sh
+> ./vcpkg install rrmlibs-legacy --overlay-ports=ports-rrm/core
+```
+
+- Step 2 - RRM compilation:
+```cmd
+> git clone https://github.com/dp-69/rrm.git
+> cd rrm
+> cmake --preset=lin-rel
+> cmake --build --preset=lin-rel-rrm
+```
+
+- Step 3 - Executing RRM:
+```cmd
+> cd build/Release/bin
+> ./RRM
+```
+
+
+### Building only the Sketching GUI on Windows x64
+
+In what follows we will require that Microsoft's Visual Studio (either version
+2019 or 2022) is installed and both `git` and `cmake` are available in the
+user's `PATH`.  For the sake of these steps, the versions of `git` and `cmake`
+that are bundled with Visual Studio are sufficient.
 
 #### Installing Qt, Eigen3 and GLEW
 
-In Windows, RRM requires the use of the
+We again suggest the use of
 [vcpkg](https://docs.microsoft.com/en-us/cpp/build/vcpkg?view=msvc-160) (see
 also [this link](https://vcpkg.readthedocs.io/en/latest/) for more details on
-using this tool) package manager to install Qt, Eigen3 and GLEW.  We'll assume
-that `vcpkg` is installed to `C:\dev\vcpkg`, as in the example:
+using this tool) package manager to install Qt, Eigen3 and GLEW -- but now
+a vanilla version of `vcpkg` obtained directly from its repository is
+sufficient (but notice that those libraries can be installed by other means as
+well).  We'll assume that `vcpkg` is installed to `C:\dev\vcpkg`, as in the
+example:
 
 ```
 > git clone https://github.com/microsoft/vcpkg C:\dev\vcpkg
@@ -164,7 +245,8 @@ piece of software.
 ## Sponsors
 
 This software was developed during the first phase of the [RRM
-project](https://rapidreservoir.org), which was sponsored by:
+project](https://rapidreservoir.org) (from 2014 to 2018), which was sponsored
+by:
 
 - Equinor
 - ExxonMobil
@@ -172,7 +254,7 @@ project](https://rapidreservoir.org), which was sponsored by:
 - Petrobras
 - Shell 
 
-The current phase of the project is being sponsored by:
+The current phase of the project (from 2019 to 2023) is being sponsored by:
 
 - Equinor
 - ExxonMobil
