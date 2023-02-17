@@ -421,8 +421,10 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
                     double perc1_ = 100*( volume1_/total_ );
                     if (perc1_ >= 0.1)
                         obj1_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
-                    else
+                    else if (perc1_ > 0.)
                         obj1_->setText( COLUMN_DETAILS, QString( "<0.1%" ) );
+                    else
+                        obj1_->setText( COLUMN_DETAILS, QString( "0%" ) );
                 }
 
                 if( label_domains->childCount() > 0 )
@@ -436,8 +438,10 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
                         double perc1_ = 100*( volume1_/total_ );
                         if (perc1_ >= 0.1)
                             domain_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
-                        else
+                        else if (perc1_ > 0.)
                             domain_->setText( COLUMN_DETAILS, QString( "<0.1%" ) );
+                        else
+                            domain_->setText( COLUMN_DETAILS, QString( "0%" ) );
                     }
                 }
             }

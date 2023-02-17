@@ -1424,6 +1424,7 @@ std::vector<std::size_t > Controller::defineRegions()
     std::vector< std::vector< std::size_t > > regions_;
     bool status_ = rules_processor.getTetrahedralMesh( vertices_, regions_ );
 
+    std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedActiveSurfaces();
     MMA::resetRegions();
     // MMA::enforceRegionsConsistency();
 
@@ -1436,29 +1437,40 @@ std::vector<std::size_t > Controller::defineRegions()
     double ox_ = 0, oy_ = 0, oz_ = 0;
     model.volume->getGeometry( ox_, oy_, oz_, w_, h_, l_ );
 
-
-    // creating region colors using a color library
-    std::size_t number_of_regions_ = regions_.size();
-    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions_ );
-
     // getting the volumes of each region
     std::vector< double > volumes_;
     rules_processor.getRegionVolumeList( volumes_ );
+    std::size_t num_empty_regions = 0;
+    for (auto v : volumes_)
+    {
+        if (v == 0)
+            ++num_empty_regions;
+    }
+
+
+    // creating region colors using a color library
+    std::size_t number_of_regions_ = regions_.size();
+    /* std::size_t number_of_regions_ = regions_.size() - num_empty_regions; */
+    if (number_of_regions_ < 1)
+        return surfaces_indexes_;
+
+    std::vector< int > colors_ = rules_processor.getRegionsColor( number_of_regions_ );
 
 
     // variable to determine the total volume, i.e., the sum of each region volume
     double volume_sum_ = 0.0;
-    for ( unsigned int i = 0; i < number_of_regions_; ++i)
+    std::size_t cur_color_id = 0;
+    for ( unsigned int i = 0; i < regions_.size(); ++i)
     {
-        if (volumes_[i] == 0.)
-        {
-            continue;
-        }
+        /* if (volumes_[i] == 0.) */
+        /* { */
+        /*     continue; */
+        /* } */
         
         Color color_;
-        color_.red = colors_[ 3*i ];
-        color_.green = colors_[ 3*i + 1 ];
-        color_.blue = colors_[ 3*i + 2 ];
+        color_.red = colors_[ 3*cur_color_id ];
+        color_.green = colors_[ 3*cur_color_id + 1 ];
+        color_.blue = colors_[ 3*cur_color_id + 2 ];
 
         RegionsPtr region_ = std::make_shared< Regions >();
         region_->setIndex( i );
@@ -1469,6 +1481,15 @@ std::vector<std::size_t > Controller::defineRegions()
         region_->setMaxMin( ox_ + w_, oy_ + h_, oz_ + l_, ox_, oy_, oz_ );
 
         volume_sum_ += volumes_[ i ];
+        if (volumes_[i] == 0)
+        {
+            region_->setName("Empty Region " + std::to_string(i));
+            region_->setColor(255, 0, 0);
+        }
+        else
+        {
+            ++cur_color_id;
+        }
 
         model.regions[region_->getIndex()] = region_;
 
@@ -1476,20 +1497,20 @@ std::vector<std::size_t > Controller::defineRegions()
         getRegionCrossSectionBoundary( i );
     }
     
-    if (number_of_regions_ != model.regions.size())
-    {
-        colors_ = rules_processor.getRegionsColor( model.regions.size() );
-        std::size_t i = 0;
-        Color color_;
-        for (auto& [_, region] : model.regions)
-        {
-            color_.red = colors_[ 3*i ];
-            color_.green = colors_[ 3*i + 1 ];
-            color_.blue = colors_[ 3*i + 2 ];
-            region->setColor( color_.red, color_.green, color_.blue );
-            ++i;
-        }
-    }
+    /* if (number_of_regions_ != model.regions.size()) */
+    /* { */
+    /*     colors_ = rules_processor.getRegionsColor( model.regions.size() ); */
+    /*     std::size_t i = 0; */
+    /*     Color color_; */
+    /*     for (auto& [_, region] : model.regions) */
+    /*     { */
+    /*         color_.red = colors_[ 3*i ]; */
+    /*         color_.green = colors_[ 3*i + 1 ]; */
+    /*         color_.blue = colors_[ 3*i + 2 ]; */
+    /*         region->setColor( color_.red, color_.green, color_.blue ); */
+    /*         ++i; */
+    /*     } */
+    /* } */
 
     for (auto& [r_id, r] : MMA::regions())
     {
@@ -1504,7 +1525,7 @@ std::vector<std::size_t > Controller::defineRegions()
         }
         else
         {
-            MMA::name(r) = "Empty Region (zero volume)" + std::to_string(r_id);
+            MMA::name(r) = "Invalid Region " + std::to_string(r_id);
             MMA::setColor(r, QColor(255, 0, 0));
         }
     }
@@ -1513,7 +1534,6 @@ std::vector<std::size_t > Controller::defineRegions()
 
      // returning the order of the surfaces
      // maybe it needs to be placed in other method
-    std::vector< std::size_t > surfaces_indexes_ = rules_processor.getOrderedActiveSurfaces();
     return surfaces_indexes_;
 }
 
@@ -2775,6 +2795,8 @@ void Controller::loadObjectMetaDatas( QFile& load_file )
     QJsonDocument load_doc( QJsonDocument::fromJson(save_data) );
     const QJsonObject &json = load_doc.object();
 
+    rules_processor.stopPreserveAbove();
+    rules_processor.stopPreserveBelow();
     if ( json.contains("objects") && json["objects"].isArray() )
     {
 

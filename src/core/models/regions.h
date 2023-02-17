@@ -332,14 +332,14 @@ class Regions: public Object
         * @param id the index of the domain
         * @return void.
         */
-        inline void setDomain( std::size_t id_ ){ domain_index = id_; indomain = true; }
+        inline void setDomain( std::size_t id_ ){ domain_index = id_; indomain = true; has_domain_color = false; }
 
 
         /**
         * This method clear the data domain and define that the regions does not belong to any domain
         * @return void.
         */
-        inline void removeFromDomain(){ indomain = false; }
+        inline void removeFromDomain(){ indomain = false; has_domain_color = false; }
 
 
         /**
@@ -450,6 +450,7 @@ class Regions: public Object
         double volume = 0;                                              /**< The volume of the region */
 
         Color dcolor;                                                    /**< The color of the region's parent domain */
+        bool has_domain_color = false;
 
         mutable std::mutex geometry_mutex;
         mutable bool vertices_list_is_fresh = false;
@@ -457,6 +458,8 @@ class Regions: public Object
 
         mutable std::mutex color_mutex;
         mutable bool color_is_fresh = false;
+
+        bool hasDomainColor() const { return indomain && has_domain_color; }
 };
 
 #endif // REGIONS_H
