@@ -1,3 +1,0 @@
-[submodule "libs/rrm-fd-ui"]
-	path = src/apps/simulator/diagnostics/rrm-fd-ui
-	url = https://bitbucket.org/dp-69/rrm-fd-ui.git
