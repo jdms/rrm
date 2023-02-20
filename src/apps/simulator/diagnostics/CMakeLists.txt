@@ -12,7 +12,7 @@ find_package(pugixml QUIET)
 # The files in the resources folder are not being copied to the right place
 # set(FD_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/rrm-fd-ui/src/rrm/fd)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dp-69/src/rrm/fd)
 
 set(RRM_DIAGNOSTICS_SOURCES
     fd_definitions.cpp
@@ -29,13 +29,13 @@ set(RRM_DIAGNOSTICS_SOURCES
 add_library(diagnostics ${RRM_DIAGNOSTICS_SOURCES})
 add_custom_command(TARGET diagnostics
     POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/rrm-fd-ui/src/rrm/fd/resources ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/_config
+    ${CMAKE_CURRENT_SOURCE_DIR}/dp-69/src/rrm/fd/resources ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/_config
     )
 
 if(WIN32)
     add_custom_command(TARGET diagnostics
         POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/rrm-fd-ui/src/rrm/fd/resources ${CMAKE_BINARY_DIR}/src/apps/_config
+        ${CMAKE_CURRENT_SOURCE_DIR}/dp-69/src/rrm/fd/resources ${CMAKE_BINARY_DIR}/src/apps/_config
         )
 endif()
 

@@ -1,0 +1,1 @@
+#include "stratmod/smodeller.hpp"

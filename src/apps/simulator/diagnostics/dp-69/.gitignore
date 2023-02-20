@@ -1,0 +1,5 @@
+/build
+#/extras/stratwrap_stable
+#/src/rrm/stratwrap_faster
+.vs
+.vscode

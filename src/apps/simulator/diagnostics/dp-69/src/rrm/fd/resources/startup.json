@@ -1,0 +1,12 @@
+{
+  "--viewport": [1200, 1000],
+  "stratmod": {
+    "--scale": [1, 1, 3]
+  },
+  
+  "publishing": false,
+  "--camera": "mycam.json",
+  "--viscosity": 10,
+  "--wells": "..\\mywells.json",
+  "--boundary_conditions": [400, 400, 400, 400, null, null]
+}

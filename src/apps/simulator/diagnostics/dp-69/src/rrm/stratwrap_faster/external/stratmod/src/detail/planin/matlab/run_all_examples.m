@@ -1,0 +1,8 @@
+daisy_ex2a
+daisy_ex2b
+daisy_ex3a
+daisy_ex3b
+daisy_ex4a
+daisy_ex4b
+daisy_ex5a
+daisy_ex5b
