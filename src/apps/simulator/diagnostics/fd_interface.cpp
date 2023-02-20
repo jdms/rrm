@@ -230,8 +230,9 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
 
   StartupSettings rendering_settings; 
       
-  try {      
-    LoadSettings(rendering_settings.domains, nlohmann::json::parse(std::ifstream("_config/fdsettings.json"))); // TODO: Deprecated
+  try {
+    // Deprecated
+    LoadSettings(rendering_settings.domains, nlohmann::json::parse(std::ifstream("_config/fdsettings.json")));
   }
   catch (...) {}
 
@@ -242,35 +243,34 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
 
 
 
-
-
-  
-
   PetrophysicalSettings petrophysics;
 
-  MMA::enforceDomainsConsistency(); // Make sure that domains set by sketghing gui can be used for flow diagnostics
+  // Make sure that domains set by sketghing gui can be used for flow diagnostics
+  MMA::enforceDomainsConsistency();
 
   // Using a colormap to provide default colors to domains if gui has not assigned any
   Colors domains_colormap(Colorwrap::Pastel1());
+  
+  {
+    for (auto& [d_idx, domain] : MMA::domains()) {
+      for (auto& region : domain.regions)
+          petrophysics.region_to_domain[region.id()] = d_idx;
 
-  int j = 0;
-  for (auto& [domain_idx, domain] : MMA::domains()) {
-    for (auto& r : domain.regions)
-      petrophysics.region_to_domain[r.id()] = j;
+      auto& d_settings = petrophysics.domains[d_idx];
 
-    auto& domain_settings = petrophysics.domains[j];
-
-    // `getORset*` methods are defined on interface FlowDiagnosticsDefinitions
-    domain_settings.name = FDD::getORsetName(domain, "Domain" + std::to_string(domain_idx));
-    domain_settings.color = FDD::getORsetColor(domain, domains_colormap.color(domain_idx));
-    domain_settings.perm = {
-      units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99)),
-      units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99)),
-      units::MilliDarcy(FDD::getORsetPermZ(domain, 999.99))
-    };
-    domain_settings.poro = FDD::getORsetPoro(domain, 0.2999);
-    domain_settings.color.setAlpha(0);
-    ++j;
+      // `getORset*` methods are defined on interface FlowDiagnosticsDefinitions
+      d_settings.name = FDD::getORsetName(domain, "Domain " + std::to_string(d_idx));
+      d_settings.color = FDD::getORsetColor(domain, domains_colormap.color(d_idx));
+      d_settings.color.setAlpha(0);
+      
+      d_settings.perm = {
+        units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99)),
+        units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99)),
+        units::MilliDarcy(FDD::getORsetPermZ(domain, 999.99))
+      };
+      
+      d_settings.poro = FDD::getORsetPoro(domain, 0.2999);
+    }
   }
 
   // Using same default colormap as gui to assign colors to regions if user
@@ -280,23 +280,23 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
   // Make sure that regions set by sketghing gui can be used for flow diagnostics
   MMA::enforceRegionsConsistency();
 
-  // TODO: check if everything is ok
-  for (auto& [region_idx, region] : MMA::regions()) {
-    auto& region_settings = petrophysics.regions[region_idx];
-    region_settings.name = FDD::getORsetName(region, "Region" + std::to_string(region_idx));
-    region_settings.color = FDD::getORsetColor(region, regions_colormap.color(region_idx + 1)); // +1 to match colour in sketching gui
+  
+  for (auto& [r_idx, region] : MMA::regions()) {
+    auto& r_settings = petrophysics.regions[r_idx];
+    r_settings.name = FDD::getORsetName(region, "Region " + std::to_string(r_idx));
+    r_settings.color = FDD::getORsetColor(region, regions_colormap.color(r_idx + 1)); // +1 to match colour in sketching gui
 
     // Won't save metadata for regions ignored by the user
-    if (petrophysics.region_to_domain.find(region_idx) == petrophysics.region_to_domain.end()) {
-      auto domain_idx = petrophysics.domains.size();
-      petrophysics.region_to_domain[region_idx] = domain_idx;
+    if (petrophysics.region_to_domain.count(r_idx) == 0) {
+      auto d_idx = petrophysics.domains.size();
+      petrophysics.region_to_domain[r_idx] = d_idx;       // NOLINT(clang-diagnostic-shorten-64-to-32)
 
-      auto& domain_settings = petrophysics.domains[domain_idx];
+      auto& d_settings = petrophysics.domains[d_idx];     // NOLINT(clang-diagnostic-shorten-64-to-32)
 
-      domain_settings.name = region_settings.name;
-      domain_settings.perm = units::MilliDarcy(999.99);
-      domain_settings.poro = 0.2999;
-      domain_settings.color = region_settings.color;
+      d_settings.name = r_settings.name;
+      d_settings.perm = units::MilliDarcy(999.99);
+      d_settings.poro = 0.2999;
+      d_settings.color = r_settings.color;
     }
   }
 
@@ -307,51 +307,52 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
 
   
   if (!project_path.empty()) {
-    using std::filesystem::path;
+    using namespace std::filesystem;
     
-    try { // TODO: Deprecated
+    try {
+      // Deprecated
       LoadSettings(rendering_settings.domains,
         nlohmann::json::parse(std::ifstream(path(project_path).replace_extension("fdsettings.json"))));
     }
     catch (...) {}
 
-    if (std::filesystem::exists(path(project_path).replace_extension("startup.json")))
+    if (exists(path(project_path).replace_extension("startup.json")))
       rendering_settings.TryParseConfig(
         path(project_path).replace_extension("startup.json").string());
-    else if (std::filesystem::exists(path(project_path).replace_filename("startup.json")))
+    else if (exists(path(project_path).replace_filename("startup.json")))
       rendering_settings.TryParseConfig(
         path(project_path).replace_filename("startup.json").string());
   }
 
 
-  
-  rendering_settings.stratmod.y_invert = true; // TODO: can it be hardset?
+  // TODO: can it be hardset?
+  rendering_settings.stratmod.y_invert = true;
 
 
   if (rendering_settings.stratmod.discretisation)
-      model().changeDiscretization(rendering_settings.stratmod.discretisation->x(), rendering_settings.stratmod.discretisation->y());
+      model().changeDiscretization(
+        rendering_settings.stratmod.discretisation->x(),
+        rendering_settings.stratmod.discretisation->y());
 
 
 
-  // TODO: [JD]
-  // I'm not saving this now because it would create problems for the sketching gui.
-  // Besides, in my code, the "OuterRegion" id is -1.
+  
   auto outer_domain_idx = petrophysics.domains.size();
-  auto& outer_settings = petrophysics.domains[outer_domain_idx];
+  auto& outer_settings = petrophysics.domains[outer_domain_idx];  // NOLINT(clang-diagnostic-shorten-64-to-32)
   outer_settings.poro = 0.3;
   outer_settings.name = "<Outer>";
   outer_settings.perm = units::MilliDarcy(0.01);
   outer_settings.color = QColor::fromRgbF(0.4, 0.4, 0.4);
 
-  petrophysics.region_to_domain[petrophysics.region_to_domain.size()] = outer_domain_idx;
+  petrophysics.region_to_domain[petrophysics.region_to_domain.size()] = outer_domain_idx;  // NOLINT(clang-diagnostic-shorten-64-to-32)
 
-  for (auto& [_, ds] : petrophysics.domains) {
-      auto original_name = ds.name;
-      auto lookup_iter = rendering_settings.domains.find(boost::algorithm::to_lower_copy(original_name));
-      if (lookup_iter != rendering_settings.domains.end()) {
-          ds = lookup_iter->second;
-          ds.name = original_name;
-      }
+  for (auto& [_, d_settings] : petrophysics.domains) {
+    auto original_name = d_settings.name;
+    if (auto iter = rendering_settings.domains.find(boost::algorithm::to_lower_copy(original_name));
+      iter != rendering_settings.domains.end()) {
+      d_settings = iter->second;
+      d_settings.name = original_name;
+    }
   }
 
 
