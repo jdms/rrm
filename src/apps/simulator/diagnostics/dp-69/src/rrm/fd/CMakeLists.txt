@@ -132,7 +132,7 @@ endif()
 if (DEFINED FD_OUTPUT_DIR)
   file(MAKE_DIRECTORY "${FD_OUTPUT_DIR}/_config")
 
-  foreach(FILE "droplet.png" "fdsettings.json" "startup.json")
+  foreach(FILE "droplet.png" "startup.json")
     if(NOT EXISTS "${FD_OUTPUT_DIR}/_config/${FILE}")
       file(COPY_FILE
         "${CMAKE_CURRENT_SOURCE_DIR}/resources/${FILE}"
