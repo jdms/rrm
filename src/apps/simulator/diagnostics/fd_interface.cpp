@@ -334,20 +334,11 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
         path(project_path).replace_filename("startup.json").string());
   }
 
-
-  // TODO: can it be hardset?
-  if (smodel().isUsingDefaultCoordinateSystem())
-  {
-    rendering_settings.stratmod.y_invert = false;
-  }
-  else
-  {
-    rendering_settings.stratmod.y_invert = true;
-  }
-
+  
+  rendering_settings.stratmod.y_invert = !stratmod.isUsingDefaultCoordinateSystem();
 
   if (rendering_settings.stratmod.discretisation)
-      smodel().changeDiscretization(
+      stratmod.changeDiscretization(
         rendering_settings.stratmod.discretisation->x(),
         rendering_settings.stratmod.discretisation->y());
 
