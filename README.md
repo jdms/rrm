@@ -1,10 +1,10 @@
-RRM
+Rapid reservoir modelling
 ===
 
 Sketch-based geological 3D modelling: Exploring uncertainty with interactive prototyping
 -----------------------------------------------------------------------
 
-RRM provides a unified graphical user interface (GUI) containing all the
+Rapid reservoir modelling (RRM) provides a unified graphical user interface (GUI) containing all the
 necessary tools to create, visualize and test 3D geological models built from
 cross-section and contour sketches. At its core sits a new modelling framework,
 designed to create models with guarantees of geological consistency.
@@ -199,23 +199,23 @@ directly from Visual Studio and continue from there.
 The [RRM project's](https://rapidreservoir.org) research results are a copyright of the respective current and past members:
 
 ### University of Calgary, Canada
-Clarissa Coda Marques  
-Julio Daniel Silva  
-Felipe Moura de Carvalho  
-Emilio Vital Brazil  
-Sicilia Judice  
-Fazilatur Rahman  
+Clarissa Coda Marques<br/>
+Julio Daniel Silva<br/>
+Felipe Moura de Carvalho<br/>
+Emilio Vital Brazil<br/>
+[Sicilia Judice](http://www.linkedin.com/in/sicilia-judice)<br/>
+Fazilatur Rahman<br/>
 Mario Costa Sousa  
 
 ### Heriot-Watt University, UK
-Dmytro Petrovskyy  
-Zhao Zang  
-Sebastian Geiger  
+[Dmytro Petrovskyy](https://www.linkedin.com/in/dmytro-petrovskyy/)<br/>
+Zhao Zang<br/>
+[Sebastian Geiger](https://www.tudelft.nl/en/staff/s.geiger/)
 
 ### Imperial College London, UK
-Carl Jacquemyn  
-Margaret E.H. Pataki  
-Gary J. Hampson  
+Carl Jacquemyn<br/>
+Margaret E.H. Pataki<br/>
+[Gary J. Hampson](https://www.linkedin.com/in/gary-hampson-icl/)<br/>
 Matthew D. Jackson  
 
 This software also includes [third party
