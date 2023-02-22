@@ -61,7 +61,6 @@ class FlowDiagnosticsDefinitions
         static Domain* accessDomain(int domain_id)
         {
             Domain* dptr = nullptr;
-            /* auto& domains = stratmod::SModeller::Instance().interpretations()[InterpretationHandle].domains; */
             auto& domains = model().interpretations()[InterpretationHandle].domains;
 
             auto iter = domains.find(domain_id);
@@ -160,6 +159,72 @@ class FlowDiagnosticsDefinitions
             }
 
             return getORsetPoro(*d, val, name, unit);
+        }
+
+        /// Get permeability_x of domain @param d if it is set, set its permeability_x otherwise
+        ///
+        /// Return @param val if domain's permeability_x is not set, domain's permeability_x otherwise
+        static double getORsetPermX(Domain& d, double val,
+                const std::string name = "Permeability X", const std::string unit = "MilliDarcy")
+        {
+            auto& data = d.metadata.scalar_data;
+            if (auto iter = data.find(k_x); iter == data.end())
+            {
+                data[k_x].value = val;
+                data[k_x].name = name;
+                data[k_x].unit = unit;
+
+                return val;
+            }
+
+            return data[k_x].value;
+        }
+
+        /// If @param d is not null: get its permeability_x if it is set, set its permeability_x otherwise
+        ///
+        /// Return @param val if @param d is null or if domain has no permeability_x, domain's porosity otherwise
+        static double getORsetPermX(Domain* d, double val,
+                const std::string name = "Permeability X", const std::string unit = "MilliDarcy")
+        {
+            if (d == nullptr)
+            {
+                return val;
+            }
+
+            return getORsetPermX(*d, val, name, unit);
+        }
+
+        /// Get permeability_y of domain @param d if it is set, set its permeability_y otherwise
+        ///
+        /// Return @param val if domain's permeability_y is not set, domain's permeability_y otherwise
+        static double getORsetPermY(Domain& d, double val,
+                const std::string name = "Permeability Y", const std::string unit = "MilliDarcy")
+        {
+            auto& data = d.metadata.scalar_data;
+            if (auto iter = data.find(k_y); iter == data.end())
+            {
+                data[k_y].value = val;
+                data[k_y].name = name;
+                data[k_y].unit = unit;
+
+                return val;
+            }
+
+            return data[k_y].value;
+        }
+
+        /// If @param d is not null: get its permeability_y if it is set, set its permeability_y otherwise
+        ///
+        /// Return @param val if @param d is null or if domain has no permeability_y, domain's porosity otherwise
+        static double getORsetPermY(Domain* d, double val,
+                const std::string name = "Permeability Y", const std::string unit = "MilliDarcy")
+        {
+            if (d == nullptr)
+            {
+                return val;
+            }
+
+            return getORsetPermY(*d, val, name, unit);
         }
 
         /// Get permeability_xy of domain @param d if it is set, set its permeability_xy otherwise

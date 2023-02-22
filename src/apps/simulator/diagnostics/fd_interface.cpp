@@ -172,8 +172,8 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
         /// A proper long term solution should be considered
         std::optional<std::string> getSavedModelFilename()
         {
-            #if defined RRMQMLVTK_STILL_DOES_NOT_PROVIDE_PROJECT_NAME_TO_FD
-            stratmod::SUtilities u(model());
+            #if defined(RRMQMLVTK_STILL_DOES_NOT_PROVIDE_PROJECT_PATH_TO_FD)
+            stratmod::SUtilities u(smodel());
             project_name = u.getSavedFileName();
             #endif
 
@@ -190,7 +190,7 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
         //
 
         /// get reference to model (make sure default coordinate system is in use?)
-        static stratmod::SModeller& model() { 
+        static stratmod::SModeller& smodel() { 
             /* stratmod::SModeller::Instance().useDefaultCoordinateSystem(); */
             if (pmodel_)
             {
@@ -201,7 +201,7 @@ struct FlowDiagnosticsInterface::Impl : public /*rrm::fd::*/FlowDiagnosticsDefin
         }
 
         /// compute current number of surfaces in model
-        static int numSurfaces() { return static_cast<int>(model().getSurfacesIndices().size()); }
+        static int numSurfaces() { return static_cast<int>(smodel().getSurfacesIndices().size()); }
 
         /// compute max number of regions in model
         static int numRegions() { return (numSurfaces() > 0) ? (numSurfaces() -1) : 0; }
@@ -236,7 +236,7 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
   }
   catch (...) {}
 
-  auto& stratmod = model();
+  auto& stratmod = smodel();
 
   rendering_settings.TryParseConfig();
   rendering_settings.font_path = GetWindowsUnicodeArialFontPath();
@@ -252,24 +252,32 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
   Colors domains_colormap(Colorwrap::Pastel1());
   
   {
+    /* Maps domains' indices in model (which can be any integer) to sequence 0, 1, 2, ... */
+    int j = 0;
     for (auto& [d_idx, domain] : MMA::domains()) {
       for (auto& region : domain.regions)
-          petrophysics.region_to_domain[region.id()] = d_idx;
+          petrophysics.region_to_domain[region.id()] = j;
 
-      auto& d_settings = petrophysics.domains[d_idx];
+      auto& d_settings = petrophysics.domains[j];
 
+      //
       // `getORset*` methods are defined on interface FlowDiagnosticsDefinitions
-      d_settings.name = FDD::getORsetName(domain, "Domain " + std::to_string(d_idx));
-      d_settings.color = FDD::getORsetColor(domain, domains_colormap.color(d_idx));
+      //
+
+      // Keep '"Domain " + std::to_string(d_idx)' here so that names match if
+      // GUI fails to save domains' names?
+      d_settings.name = FDD::getORsetName(domain, "Domain " + std::to_string(j));
+      d_settings.color = FDD::getORsetColor(domain, domains_colormap.color(j));
       d_settings.color.setAlpha(0);
       
       d_settings.perm = {
-        units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99)),
-        units::MilliDarcy(FDD::getORsetPermXY(domain, 999.99)),
+        units::MilliDarcy(FDD::getORsetPermX(domain, 999.99)),
+        units::MilliDarcy(FDD::getORsetPermY(domain, 999.99)),
         units::MilliDarcy(FDD::getORsetPermZ(domain, 999.99))
       };
       
       d_settings.poro = FDD::getORsetPoro(domain, 0.2999);
+      ++j;
     }
   }
 
@@ -281,6 +289,8 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
   MMA::enforceRegionsConsistency();
 
   
+  // If GUI fails to save metadata properly when regions have 0 volume then
+  // regions' names and colors in FD may not make sense.
   for (auto& [r_idx, region] : MMA::regions()) {
     auto& r_settings = petrophysics.regions[r_idx];
     r_settings.name = FDD::getORsetName(region, "Region " + std::to_string(r_idx));
@@ -326,11 +336,18 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
 
 
   // TODO: can it be hardset?
-  rendering_settings.stratmod.y_invert = true;
+  if (smodel().isUsingDefaultCoordinateSystem())
+  {
+    rendering_settings.stratmod.y_invert = false;
+  }
+  else
+  {
+    rendering_settings.stratmod.y_invert = true;
+  }
 
 
   if (rendering_settings.stratmod.discretisation)
-      model().changeDiscretization(
+      smodel().changeDiscretization(
         rendering_settings.stratmod.discretisation->x(),
         rendering_settings.stratmod.discretisation->y());
 
@@ -424,7 +441,7 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
 vtkSmartPointer<vtkPropAssembly> FlowDiagnosticsInterface::Impl::createSurfacesActor(dpl::vector3d scale) {
   auto surfaces_prop = vtkSmartPointer<vtkPropAssembly>::New();
 
-  auto& stratmod = model();
+  auto& stratmod = smodel();
 
   stratmod.useDefaultCoordinateSystem();
 
@@ -483,13 +500,13 @@ vtkSmartPointer<vtkPropAssembly> FlowDiagnosticsInterface::Impl::createSurfacesA
     actor->SetMapper(mapper);
 
 
-    // Get surface metadata from model() and use its color if defined,
+    // Get surface metadata from smodel() and use its color if defined,
     // use default color otherwise. See also @MMA::getSurfaceMetadata
     double r = 1., g = 0., b = 0.; // qreal r, g, b;
     colormap_surfaces.color(surface_idx).getRgbF(&r, &g, &b);
     {
         stratmod::SurfaceMetadata data;
-        bool success = model().getSurfaceMetadata(surface_idx, data);
+        bool success = smodel().getSurfaceMetadata(surface_idx, data);
         if (success && data.color_rgb)
         {
             FDD::color(*data.color_rgb).getRgbF(&r, &g, &b);
@@ -533,7 +550,7 @@ vtkSmartPointer<vtkPropAssembly> FlowDiagnosticsInterface::Impl::createSurfacesA
 //     auto* surfaces_prop = vtkPropAssembly::New();
 //
 //     double x, y, z;
-//     model().getSize(x, y, z); 
+//     smodel().getSize(x, y, z); 
 //
 //     min_z = std::numeric_limits<double>::max();
 //     max_z = -std::numeric_limits<double>::max();
@@ -542,13 +559,13 @@ vtkSmartPointer<vtkPropAssembly> FlowDiagnosticsInterface::Impl::createSurfacesA
 //     // gui is able to provide them
 //     Colors colormap_surfaces(Colorwrap::Paired(12));
 //
-//     for (auto surface_idx : model().getOrderedSurfacesIndices()) {
+//     for (auto surface_idx : smodel().getOrderedSurfacesIndices()) {
 //         vtkNew<vtkCellArray> vtk_indices;
 //
 //         std::vector<double> coordinates;
 //         std::vector<size_t> indices;
 //
-//         model().getMesh(surface_idx, coordinates, indices);
+//         smodel().getMesh(surface_idx, coordinates, indices);
 //
 //         if (indices.size() == 0)
 //             continue;
@@ -585,13 +602,13 @@ vtkSmartPointer<vtkPropAssembly> FlowDiagnosticsInterface::Impl::createSurfacesA
 //
 //         // TODO: check code below, and see if anything is missing
 //
-//         // Get surface metadata from model() and use its color if defined,
+//         // Get surface metadata from smodel() and use its color if defined,
 //         // use default color otherwise. See also @MMA::getSurfaceMetadata
 //         double r = 1., g = 0., b = 0.; // qreal r, g, b;
 //         colormap_surfaces.color(surface_idx).getRgbF(&r, &g, &b);
 //         {
 //             stratmod::SurfaceMetadata data;
-//             bool success = model().getSurfaceMetadata(surface_idx, data);
+//             bool success = smodel().getSurfaceMetadata(surface_idx, data);
 //             if (success && data.color_rgb)
 //             {
 //                 FDD::color(*data.color_rgb).getRgbF(&r, &g, &b);
@@ -667,8 +684,8 @@ bool FlowDiagnosticsInterface::createWindow()
     bool success = pimpl_->CreateWindow();
     stratmod::SModeller::Instance().useDefaultCoordinateSystem();
 
-    #if defined RRMQMLVTK_STILL_DOES_NOT_PROVIDE_PROJECT_NAME_TO_FD
-    stratmod::SUtilities u(pimpl_>model());
+    #if defined(RRMQMLVTK_STILL_DOES_NOT_PROVIDE_PROJECT_PATH_TO_FD)
+    stratmod::SUtilities u(FlowDiagnosticsInterface::Impl::smodel());
     pimpl_->project_name = u.getSavedFileName();
     #endif
 
