@@ -159,6 +159,14 @@ class STRATMODLIB_DLL_HANDLER SModeller
          **/
         bool useOpenGLCoordinateSystem();
 
+        /**
+         * @brief Return true if model is using the default coordinate system,
+         * false if it is using the OpenGL coordinate system.
+         *
+         * @sa useDefaultCoordinateSystem(), useOpenGLCoordinateSystem()
+         **/
+        bool isUsingDefaultCoordinateSystem();
+
         /** 
          * @brief Get number of pieces in which the width direction is discretized.
          *

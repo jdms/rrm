@@ -38,6 +38,9 @@ RulesProcessor::RulesProcessor(): modeller_(stratmod::SModeller::Instance())
 {
     modeller_.useOpenGLCoordinateSystem();
     /* setMediumResolution(); */
+
+    modeller_.getOrigin(origin_.x, origin_.y, origin_.z);
+    modeller_.getSize(length_.x, length_.y, length_.z);
 }
 
 stratmod::SModeller& RulesProcessor::getSModeller()
@@ -1400,11 +1403,13 @@ bool RulesProcessor::setLenght( double opengl_x, double opengl_y, double opengl_
 void RulesProcessor::getOrigin( double &opengl_x, double &opengl_y, double &opengl_z )
 {
     modeller_.getOrigin(opengl_x, opengl_y, opengl_z);
+    modeller_.getOrigin(origin_.x, origin_.y, origin_.z);
 }
 
 void RulesProcessor::getLenght( double &opengl_x, double &opengl_y, double &opengl_z )
 {
     modeller_.getSize(opengl_x, opengl_y, opengl_z);
+    modeller_.getSize(length_.x, length_.y, length_.z);
 }
 
 
@@ -1428,6 +1433,9 @@ void RulesProcessor::clear()
 
     testing_surface_insertion_ = false;
     last_surface_inserted_is_a_test_ = false;
+
+    modeller_.getOrigin(origin_.x, origin_.y, origin_.z);
+    modeller_.getSize(length_.x, length_.y, length_.z);
 }
 
 
@@ -1808,14 +1816,18 @@ bool RulesProcessor::saveFile( std::string filename )
 
 bool RulesProcessor::loadFile( std::string filename )
 {
-//    bool status = modeller_.loadBinary(filename) || modeller_.loadJSON(filename);
-bool status = modeller_.loadJSON(filename);
+bool status = modeller_.loadBinary(filename) || modeller_.loadJSON(filename);
+/* bool status = modeller_.loadJSON(filename); */
 
     if ( status )
     {
         modeller_.useOpenGLCoordinateSystem();
         pa_is_active_ = modeller_.preserveAboveIsActive(lower_model_);
         pb_is_active_ = modeller_.preserveBelowIsActive(upper_model_);
+        modeller_.getOrigin(origin_.x, origin_.y, origin_.z);
+        modeller_.getSize(length_.x, length_.y, length_.z);
+        modelling_length_discretization_ = modeller_.getLengthDiscretization();
+        modelling_width_discretization_ = modeller_.getWidthDiscretization();
         // enforcePreserveRegion();
     }
     /* if ( status == false ) */

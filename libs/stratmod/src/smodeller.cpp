@@ -251,6 +251,10 @@ bool SModeller::useOpenGLCoordinateSystem()
     return true;
 }
 
+bool SModeller::isUsingDefaultCoordinateSystem()
+{
+    return (pimpl_->default_coordinate_system_ == true);
+}
 
 /**
  * \brief Change models discretization if model is empty
