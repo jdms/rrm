@@ -125,8 +125,6 @@ else()
 endif()
 
 
- 
-
 
 
 if (DEFINED FD_OUTPUT_DIR)
@@ -141,8 +139,13 @@ if (DEFINED FD_OUTPUT_DIR)
   endforeach()
 endif()
 
-
  
+if (DEFINED rrm_version)  
+  target_compile_definitions(rrm_flow_diagnostics_lib PRIVATE FD_VERSION="${rrm_version}-rrm")
+else()
+  target_compile_definitions(rrm_flow_diagnostics_lib PRIVATE FD_VERSION="2.1.3")
+endif()
+
 
 
 

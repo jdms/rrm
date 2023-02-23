@@ -929,8 +929,8 @@ namespace rrm::fd
           <p>University of Calgary, Canada</p>
           <p class="author">Julio Machado Silva, Sicilia Judice, Fazilatur Rahman, Mario Costa Sousa</p>)")
         .arg("14px")
-        .arg("2.1.20822"));
-
+        .arg(FD_VERSION));
+        
         
         msg.setIconPixmap(this->windowIcon().pixmap(this->windowIcon().availableSizes().first()));
         msg.setWindowFlags(

@@ -334,20 +334,11 @@ bool FlowDiagnosticsInterface::Impl::CreateWindow()
         path(project_path).replace_filename("startup.json").string());
   }
 
-
-  // TODO: can it be hardset?
-  if (smodel().isUsingDefaultCoordinateSystem())
-  {
-    rendering_settings.stratmod.y_invert = false;
-  }
-  else
-  {
-    rendering_settings.stratmod.y_invert = true;
-  }
-
+  
+  rendering_settings.stratmod.y_invert = !stratmod.isUsingDefaultCoordinateSystem();
 
   if (rendering_settings.stratmod.discretisation)
-      smodel().changeDiscretization(
+      stratmod.changeDiscretization(
         rendering_settings.stratmod.discretisation->x(),
         rendering_settings.stratmod.discretisation->y());
 
@@ -543,110 +534,6 @@ vtkSmartPointer<vtkPropAssembly> FlowDiagnosticsInterface::Impl::createSurfacesA
 
   return surfaces_prop;
 }
-
-
-// vtkPropAssembly* FlowDiagnosticsInterface::Impl::createSurfacesActor(double& min_z, double& max_z)
-// {
-//     auto* surfaces_prop = vtkPropAssembly::New();
-//
-//     double x, y, z;
-//     smodel().getSize(x, y, z); 
-//
-//     min_z = std::numeric_limits<double>::max();
-//     max_z = -std::numeric_limits<double>::max();
-//
-//     // Using a colormap to provide default colors to surfaces before the sketching
-//     // gui is able to provide them
-//     Colors colormap_surfaces(Colorwrap::Paired(12));
-//
-//     for (auto surface_idx : smodel().getOrderedSurfacesIndices()) {
-//         vtkNew<vtkCellArray> vtk_indices;
-//
-//         std::vector<double> coordinates;
-//         std::vector<size_t> indices;
-//
-//         smodel().getMesh(surface_idx, coordinates, indices);
-//
-//         if (indices.size() == 0)
-//             continue;
-//
-//         vtkNew<vtkPolyData> poly_data;
-//
-//         vtkNew<vtkPoints> vtk_points;
-//         vtk_points->SetNumberOfPoints(coordinates.size() / 3);
-//
-//         for (size_t i = 0, vertices = coordinates.size()/3; i < vertices; ++i) {
-//             z = coordinates[i*3 + 2];
-//             if (z < min_z) min_z = z;
-//             if (z > max_z) max_z = z;
-//             /* vtk_points->SetPoint(i, coordinates[i*3 + 0], y - coordinates[i*3 + 1], z); */
-//             vtk_points->SetPoint(i, coordinates[i*3 + 0], coordinates[i*3 + 1], z);
-//         }
-//
-//         for (size_t i = 0, triangles = indices.size()/3; i < triangles; ++i) {
-//             vtk_indices->InsertNextCell(3);
-//             vtk_indices->InsertCellPoint(indices[i*3 + 0]);
-//             vtk_indices->InsertCellPoint(indices[i*3 + 1]);
-//             vtk_indices->InsertCellPoint(indices[i*3 + 2]);
-//         }
-//
-//         poly_data->SetPoints(vtk_points);
-//         poly_data->SetPolys(vtk_indices);
-//
-//         vtkNew<vtkPolyDataMapper> mapper;
-//
-//         mapper->SetInputData(poly_data);
-//
-//         vtkNew<vtkActor> actor;
-//         actor->SetMapper(mapper);
-//
-//         // TODO: check code below, and see if anything is missing
-//
-//         // Get surface metadata from smodel() and use its color if defined,
-//         // use default color otherwise. See also @MMA::getSurfaceMetadata
-//         double r = 1., g = 0., b = 0.; // qreal r, g, b;
-//         colormap_surfaces.color(surface_idx).getRgbF(&r, &g, &b);
-//         {
-//             stratmod::SurfaceMetadata data;
-//             bool success = smodel().getSurfaceMetadata(surface_idx, data);
-//             if (success && data.color_rgb)
-//             {
-//                 FDD::color(*data.color_rgb).getRgbF(&r, &g, &b);
-//             }
-//         }
-//         actor->GetProperty()->SetColor(r, g, b);
-//         actor->GetProperty()->SetAmbient(0.5);
-//         actor->GetProperty()->SetDiffuse(0.4);
-//
-//         surfaces_prop->AddPart(actor);
-//
-//         // TODO: uncoment anything?
-//         // vtkNew<vtkFeatureEdges> edges;
-//         //
-//         // edges->SetInputData(poly_data);
-//         // edges->BoundaryEdgesOn();
-//         // edges->FeatureEdgesOff();
-//         // edges->ManifoldEdgesOff();
-//         // edges->NonManifoldEdgesOff();
-//         //
-//         // edges->ColoringOff();
-//         //
-//         // vtkNew<vtkPolyDataMapper> outlineMapper;
-//         // outlineMapper->SetInputConnection(edges->GetOutputPort());
-//         //
-//         // vtkNew<vtkActor> outlineActor;
-//         // outlineActor->SetMapper(outlineMapper);
-//         // // outlineActor->GetProperty()->SetLineWidth(1.5);
-//         // outlineActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
-//         //
-//         // surfaces_prop->AddPart(outlineActor);
-//     }
-//
-//     return surfaces_prop;
-// }
-
-
-
 
 
 
