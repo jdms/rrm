@@ -10,7 +10,7 @@ cross-section and contour sketches. At its core sits a new modelling framework,
 designed to create models with guarantees of geological consistency.
 A description of geological operators and applications from a user's point of
 view is available in [Jacquemyn et al
-(2021)](https://doi.org/10.1144/jgs2020-187), while a description of RRM's flow
+(2021)](https://doi.org/10.1144/jgs2020-187), while a description of flow
 diagnostics is available in [Petrovskyy et al.
 (2023)](https://dx.doi.org/10.2139/ssrn.4207850). See also
 [https://rapidreservoir.org](https://rapidreservoir.org).
@@ -31,7 +31,7 @@ and [How to use geological operators?](https://youtu.be/Sy_OubDrvX8)
 The latest stable release can be found at:
 
 | Platform                | Files                                                                                                                     |
-|-------------------------|------------------------------------------------------------------------------------------------------------- -------------|
+|-------------------------|---------------------------------------------------------------------------------------------------------------------------|
 | Windows ZIP (portable)  | [rrm-1.0.1-windows-x86_64.zip](https://bitbucket.org/rapidreservoirmodelling/rrm/downloads/rrm-1.0.1-windows-x86_64.zip)  |
 
 To run RRM, unpack a ZIP archive to your preferred folder and simply run the
@@ -49,9 +49,7 @@ following external libraries that must be obtained and properly installed
 before RRM can be compiled.
 
 - [Qt5] (components: Core, Gui, Widgets, OpenGL, Svg)
-
 - [Eigen3]
-
 - [Glew]
 
 [Qt5]: https://www.qt.io/download
@@ -95,7 +93,7 @@ Microsoft's Visual Studio toolset).
 
 - Step 2 - RRM compilation:
 ```cmd
-> git clone https://github.com/dp-69/rrm.git
+> git clone https://bitbucket.org/rapidreservoirmodelling/rrm.git
 > cd rrm
 > cmake --preset=win-rel
 > cmake --build --preset=win-rel-rrm
@@ -123,7 +121,7 @@ the user's home folder, and that all commands are issued from a terminal.
 
 - Step 2 - RRM compilation:
 ```cmd
-> git clone https://github.com/dp-69/rrm.git
+> git clone https://bitbucket.org/rapidreservoirmodelling/rrm.git
 > cd rrm
 > cmake --preset=lin-rel
 > cmake --build --preset=lin-rel-rrm
@@ -207,7 +205,7 @@ Emilio Vital Brazil<br/>
 Fazilatur Rahman<br/>
 Mario Costa Sousa  
 
-### Heriot-Watt University, UK
+### Delft University of Technology, Netherlands<sup>[1](#footnote-delft)</sup>
 [Dmytro Petrovskyy](https://www.linkedin.com/in/dmytro-petrovskyy/)<br/>
 Zhao Zang<br/>
 [Sebastian Geiger](https://www.tudelft.nl/en/staff/s.geiger/)
@@ -226,6 +224,7 @@ URL their code was made available at can be found
 [here](https://bitbucket.org/rapidreservoirmodelling/rrm/src/main/rrm_3rd_party_libraries.md).
 Please, check the source code for details.
 
+<sup><a name="footnote-delft">1</a></sup> Parts of the code were developed while S. Geiger and D. Petrovskyy were at Heriot-Watt University, with support from Z. Zhang.
 
 ## License
 
