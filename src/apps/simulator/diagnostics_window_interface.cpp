@@ -122,7 +122,10 @@ void DiagnosticsWindowInterface::close()
 bool DiagnosticsWindowInterface::update()
 {
     /* pimpl_->window.closeWindow(); */
-
+    if(pmodel_)
+    {
+        pmodel_->useOpenGLCoordinateSystem();
+    }
     bool status = pimpl_->window.createWindow();
 
     return status;
