@@ -3,8 +3,8 @@ cmake_minimum_required (VERSION 3.14 FATAL_ERROR)
 project(RRM_Suite CXX)
 
 set(rrm_version_major 1)
-set(rrm_version_minor 0)
-set(rrm_version_patch 1)
+set(rrm_version_minor 1)
+set(rrm_version_patch 0)
 mark_as_advanced(rrm_version_major rrm_version_minor rrm_version_patch)
 
 set(rrm_version "${rrm_version_major}.${rrm_version_minor}.${rrm_version_patch}")
