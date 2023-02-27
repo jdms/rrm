@@ -66,10 +66,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-include_directories (${PROJECT_SOURCE_DIR})
-include_directories (${PROJECT_BINARY_DIR})
-
-
 ###############################################
 # ADD TO LIBRARY AND LINK
 ###############################################
@@ -77,8 +73,24 @@ include_directories (${PROJECT_BINARY_DIR})
 
 add_library( ${PROJECT_NAME} STATIC ${MAINWINDOW_SOURCES} ${MAINWINDOW_MOC_SRCS} ${MAINWINDOW_HEADERS} )
 
+target_include_directories(${PROJECT_NAME} PUBLIC CMAKE_CURRENT_SOURCE_DIR)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/about)
+target_include_directories(${PROJECT_NAME} PUBLIC ${3DVIEW_HEADERS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${SKETCHING_HEADERS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${SIMULATOR_HEADERS})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include_Debug)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include_Release)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include_RelWithDebInfo)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR}/MainApp_autogen/include_MinSizeRel)
+
+
 #target_link_libraries( ${PROJECT_NAME} GLEW::GLEW )
-target_link_libraries( ${PROJECT_NAME} RRMBase RRMModel RRMWidgets 3dViewApp Sketching FlowDiagnosticsApp )
+# target_link_libraries( ${PROJECT_NAME} RRMBase RRMModel RRMWidgets 3dViewApp Sketching FlowDiagnosticsApp )
+target_link_libraries( ${PROJECT_NAME} RRMBase RRMModel RRMWidgets 3dViewApp Sketching RRMVersionData RRMAppsIncludes )
 target_link_libraries( ${PROJECT_NAME} Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Core Qt5::Svg ${OPENGL_LIBRARIES} ) #${OPENGL_LIBRARIES} ${GLEW_LIBRARY} )
 if(WIN32)
     #target_link_libraries( ${PROJECT_NAME} stratmod TinyObjLoader )

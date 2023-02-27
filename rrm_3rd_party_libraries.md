@@ -1,7 +1,7 @@
 RRM 3^rd^ party libraries
 =========================
 
-February 25, 2021
+Updated: February 22, 2023
 
 
 ## Introduction 
@@ -16,7 +16,7 @@ copies of such licenses when possible.
 ## Libraries currently in use
 
 -  [Qt](https://www.qt.io/)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [LGPL v3.0], [GPL v3.0], [GPL v2.0]
     + Description: Qt is a cross-platform application framework and widget
       toolkit for creating classic and embedded graphical user interfaces, and
@@ -25,19 +25,19 @@ copies of such licenses when possible.
       native application with native capabilities and speed.
 
 -  [curvendimension](https://github.com/esperanc/curvendimension)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [LGPL v2.1]
     + Description: This is a C++ library for handling n-dimensional curves, or,
       actually, n-dimensional polygonal lines.
 
 -  [Tucano](https://gitlab.com/LCG-UFRJ/tucano)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [GPL v3.0]
     + Description: Tucano Lib - A library for rapid prototyping with modern
       OpenGL and GLSL.
 
 -  [Glew](http://glew.sourceforge.net/)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + Licenses: [Glew Modified BSD], [MESA 3-D], [KHRONOS]
     + Description: The OpenGL Extension Wrangler Library (GLEW) is a
       cross-platform open-source C/C++ extension loading library. GLEW provides
@@ -48,20 +48,20 @@ copies of such licenses when possible.
       Solaris.
 
 -  [Eigen3](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [MPL 2.0], but also uses code released as [BSD-3-Clause], [LGPL v2.1], [MINPACK]
     + Description: Eigen is a C++ template library for linear algebra:
       matrices, vectors, numerical solvers, and related algorithms.
 
 -  [TinyObjLoader](https://github.com/syoyo/tinyobjloader)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [MIT]
     + Description: Tiny but powerful single file wavefront obj loader written
       in C++. No dependency except for C++ STL. It can parse over 10M polygons
       with moderate memory and time.
 
 -  [cereal](https://github.com/USCiLab/cereal) 
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [BSD-3-Clause]
     + Description: cereal is a header-only C++11 serialization library. cereal
       takes arbitrary data types and reversibly turns them into different
@@ -71,7 +71,7 @@ copies of such licenses when possible.
       standalone.
 
 -  [Catch2](https://github.com/catchorg/Catch2)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [Boost Software License - Version 1.0]
     + Description: Catch stands for C++ Automated Test Cases in a Header and is
       a multi-paradigm test framework for C++, which also supports Objective-C
@@ -79,7 +79,7 @@ copies of such licenses when possible.
       although certain extensions may require additional headers.
 
 -  [glog](https://github.com/google/glog)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [BSD-3-Clause]
     + Description: Google glog is a library that implements application-level
       logging.  This library provides logging APIs based on C++-style streams
@@ -87,28 +87,20 @@ copies of such licenses when possible.
       things to LOG to a particular severity level.
 
 -  [argh](https://github.com/adishavit/argh)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [BSD-3-Clause]
     + Description: Frustration-free command line processing.
 
 -  [ColorBrewer for C++](https://github.com/schulzch/colorbrewercpp)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [Apache 2.0]
     + Description: This header-only library implements the ColorBrewer palette
       using C++11.  About the ColorBrewer palette: web tool for guidance in
       choosing choropleth map color schemes, based on the research of Dr.
       Cynthia Brewer. Built and maintained by Axis Maps.
 
--  [LibQtx](https://bitbucket.org/libqxt/libqxt/overview)
-    + Retrieved: July 17, 2020
-    + License: [BSD-3-Clause], [LGPL v2.1]
-    + Description: LibQxt is an extension library for Qt providing a suite of
-      cross-platform utility classes to add functionality not readily available
-      in the Qt toolkit by Qt Development Frameworks, Nokia. As of August 15,
-      2018 it is stated in their website that LibQtx is no longer maintained.  
-
 -  [predicates.c](https://www.cs.cmu.edu/~quake/robust.html)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: Public domain
     + Description: C implementation of algorithms for exact addition and
       multiplication of floating-point numbers, and predicates for robustly
@@ -120,7 +112,7 @@ copies of such licenses when possible.
       May 1996.  (Submitted to Discrete & Computational Geometry.)
 
 -  [JSON for Modern C++](https://github.com/nlohmann/json)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [MIT]
     + Description: There are myriads of JSON libraries out there, and each may
       even have its reason to exist. Our class had these design goals:
@@ -140,7 +132,7 @@ copies of such licenses when possible.
       Infrastructure Initiative (CII) best practices.
 
 -  [Boost](https://www.boost.org)
-    + Retrieved: July 17, 2020
+    + Retrieved: February 22, 2023
     + License: [Boost Software License - Version 1.0]
     + Description: Boost provides free peer-reviewed portable C++ source
       libraries. We emphasize libraries that work well with the C++ Standard
@@ -153,6 +145,17 @@ copies of such licenses when possible.
       (TR1) and continuing with every release of the ISO standard for C++ since
       2011, the C++ Standards Committee has continued to rely on Boost as
       a valuable source for additions to the Standard C++ Library.
+
+-  [VTK](https://vtk.org/)
+    + Retrieved: February 22, 2023
+    + License: [BSD-3-Clause]
+    - Description: The Visualization Toolkit (VTK) is an open-source, freely
+      available software system for 3D computer graphics, modeling, image
+      processing, volume rendering, scientific visualization, and 2D plotting.
+      It supports a wide variety of visualization algorithms and advanced
+      modeling techniques, and it takes advantage of both threaded and
+      distributed memory parallel processing for speed and scalability,
+      respectively.
 
 
 [LGPL v2.1]: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html

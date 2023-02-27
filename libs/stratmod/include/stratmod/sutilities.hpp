@@ -1,7 +1,7 @@
 /********************************************************************************/
 /*                                                                              */
 /* This file is part of the "Stratigraphy Modeller Library" (StratModLib)       */
-/* Copyright (C) 2017, Julio Daniel Machado Silva.                              */
+/* Copyright (C) 2017-2022, Julio Daniel Machado Silva.                         */
 /*                                                                              */
 /* StratModLib is free software; you can redistribute it and/or                 */
 /* modify it under the terms of the GNU Lesser General Public                   */
@@ -101,6 +101,8 @@ class STRATMODLIB_DLL_HANDLER SUtilities
         std::vector<size_t> getSurfacesIndicesAbovePoint(double x, double y, double z);
 
         bool getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length );
+
+        std::map<std::size_t, std::map<int, int>> getI2VRegionMap();
 
     private:
         SModeller &model_;

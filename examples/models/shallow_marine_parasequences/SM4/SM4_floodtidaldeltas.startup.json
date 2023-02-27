@@ -1,0 +1,19 @@
+{
+  "base" : "../settings.json",
+  "wells": [
+    {
+      "location": [
+        5000.0,
+        4940.0,
+        70.0
+      ],
+      "name": "Well 1",
+      "perforation_md": [
+        10.0,
+        27.0
+      ],
+      "pressure": 30445000.0,
+      "wellbore_radius": 0.1
+    }
+  ]
+}

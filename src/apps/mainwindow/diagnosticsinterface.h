@@ -29,16 +29,20 @@
 #ifndef DIAGNOSTICSINTERFACE_H
 #define DIAGNOSTICSINTERFACE_H
 
-#include <memory>
-
+/* Including QDockWidget before filesystem to workaround bug in Qt moc when
+ * compiling in linux: */
+/* https://bugreports.qt.io/browse/QTBUG-73263 */
 #include <QDockWidget>
+
+#include <filesystem>
+#include <memory>
 
 class MainWindow;
 class DiagnosticsWindowInterface;
 
 
 /**
- *   Class responsible for initializing the diagnostics application
+ *   Class responsible for initializing the exernal flow diagnostics
  */
 
 class DiagnosticsInterface: public QObject
@@ -58,7 +62,6 @@ class DiagnosticsInterface: public QObject
         * Default Destructor.
         */
         ~DiagnosticsInterface();
-
 
         /**
         * Deleted copy constructor.
@@ -93,13 +96,26 @@ class DiagnosticsInterface: public QObject
         bool isImplemented();
 
         /**
+        * Method to check if the flow diagnostics application window is active
+        * @return true is flow diagnostics is active, false otherwise.
+        */
+        bool isActive();
+
+        /**
         * Method to tell main application if Flow Diagnostics window should be docked in main GUI
         * @return true if DiagnosticsWindowInterface should be docked, false otherwise.
         */
         bool preferDockedWindow();
 
+
     public slots:
 
+        /**
+        * Method to set current project path
+        * @param path Filesystem's path to model's files
+        * @return void.
+        */
+        void setProjectPath(std::filesystem::path path);
 
         /**
         * Method to update the Flow Diagnostics app window.
@@ -108,15 +124,14 @@ class DiagnosticsInterface: public QObject
         */
         void updateWindow( bool window_is_active );
 
-    protected:
 
+    protected:
 
         /**
         * Method to create a docked Flow Diagnostics interface
         * @return void.
         */
         void createDockedDiagnosticsWindow();
-
 
         /**
         * Method to initialize and create the connects related to the actions of the Flow Diagnostics application
@@ -127,12 +142,11 @@ class DiagnosticsInterface: public QObject
 
     protected:
 
-
         MainWindow* window = nullptr;                                       /**< Main Window */
 
         QDockWidget* dw_flow_window = nullptr;                              /**< DockWidget to hold the Flow Diagnostics window */
 
-        DiagnosticsWindowInterface* fd_window_interface = nullptr;                           /**< Flow Diagnostics window */
+        DiagnosticsWindowInterface* fd_window_interface = nullptr;          /**< Flow Diagnostics window */
 
 
 };

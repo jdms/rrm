@@ -48,7 +48,7 @@ include_directories (${PROJECT_BINARY_DIR})
 
 
 add_library( ${PROJECT_NAME} STATIC ${3DVIEW_MOC_SRCS} ${3DVIEW_SOURCES} ${3DVIEW_HEADERS} )
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 target_link_libraries( ${PROJECT_NAME} Qt5::Widgets )
 

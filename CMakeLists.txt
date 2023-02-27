@@ -3,8 +3,8 @@ cmake_minimum_required (VERSION 3.14 FATAL_ERROR)
 project(RRM_Suite CXX)
 
 set(rrm_version_major 1)
-set(rrm_version_minor 0)
-set(rrm_version_patch 1)
+set(rrm_version_minor 1)
+set(rrm_version_patch 0)
 mark_as_advanced(rrm_version_major rrm_version_minor rrm_version_patch)
 
 set(rrm_version "${rrm_version_major}.${rrm_version_minor}.${rrm_version_patch}")
@@ -20,7 +20,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ###############################################
 
 # Leave empty to use the (platform dependent) default build type
-set(RRM_BUILD_TYPE "" CACHE STRING
+set(RRM_BUILD_TYPE "RelWithDebInfo" CACHE STRING
     "Leave empty ot set build type to: Debug, Release, RelWithDebInfo, or MinSizeRel")
 
 OPTION(RRM_BUILD_SHARED_STRATMODLIB "Build a shared library from stratmod"  ON)
@@ -30,7 +30,8 @@ OPTION(RRM_BUILD_IN_PREFIXED_BINARY_DIR "To simplify sharing in Windows"    ON)
 OPTION(RRM_BUILD_DEPLOY_QT
     "Automatically copy Qt resources to build dir (Windows only)"          OFF)
 
-OPTION(RRM_BUILD_FLOW_DIAGNOSTICS "Build flow diagnostics"                 OFF)
+OPTION(RRM_BUILD_FLOW_DIAGNOSTICS
+    "Build flow diagnostics"                                                ON)
 
 ### Execute options
 if(RRM_BUILD_TYPE)
@@ -102,7 +103,7 @@ if(QTDIR AND (NOT DEFINED Qt5_DIR))
     list(APPEND CMAKE_PREFIX_PATH ${QTDIR})
 endif()
 
-find_package(Qt5 COMPONENTS Core Help Gui Svg Widgets OpenGL REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Svg Widgets OpenGL REQUIRED)
 
 ### Tucano settings
 set( TUCANO_DIR ${CMAKE_SOURCE_DIR}/libs/Tucano )

@@ -29,14 +29,18 @@ namespace stratmod
     class SModeller;
 }
 
+/* Including QWidget before filesystem to workaround bug in Qt moc when
+ * compiling in linux: */
+/* https://bugreports.qt.io/browse/QTBUG-73263 */
+#include <QWidget>
+
+#include <filesystem>
 #include <functional>
 #include <memory>
 #include <vector>
 
-#include <QMainWindow>
 
-
-class DiagnosticsWindowInterface : public QMainWindow
+class DiagnosticsWindowInterface : public QWidget
 {
     Q_OBJECT
 
@@ -74,9 +78,17 @@ class DiagnosticsWindowInterface : public QMainWindow
 
         /**
         * Method to check if the flow diagnostics application is implemented
-        * @return true is flow diagnostics works, false otherwise (returned value must not change during execution).
+        *
+        * @return true is flow diagnostics works, false otherwise (returned
+        * value must not change during execution).
         */
         bool isImplemented() const;
+
+        /**
+        * Method to check if the flow diagnostics application is active
+        * @return true is flow diagnostics is running, false otherwise
+        */
+        bool isActive() const;
 
         /**
         * Set model for flow diagnostics application
@@ -85,24 +97,46 @@ class DiagnosticsWindowInterface : public QMainWindow
         void setModel(stratmod::SModeller& model);
 
         /**
+        * Set current project path
+        * param path Filesystem's path to model's files
+        */
+        void setProjectPath(std::filesystem::path path);
+
+        /**
+        * Method to initialize an independent flow diagnostics application
+        * window
+        *
+        * @return true if successful, false otherwise.
+        */
+        bool init();
+
+        /**
         * Method to clear the flow diagnostics application window
         */
         void clear();
 
         /**
-        * Method to update the flow diagnostics application window
-        */
-        void update();
-
-        /**
         * Method to create an independent flow diagnostics application window
         * @return true if successful, false otherwise.
         */
-        bool createFlowDiagnosticsWindow();
+        bool create();
 
         /**
-        * Method to tell main application if Flow Diagnostics window should be docked in main GUI
-        * @return true if DiagnosticsWindowInterface should be docked, false otherwise (returned value must not change during execution).
+        * Method to close an independent flow diagnostics application window
+        */
+        void close();
+
+        /**
+        * Method to update the flow diagnostics application window
+        */
+        bool update();
+
+        /**
+        * Method to tell main application if Flow Diagnostics window should
+        * be docked in main GUI
+        *
+        * @return true if DiagnosticsWindowInterface should be docked, false
+        * otherwise (returned value must not change during execution).
         */
         bool preferDockedWindow() const;
 
@@ -121,8 +155,8 @@ class DiagnosticsWindowInterface : public QMainWindow
         };
 
     protected:
-        stratmod::SModeller* pmodel_ = nullptr;                              /**< Pointer to model */
-        QWidget* pparent_ = nullptr;                              /**< Pointer to parent Widget */
+        stratmod::SModeller* pmodel_ = nullptr;      /**< Pointer to model */
+        QWidget* pparent_ = nullptr;             /**< Pointer to parent Widget */
 
     private:
         struct DiagnosticsWindowInterfaceImpl;

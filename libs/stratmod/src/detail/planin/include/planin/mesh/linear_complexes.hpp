@@ -186,7 +186,7 @@ class Segment
         template<typename Point>
         Point getPoint( double t ) const
         {
-            Point p;
+            Point p{};
             if ( p.size() < dim )
             {
                 return p;

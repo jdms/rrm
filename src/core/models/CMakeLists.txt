@@ -3,6 +3,7 @@ cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
 project( RRMModel VERSION 3.1 LANGUAGES CXX )
 
 find_package (Qt5Widgets)
+find_package(nlohmann_json)
 
 
 #####################################################################
@@ -28,9 +29,10 @@ set( MODELS_HEADERS       controller.h
                           shader.h
                           stratigraphy.h
                           rules_processor.hpp
-                          qt_popup.hpp
                           stratmod_wrapper.hpp
+                          model_metadata_access.hpp
                           irap_grid_exporter.hpp
+                          colors.hpp
                           )
 
 set( MODELS_SOURCES       controller.cpp
@@ -58,3 +60,4 @@ add_library( ${PROJECT_NAME} STATIC ${MODELS_HEADERS} ${MODELS_SOURCES} )
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_link_libraries( ${PROJECT_NAME} stratmod colorwrap )
 target_link_libraries( ${PROJECT_NAME} Qt5::Widgets  )
+target_link_libraries( ${PROJECT_NAME} nlohmann_json::nlohmann_json)

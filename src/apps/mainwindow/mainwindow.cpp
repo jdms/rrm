@@ -173,7 +173,7 @@ void MainWindow::createActions()
     ac_regions->setChecked( false );
 
     ac_diagnostics = new QAction( "Diagnostics", this );
-    ac_diagnostics->setToolTip( "Run Diagnostics" );
+    ac_diagnostics->setToolTip( "Run Flow Diagnostics" );
     ac_diagnostics->setCheckable( true );
     ac_diagnostics->setChecked( false );
     ac_diagnostics->setEnabled( false );
@@ -238,6 +238,7 @@ void MainWindow::createActions()
         bool model_contains_a_region = controller->getRulesProcessor().getActiveSurfaces().size() >= 2;
         status_ &= model_contains_a_region;
         app->getRegions( status_ );
+        app->getDomains( status_ );
         bool activate_diagnostics = status_ && diagapp->isImplemented();
         ac_diagnostics->setEnabled( activate_diagnostics );
         lockUndoRedo( status_ );
@@ -253,11 +254,18 @@ void MainWindow::createActions()
     connect( ac_diagnostics, &QAction::triggered, [=]( bool status_ )
     {
         emit runDiagnostics( status_ );
-        if (status_ && !diagapp->preferDockedWindow())
+
+        if (status_ && !diagapp->isActive())
         {
             emit runDiagnostics(false);
-            ac_diagnostics->setChecked(false);
         }
+
+        if (status_ == false)
+        {
+            emit runDiagnostics(false);
+        }
+
+        ac_diagnostics->setChecked(false);
     } );
 
     connect( ac_screenshot, &QAction::triggered, [=](){ emit takeScreenshot();  } );
@@ -284,7 +292,7 @@ void MainWindow::createMenuBar()
 
 
     mn_help = menuBar()->addMenu ( tr ( "&Help" ) );
-    mn_help->addAction( ac_manual );
+    /* mn_help->addAction( ac_manual ); */
     mn_help->addAction( ac_about );
 
 
@@ -489,6 +497,11 @@ void MainWindow::createObjectTree()
         app->setDomainName( index_, name_ );
     } );
 
+    connect( object_tree, &ObjectTree::setDomainColor, [=]( std::size_t index_, const QColor& c_ )
+    {
+        app->setDomainColor( index_, c_.red(), c_.green(), c_.blue() );
+    } );
+
     connect( object_tree, &ObjectTree::createDomainOfRegions, [=]()
     {
         app->createDomain();
@@ -581,7 +594,12 @@ void MainWindow::save()
 
     if( filename_.isEmpty() == true ) return;
     app->save( filename_.toStdString() );
-    current_path = QDir(filename_).canonicalPath();
+    current_path.setPath( QDir(filename_).canonicalPath() );
+
+    if (diagapp)
+    {
+        diagapp->setProjectPath( current_path.canonicalPath().toStdString() );
+    }
 }
 
 
@@ -593,9 +611,14 @@ void MainWindow::load()
                                                              "rrm files (*.rrm)", &selected_format );
 
     if( filename_.isEmpty() == true ) return;
+    app->reset();
     app->load( filename_.toStdString() );
-    current_path = QDir(filename_).canonicalPath();
+    current_path.setPath( QDir(filename_).canonicalPath() );
 
+    if (diagapp)
+    {
+        diagapp->setProjectPath( current_path.canonicalPath().toStdString() );
+    }
 }
 
 void MainWindow::exportToIRAP()

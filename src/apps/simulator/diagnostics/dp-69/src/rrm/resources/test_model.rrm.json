@@ -1,0 +1,169 @@
+{
+    "domains": [
+        {
+            "index": 0,
+            "name": "First",
+            "regions": [
+                0,
+                3
+            ]
+        },
+        {
+            "index": 1,
+            "name": "Sand",
+            "regions": [
+                1
+            ]
+        },
+        {
+            "index": 2,
+            "name": "Second",
+            "regions": [
+                2
+            ]
+        }
+    ],
+    "objects": [
+        {
+            "blue": 0,
+            "direction": 0,
+            "green": 0,
+            "is_active": true,
+            "is_done": true,
+            "is_editable": true,
+            "is_selectable": false,
+            "is_selected": false,
+            "is_visible": true,
+            "name": "Surface 3",
+            "red": 255,
+            "text_information": "",
+            "type": 3
+        },
+        {
+            "blue": 72,
+            "direction": 0,
+            "green": 12,
+            "is_active": true,
+            "is_done": true,
+            "is_editable": true,
+            "is_selectable": false,
+            "is_selected": false,
+            "is_visible": true,
+            "name": "Surface 4",
+            "red": 233,
+            "text_information": "",
+            "type": 3
+        },
+        {
+            "blue": 240,
+            "direction": 0,
+            "green": 81,
+            "is_active": true,
+            "is_done": true,
+            "is_editable": true,
+            "is_selectable": false,
+            "is_selected": false,
+            "is_visible": true,
+            "name": "Surface 5",
+            "red": 90,
+            "text_information": "",
+            "type": 3
+        },
+        {
+            "blue": 162,
+            "direction": 0,
+            "green": 204,
+            "is_active": true,
+            "is_done": true,
+            "is_editable": true,
+            "is_selectable": false,
+            "is_selected": false,
+            "is_visible": true,
+            "name": "Surface 6",
+            "red": 25,
+            "text_information": "",
+            "type": 3
+        },
+        {
+            "blue": 162,
+            "direction": 0,
+            "green": 234,
+            "is_active": true,
+            "is_done": true,
+            "is_editable": true,
+            "is_selectable": false,
+            "is_selected": false,
+            "is_visible": true,
+            "name": "Surface 7",
+            "red": 116,
+            "text_information": "",
+            "type": 3
+        }
+    ],
+    "regions": [
+        {
+            "blue": 28,
+            "direction": 0,
+            "green": 25,
+            "index": 0,
+            "is_active": true,
+            "is_done": false,
+            "is_editable": true,
+            "is_selectable": false,
+            "is_selected": false,
+            "is_visible": true,
+            "name": "Region 0",
+            "red": 215,
+            "text_information": "",
+            "type": 3
+        },
+        {
+            "blue": 97,
+            "direction": 0,
+            "green": 174,
+            "index": 1,
+            "is_active": true,
+            "is_done": false,
+            "is_editable": true,
+            "is_selectable": false,
+            "is_selected": false,
+            "is_visible": true,
+            "name": "Region 1",
+            "red": 253,
+            "text_information": "",
+            "type": 3
+        },
+        {
+            "blue": 164,
+            "direction": 0,
+            "green": 221,
+            "index": 2,
+            "is_active": true,
+            "is_done": false,
+            "is_editable": true,
+            "is_selectable": false,
+            "is_selected": false,
+            "is_visible": true,
+            "name": "Region 2",
+            "red": 171,
+            "text_information": "",
+            "type": 3
+        },
+        {
+            "blue": 186,
+            "direction": 0,
+            "green": 131,
+            "index": 3,
+            "is_active": true,
+            "is_done": false,
+            "is_editable": true,
+            "is_selectable": false,
+            "is_selected": false,
+            "is_visible": true,
+            "name": "Region 3",
+            "red": 43,
+            "text_information": "",
+            "type": 3
+        }
+    ]
+}

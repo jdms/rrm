@@ -60,9 +60,13 @@ void Domain::addRegion( const std::size_t& index_ )
 }
 
 
-void Domain::removeRegion( const std::size_t& index_ )
+bool Domain::removeRegion( const std::size_t& index_ )
 {
+    if (index_regions.find(index_) == index_regions.end())
+        return false;
+
     index_regions.erase( index_ );
+    return true;
 }
 
 

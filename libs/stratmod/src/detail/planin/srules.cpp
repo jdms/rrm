@@ -215,10 +215,11 @@ std::size_t SRules::size()
 
 void SRules::clear()
 {
-    container.clear();
-    dictionary.clear(); 
-    define_above_ = false; 
-    define_below_ = false; 
+    *this = SRules();
+    /* container.clear(); */
+    /* dictionary.clear(); */ 
+    /* define_above_ = false; */ 
+    /* define_below_ = false; */ 
 }
 
 PlanarSurface::Ptr& SRules::operator[]( std::size_t surface_index ) 
@@ -574,15 +575,25 @@ bool SRules::removeAbove( PlanarSurface::Ptr sptr )
         return false; 
     }
 
+    std::set<PlanarSurface::SurfaceId> modified_surfaces{};
     bool status = true; 
     for ( auto s : container ) 
     {
         if ( s->surfaceIsSet() == true  ) 
             if ( !s->weakLiesBelowCheck(sptr) )
             {
-                status |= boundaryAwareRemoveAbove(sptr, s); 
+                status |= boundaryAwareRemoveAbove(sptr, s);
+                modified_surfaces.insert( s->getID() );
             }
     }
+
+    for ( auto sid : modified_surfaces )
+    {
+        std::size_t surface_id;
+        if ( getSurfaceIndex(sid, surface_id ) )
+            container[surface_id]->markCacheUnfresh();
+    }
+    updateCache();
 
     return status; 
 }
@@ -619,7 +630,8 @@ bool SRules::removeAboveIntersection( PlanarSurface::Ptr sptr )
     }
 
     bool status = true; 
-    ContainerType intersection_seeds {sptr}; 
+    ContainerType intersection_seeds {sptr};
+    std::set<PlanarSurface::SurfaceId> modified_surfaces{};
     std::set<PlanarSurface::SurfaceId> intersected_surfaces {sptr->getID()}; 
     PlanarSurface::Ptr seed; 
 
@@ -642,7 +654,8 @@ bool SRules::removeAboveIntersection( PlanarSurface::Ptr sptr )
                         {
                             status |= boundaryAwareRemoveAbove(sptr, s); 
                             intersection_seeds.push_back(s); 
-                            intersected_surfaces.insert( s->getID() ); 
+                            intersected_surfaces.insert( s->getID() );
+                            modified_surfaces.insert( s->getID() );
                         }
                     }
 
@@ -652,12 +665,50 @@ bool SRules::removeAboveIntersection( PlanarSurface::Ptr sptr )
                     { 
                         status |= boundaryAwareRemoveAbove(sptr, s); 
                         intersection_seeds.push_back(s); 
-                        intersected_surfaces.insert( s->getID() ); 
+                        intersected_surfaces.insert( s->getID() );
+                        modified_surfaces.insert( s->getID() );
                     }
                 }
             }
         }
     } while ( !intersection_seeds.empty() ); 
+
+    if (!lower_bound_.empty())
+    {
+        ContainerType new_lbounds{};
+        for ( auto s : container )
+        {
+            for (auto sid : sup_lower_bound_ids_)
+            {
+                auto bsptr = container[sid];
+                if ((s->getID() == sptr->getID())
+                        || s->checkIfDependsOn(sptr->getID())
+                        || isInBoundList(s->getID(), lower_bound_))
+                    continue;
+
+                if (s->checkIfInLowerBound(bsptr->getID()) && !isInBoundList(s->getID(), upper_bound_))
+                {
+                    if( s->weakCompleteIntersectionCheck(bsptr) && !s->weakLiesAboveOrEqualsCheck(sptr) )
+                    {
+                        new_lbounds.push_back(s);
+                    }
+                }
+            }
+        }
+
+        for (auto s : new_lbounds)
+        {
+            sptr->removeBelow(s);
+        }
+    }
+
+    for ( auto sid : modified_surfaces )
+    {
+        std::size_t surface_id;
+        if ( getSurfaceIndex(sid, surface_id ) )
+            container[surface_id]->markCacheUnfresh();
+    }
+    updateCache();
 
     return status; 
 }
@@ -672,15 +723,25 @@ bool SRules::removeBelow( PlanarSurface::Ptr sptr )
         return false; 
     }
 
+    std::set<PlanarSurface::SurfaceId> modified_surfaces{};
     bool status = true; 
     for ( auto s : container ) 
     {
         if ( s->surfaceIsSet() == true ) 
             if ( !s->weakLiesAboveCheck(sptr) )
             { 
-                status |= boundaryAwareRemoveBelow(sptr, s); 
+                status |= boundaryAwareRemoveBelow(sptr, s);
+                modified_surfaces.insert( s->getID() );
             }
     }
+
+    for ( auto sid : modified_surfaces )
+    {
+        std::size_t surface_id;
+        if ( getSurfaceIndex(sid, surface_id ) )
+            container[surface_id]->markCacheUnfresh();
+    }
+    updateCache();
 
     return status; 
 }
@@ -717,7 +778,8 @@ bool SRules::removeBelowIntersection( PlanarSurface::Ptr sptr )
     }
 
     bool status = true; 
-    ContainerType intersection_seeds {sptr}; 
+    ContainerType intersection_seeds {sptr};
+    std::set<PlanarSurface::SurfaceId> modified_surfaces{};
     std::set<PlanarSurface::SurfaceId> intersected_surfaces {sptr->getID()}; 
     PlanarSurface::Ptr seed; 
 
@@ -740,7 +802,8 @@ bool SRules::removeBelowIntersection( PlanarSurface::Ptr sptr )
                         {
                             status |= boundaryAwareRemoveBelow(sptr, s); 
                             intersection_seeds.push_back(s); 
-                            intersected_surfaces.insert( s->getID() ); 
+                            intersected_surfaces.insert( s->getID() );
+                            modified_surfaces.insert( s->getID() );
                         }
                     }
 
@@ -750,12 +813,50 @@ bool SRules::removeBelowIntersection( PlanarSurface::Ptr sptr )
                     { 
                         status |= boundaryAwareRemoveBelow(sptr, s); 
                         intersection_seeds.push_back(s); 
-                        intersected_surfaces.insert( s->getID() ); 
+                        intersected_surfaces.insert( s->getID() );
+                        modified_surfaces.insert( s->getID() );
                     }
                 }
             }
         }
     } while ( !intersection_seeds.empty() ); 
+
+    if (!upper_bound_.empty())
+    {
+        ContainerType new_ubounds{};
+        for ( auto s : container )
+        {
+            for (auto sid : inf_upper_bound_ids_)
+            {
+                auto bsptr = container[sid];
+                if ((s->getID() == sptr->getID())
+                        || s->checkIfDependsOn(sptr->getID())
+                        || isInBoundList(s->getID(), upper_bound_))
+                    continue;
+
+                if (s->checkIfInUpperBound(bsptr->getID()) && !isInBoundList(s->getID(), lower_bound_))
+                {
+                    if( s->weakCompleteIntersectionCheck(bsptr) && !s->weakLiesBelowOrEqualsCheck(sptr) )
+                    {
+                        new_ubounds.push_back(s);
+                    }
+                }
+            }
+        }
+
+        for (auto s : new_ubounds)
+        {
+            sptr->removeAbove(s);
+        }
+    }
+
+    for ( auto sid : modified_surfaces )
+    {
+        std::size_t surface_id;
+        if ( getSurfaceIndex(sid, surface_id ) )
+            container[surface_id]->markCacheUnfresh();
+    }
+    updateCache();
 
     return status; 
 }
@@ -1420,6 +1521,8 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
 
     if ( defineAboveIsActive() && defineBelowIsActive() ) 
     { 
+        if ( !isInBoundList(to_remove_surface->getID(), lower_bound_) )
+        if ( !isInBoundList(to_remove_surface->getID(), upper_bound_) )
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
             if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
                 std::vector<PlanarSurface::SurfaceId> ub_planar_surface_ids;
@@ -1428,6 +1531,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
                     ub_planar_surface_ids.push_back(container[s]->getID());
                 }
 
+
                 to_remove_surface->updateCache();
                 to_remove_surface->removeAbove(base_surface, ub_planar_surface_ids); 
                 status |= true;
@@ -1435,6 +1539,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
     }
     else if ( defineAboveIsActive() ) 
     {
+        if ( !isInBoundList(to_remove_surface->getID(), lower_bound_) )
         if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
             to_remove_surface->updateCache();
             to_remove_surface->removeAbove(base_surface); 
@@ -1443,6 +1548,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
     }
     else if ( defineBelowIsActive() ) 
     { 
+        if ( !isInBoundList(to_remove_surface->getID(), upper_bound_) )
         if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
             std::vector<PlanarSurface::SurfaceId> ub_planar_surface_ids;
             for ( auto &s : upper_bound_ids_ )
@@ -1471,10 +1577,11 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
         bool status = false; 
         /* std::cout << "Inside SRules::boundaryAwareRemoveBelow(), status is " << status << std::endl; */
         /* std::cout << "BaseSurface = " << base_surface->getID() << ", ToRemove = " << to_remove_surface->getID() << std::endl; */
-
         if ( defineAboveIsActive() && defineBelowIsActive() ) 
         { 
             /* std::cout << "defineAboveIsActive() && defineBelowIsActive(); "; */
+            if ( !isInBoundList(to_remove_surface->getID(), lower_bound_) )
+            if ( !isInBoundList(to_remove_surface->getID(), upper_bound_) )
             if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) )  
                 if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
                     std::vector<PlanarSurface::SurfaceId> lb_plannar_surface_ids;
@@ -1494,6 +1601,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
         else if ( defineAboveIsActive() ) 
         { 
             /* std::cout << "defineAboveIsActive(); "; */
+            if ( !isInBoundList(to_remove_surface->getID(), lower_bound_) )
             if ( to_remove_surface->weakLiesAboveOrEqualsCheck(lower_bound_) ) { 
                 std::vector<PlanarSurface::SurfaceId> lb_plannar_surface_ids;
                 for ( auto &s : lower_bound_ids_ )
@@ -1512,6 +1620,7 @@ bool SRules::boundaryAwareRemoveAbove( const PlanarSurface::Ptr &base_surface, P
         else if ( defineBelowIsActive() ) 
         { 
             /* std::cout << "defineBelowIsActive(); "; */
+            if ( !isInBoundList(to_remove_surface->getID(), upper_bound_) )
             if ( to_remove_surface->weakLiesBelowOrEqualsCheck(upper_bound_) ) { 
                 to_remove_surface->updateCache();
                 to_remove_surface->removeBelow(base_surface); 

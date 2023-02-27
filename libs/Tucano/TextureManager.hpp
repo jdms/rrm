@@ -10,7 +10,7 @@
 #include <GL/glew.h>
 
 
-using namespace std;
+/* using namespace std; */
 
 namespace Tucano
 {

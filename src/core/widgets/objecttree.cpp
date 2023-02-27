@@ -33,6 +33,9 @@
 
 #include "objecttree.h"
 #include "core/widgets/color_picker.h"
+#include "model_metadata_access.hpp"
+
+#include "colors.hpp"
 
 
 ObjectTree::ObjectTree( QWidget *parent )
@@ -87,10 +90,10 @@ void ObjectTree::createMenu()
 
 
     // actions regarding the domains, they will be shown through a menu
-    ac_create_domain = new QAction( "Create domain", this );
-    ac_addto_domain = new QAction( "Add to domain", this );
-    ac_removefrom_domain = new QAction( "Remove from domain", this );
-    ac_remove_domain = new QAction( "Delete domain", this );
+    ac_create_domain = new QAction( "Create Domain", this );
+    ac_addto_domain = new QAction( "Add to Domain", this );
+    ac_removefrom_domain = new QAction( "Remove from Domain", this );
+    ac_remove_domain = new QAction( "Delete Domain", this );
 
     connect( ac_create_domain, &QAction::triggered, [=]()
     {
@@ -142,6 +145,7 @@ void ObjectTree::showMenu( const QPoint& pos_ )
    if( selected_.empty() == true ) return;
 
    bool region_ = false;
+   bool region_in_domain_ = false;
    bool surface_ = false;
    bool domain_ = false;
 
@@ -161,6 +165,11 @@ void ObjectTree::showMenu( const QPoint& pos_ )
         else if( obj_->getType() == Settings::Objects::ObjectType::REGION )
         {
             region_ = true;
+            ObjectTreeItem* parent_ = static_cast<ObjectTreeItem*>( obj_->parent() );
+            if (parent_->getType() == Settings::Objects::ObjectType::DOMAINS )
+            {
+                region_in_domain_ = true;
+            }
         }
         else if( obj_->getType() == Settings::Objects::ObjectType::DOMAINS )
         {
@@ -180,7 +189,7 @@ void ObjectTree::showMenu( const QPoint& pos_ )
             return;
         }
 
-        region_ = false;
+        // region_ = false;
 
         // if the object is a stratigraphy or a structural, the log edit will be shown.
         // if many objects are selected we keep the last one
@@ -205,7 +214,7 @@ void ObjectTree::showMenu( const QPoint& pos_ )
 
 
     ac_create_domain->setEnabled( region_ );
-    ac_removefrom_domain->setEnabled( region_ );
+    ac_removefrom_domain->setEnabled( region_in_domain_ );
     ac_remove_domain->setEnabled( domain_ );
     mn_submenu->setEnabled( region_ );
     mn_menu->exec( mapToGlobal( pos_ ) );
@@ -323,6 +332,15 @@ void ObjectTree::filterAction( QTreeWidgetItem* item_, std::size_t column_ )
         }
         else if( column_ == COLUMN_NAME )
         {
+            auto index_ = obj_->getIndex();
+            if (domain_actions_[ index_ ] != nullptr) {
+                domain_actions_[ index_ ]->setText( obj_->text(COLUMN_NAME) );
+                //delete domain_actions_[ index_ ];
+            }
+            // domain_actions_[ index_ ] = new QAction( obj_->text( COLUMN_NAME ), this );
+            // mn_submenu->addAction( domain_actions_[ index_ ] );
+            // connect( domain_actions_[ index_ ], &QAction::triggered, [=](){ this->addToDomain( index_ );} );
+
             emit setDomainName( obj_->getIndex(), obj_->text( COLUMN_NAME ).toStdString() );
         }
     }
@@ -340,12 +358,15 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
     //
 
     ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( item_ );
-    if( obj_->getType() == Settings::Objects::ObjectType::REGION )
+    if( (obj_->getType() == Settings::Objects::ObjectType::REGION)
+            || (obj_->getType() == Settings::Objects::ObjectType::DOMAINS)
+            /* || (obj_->getType() == Settings::Objects::ObjectType::VOLUME) */
+            )
     {
         if( column_ == COLUMN_DETAILS )
         {
             is_perc = !is_perc;
-            double volume_ = volume_regions[ obj_->getIndex() ];
+            // double volume_ = volume_regions[ obj_->getIndex() ];
 
             ObjectTreeItem* vol_ = ( ObjectTreeItem* ) topLevelItem( 0 );
             if( vol_ == nullptr ) return;
@@ -389,7 +410,7 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
             }
             else
             {
-                vol_->setText( COLUMN_DETAILS, QString( "100%" ) );
+                vol_->setText( COLUMN_DETAILS, QString::number( total_, 'g', 1 ).append( " m3" ) + QString( "(100%)" )  );
 
                 for( int i = 0; i < nchild_; ++i )
                 {
@@ -398,7 +419,12 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
 
                     double volume1_ = volume_regions[ obj1_->getIndex() ];
                     double perc1_ = 100*( volume1_/total_ );
-                    obj1_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                    if (perc1_ >= 0.1)
+                        obj1_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                    else if (perc1_ > 0.)
+                        obj1_->setText( COLUMN_DETAILS, QString( "<0.1%" ) );
+                    else
+                        obj1_->setText( COLUMN_DETAILS, QString( "0%" ) );
                 }
 
                 if( label_domains->childCount() > 0 )
@@ -410,7 +436,12 @@ void ObjectTree::clickAction( QTreeWidgetItem* item_, std::size_t column_ )
                         if( domain_ == nullptr ) continue;
                         double volume1_ = volume_domains[ domain_->getIndex() ];
                         double perc1_ = 100*( volume1_/total_ );
-                        domain_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                        if (perc1_ >= 0.1)
+                            domain_->setText( COLUMN_DETAILS, QString::number( perc1_, 'f', 1 ).append( "%" ) );
+                        else if (perc1_ > 0.)
+                            domain_->setText( COLUMN_DETAILS, QString( "<0.1%" ) );
+                        else
+                            domain_->setText( COLUMN_DETAILS, QString( "0%" ) );
                     }
                 }
             }
@@ -643,6 +674,7 @@ void ObjectTree::updateObjectName( std::size_t index_, const std::string& name_ 
 
     ObjectTreeItem* obj_ = items.getElement( index_ );
     obj_->setText( COLUMN_NAME, QString( name_.c_str() ) );
+
     update();
 
 }
@@ -693,6 +725,7 @@ void ObjectTree::addRegion( std::size_t index_, const std::string& name_,  const
     region_->setText( COLUMN_NAME, QString( name_.c_str() ) );
     region_->setCheckState( COLUMN_STATUS, Qt::Checked );
     region_->setText( COLUMN_DETAILS, QString::number( volume_, 'g', 3 ).append( " m3" ) );
+    region_->setFlags( region_->flags() & ~Qt::ItemIsEditable );
 
     // We need to pad index_ with zeros because Qt orders the tree itens using
     // the lexicographical ordering on strings
@@ -833,11 +866,69 @@ void ObjectTree::removeStructurals()
 void ObjectTree::updateVolumeDomain( std::size_t index_, double volume_ )
 {
     ObjectTreeItem* domain_ = domains.getElement( index_ );
-    domain_->setText( COLUMN_DETAILS, QString::number( volume_, 'g', 3 ).append( " m3" ) );
-    volume_domains[ index_ ] = volume_;
+    if(domain_)
+    {
+        domain_->setText( COLUMN_DETAILS, QString::number( volume_, 'g', 3 ).append( " m3" ) );
+        volume_domains[ index_ ] = volume_;
+    }
 }
 
 
+bool ObjectTree::loadDomain( std::size_t index_ )
+{
+    if( domains.findElement( index_ )  == true ) return false;
+
+    if ( MMA::domains().find(index_) == MMA::domains().end() ) return false;
+    auto& domain = MMA::domains()[index_];
+
+    if( domains.empty() == true )
+    {
+        addTopLevelItem( label_domains );
+        label_domains->setHidden( false );
+    }
+
+    ObjectTreeItem* domain_ = new ObjectTreeItem();
+    domain_->setIndex( index_ );
+    domain_->setType( Settings::Objects::ObjectType::DOMAINS );
+    domain_->setText( COLUMN_NAME, MMA::name(domain).empty() ? 
+            QString( "DOMAIN %1" ).arg( index_ ) : QString::fromUtf8(MMA::name(domain).c_str()));
+    domain_->setCheckState( COLUMN_STATUS, Qt::Checked );
+
+    label_domains->addChild( domain_ );
+
+    ColorPicker* colorpicker_ = new ColorPicker( this );
+    /* colorpicker_->setColor( QColor(0, 0, 0, 0) ); */
+    QColor color_;
+    if ( !MMA::getColor(domain, color_) )
+    {
+        color_ = DomainsColors.color( index_ );
+    }
+    colorpicker_->setColor( color_ );
+    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setDomainColor( index_, color_ ); } );
+
+    setItemWidget( domain_, COLUMN_COLOR, colorpicker_ );
+    domains.addElement( index_, domain_ );
+
+    // for each domain created it will exist an associated action
+    // e.g., so that the user can choose which domain he/she wants to add regions
+    domain_actions_[ index_ ] = new QAction( colorpicker_->currentIcon(), domain_->text( COLUMN_NAME ), this );
+    mn_submenu->addAction( domain_actions_[ index_ ] );
+    connect( domain_actions_[ index_ ], &QAction::triggered, [=](){ this->addToDomain( index_ );} );
+
+    std::vector< std::size_t > regions_;
+    for (auto& r : domain.regions)
+    {
+        if ( r.id() > -1 )
+            regions_.push_back(r.id());
+    }
+
+    if( !regions_.empty() )
+        addRegionsInDomain(index_, regions_);
+
+    sortDomains();
+
+    return true;
+}
 
 bool ObjectTree::createDomain( std::size_t index_ )
 {
@@ -856,11 +947,18 @@ bool ObjectTree::createDomain( std::size_t index_ )
     domain_->setCheckState( COLUMN_STATUS, Qt::Checked );
 
     label_domains->addChild( domain_ );
+
+    ColorPicker* colorpicker_ = new ColorPicker( this );
+    /* colorpicker_->setColor( QColor(0, 0, 0, 0) ); */
+    colorpicker_->setColor( DomainsColors.color(index_) );
+    connect( colorpicker_, &ColorPicker::colorSelected, [=]( const QColor& color_ ){ emit setDomainColor( index_, color_ ); } );
+
+    setItemWidget( domain_, COLUMN_COLOR, colorpicker_ );
     domains.addElement( index_, domain_ );
 
     // for each domain created it will exist an associated action
     // e.g., so that the user can choose which domain he/she wants to add regions
-    domain_actions_[ index_ ] = new QAction( domain_->text( COLUMN_NAME ), this );
+    domain_actions_[ index_ ] = new QAction(colorpicker_->currentIcon(), domain_->text( COLUMN_NAME ), this );
     mn_submenu->addAction( domain_actions_[ index_ ] );
     connect( domain_actions_[ index_ ], &QAction::triggered, [=](){ this->addToDomain( index_ );} );
 
@@ -874,6 +972,38 @@ bool ObjectTree::createDomain( std::size_t index_ )
     return true;
 }
 
+
+bool ObjectTree::updateDomainActions( std::size_t index_ )
+{
+    if ( !domains.findElement( index_ ) )
+    {
+        return false;
+    }
+
+    ObjectTreeItem* domain_ = static_cast< ObjectTreeItem* >( domains.getElement( index_ ) );
+    if( domain_->getType() != Settings::Objects::ObjectType::DOMAINS )
+    {
+        return false;
+    }
+
+    auto* action_ = domain_actions_[ index_ ];
+    if (action_ == nullptr)
+    {
+        domain_actions_[ index_ ] = new QAction( /*colorpicker_->currentIcon(), domain_->text( COLUMN_NAME ),*/ this );
+        mn_submenu->addAction( domain_actions_[ index_ ] );
+        connect( domain_actions_[ index_ ], &QAction::triggered, [=](){ this->addToDomain( index_ );} );
+        action_ = domain_actions_[ index_ ];
+    }
+    action_->setText( domain_->text(COLUMN_NAME) );
+
+    ColorPicker* colorpicker_ = (ColorPicker*)( itemWidget( domain_, COLUMN_COLOR ) );
+    if (colorpicker_)
+    {
+        action_->setIcon( colorpicker_->currentIcon() );
+    }
+
+    return true;
+}
 
 bool ObjectTree::getSelectedRegionsList( std::vector< std::size_t >& regions_ )
 {
@@ -893,6 +1023,9 @@ bool ObjectTree::getSelectedRegionsList( std::vector< std::size_t >& regions_,
         ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( it );
         if( obj_->getType() != Settings::Objects::ObjectType::REGION ) continue;
 
+        // NOTICE:
+        // notice that the parent here might be something different from a domainm
+        // e.g., if region is selected in Region List, obj_->parent() is a "VOLUME".
         ObjectTreeItem* const& domain_ = static_cast< ObjectTreeItem* >( obj_->parent() );
 
         regions_.push_back( obj_->getIndex() );
@@ -913,6 +1046,7 @@ void ObjectTree::addRegionsInDomain( std::size_t index_, const std::vector< std:
 
     for( auto it: regions_ )
     {
+        if ( regions.findElement( it ) == false ) continue;
         ObjectTreeItem* const& obj_ = static_cast< ObjectTreeItem* >( regions.getElement( it ) );
         if( obj_->getType() != Settings::Objects::ObjectType::REGION ) continue;
 
@@ -1230,35 +1364,41 @@ void ObjectTree::deleteDomain( std::size_t index_ )
 
 void ObjectTree::sortDomains()
 {
-
-    for( auto it: domains )
+    for( auto& it: domains )
     {
         ObjectTreeItem* domain_ = static_cast< ObjectTreeItem* >( it.second );
+        std::size_t domain_id_ = it.first;
         if( domain_ == nullptr ) continue;
 
-        int nchild_ = domain_->childCount();
-        int minor_ = std::numeric_limits<int>::max();
+        //
+        // This code sorts domains based on the regions they contain
+        //
+        /* int nchild_ = domain_->childCount(); */
+        /* int minor_ = std::numeric_limits<int>::max(); */
 
-        for( int j = 0; j < nchild_; ++j )
-        {
-            ObjectTreeItem* reg_ = static_cast< ObjectTreeItem* >( domain_->child( j ) );
-            if( reg_ == nullptr ) continue;
+        /* for( int j = 0; j < nchild_; ++j ) */
+        /* { */
+        /*     ObjectTreeItem* reg_ = static_cast< ObjectTreeItem* >( domain_->child( j ) ); */
+        /*     if( reg_ == nullptr ) continue; */
 
-            if( reg_->getIndex() > minor_ ) continue;
-            minor_ = reg_->getIndex();
+        /*     if( reg_->getIndex() > minor_ ) continue; */
+        /*     minor_ = reg_->getIndex(); */
 
-        }
+        /* } */
 
-        int ind_ = label_domains->indexOfChild( domain_ );
-        if( ind_ < 0 ) continue;
+        /* int ind_ = label_domains->indexOfChild( domain_ ); */
+        /* if( ind_ < 0 ) continue; */
 
-        ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) );
-        if( domain_tree_ == nullptr ) continue;
-        domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_, 10, 10, QChar('0') ) );
+        /* ObjectTreeItem* domain_tree_ = static_cast< ObjectTreeItem* >( label_domains->child( ind_ ) ); */
+        /* if( domain_tree_ == nullptr ) continue; */
+        /* domain_tree_->setText( COLUMNS_NUMBER , QString( "%1" ).arg( minor_, 10, 10, QChar('0') ) ); */
 
+        // This sorts domains by the order they are created
+        domain_->setText( COLUMNS_NUMBER, QString( "%1" ).arg( domain_id_, 10, 10, QChar('0') ) );
     }
 
-    label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
+    /* label_domains->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder ); */
+    label_domains->sortChildren( COLUMNS_NUMBER, Qt::AscendingOrder );
 
 }
 
@@ -1413,8 +1553,8 @@ void ObjectTree::sortStratigraphies( std::vector< std::size_t > indexes_ )
     for( int i = 0; i < ntotal_; ++i )
     {
         std::size_t index_ = indexes_[ i ];
-        ObjectTreeItem* obj_;
-        ObjectTreeItem* obj_tree_;
+        ObjectTreeItem* obj_ = nullptr;
+        ObjectTreeItem* obj_tree_ = nullptr;
         int ind_ = 0;
 
         if( stratigraphies.findElement( index_ ) == true )
@@ -1432,14 +1572,14 @@ void ObjectTree::sortStratigraphies( std::vector< std::size_t > indexes_ )
 
         if( ( obj_ == nullptr ) || ( ind_ < 0 ) ) continue;
 
-        obj_tree_->setText( COLUMNS_NUMBER - 1 , QString( "%1" ).arg( i, 10, 10, QChar('0') ) );
+        obj_tree_->setText( COLUMNS_NUMBER, QString( "%1" ).arg( i, 10, 10, QChar('0') ) );
 
     }
 
     // ordering in descending order -- note that COLUMNS_NUMBER - 1 should be
     // hidden, since it serves only to help sorting
-    label_stratigraphy->sortChildren( COLUMNS_NUMBER - 1, Qt::DescendingOrder );
-    label_structural->sortChildren( COLUMNS_NUMBER - 1, Qt::DescendingOrder );
+    label_stratigraphy->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
+    label_structural->sortChildren( COLUMNS_NUMBER, Qt::DescendingOrder );
 
 
 }

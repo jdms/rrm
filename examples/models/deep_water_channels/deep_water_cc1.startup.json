@@ -1,0 +1,49 @@
+{
+  "publishing" : true,
+  "stratmod": {
+    "scale": [1, 1, 0.1]
+  },
+  "grid": {
+    "resolution": [100, 100, 50]
+  },
+  "camera": {
+    "focal_point": [
+      3355.459581454901,
+      3189.9323271837325,
+      1618.791958423536
+    ],
+    "parallel": false,
+    "parallel_scale": 89.5548615609085,
+    "position": [
+      -4918.1332707364745,
+      -8181.416295874545,
+      8094.681813436532
+    ],
+    "view_up": [
+      0.2093666435804987,
+      0.3644215500602964,
+      0.9073932677772563
+    ]
+  },
+  "viscosity": 6.76e-5,
+  "wells": "well_config/inj_pos4.json",
+  "visual": {
+    "font_size": 24,
+    "colour_bar": {
+      "visible" : true
+    },
+    "cutoff": {
+      "type": [1, 1, -1],
+      "value": [3100, 4500, 135]
+    },
+    "display_property": "domain",
+    "window": {
+      "maximised": true
+    },
+    "colour_range": {
+      "tof_forward" : { "value": [1, 10000], "log": true },
+      "tof_backward" : { "value": [1, 10000], "log": true }
+    },
+    "exaggeration": [1, 1, 15]
+  }
+}

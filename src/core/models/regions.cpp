@@ -255,11 +255,48 @@ void Regions::setColor( int r_, int g_, int b_ )
 }
 
 
-void Regions::getColor( int& r_, int& g_, int& b_ ) const
+void Regions::setDomainColor( int r_, int g_, int b_ )
 {
     std::lock_guard<std::mutex> g(color_mutex);
 
+    if (indomain)
+    {
+        dcolor = {r_, g_, b_};
+        has_domain_color = true;
+        color_is_fresh = true;
+    }
+}
+
+
+void Regions::getColor( int& r_, int& g_, int& b_ ) const
+{
+    /* Object::getColor(r_, g_, b_); */
+    getBlendedColor(r_, g_, b_);
+}
+
+
+void Regions::getBlendedColor( int& r_, int& g_, int& b_, double f ) const
+{
+    /* std::lock_guard<std::mutex> g(color_mutex); */
+
     Object::getColor(r_, g_, b_);
+
+    if (hasDomainColor() && ((r_ != dcolor.red) || (g_ != dcolor.green) || (b_ != dcolor.blue)) && (volume > 0.))
+    {
+        r_ = std::round(f * r_ + (1 - f) * dcolor.red);
+        g_ = std::round(f * g_ + (1 - f) * dcolor.green);
+        b_ = std::round(f * b_ + (1 - f) * dcolor.blue);
+    }
+
+    /* color_is_fresh = false; */
+}
+
+void Regions::getColorFor3DView( int& r_, int& g_, int& b_ ) const
+{
+    std::lock_guard<std::mutex> g(color_mutex);
+
+    getBlendedColor(r_, g_, b_);
+
     color_is_fresh = false;
 }
 
@@ -296,6 +333,7 @@ void Regions::initialize()
 
     is_visible = true;
     indomain = false;
+    has_domain_color = false;
 
     color.red = 255;
     color.green = 0;

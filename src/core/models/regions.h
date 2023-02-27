@@ -272,6 +272,15 @@ class Regions: public Object
         */
         void setColor( int r_, int g_, int b_ );
 
+        /**
+        * Method to set the color of the region's parent domain
+        * @param r the red component of the color (integer)
+        * @param g the green component of the color (integer)
+        * @param b the blue component of the color (integer)
+        * @return void.
+        */
+        void setDomainColor( int r_, int g_, int b_ );
+
 
         /**
         * Method to get the color of the region
@@ -281,6 +290,27 @@ class Regions: public Object
         * @return void.
         */
         void getColor( int& r_, int& g_, int& b_ ) const;
+
+
+        /**
+        * Method to get the color of the region
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
+        * @return void.
+        */
+        void getColorFor3DView( int& r_, int& g_, int& b_ ) const;
+
+
+        /**
+        * Method to get the blend of the colors of the region and its parent domain
+        * @param r reference to the red component of the color (integer)
+        * @param g reference to the green component of the color (integer)
+        * @param b reference to the blue component of the color (integer)
+        * @param f amount of region color to display
+        * @return void.
+        */
+        void getBlendedColor( int& r_, int& g_, int& b_, double f = 0.2 ) const;
 
 
         /**
@@ -302,14 +332,14 @@ class Regions: public Object
         * @param id the index of the domain
         * @return void.
         */
-        inline void setDomain( std::size_t id_ ){ domain_index = id_; indomain = true; }
+        inline void setDomain( std::size_t id_ ){ domain_index = id_; indomain = true; has_domain_color = false; }
 
 
         /**
         * This method clear the data domain and define that the regions does not belong to any domain
         * @return void.
         */
-        inline void removeFromDomain(){ indomain = false; }
+        inline void removeFromDomain(){ indomain = false; has_domain_color = false; }
 
 
         /**
@@ -419,7 +449,8 @@ class Regions: public Object
 
         double volume = 0;                                              /**< The volume of the region */
 
-        /* Color color;                                                    /**< The color of the region *1/ */
+        Color dcolor;                                                    /**< The color of the region's parent domain */
+        bool has_domain_color = false;
 
         mutable std::mutex geometry_mutex;
         mutable bool vertices_list_is_fresh = false;
@@ -427,6 +458,8 @@ class Regions: public Object
 
         mutable std::mutex color_mutex;
         mutable bool color_is_fresh = false;
+
+        bool hasDomainColor() const { return indomain && has_domain_color; }
 };
 
 #endif // REGIONS_H

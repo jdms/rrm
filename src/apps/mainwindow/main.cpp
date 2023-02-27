@@ -43,7 +43,13 @@ int main( int argc, char *argv[] )
     QApplication::setAttribute( Qt::AA_EnableHighDpiScaling );
 
     QSurfaceFormat format; 
+    /* The following is a quick fix for VTK 8.2 rendering issues in windows: */
+    /* https://discourse.vtk.org/t/problem-in-vtk-8-2-with-defaultformat-and-qvtkopenglwidget-on-windows-10-intel/998 */
+    #ifdef _WIN32
+    format.setProfile( QSurfaceFormat::CompatibilityProfile );
+    #else
     format.setProfile( QSurfaceFormat::CoreProfile );
+    #endif
     format.setMajorVersion( 4 );
     format.setMinorVersion( 1 );
     /* format.setDepthBufferSize( 16 ); */

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with RRM.  If not, see <http://www.gnu.org/licenses/>.
+ * along with RRM.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "coordinate_axes_3d.h"
 #include <math.h>
@@ -64,8 +64,8 @@ void CoordinateAxes3d::reloadShader()
 void CoordinateAxes3d::load()
 {
 
-	std::string filename = current_directory + "models/orientationaxes.obj";
-	std::string material_path = current_directory + "models/";
+	std::string filename = current_directory + "objects/orientationaxes.obj";
+	std::string material_path = current_directory + "objects/";
 
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;

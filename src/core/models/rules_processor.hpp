@@ -421,7 +421,7 @@
             bool getFrontBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges );
             bool getBackBoundaryCrossSectionCurve( std::vector< std::vector<double> >& vertices,  std::vector< std::vector<std::size_t> >& edges );
 
-            bool getTetrahedralMesh( std::vector<double> &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list );
+            bool getTetrahedralMesh( std::vector< std::vector<double> > &vertex_coordinates, std::vector< std::vector<std::size_t> > &element_list );
 
             void getRegionVolumeList( std::vector<double>& volumes );
 
@@ -440,8 +440,12 @@
 
             bool getQuadMesh( std::size_t surface_id, std::vector<double> &points, std::vector<bool> &valid_points, std::size_t &num_width, std::size_t &num_length );
 
+            using Att2RegMap = std::vector<int>;
+            using Reg2AttMap = std::vector<int>;
+            std::pair<Att2RegMap, Reg2AttMap> getI2VRegionMaps();
+
         private:
-            SModellerWrapper modeller_;
+            SModellerWrapper& modeller_;
             struct { double x, y, z; } origin_, length_;
 
             enum ModelResolution { LOW, MEDIUM, HIGH };

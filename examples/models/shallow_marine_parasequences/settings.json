@@ -1,0 +1,48 @@
+{
+  "stratmod": {
+    "scale": [20.5, 20.4918, 0.1333333333333333]
+  },
+  "publishing" : true,
+  "camera": {
+    "focal_point": [
+      12423.56547015638,
+      4203.3094581173955,
+      4271.240705065521
+    ],
+    "parallel": false,
+    "parallel_scale": 54.28330147285559,
+    "position": [
+      32203.45385809093,
+      -28549.755437264008,
+      13492.468576584086
+    ],
+    "view_up": [
+      -0.11782343372181513,
+      0.20254488346045912,
+      0.9721590449355446
+    ]
+  },
+  "grid": {
+    "resolution": [100, 50, 100]
+  },
+  "boundary_conditions": [30000000.0, 30000000.0, 30000000.0, 30000000.0, null, null],
+  "viscosity": 6.76e-5,
+  "visual": {
+    "font_size": 24,
+    "colour_bar": {
+      "visible": true
+    },
+    "cutoff": {
+      "type": [-1, 1, -1],
+      "value": [5000.0, 4940.0, 30]
+    },
+    "display_property": "domain",
+    "colour_range": {
+      "tof_forward" : { "value": [1, 10000], "log": true },
+      "tof_backward" : { "value": [1, 10000], "log": true }
+    },
+    "window": {
+      "maximised": true
+    }
+  }
+}

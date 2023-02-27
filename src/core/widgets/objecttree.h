@@ -34,8 +34,8 @@
 
 #include <QTreeWidget>
 #include <QMenu>
-#include<QDragEnterEvent>
-#include<QDragMoveEvent>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QMouseEvent>
 #include <QInputDialog>
@@ -251,6 +251,14 @@ class ObjectTree: public QTreeWidget
         void updateVolumeDomain( std::size_t index_, double volume_ );
 
 
+        /**
+         * Method to update a domain's actions
+         * @param index index of the domain
+         * @return Void.
+         */
+        bool updateDomainActions( std::size_t index_ );
+
+
 
     public slots:
 
@@ -281,6 +289,14 @@ class ObjectTree: public QTreeWidget
         * @return Void.
         */
         void removeRegions();
+
+
+        /**
+        * Method (slot) to load a domain from the model into the object tree
+        * @param index index of the domain
+        * @return Void.
+        */
+        bool loadDomain( std::size_t index_ );
 
 
         /**

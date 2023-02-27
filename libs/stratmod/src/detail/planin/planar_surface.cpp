@@ -161,6 +161,7 @@ PlanarSurface::PlanarSurface( const PlanarSurface &rhs ) : id_(num_instances_)
 
     heights = rhs.heights; 
     normals = rhs.normals;
+    linear_graph_ = rhs.linear_graph_;
     interpolant_is_set_ = rhs.interpolant_is_set_; 
     mesh_is_set_ = rhs.mesh_is_set_; 
 
@@ -169,7 +170,8 @@ PlanarSurface::PlanarSurface( const PlanarSurface &rhs ) : id_(num_instances_)
 
     dependency_list_ = rhs.dependency_list_; 
     auto iter = dependency_list_.find(rhs.id_); 
-    dependency_list_.erase(iter); 
+    if (iter != dependency_list_.end())
+        dependency_list_.erase(iter); 
     dependency_list_.insert(id_); 
 
     extruded_surface_ = rhs.extruded_surface_; 
@@ -204,6 +206,7 @@ PlanarSurface::PlanarSurface( PlanarSurface &&rhs ) : id_( rhs.id_ )
 
     heights = std::move(rhs.heights); 
     normals = std::move(rhs.normals);
+    linear_graph_ = std::move(rhs.linear_graph_);
     interpolant_is_set_ = rhs.interpolant_is_set_; 
     mesh_is_set_ = rhs.mesh_is_set_; 
 
@@ -593,7 +596,7 @@ bool PlanarSurface::weakIntersectionCheck( PlanarSurface::Ptr &sp )
     size_t num_blocks = discretization_X*discretization_Y;
 
     /* VS2013 error C3016: index variable in OpenMP 'for' statement must have signed integral type*/ 
-    #pragma omp parallel for shared(sp) firstprivate(num_blocks) private(theights, sp_theights) default(none) reduction(||: lies_above, lies_below) 
+    #pragma omp parallel for shared(sp) firstprivate(num_blocks) private(theights, sp_theights) default(none) reduction(||: lies_above, lies_below)
     for ( long int b = 0; b < static_cast<long int>(num_blocks); ++b ) 
     {
         for ( size_t tpos = 0; tpos < 8; ++tpos)
@@ -1043,6 +1046,46 @@ bool PlanarSurface::checkIfDependsOn( unsigned long int surface_id ) {
 
     return true;
 }
+
+bool PlanarSurface::checkIfInLowerBound( unsigned long int surface_id )
+{ 
+    if ( dependency_list_.find(surface_id) == dependency_list_.end() ) { 
+        return false; 
+    }
+
+    for (auto wptr : lower_bound_)
+    {
+        if (auto sptr = wptr.lock())
+        {
+            if (surface_id == sptr->getID())
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool PlanarSurface::checkIfInUpperBound( unsigned long int surface_id )
+{ 
+    if ( dependency_list_.find(surface_id) == dependency_list_.end() ) { 
+        return false; 
+    }
+
+    for (auto wptr : upper_bound_)
+    {
+        if (auto sptr = wptr.lock())
+        {
+            if (surface_id == sptr->getID())
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+} 
 
 template<typename T>
 bool PlanarSurface::getHeight( const Point2 &p, double &height, T &&cache ) { 
@@ -1718,6 +1761,11 @@ bool PlanarSurface::updateRawCache()
 /* bool getMesh( BoundBox bbox, MeshType *mesh ); */ 
 /* bool getMesh( std::vector<BoundBox> &bboxes, MeshType *mesh ); */ 
 
+void PlanarSurface::markCacheUnfresh()
+{
+    cache_is_fresh_ = false;
+}
+
 bool PlanarSurface::updateCache() 
 {
     if ( surfaceIsSet() == false ) { 
@@ -1890,17 +1938,24 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s, const std::vector<Surfac
         return false; 
     }
 
-    bool status_ra_interpolant = f->removeAbove( s->get_interpolant() ); 
-    if ( status_ra_interpolant == false ) { 
-        return false; 
-    }
+    /* bool status_ra_interpolant = f->removeAbove( s->get_interpolant() ); */ 
+    /* if ( status_ra_interpolant == false ) { */ 
+    /*     return false; */ 
+    /* } */
 
     unsigned long int my_id = getID(); 
+    if (s->getID() == my_id)
+    {
+        return false;
+    }
+
     bool has_cyclic_dependency = s->checkIfDependsOn(my_id); 
+
+    /* DCHECK(has_cyclic_dependency == false) << "PlanarSurface " << my_id << " has a cyclic dependency"; */
 
     if ( has_cyclic_dependency == true ) { 
         // Shall never happen.
-        throw std::runtime_error("\nDependency lists of planar mesh and its included interpolated graph differed.\n "); 
+        throw std::runtime_error("\nPlanarSurface " + std::to_string(my_id) + " has a cyclic dependency\n "); 
     }
 
     s->getDependencyList( dependency_list_ ); 
@@ -1937,6 +1992,7 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s, const std::vector<Surfac
     }
     /* unprocessed_upper_bound_.push_back(std::weak_ptr<PlanarSurface>(s)); */
     cache_is_fresh_ = false;
+    markCacheUnfresh();
 
     pruneBoundingLists();
 
@@ -1950,6 +2006,11 @@ bool PlanarSurface::removeAbove( PlanarSurface::Ptr &s, const std::vector<Surfac
         new_bound = true;
         if ( auto slb = lb.lock() )
         {
+            if (slb->getID() == my_id)
+            {
+                new_bound = false;
+            }
+
             auto it = std::find(surface_ids_above_or_equal_s.begin(), surface_ids_above_or_equal_s.end(), slb->getID());
             if ( it != surface_ids_above_or_equal_s.end() )
             {
@@ -1995,17 +2056,24 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s, const std::vector<Surfac
         return false; 
     }
 
-    bool status_rb_interpolant = f->removeBelow( s->get_interpolant() ); 
-    if ( status_rb_interpolant == false ) { 
-        return false; 
-    }
+    /* bool status_rb_interpolant = f->removeBelow( s->get_interpolant() ); */ 
+    /* if ( status_rb_interpolant == false ) { */ 
+    /*     return false; */ 
+    /* } */
 
     unsigned long int my_id = getID(); 
+    if (s->getID() == my_id)
+    {
+        return false;
+    }
+
     bool has_cyclic_dependency = s->checkIfDependsOn(my_id); 
+
+    /* DCHECK(has_cyclic_dependency == false) << "PlanarSurface " << my_id << " has a cyclic dependency"; */
 
     if ( has_cyclic_dependency == true ) { 
         // Shall never happen.
-        throw std::runtime_error("\nDependency lists of planar mesh and its included interpolated graph differed.\n "); 
+        throw std::runtime_error("\nPlanarSurface " + std::to_string(my_id) + " has a cyclic dependency\n "); 
     }
 
     s->getDependencyList( dependency_list_ ); 
@@ -2045,6 +2113,7 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s, const std::vector<Surfac
     }
     /* unprocessed_lower_bound_.push_back(std::weak_ptr<PlanarSurface>(s)); */
     cache_is_fresh_ = false;
+    markCacheUnfresh();
 
     pruneBoundingLists();
 
@@ -2058,6 +2127,11 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s, const std::vector<Surfac
         new_bound = true;
         if ( auto sub = ub.lock() )
         {
+            if (sub->getID() == my_id)
+            {
+                new_bound = false;
+            }
+
             auto it = std::find(surface_ids_below_or_equal_s.begin(), surface_ids_below_or_equal_s.end(), sub->getID());
             if ( it != surface_ids_below_or_equal_s.end() )
             {
@@ -2074,7 +2148,7 @@ bool PlanarSurface::removeBelow( PlanarSurface::Ptr &s, const std::vector<Surfac
             new_bound &= (compareSurfaceWptr(ub, lb) == false);
         }
 
-        if (new_bound)
+        if ( new_bound )
         {
             upper_bound_.push_back(ub);
             /* unprocessed_upper_bound_.push_back(ub); */
@@ -2237,9 +2311,7 @@ size_t PlanarSurface::getVertexIndexFromPositionInBlock( size_t vpos,  size_t bi
     return getVertexIndex(iv, jv);
 }
 
-#include "mesh/polyhedra.hpp"
-
-TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpos, size_t bindex ) 
+PlanarSurface::TriangleHeights PlanarSurface::getTriangleHeightsFromPositionInBlock( size_t tpos, size_t bindex ) 
 {
     // Range check?
 

@@ -33,17 +33,34 @@
 #include <type_traits>
 #include <cstdint>
 
-#include "planin/use_openmp.hpp"
 #include "planin/serialization_primitives.hpp"
+#include "planin/mesh/legacy_polyhedra.hpp"
+
+#if defined(STRATMOD_LIB_BUILT)
+    #include "detail/metadata_cereal.hpp"
+    #include "stratmod/metadata.hpp"
+    using SurfaceMetadata = stratmod::SurfaceMetadata;
+#else
+    struct SurfaceMetadata {
+        template<typename Archive>
+        void save( Archive &, const std::uint32_t ) const {}
+
+        template<typename Archive>
+        void load( Archive &, const std::uint32_t ) {}
+    };
+#endif
+
+#include "planin/use_openmp.hpp"
+
+#include "planin/mesh/legacy_polyhedra.hpp"
+#include "planin/piecewise_linear_graph.hpp"
 
 #include "planin/interpolated_graph.hpp"
 #include "planin/triangle_soup_wrapper.hpp" 
 
-#include "planin/mesh/polyhedra.hpp"
-
-#include "planin/piecewise_linear_graph.hpp"
-
 /* Class PlanarSurface is not reentrant. */ 
+
+class LegacyTetrahedralMeshBuilder;
 
 /* template<typename CoordinatesListType = std::vector<float>, typename Natural = unsigned long int> */ 
 class PlanarSurface { 
@@ -54,6 +71,8 @@ class PlanarSurface {
         /* using NaturalType = Natural; */ 
         using Natural = unsigned long int; 
         using SurfaceId = unsigned long int; 
+
+        using TriangleHeights = legacy::TriangleHeights;
 
         enum class Coordinate : Natural { WIDTH = 0, HEIGHT = 1, DEPTH = 2 };  
 
@@ -134,6 +153,8 @@ class PlanarSurface {
         bool surfaceIsSet();
         unsigned long int getID() const; 
         bool checkIfDependsOn( unsigned long int surface_id ); 
+        bool checkIfInLowerBound( unsigned long int surface_id ); 
+        bool checkIfInUpperBound( unsigned long int surface_id ); 
 
         bool rangeCheck( Natural vertex );
 
@@ -272,6 +293,11 @@ class PlanarSurface {
         template<typename FList = std::vector<size_t>>
         size_t mergeFaceLists( const std::vector<FList> &flists, FList &merged_flist );
 
+        SurfaceMetadata& metadata() { return metadata_; };
+        SurfaceMetadata metadata() const { return metadata_; };
+
+        void markCacheUnfresh();
+
     private:
         /* Members 'discretization_X' and 'discretization_Y' are supposed to 
          * be specified. Everything else should be kept as is. 
@@ -325,6 +351,8 @@ class PlanarSurface {
         std::vector<SurfaceId> cached_bounding_surface_ids_;
         bool surface_is_empty_ = false;
 
+        SurfaceMetadata metadata_{};
+
         /* Methods */ 
         bool getHeight( Natural vertex_index, double &height, 
                 std::vector<double> &base_heights,
@@ -356,6 +384,8 @@ class PlanarSurface {
         bool compareSurfaceWptr( const PlanarSurface::WeakPtr &left, const PlanarSurface::WeakPtr &right ) const;
 
         PlanarSurface::Ptr getBoundingSurface(SurfaceId id);
+
+        friend class LegacyTetrahedralMeshBuilder;
 
         friend class SRules;
 
@@ -957,7 +987,8 @@ size_t PlanarSurface::mergeFaceLists( const std::vector<FList> &flists, FList &m
            upper_bound_, 
            lower_bound_, 
            dependency_list_, 
-           extruded_surface_
+           extruded_surface_,
+           metadata_
           );
     }
 
@@ -989,10 +1020,15 @@ size_t PlanarSurface::mergeFaceLists( const std::vector<FList> &flists, FList &m
            extruded_surface_
           );
 
+        if (version >= 2)
+        {
+            ar(metadata_);
+        }
+
         updateRawCache();
     }
 
-    CEREAL_CLASS_VERSION(PlanarSurface, 1);
+    CEREAL_CLASS_VERSION(PlanarSurface, 2);
 
 #else
     template<typename Archive>

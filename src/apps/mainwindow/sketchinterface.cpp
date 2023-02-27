@@ -368,7 +368,7 @@ void SketchInterface::createMainWindowActions()
     connect( window->app, &RRMApplication::updateImageInCrossSection, [=]()
     { scontroller->updateImageInScene(); } );
 
-    connect( window, &MainWindow::runDiagnostics, this, &SketchInterface::showOnlyMainCanvas );
+    /* connect( window, &MainWindow::runDiagnostics, this, &SketchInterface::showOnlyMainCanvas ); */
 }
 
 

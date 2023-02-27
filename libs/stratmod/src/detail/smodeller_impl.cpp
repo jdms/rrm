@@ -41,6 +41,7 @@ bool SModellerImplementation::init()
     /*         PlanarSurface::Coordinate::HEIGHT); */ 
 
     mesh_ = nullptr;
+    i2v_region_map_ = {};
 
     initialized_ = true; 
 
@@ -56,7 +57,7 @@ void SModellerImplementation::clear()
 
     /* bool default_coordinate_system_ = true; */
 
-    container_.clear(); 
+    container_ = SRules();
     dictionary_.clear(); 
     inserted_surfaces_indices_.clear();
 
@@ -71,6 +72,11 @@ void SModellerImplementation::clear()
     got_lenght_ = false; 
 
     mesh_ = nullptr;
+    i2v_region_map_ = {};
+
+    interpretations_.clear();
+
+    model_id_ = RandomId::Get();
 
     init();
 }
@@ -180,13 +186,13 @@ std::vector<std::size_t> SModellerImplementation::getOrderedSurfacesIndices()
 
 bool SModellerImplementation::getBoundingSurfacesFromRegionID( std::size_t region_id, std::vector<size_t> &lower_bound_surfaces, std::vector<size_t> &upper_bound_surfaces)
 {
-    /* TetrahedralMeshBuilder mb(container_); */
+    /* LegacyTetrahedralMeshBuilder mb(container_); */
     if ( buildTetrahedralMesh() == false )
     {
         return 0;
     }
     
-    bool success = mesh_->mapAttributeToBoundingSurfaces(region_id, lower_bound_surfaces, upper_bound_surfaces);
+    bool success = mesh_->mapRegionToBoundingSurfaces(region_id, lower_bound_surfaces, upper_bound_surfaces);
     if ( !success )
     {
         return false;
@@ -568,6 +574,7 @@ bool SModellerImplementation::commitSurface(
         past_states_.push_back(current_);
 
         mesh_ = nullptr;
+        i2v_region_map_ = {};
     }
 	else
 	{
@@ -645,6 +652,98 @@ bool SModellerImplementation::popUndoStack()
     undoed_states_.pop_back();
 
     return true;
+}
+
+bool SModellerImplementation::undo()
+{
+    if ( canUndo() == false )
+    {
+        return false; 
+    }
+
+    PlanarSurface::Ptr last_sptr; 
+    container_.popLastSurface(last_sptr);
+
+    size_t last_surface_index = inserted_surfaces_indices_.back(); 
+    inserted_surfaces_indices_.pop_back(); 
+
+    StateDescriptor last = past_states_.back();
+    past_states_.pop_back();
+
+    current_.bounded_above_ = last.bounded_above_;
+    current_.upper_boundary_list_ = last.upper_boundary_list_;
+    current_.bounded_below_ = last.bounded_below_;
+    current_.lower_boundary_list_ = last.lower_boundary_list_;
+    // current_ = last; 
+    enforceDefineRegion();
+
+    undoed_surfaces_stack_.push_back(last_sptr); 
+    undoed_surfaces_indices_.push_back(last_surface_index); 
+
+    undoed_states_.push_back(last);
+
+    auto iter = dictionary_.find(last_surface_index); 
+    dictionary_.erase(iter); 
+
+    // Cache was updated in call to SRules::popLastSurface()
+    /* container_.updateCache(); */
+
+    mesh_ = nullptr;
+    i2v_region_map_ = {};
+
+    return true;
+}
+
+bool SModellerImplementation::redo()
+{
+    if ( canRedo() == false )
+    {
+        return false;
+    }
+
+    PlanarSurface::Ptr undoed_sptr = undoed_surfaces_stack_.back(); 
+    undoed_surfaces_stack_.pop_back(); 
+
+    size_t surface_index = undoed_surfaces_indices_.back();
+    undoed_surfaces_indices_.pop_back();
+
+    /* StateDescriptor state_before_redo_ = current_; */
+    current_ = undoed_states_.back();
+    undoed_states_.pop_back();
+    enforceDefineRegion();
+
+    std::vector<size_t> lbounds, ubounds;
+    bool status = parseTruncateSurfaces(lbounds, ubounds); 
+
+    /* container_.updateCache(); */
+
+    if ( status == true )
+    {
+        status = commitSurface(undoed_sptr, surface_index, lbounds, ubounds); 
+    }
+
+
+    /* bool status = commitSurface(undoed_sptr, surface_index, std::vector<size_t>(), std::vector<size_t>()); */
+
+    /* current_ = state_before_redo_; */
+    /* enforceDefineRegion(); */
+
+    return status;
+}
+
+void SModellerImplementation::reloadModel()
+{
+    int counter = 0;
+    while (canUndo())
+    {
+        undo();
+        ++counter;
+    }
+
+    for (int i = 0; i < counter; ++i)
+    {
+        redo();
+    }
 }
 
 bool SModellerImplementation::preserveAbove( std::vector<size_t> bounding_surfaces_list )
@@ -870,10 +969,64 @@ bool SModellerImplementation::buildTetrahedralMesh()
 {
     if ( mesh_ == nullptr )
     {
-        mesh_ = std::make_shared<TetrahedralMeshBuilder>(container_);
+        mesh_ = std::make_shared<LegacyTetrahedralMeshBuilder>(container_);
     }
 
     return true;
+}
+
+void SModellerImplementation::fixLegacyRegionLoadFile()
+{
+    if ( mesh_ == nullptr )
+    {
+        mesh_ = std::make_shared<LegacyTetrahedralMeshBuilder>(container_);
+    }
+    auto i2v_region_map_points = mesh_->computeI2VRegionMap();
+
+    reloadModel();
+
+    std::map<std::size_t, std::map<int, int>> i2v_region_map_counts{};
+    int rid;
+    for (auto& [attribute, points] : i2v_region_map_points)
+    {
+        i2v_region_map_counts[attribute] = {};
+        for (auto& p : points)
+        {
+            rid = static_cast<int>(container_.getSurfacesBelowPoint({{{p[0], p[1], p[2]}}}).size()) - 1;
+            if (rid < 0)
+                continue;
+
+            auto iter = i2v_region_map_counts[attribute].find(rid);
+            if (iter == i2v_region_map_counts[attribute].end())
+            {
+                i2v_region_map_counts[attribute].insert(std::make_pair(rid, 1));
+            }
+            else
+            {
+                auto& [region_id, counter] = *iter;
+                ++counter;
+            }
+        }
+    }
+
+    /* std::map<std::size_t, int> i2v_region_map{}; */
+    /* for (auto& [att, rmap] : i2v_region_map_counts) */
+    /* { */
+    /*     int votes = 0; */
+    /*     for(auto iter = rmap.begin(); iter != rmap.end(); ++iter) */
+    /*     { */
+    /*         auto& [rid, counter] = *rmap.begin(); */
+    /*         if (counter > votes) */
+    /*         { */
+    /*             i2v_region_map[att] = rid; */
+    /*             votes = counter; */
+    /*         } */
+    /*     } */
+    /* } */
+
+    i2v_region_map_ = std::move(i2v_region_map_counts);
+
+    return;
 }
 
 } // namespace stratmod

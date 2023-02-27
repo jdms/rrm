@@ -83,7 +83,7 @@ void RRMApplication::init()
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
     window->object_tree->addInputVolume();
-    setDiscretization( Settings::CrossSection::CrossSectionDirections::Z );
+    changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::Z );
 
 }
 
@@ -444,11 +444,45 @@ void RRMApplication::getRegions( bool status_ )
     emit addRegions();
 }
 
+void RRMApplication::getDomains( bool status_ )
+{
+    if (status_ == false)
+    {
+        return;
+    }
+
+    auto domain_ids = controller->getDomains();
+
+    for (auto id : domain_ids)
+    {
+        /* controller->loadDomain( id ); */
+        window->object_tree->loadDomain( id );
+        double volume_ = controller->getDomainVolume( id );
+        window->object_tree->updateVolumeDomain( id, volume_ );
+    }
+
+    // Update regions
+    const std::map< std::size_t, RegionsPtr >& regions_ = controller->getRegions();
+    for( auto it: regions_ )
+    {
+        RegionsPtr & reg_ = (it.second);
+
+        int r_, g_, b_;
+        double volume_;
+        double perc_;
+
+        reg_->getColor( r_, g_, b_ );
+        volume_  = reg_->getVolume();
+
+        window->object_tree->updateRegionColor( reg_->getIndex(), r_, g_, b_ );
+    }
+    emit updateRegions();
+}
 
 void RRMApplication::setRegionsVisible( bool status_ )
 {
     controller->setRegionsVisible( status_ );
-    updateRegions();
+    emit updateRegions();
 }
 
 
@@ -480,6 +514,7 @@ void RRMApplication::createDomain()
     window->object_tree->createDomain( id_ );
     double volume_ = controller->getDomainVolume( id_ );
     window->object_tree->updateVolumeDomain( id_, volume_ );
+    emit updateRegions();
 }
 
 
@@ -492,6 +527,24 @@ void RRMApplication::setDomainName( std::size_t index_, const std::string& name_
 void RRMApplication::setDomainColor( std::size_t index_, int red_, int green_, int blue_ )
 {
     controller->setDomainColor( index_, red_, green_, blue_ );
+
+    // Update regions
+    const std::map< std::size_t, RegionsPtr >& regions_ = controller->getRegions();
+    for( auto it: regions_ )
+    {
+        RegionsPtr & reg_ = (it.second);
+
+        int r_, g_, b_;
+        double volume_;
+        double perc_;
+
+        reg_->getColor( r_, g_, b_ );
+        volume_  = reg_->getVolume();
+
+        window->object_tree->updateRegionColor( reg_->getIndex(), r_, g_, b_ );
+    }
+    window->object_tree->updateDomainActions( index_ );
+    emit updateRegions();
 }
 
 
@@ -500,6 +553,10 @@ void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_
     controller->addRegionToDomain( reg_id_, domain_id_ );
     double volume_ = controller->getDomainVolume( domain_id_ );
     window->object_tree->updateVolumeDomain( domain_id_, volume_ );
+    int r, g, b;
+    controller->getRegionColor(reg_id_, r, g, b);
+    window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    emit updateRegions();
 }
 
 
@@ -507,16 +564,36 @@ void RRMApplication::addRegionToDomain( std::size_t reg_id_, std::size_t domain_
 
 void RRMApplication::removeRegionFromDomain( std::size_t reg_id_, std::size_t domain_id_ )
 {
-    controller->removeRegionFromDomain( reg_id_, domain_id_ );
-    double volume_ = controller->getDomainVolume( domain_id_ );
-    window->object_tree->updateVolumeDomain( domain_id_, volume_ );
+    if (controller->removeRegionFromDomain( reg_id_, domain_id_ ))
+    {
+        double volume_ = controller->getDomainVolume( domain_id_ );
+        window->object_tree->updateVolumeDomain( domain_id_, volume_ );
+
+    }
+
+    int r, g, b;
+    controller->getRegionColor(reg_id_, r, g, b);
+    window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    emit updateRegions();
 }
 
 
 void RRMApplication::removeDomain( std::size_t index_ )
 {
-    controller->removeDomain( index_ );
+    auto regions_removed_ = controller->getRegionsFromDomain(index_);
+    bool success = controller->removeDomain( index_ );
+    if (!success)
+        return;
+
     window->object_tree->deleteDomain( index_ );
+
+    for ( auto reg_id_ : regions_removed_ )
+    {
+        int r, g, b;
+        controller->getRegionColor(reg_id_, r, g, b);
+        window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    }
+    emit updateRegions();
 }
 
 
@@ -535,6 +612,14 @@ void RRMApplication::addRegionsToDomain( std::size_t domain_id_, std::vector< st
     window->object_tree->addRegionsInDomain( domain_id_, regions_added_ );
     double volume_ = controller->getDomainVolume( domain_id_ );
     window->object_tree->updateVolumeDomain( domain_id_, volume_ );
+
+    for ( auto reg_id_ : regions_added_ )
+    {
+        int r, g, b;
+        controller->getRegionColor(reg_id_, r, g, b);
+        window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    }
+    emit updateRegions();
 }
 
 
@@ -552,10 +637,9 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
         {
             regions_removed_.push_back( regions_[ i ] );
             domains_removed_.push_back( domains_[ i ] );
+            double volume_ = controller->getDomainVolume( domains_[ i ] );
+            window->object_tree->updateVolumeDomain( domains_[ i ], volume_ );
         }
-
-        double volume_ = controller->getDomainVolume( domains_[ i ] );
-        window->object_tree->updateVolumeDomain( domains_[ i ], volume_ );
     }
 
     if( delete_ == true )
@@ -563,7 +647,13 @@ void RRMApplication::removeRegionsFromDomains( const std::vector< std::size_t >&
     else
         window->object_tree->removeRegionsOfTheirDomainsNoDelete( regions_removed_, domains_removed_ );
 
-
+    for ( auto reg_id_ : regions_removed_ )
+    {
+        int r, g, b;
+        controller->getRegionColor(reg_id_, r, g, b);
+        window->object_tree->updateRegionColor(reg_id_, r, g, b);
+    }
+    emit updateRegions();
 }
 
 
@@ -615,10 +705,15 @@ void RRMApplication::updateRegionBoundary()
 // set domains for objecttree
 void RRMApplication::loadDomains()
 {
+    if ( controller->getRegions().empty() )
+    {
+        return;
+    }
+
     std::vector< std::size_t > domains_ = controller->getDomains();
     for( auto it_: domains_ )
     {
-        bool status_ = window->object_tree->createDomain( it_ );
+        bool status_ = window->object_tree->loadDomain( it_ );
         if( status_ == false ) continue;
 
         std::set< std::size_t > regions_ = controller->getRegionsFromDomain( it_ );
@@ -701,6 +796,7 @@ void RRMApplication::reset()
     emit resetApplication();
     emit enableVolumeResizing();
     window->initializeInterface();
+    window->current_path.setPath( QDir::homePath() );
     controller->clear();
 
     init();
@@ -961,53 +1057,53 @@ void RRMApplication::getLegacyMeshes( std::vector<double> &points, std::vector<s
 }
 
 
-void RRMApplication::getSurfacesMeshes( std::vector< DiagnosticsWindowInterface::TriangleMesh >& triangles_meshes,
-                                        std::vector< DiagnosticsWindowInterface::CurveMesh>& left_curves,
-                                        std::vector< DiagnosticsWindowInterface::CurveMesh >& right_curves,
-                                        std::vector< DiagnosticsWindowInterface::CurveMesh > & front_curves,
-                                        std::vector< DiagnosticsWindowInterface::CurveMesh >& back_curves )
-{
-    std::vector< Controller::TriangleMesh > meshes;
-    std::vector< Controller::CurveMesh > lcurves;
-    std::vector< Controller::CurveMesh > rcurves;
-    std::vector< Controller::CurveMesh > fcurves;
-    std::vector< Controller::CurveMesh > bcurves;
+/* void RRMApplication::getSurfacesMeshes( std::vector< DiagnosticsWindowInterface::TriangleMesh >& triangles_meshes, */
+/*                                         std::vector< DiagnosticsWindowInterface::CurveMesh>& left_curves, */
+/*                                         std::vector< DiagnosticsWindowInterface::CurveMesh >& right_curves, */
+/*                                         std::vector< DiagnosticsWindowInterface::CurveMesh > & front_curves, */
+/*                                         std::vector< DiagnosticsWindowInterface::CurveMesh >& back_curves ) */
+/* { */
+/*     std::vector< Controller::TriangleMesh > meshes; */
+/*     std::vector< Controller::CurveMesh > lcurves; */
+/*     std::vector< Controller::CurveMesh > rcurves; */
+/*     std::vector< Controller::CurveMesh > fcurves; */
+/*     std::vector< Controller::CurveMesh > bcurves; */
 
-    controller->setSurfacesMeshes( meshes, lcurves, rcurves, fcurves, bcurves );
+/*     controller->setSurfacesMeshes( meshes, lcurves, rcurves, fcurves, bcurves ); */
 
-    for( std::size_t i = 0; i < meshes.size(); ++i )
-    {
-        DiagnosticsWindowInterface::TriangleMesh t;
-        t.vertex_list = meshes[i].vertex_list;
-        t.face_list = meshes[i].face_list;
-        triangles_meshes.push_back( t );
-    }
+/*     for( std::size_t i = 0; i < meshes.size(); ++i ) */
+/*     { */
+/*         DiagnosticsWindowInterface::TriangleMesh t; */
+/*         t.vertex_list = meshes[i].vertex_list; */
+/*         t.face_list = meshes[i].face_list; */
+/*         triangles_meshes.push_back( t ); */
+/*     } */
 
-    for ( std::size_t i = 0; i < lcurves.size(); ++i )
-    {
-        DiagnosticsWindowInterface::CurveMesh cm_lb, cm_rb, cm_fb, cm_bb;
+/*     for ( std::size_t i = 0; i < lcurves.size(); ++i ) */
+/*     { */
+/*         DiagnosticsWindowInterface::CurveMesh cm_lb, cm_rb, cm_fb, cm_bb; */
 
-        std::copy( lcurves[i].vertex_list.begin(), lcurves[i].vertex_list.end(), std::back_inserter(cm_lb.vertex_list) );
-        std::copy( lcurves[i].edge_list.begin(), lcurves[i].edge_list.end(), std::back_inserter(cm_lb.edge_list) );
+/*         std::copy( lcurves[i].vertex_list.begin(), lcurves[i].vertex_list.end(), std::back_inserter(cm_lb.vertex_list) ); */
+/*         std::copy( lcurves[i].edge_list.begin(), lcurves[i].edge_list.end(), std::back_inserter(cm_lb.edge_list) ); */
 
-        std::copy( rcurves[i].vertex_list.begin(), rcurves[i].vertex_list.end(), std::back_inserter(cm_rb.vertex_list) );
-        std::copy( rcurves[i].edge_list.begin(), rcurves[i].edge_list.end(), std::back_inserter(cm_rb.edge_list) );
-
-
-        std::copy( fcurves[i].vertex_list.begin(), fcurves[i].vertex_list.end(), std::back_inserter(cm_fb.vertex_list) );
-        std::copy( fcurves[i].edge_list.begin(), fcurves[i].edge_list.end(), std::back_inserter(cm_fb.edge_list) );
+/*         std::copy( rcurves[i].vertex_list.begin(), rcurves[i].vertex_list.end(), std::back_inserter(cm_rb.vertex_list) ); */
+/*         std::copy( rcurves[i].edge_list.begin(), rcurves[i].edge_list.end(), std::back_inserter(cm_rb.edge_list) ); */
 
 
-        std::copy( bcurves[i].vertex_list.begin(), bcurves[i].vertex_list.end(), std::back_inserter(cm_bb.vertex_list) );
-        std::copy( bcurves[i].edge_list.begin(), bcurves[i].edge_list.end(), std::back_inserter(cm_bb.edge_list) );
+/*         std::copy( fcurves[i].vertex_list.begin(), fcurves[i].vertex_list.end(), std::back_inserter(cm_fb.vertex_list) ); */
+/*         std::copy( fcurves[i].edge_list.begin(), fcurves[i].edge_list.end(), std::back_inserter(cm_fb.edge_list) ); */
 
 
-        left_curves.push_back( cm_lb );
-        right_curves.push_back( cm_rb );
-        front_curves.push_back( cm_fb );
-        back_curves.push_back( cm_bb );
-    }
-}
+/*         std::copy( bcurves[i].vertex_list.begin(), bcurves[i].vertex_list.end(), std::back_inserter(cm_bb.vertex_list) ); */
+/*         std::copy( bcurves[i].edge_list.begin(), bcurves[i].edge_list.end(), std::back_inserter(cm_bb.edge_list) ); */
+
+
+/*         left_curves.push_back( cm_lb ); */
+/*         right_curves.push_back( cm_rb ); */
+/*         front_curves.push_back( cm_fb ); */
+/*         back_curves.push_back( cm_bb ); */
+/*     } */
+/* } */
 
 
 void RRMApplication::getTetrahedronsRegions( const std::vector< float >& vertices, const std::vector< unsigned int >& faces,

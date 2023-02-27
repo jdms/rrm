@@ -52,8 +52,8 @@ class PiecewiseLinearGraph : public StructuredTriangleMesh2D<Point2D> {
         }
 
         ~PiecewiseLinearGraph() = default;
-        PiecewiseLinearGraph(PiecewiseLinearGraph&) = default;
-        PiecewiseLinearGraph& operator=(PiecewiseLinearGraph&) = default;
+        PiecewiseLinearGraph(const PiecewiseLinearGraph&) = default;
+        PiecewiseLinearGraph& operator=(const PiecewiseLinearGraph&) = default;
         PiecewiseLinearGraph(PiecewiseLinearGraph&&) = default;
         PiecewiseLinearGraph& operator=(PiecewiseLinearGraph&&) = default;
 

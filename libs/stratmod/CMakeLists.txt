@@ -65,7 +65,7 @@ if(NOT DEFINED STRATMOD_BUILD_USING_OPENMP)
 endif()
 
 if(NOT DEFINED STRATMOD_BUILD_USING_LAPACK)
-    option(STRATMOD_BUILD_USING_LAPACK   "Use lapack to accelerate linear algebra"          ON)
+    option(STRATMOD_BUILD_USING_LAPACK   "Use lapack to accelerate linear algebra"          OFF)
 endif()
 
 if(NOT DEFINED STRATMOD_BUILD_USING_CEREAL)
@@ -73,7 +73,7 @@ if(NOT DEFINED STRATMOD_BUILD_USING_CEREAL)
 endif()
 
 if(NOT DEFINED STRATMOD_BUILD_VTK_EXPORTER_UTILITY)
-    option(STRATMOD_BUILD_VTK_EXPORTER_UTILITY   "Build utility to export models to vtk"    ON)
+    option(STRATMOD_BUILD_VTK_EXPORTER_UTILITY   "Build utility to export models to vtk"    OFF)
 endif()
 
 # Detects whether this is a top-level project
@@ -222,7 +222,13 @@ include(ExternalProject)
 ###############################################
 
 set(PLANIN_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/detail/planin)
-add_subdirectory(${PLANIN_PATH})
+add_subdirectory(${PLANIN_PATH} EXCLUDE_FROM_ALL)
+target_include_directories(planin
+    PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+)
+target_compile_options(planin PRIVATE -DSTRATMOD_LIB_BUILT)
 
 if(STRATMOD_BUILD_SHARED_LIBRARY)
     set_property(TARGET planin PROPERTY POSITION_INDEPENDENT_CODE ON)
@@ -312,18 +318,41 @@ endif()
 
 # include_directories(${CMAKE_SOURCE_DIR}/src)
 
-set(STRATMOD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/stratmod)
+set(STRATMOD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(STRATMOD_LIB_HEADERS 
-    ${STRATMOD_INCLUDE_DIR}/stratmod_win_dll_export_handler.hpp
-    ${STRATMOD_INCLUDE_DIR}/smodeller_primitives.hpp
-    ${STRATMOD_INCLUDE_DIR}/smodeller.hpp
-    ${STRATMOD_INCLUDE_DIR}/sutilities.hpp
+    ${STRATMOD_INCLUDE_DIR}/stratmod/misc/stratmod_win_dll_export_handler.hpp
+    ${STRATMOD_INCLUDE_DIR}/stratmod/misc/stratmod_primitives.hpp
+    ${STRATMOD_INCLUDE_DIR}/stratmod/smodeller.hpp
+    ${STRATMOD_INCLUDE_DIR}/stratmod/sutilities.hpp
+    ${STRATMOD_INCLUDE_DIR}/stratmod/metadata.hpp
+    ${STRATMOD_INCLUDE_DIR}/stratmod/curve3d.hpp
+    ${STRATMOD_INCLUDE_DIR}/stratmod/region.hpp
+    ${STRATMOD_INCLUDE_DIR}/stratmod/model_interpretation.hpp
     )
 
 set(STRATMOD_LIB_SOURCES 
+    src/detail/smodeller_impl.hpp
     src/detail/smodeller_impl.cpp
+    src/detail/metadata_cereal.hpp
+    src/detail/metadata_cereal.cpp
+    src/detail/region_cereal.hpp
+    src/detail/region_cereal.cpp
+    src/detail/region_impl.hpp
+    src/detail/region_impl.cpp
+    src/detail/model_interpretation_cereal.hpp
+    src/detail/model_interpretation_cereal.cpp
+    src/detail/eigen_cereal_support.hpp
+    src/detail/eigen_cereal_support.cpp
+    src/detail/serialization_definitions.hpp
+    src/detail/serialization_definitions.cpp
+    src/detail/smodeller_access.hpp
+    src/detail/smodeller_access.cpp
     src/smodeller.cpp
     src/sutilities.cpp
+    src/metadata.cpp
+    src/curve3d.cpp
+    src/region.cpp
+    src/model_interpretation.cpp
     src/use_smodeller.cpp
     src/use_sutilities.cpp
     ) 
@@ -332,7 +361,8 @@ set(STRATMOD_LIB_SOURCES
 add_library(stratmod ${LIB_TYPE} ${STRATMOD_LIB_SOURCES} ${STRATMOD_LIB_HEADERS})  
 add_library(stratmod::stratmod ALIAS stratmod)
 
-target_compile_features(stratmod PUBLIC cxx_std_11)
+target_compile_features(stratmod PUBLIC cxx_std_17)
+target_compile_options(stratmod PRIVATE -DSTRATMOD_LIB_BUILT)
 
 if(MSVC)
     target_compile_options(stratmod PRIVATE -EHsc -W3)

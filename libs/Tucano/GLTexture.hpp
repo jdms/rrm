@@ -28,7 +28,7 @@
 
 #include "TextureManager.hpp"
 
-using namespace std;
+/* using namespace std; */
 
 namespace Tucano
 {

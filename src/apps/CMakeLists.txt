@@ -16,10 +16,16 @@ ADD_DEFINITIONS(-DINCLUDE_TEMPLATES)
 # Main source -- Subprojects
 ###############################################
 
-add_subdirectory( simulator )
+add_library(RRMAppsIncludes INTERFACE)
+target_include_directories(RRMAppsIncludes
+    INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/simulator>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mainwindow>
+)
 add_subdirectory( mainwindow )
+add_subdirectory( simulator )
 
-
+target_link_libraries(MainApp FlowDiagnosticsApp)
 
 ###############################################
 # Wrapping Qt Elements
@@ -72,10 +78,10 @@ add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -
 
 
 add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/files/models ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/models )
+    ${CMAKE_SOURCE_DIR}/files/objects ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/objects )
 
 if(WIN32)
-# add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} ARGS -E copy
+    # add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} ARGS -E copy
     # ${CMAKE_SOURCE_DIR}/libs/stratmod/stratmod/lib/stratmod.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
     if(GLEW_RUNTIME)
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -83,12 +89,23 @@ if(WIN32)
             )
     endif()
 
-if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
+    add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/files/shaders ${CMAKE_CURRENT_BINARY_DIR}/shaders )
 
-    add_custom_command( TARGET ${PROJECT_NAME} PRE_LINK COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/files/dlls ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 
-endif(  EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
+    add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/files/manual ${CMAKE_CURRENT_BINARY_DIR}/manual )
+
+
+    add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/files/objects ${CMAKE_CURRENT_BINARY_DIR}/objects )
+
+    if( EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
+
+        add_custom_command( TARGET ${PROJECT_NAME} PRE_LINK COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/files/dlls ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+
+    endif(  EXISTS ${CMAKE_SOURCE_DIR}/files/dlls )
 endif(WIN32)
 
 if(WIN32 AND RRM_BUILD_DEPLOY_QT)

@@ -74,6 +74,22 @@ class ColorPicker: public QToolButton
         QColor currentColor() const;
 
 
+        /**
+        * Method to return the current QPixmap from the color picker
+        * @see QPixmap
+        * @return QPixmap the current icon of the color picker.
+        */
+        QPixmap currentIcon() const;
+
+
+        /**
+        * Method to create the ColorPicker icon given a color
+        * @param c input color
+        * @see QPixmap
+        * @return QPixmap ColorPicker icon created from input color.
+        */
+        static QPixmap colorPickerIcon( const QColor& c );
+
 
     public slots:
 

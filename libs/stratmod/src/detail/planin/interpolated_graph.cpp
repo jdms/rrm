@@ -53,7 +53,8 @@ InterpolatedGraph::InterpolatedGraph( const InterpolatedGraph &rhs ) : id_(num_i
 
     dependency_list_ = rhs.dependency_list_; 
     auto iter = dependency_list_.find(rhs.id_); 
-    dependency_list_.erase(iter); 
+    if (iter != dependency_list_.end())
+        dependency_list_.erase(iter); 
     dependency_list_.insert(id_); 
 
     extruded_surface_ = rhs.extruded_surface_; 

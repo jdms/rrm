@@ -30,6 +30,7 @@
 #include <QHBoxLayout>
 
 #include "color_picker.h"
+#include "colors.hpp"
 
 
 ColorPicker::ColorPicker( QWidget* parent ): QToolButton ( parent )
@@ -43,6 +44,21 @@ void ColorPicker::createWidget()
     cd_picker_color = new QColorDialog( this );
     cd_picker_color->setWindowFlags( Qt::Widget );
     cd_picker_color->setCurrentColor( QColor( 255, 0, 0 ) );
+    cd_picker_color->setOption(QColorDialog::DontUseNativeDialog, true);
+    /* cd_picker_color->setOption(QColorDialog::NoButtons, true); */
+    int j = 0;
+    Colors pastel1(Colorwrap::Pastel1(8));
+    for ( std::size_t i = 0; i < pastel1.size(); ++i )
+    {
+        cd_picker_color->setCustomColor( j, pastel1.color(i) );
+        j += 1;
+    }
+    Colors pastel2(Colorwrap::Pastel2(7));
+    for ( std::size_t i = 0; i < pastel2.size(); ++i )
+    {
+        cd_picker_color->setCustomColor( j, pastel2.color(i) );
+        j += 1;
+    }
 
     wa_picker_color = new QWidgetAction( this );
     wa_picker_color->setDefaultWidget( cd_picker_color );
@@ -92,14 +108,32 @@ QColor ColorPicker::currentColor() const
     return cd_picker_color->currentColor();
 }
 
+QPixmap ColorPicker::currentIcon() const
+{
+    return ColorPicker::colorPickerIcon(currentColor());
+}
 
 void ColorPicker::colorChanged( const QColor& color_ )
 {
 
-    // this create a small icon with the color on the toolbutton
-    QPixmap px( 15, 15 );
-    px.fill( QColor( color_.red(), color_.green(), color_.blue() ) );
+    /* // this create a small icon with the color on the toolbutton */
+    /* QPixmap px( 15, 15 ); */
+    /* px.fill( QColor( color_.red(), color_.green(), color_.blue(), color_.alpha() ) ); */
+    /* setIcon( px ); */
+
+    QPixmap px = ColorPicker::colorPickerIcon(color_);
     setIcon( px );
+}
+
+
+QPixmap ColorPicker::colorPickerIcon( const QColor& color_ )
+{
+
+    // this creates a small icon with the color on the toolbutton
+    QPixmap px( 15, 15 );
+    px.fill( QColor( color_.red(), color_.green(), color_.blue(), color_.alpha() ) );
+    /* setIcon( px ); */
+    return px;
 }
 
 

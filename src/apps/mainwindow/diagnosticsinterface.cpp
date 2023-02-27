@@ -38,6 +38,7 @@ DiagnosticsInterface::DiagnosticsInterface( MainWindow* const& window_ )
 {
     window = window_;
     fd_window_interface = new DiagnosticsWindowInterface(window);
+    fd_window_interface->setAttribute(Qt::WA_DeleteOnClose);
 
     if ( isImplemented() && (window != nullptr))
     {
@@ -60,7 +61,7 @@ void DiagnosticsInterface::createInterface()
     }
     else
     {
-        fd_window_interface->createFlowDiagnosticsWindow();
+        fd_window_interface->init();
     }
 
     createDiagnosticsActions();
@@ -74,6 +75,16 @@ bool DiagnosticsInterface::isImplemented()
     }
 
     return fd_window_interface->isImplemented();
+}
+
+bool DiagnosticsInterface::isActive()
+{
+    if (fd_window_interface == nullptr)
+    {
+        return false;
+    }
+
+    return fd_window_interface->isActive();
 }
 
 bool DiagnosticsInterface::preferDockedWindow()
@@ -94,6 +105,7 @@ void DiagnosticsInterface::createDockedDiagnosticsWindow()
     }
 
     dw_flow_window = new QDockWidget( "Flow Diagnostics" );
+    dw_flow_window->setAttribute(Qt::WA_DeleteOnClose);
     dw_flow_window->setAllowedAreas( Qt::AllDockWidgetAreas );
     dw_flow_window->setWidget( fd_window_interface );
     dw_flow_window->setVisible( false );
@@ -137,13 +149,25 @@ void DiagnosticsInterface::createDiagnosticsActions()
     connect( window->app, &RRMApplication::resetApplication, [=]()
     {
         fd_window_interface->clear(); 
+        fd_window_interface->init(); 
         fd_window_interface->setModel(window->controller->getRulesProcessor().getSModeller());
-        if (!fd_window_interface->preferDockedWindow())
-        {
-            fd_window_interface->createFlowDiagnosticsWindow();
-        }
+        /* if (!fd_window_interface->preferDockedWindow()) */
+        /* { */
+        /*     fd_window_interface->create(); */
+        /* } */
         this->updateWindow( false );
     } );
+}
+
+
+void DiagnosticsInterface::setProjectPath(std::filesystem::path path)
+{
+    if (!isImplemented() || (window == nullptr))
+    {
+        return;
+    }
+
+    fd_window_interface->setProjectPath(path);
 }
 
 
@@ -162,6 +186,7 @@ void DiagnosticsInterface::updateWindow( bool window_is_active )
 
     if (window_is_active == false)
     {
+        fd_window_interface->close();
         return;
     }
 

@@ -26,8 +26,9 @@
 struct DiagnosticsWindowInterface::DiagnosticsWindowInterfaceImpl {
 };
 
-DiagnosticsWindowInterface::DiagnosticsWindowInterface(QWidget *parent) : QMainWindow(parent)
+DiagnosticsWindowInterface::DiagnosticsWindowInterface(QWidget *parent)
 {
+    this->setParent(parent);
     pimpl_ = std::make_unique<DiagnosticsWindowInterfaceImpl>();
     pparent_ = parent;
 }
@@ -39,24 +40,45 @@ bool DiagnosticsWindowInterface::isImplemented() const
     return false;
 }
 
+bool DiagnosticsWindowInterface::isActive() const
+{
+    return false;
+}
+
 void DiagnosticsWindowInterface::setModel(stratmod::SModeller& model)
 {
     pmodel_ = &model;
 }
 
-bool DiagnosticsWindowInterface::createFlowDiagnosticsWindow()
+void DiagnosticsWindowInterface::setProjectPath(std::filesystem::path path)
 {
-    return false;
+    return;
 }
 
-void DiagnosticsWindowInterface::update()
+bool DiagnosticsWindowInterface::init()
 {
+    return true;
 }
 
 void DiagnosticsWindowInterface::clear()
 {
     pimpl_ = std::make_unique<DiagnosticsWindowInterfaceImpl>();
     pmodel_ = nullptr;
+}
+
+bool DiagnosticsWindowInterface::create()
+{
+    return true;
+}
+
+void DiagnosticsWindowInterface::close()
+{
+    return;
+}
+
+bool DiagnosticsWindowInterface::update()
+{
+    return true;
 }
 
 bool DiagnosticsWindowInterface::preferDockedWindow() const

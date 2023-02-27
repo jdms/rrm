@@ -8,14 +8,6 @@
   <property name="enabled">
    <bool>true</bool>
   </property>
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>418</width>
-    <height>200</height>
-   </rect>
-  </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
@@ -28,10 +20,34 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
       <widget class="QLabel" name="about_label">
+       <property name="minimumSize">
+        <size>
+         <width>500</width>
+         <height>200</height>
+        </size>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-weight:600;&quot;&gt;RRM&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-weight:600;&quot;&gt;Version %1&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-weight:600;&quot;&gt;© 2021 RRM Team&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;This program comes with absolutely no warranty.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;See the &lt;/span&gt;&lt;a href=&quot;https://www.gnu.org/licenses/gpl.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0068da;&quot;&gt;GNU General Public License, version 3 or later&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt; for details. The 3&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; vertical-align:super;&quot;&gt;rd&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt; party libraries used in RRM are described &lt;/span&gt;&lt;a href=&quot;https://bitbucket.org/rapidreservoirmodelling/rrm/src/main/rrm_3rd_party_libraries.md&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0068da;&quot;&gt;in this link&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-weight:600;&quot;&gt;RRM&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Version %1&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;© 2021-2023 RRM Team&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-weight:600;&quot;&gt;This program comes with absolutely no warranty.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;See the &lt;/span&gt;&lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.en.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GNU General Public License version 3&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;, or later, for details. The 3rd party libraries used in RRM are described in this &lt;/span&gt;&lt;a href=&quot;https://bitbucket.org/rapidreservoirmodelling/rrm/src/main/rrm_3rd_party_libraries.md&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;link&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;. See each individual file in RRM's &lt;/span&gt;&lt;a href=&quot;https://bitbucket.org/rapidreservoirmodelling/rrm/src/main/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;repository&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt; for their authors' detailed copyright information.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::RichText</enum>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="openExternalLinks">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -40,7 +56,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../Resources/images.qrc"/>
+  <include location="../../resources/images.qrc"/>
  </resources>
  <connections/>
 </ui>
