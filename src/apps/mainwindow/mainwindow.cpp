@@ -611,6 +611,7 @@ void MainWindow::load()
                                                              "rrm files (*.rrm)", &selected_format );
 
     if( filename_.isEmpty() == true ) return;
+    app->reset();
     app->load( filename_.toStdString() );
     current_path.setPath( QDir(filename_).canonicalPath() );
 

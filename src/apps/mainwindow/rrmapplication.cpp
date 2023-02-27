@@ -83,7 +83,7 @@ void RRMApplication::init()
     emit defineVolumeGeometry( ox_, oy, oz, w_, h_, d_ );
 
     window->object_tree->addInputVolume();
-    setDiscretization( Settings::CrossSection::CrossSectionDirections::Z );
+    changeCrossSectionDirection( Settings::CrossSection::CrossSectionDirections::Z );
 
 }
 
