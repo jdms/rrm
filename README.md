@@ -12,7 +12,7 @@ A description of geological operators and applications from a user's point of
 view is available in [Jacquemyn et al
 (2021)](https://doi.org/10.1144/jgs2020-187), while a description of flow
 diagnostics is available in [Petrovskyy et al.
-(2023)](https://dx.doi.org/10.2139/ssrn.4207850). See also
+(2023)](https://doi.org/10.1016/j.ijggc.2023.103855). See also
 [https://rapidreservoir.org](https://rapidreservoir.org).
 
 RRM is built to allow interactive operation: modelling and visualization of
@@ -57,8 +57,7 @@ before RRM can be compiled.
 [Glew]: http://glew.sourceforge.net/
 
 Instructions on how to obtain these libraries are platform dependent and will
-be provided below.  [Git](https://git-scm.com/downloads) is also required.
-
+be provided below.  [Git](https://git-scm.com/downloads) is also required. The necessary feature list is C++17.
 
 ### Building the Sketching GUI and Flow Diagnostics
 
