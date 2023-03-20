@@ -196,8 +196,8 @@ directly from Visual Studio and continue from there.
 The [RRM project's](https://rapidreservoir.org) research results are a copyright of the respective current and past members:
 
 ### University of Calgary, Canada
-[Clarissa Coda Marques](linkedin.com/in/clarissa-marques-9bb49296)<br/>
-[Julio Daniel Silva](linkedin.com/in/julio-machado-silva-490bb3251)<br/>
+[Clarissa Coda Marques](https://www.linkedin.com/in/clarissa-marques-9bb49296)<br/>
+[Julio Daniel Silva](https://www.linkedin.com/in/julio-machado-silva-490bb3251)<br/>
 Felipe Moura de Carvalho<br/>
 Emilio Vital Brazil<br/>
 [Sicilia Judice](http://www.linkedin.com/in/sicilia-judice)<br/>
