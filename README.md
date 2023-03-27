@@ -210,7 +210,7 @@ Zhao Zang<br/>
 [Sebastian Geiger](https://www.tudelft.nl/en/staff/s.geiger/)
 
 ### Imperial College London, UK
-Carl Jacquemyn<br/>
+[Carl Jacquemyn](https://www.linkedin.com/in/carljacquemyn/)<br/>
 Margaret E.H. Pataki<br/>
 [Gary J. Hampson](https://www.linkedin.com/in/gary-hampson-icl/)<br/>
 Matthew D. Jackson  
