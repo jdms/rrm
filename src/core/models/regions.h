@@ -339,7 +339,7 @@ class Regions: public Object
         * This method clear the data domain and define that the regions does not belong to any domain
         * @return void.
         */
-        inline void removeFromDomain(){ indomain = false; has_domain_color = false; }
+        inline void removeFromDomain(){ indomain = false; has_domain_color = false; color_is_fresh = true; }
 
 
         /**
